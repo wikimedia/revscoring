@@ -1,4 +1,8 @@
+import logging
 
+import decorator
+
+logger = logging.getLogger("revscores.features.dependencies")
 
 class depends_on:
     
@@ -6,17 +10,36 @@ class depends_on:
         self.dependencies = dependencies
     
     def __call__(self, f):
-        f.dependencies = self.dependencies
         
-        return f
+        def wrapped_f(*args, **kwargs):
+            logger.debug("Executing {0}.".format(f))
+            return f(*args, **kwargs)
+            
+        
+        wrapped_f.dependencies = self.dependencies
+        
+        return wrapped_f
     
 
 def solve(dependent, cache):
     if dependent in cache:
         return cache[dependent]
     else:
-        args = [solve(dependency, cache)
-                for dependency in dependent.dependencies]
         
-        value = dependent(*args)
-        cache[dependent] = value
+        if not callable(dependent):
+            raise Exception("Can't solve dependency " + repr(dependent) + \
+                            ".  " + type(dependent).__name__ + \
+                            " is not callable.")
+        else:
+            
+            if hasattr(dependent, "dependencies"):
+                dependencies = dependent.dependencies
+            else:
+                dependencies = []
+            
+            args = [solve(dependency, cache)
+                    for dependency in dependencies]
+        
+            value = dependent(*args)
+            cache[dependent] = value
+            return cache[dependent]

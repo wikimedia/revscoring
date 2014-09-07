@@ -13,6 +13,8 @@ def test_is_section_comment():
                           "/* Foobar */ I did some stuff!",
                           None,
                           None,
+                          None,
+                          None,
                           None)
     
     assert is_section_comment(rm)
@@ -23,6 +25,8 @@ def test_is_section_comment():
                           None,
                           None,
                           "Derp some stuff!",
+                          None,
+                          None,
                           None,
                           None,
                           None)

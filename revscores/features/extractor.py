@@ -1,35 +1,19 @@
-
 from .dependencies import solve
 
 
-class rev_id: pass
-class session: pass
-
 class Extractor:
     
-    def __init__(self, session):
+    def __init__(self, session, dictionary):
         self.session = session
+        self.dictionary = dictionary
         
     def extract(self, rev_id, features):
         
+        # Prime the cache with pre-configured values
         cache = {
-            rev_id: rev_id,
-            session: self.session,
+            'rev_id': rev_id,
+            'session': self.session,
+            'dictionary': self.dictionary
         }
         
-        for feature in features:
-            
-        
-    def solve(self, Dependent, cache=None):
-        
-        if cache == None:
-            cache = {}
-        
-        if Dependent in cache:
-            return cache[Dependent]
-        else:
-            args = [self.solve(sub_dep, cache)
-                    for sub_dep in dependent.dependencies]
-            
-            cache[Dependent] = Dependent(*args)
-            return cache[Dependent]
+        return [solve(feature, cache) for feature in features]

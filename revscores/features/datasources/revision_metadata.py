@@ -1,19 +1,30 @@
+from collections import namedtuple
+
 from mw import Timestamp
 
+from ..dependencies import depends_on
 from .rev_doc import rev_doc
 
-RevisionMetadata = namedtuple("RevisionMetadata", ['id',
+RevisionMetadata = namedtuple("RevisionMetadata", ['rev_id',
                                                    'parent_id',
                                                    'user_text',
                                                    'user_id',
                                                    'timestamp',
                                                    'comment',
                                                    'page_id',
-                                                   'page_ns',
-                                                   'page_title'])
+                                                   'page_namespace',
+                                                   'page_title',
+                                                   'bytes',
+                                                   'minor'])
 
 @depends_on(rev_doc)
 def revision_metadata(rev_doc):
+    
+    return convert_doc(rev_doc)
+    
+
+
+def convert_doc(rev_doc):
     
     try:
         timestamp = Timestamp(rev_doc.get('timestamp'))
@@ -28,8 +39,6 @@ def revision_metadata(rev_doc):
                             rev_doc.get('comment'),
                             rev_doc['page'].get('pageid'),
                             rev_doc['page'].get('ns'),
-                            rev_doc['page'].get('title'))
-
-@depends_on(rev_doc)
-def revision_text(rev_doc):
-    return rev_doc.get("*")
+                            rev_doc['page'].get('title'),
+                            rev_doc.get('size'),
+                            'minor' in rev_doc)
