@@ -7,4 +7,4 @@ Wikipedia.
 Authors
 =======
     Aaron Halfaker:
-        * `http://halfaker.info`_
+        * `http://halfaker.info`
