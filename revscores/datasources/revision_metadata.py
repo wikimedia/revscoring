@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from mw import Timestamp
 
-from ..dependencies import depends_on
+from ..util.dependencies import depends_on
 from .rev_doc import rev_doc
 
 RevisionMetadata = namedtuple("RevisionMetadata", ['rev_id',

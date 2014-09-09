@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from ..dependencies import depends_on
+from ..util.dependencies import depends_on
 from .revision_diff import revision_diff
 
 

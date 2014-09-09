@@ -1,9 +1,9 @@
-from .dependencies import solve
+from .util.dependencies import solve
 
 
-class Extractor:
+class APIExtractor:
     
-    def __init__(self, session, dictionary):
+    def __init__(self, session, dictionary=None):
         self.session = session
         self.dictionary = dictionary
         

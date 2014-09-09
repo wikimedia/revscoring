@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from mw import Timestamp
 
-from ..dependencies import depends_on
+from ..util.dependencies import depends_on
 from .previous_rev_doc import previous_rev_doc
 from .revision_metadata import convert_doc, RevisionMetadata
 

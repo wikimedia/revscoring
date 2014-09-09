@@ -1,4 +1,4 @@
-from ..dependencies import depends_on
+from ..util.dependencies import depends_on
 from .rev_doc import rev_doc
 
 

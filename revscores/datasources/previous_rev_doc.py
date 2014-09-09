@@ -1,4 +1,4 @@
-from ..dependencies import depends_on
+from ..util.dependencies import depends_on
 from .revision_metadata import revision_metadata
 
 

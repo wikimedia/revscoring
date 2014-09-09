@@ -3,7 +3,7 @@ from collections import namedtuple
 from deltas import segment_matcher
 from deltas.tokenizers import WikitextSplit
 
-from ..dependencies import depends_on
+from ..util.dependencies import depends_on
 from .previous_revision_text import previous_revision_text
 from .revision_text import revision_text
 

@@ -1,7 +1,7 @@
 import re
 
 from ..datasources import revision_metadata
-from ..dependencies import depends_on
+from ..util.dependencies import depends_on
 
 SECTION_COMMENT_RE = re.compile(r"\/\*([^\*]|\*[^\/])+\*\/")
 

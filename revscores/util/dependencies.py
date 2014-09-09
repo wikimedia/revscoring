@@ -2,7 +2,7 @@ import logging
 
 import decorator
 
-logger = logging.getLogger("revscores.features.dependencies")
+logger = logging.getLogger("revscores.feature_extraction.dependencies")
 
 class depends_on:
     

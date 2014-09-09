@@ -1,7 +1,7 @@
 import re
 
 from ..datasources import contiguous_segments_added
-from ..dependencies import depends_on
+from ..util.dependencies import depends_on
 
 WORD_RE = re.compile('\w+')
 
