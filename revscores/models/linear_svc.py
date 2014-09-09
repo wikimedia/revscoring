@@ -1,11 +1,11 @@
-from sklean import svm
+from sklearn import svm
 
 
 def LinearSVC(Model):
     
-    def __init__(self, feature_extractors, *, classifier=None, **kwargs):
+    def __init__(self, extractors, *, classifier=None, **kwargs):
         
-        self.feature_extractors = list(feature_extractors)
+        self.extractors = list(extractors)
         
         if classifier is not None:
             self.classifier = svm.SVC(**kwargs)
@@ -14,22 +14,20 @@ def LinearSVC(Model):
         
         
     def train(self, feature_sets, classes):
-        features = [definition.validate(f)
-                    for definition, f in zip(self.feature_set, features)]
-                
-        
-        self.classifier.fit(features, classes)
-    
-    def test(self, feature_sets, classes):
         features = [extractor.validate(value)
                     for feature_set in feature_sets
-                    for extractor, value in zip(self.feature_extractors, feature_set)]
+                    for extractor, value in zip(self.extractors, feature_set)]
                 
         
-        self.classifier.score(features, classes)
+        self.classifier.fit(feature_sets, classes)
     
-    def predict(self, features, proba=False):
+    def test(self, feature_sets, classes):
+        
+        
+        self.classifier.score(feature_sets, classes)
+    
+    def predict(self, feature_sets, proba=False):
         if not proba:
-            self.classifier.predict_proba(features)
+            self.classifier.predict_proba(feature_sets)
         else:
-            self.classifier.predict(features)
+            self.classifier.predict(feature_sets)

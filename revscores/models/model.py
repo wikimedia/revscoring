@@ -2,4 +2,4 @@
 
 class Model:
     
-    def train(self, features, )
+    def train(self, features, classes): pass

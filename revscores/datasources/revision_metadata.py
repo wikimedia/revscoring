@@ -37,8 +37,8 @@ def convert_doc(rev_doc):
                             rev_doc.get('userid'),
                             timestamp,
                             rev_doc.get('comment'),
-                            rev_doc['page'].get('pageid'),
-                            rev_doc['page'].get('ns'),
-                            rev_doc['page'].get('title'),
+                            rev_doc.get('page', {}).get('pageid'),
+                            rev_doc.get('page', {}).get('ns'),
+                            rev_doc.get('page', {}).get('title'),
                             rev_doc.get('size'),
                             'minor' in rev_doc)

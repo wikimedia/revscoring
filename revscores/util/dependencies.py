@@ -3,6 +3,9 @@ from functools import wraps
 
 logger = logging.getLogger("revscores.feature_extraction.dependencies")
 
+class DependencyLoop(RuntimeError):
+    pass
+
 class Dependent:
     
     def __init__(self, f, dependencies):
@@ -21,16 +24,54 @@ class Dependent:
     
 
 class depends:
+    """
+    Decorator for functions that adds a list of dependencies.  Functions
+    decorated with this decorator can expect to be called with their
+    dependencies solved as *args by the `solve()` function.
     
-    def __init__(self, on):
-        self.dependencies = on
+    :Example:
+        >>> from revscores.util.dependencies import depends
+        >>> @depends()
+        ... def foo():
+        ...     return 5
+        ...
+        >>> @depends(on=[foo])
+        ... def bar(foo):
+        ...     return "Bar value: {0}".format(foo)
+        ...
+        >>> bar
+        <bar>
+        >>> bar.dependencies
+        [<foo>]
+    
+    :Parameters:
+        on : `list`
+            A sorted of dependencies that correspond to the *args of the
+            function
+    """
+    def __init__(self, on=None):
+        self.dependencies = list(on or [])
     
     def __call__(self, f):
         return Dependent(f, self.dependencies)
     
 
-def solve(dependent, cache, history=None):
+def solve(dependent, cache=None, history=None):
+    """
+    Calculates a dependent's value by solving dependencies.
     
+    :Parameters:
+        dependent : `Dependent` | `function`
+            A dependent function to solve for.
+        cache : `dict`
+            A memoized cache of previously solved dependencies.
+        history : `set`
+            Used to detect loops in dependencies.
+    
+    :Returns:
+        The result of executing the dependent with all dependencies resolved
+    """
+    cache = cache or {}
     history = history or set()
     
     # Check if we've already got this dependency
@@ -40,13 +81,14 @@ def solve(dependent, cache, history=None):
         
         # Check if the dependency is callable.  If not, we're SOL
         if not callable(dependent):
-            raise Exception("Can't solve dependency " + repr(dependent) + \
-                            ".  " + type(dependent).__name__ + \
-                            " is not callable.")
+            raise RuntimeError("Can't solve dependency " + repr(dependent) + \
+                               ".  " + type(dependent).__name__ + \
+                               " is not callable.")
                 
         # Check if we're in a loop.
         elif dependent in history:
-            raise Exception("Dependency loop detected at " + dependent.__name__)
+            raise DependencyLoop("Dependency loop detected at " + \
+                                 repr(dependent))
         
         # All is good.  Time to generate a value
         else:
