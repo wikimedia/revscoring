@@ -1,11 +1,11 @@
 import re
 
 from ..datasources import contiguous_segments_added
-from ..util.dependencies import depends_on
+from ..util.dependencies import depends
 
 WORD_RE = re.compile('\w+')
 
-@depends_on(contiguous_segments_added)
+@depends(on=[contiguous_segments_added])
 def num_words_added(contiguous_segments_added):
     
     return sum(len(WORD_RE.findall(segment))

@@ -1,11 +1,11 @@
 import re
 
 from ..datasources import revision_metadata
-from ..util.dependencies import depends_on
+from ..util.dependencies import depends
 
 SECTION_COMMENT_RE = re.compile(r"\/\*([^\*]|\*[^\/])+\*\/")
 
-@depends_on(revision_metadata)
+@depends(on=[revision_metadata])
 def is_section_comment(revision_metadata):
     
     if revision_metadata.comment is not None:

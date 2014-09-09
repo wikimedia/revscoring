@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from mw import Timestamp
 
-from ..util.dependencies import depends_on
+from ..util.dependencies import depends
 from .rev_doc import rev_doc
 
 RevisionMetadata = namedtuple("RevisionMetadata", ['rev_id',
@@ -17,7 +17,7 @@ RevisionMetadata = namedtuple("RevisionMetadata", ['rev_id',
                                                    'bytes',
                                                    'minor'])
 
-@depends_on(rev_doc)
+@depends(on=[rev_doc])
 def revision_metadata(rev_doc):
     
     return convert_doc(rev_doc)

@@ -1,7 +1,7 @@
-from ..util.dependencies import depends_on
+from ..util.dependencies import depends
 
 
-@depends_on('rev_id', 'session')
+@depends(on=['rev_id', 'session'])
 def rev_doc(rev_id, session):
     doc = session.revisions.get(rev_id=rev_id,
                                 properties={'ids', 'user', 'timestamp',
