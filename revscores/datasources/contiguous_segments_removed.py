@@ -9,6 +9,6 @@ def contiguous_segments_removed(revision_diff):
     
     operations, a, b = revision_diff
     
-    return ["".join(b[op.b1:op.b2])
+    return ["".join(a[op.a1:op.a2])
             for op in operations\
             if op.name == "delete"]

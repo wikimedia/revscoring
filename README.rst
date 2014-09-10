@@ -7,7 +7,6 @@ Wikipedia.
 Examples
 ========
 
-
 Feature extraction:
     
     .. code-block:: python
@@ -28,7 +27,6 @@ Feature extraction:
         ... )
         >>> print(features)
         [True, False, True, -3, False, 2, 0]
-
 
 
 Authors

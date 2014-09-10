@@ -15,4 +15,4 @@ def revision_diff(previous_revision_text, revision_text):
     a = tokenizer.tokenize(previous_revision_text)
     b = tokenizer.tokenize(revision_text)
     
-    return (segment_matcher.diff(a, b), a, b)
+    return [op for op in segment_matcher.diff(a, b)], a, b

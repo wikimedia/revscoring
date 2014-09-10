@@ -4,7 +4,7 @@ from nose.tools import eq_
 from ..revision_text import revision_text
 
 
-def test_convert_doc():
+def test_revision_text():
     doc = {
         "*": "This is some text."
     }
