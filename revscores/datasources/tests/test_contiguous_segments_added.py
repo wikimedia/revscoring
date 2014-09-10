@@ -4,7 +4,7 @@ from nose.tools import eq_
 from ..contiguous_segments_added import contiguous_segments_added
 
 
-def test_convert_doc():
+def test_contiguous_segments_added():
     
     a = ["foo", " ", "bar",
          " ",
