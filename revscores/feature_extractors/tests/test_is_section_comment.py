@@ -2,7 +2,6 @@ from collections import namedtuple
 
 from nose.tools import eq_
 
-from ...datasources import RevisionMetadata
 from ..is_section_comment import is_section_comment
 
 
