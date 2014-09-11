@@ -23,7 +23,6 @@ def LinearSVC(Model):
     
     def test(self, feature_sets, classes):
         
-        
         self.classifier.score(feature_sets, classes)
     
     def predict(self, feature_sets, proba=False):
