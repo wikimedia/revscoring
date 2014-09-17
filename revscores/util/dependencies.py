@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-logger = logging.getLogger("revscores.feature_extraction.dependencies")
+logger = logging.getLogger("revscores.util.dependencies")
 
 class DependencyLoop(RuntimeError):
     pass
@@ -11,6 +11,9 @@ class Dependent:
     def __init__(self, f, dependencies):
         self.f = f
         self.dependencies = dependencies
+    
+    def __getattr__(self, attr):
+        return getattr(self.f, attr)
     
     def __call__(self, *args, **kwargs):
         logger.debug("Executing {0}.".format(self))

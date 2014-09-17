@@ -3,17 +3,17 @@ from .util.dependencies import solve
 
 class APIExtractor:
     
-    def __init__(self, session, dictionary=None):
+    def __init__(self, session, lang=None):
         self.session = session
-        self.dictionary = dictionary
+        self.lang = lang
         
-    def extract(self, rev_id, features):
+    def extract(self, rev_id, features, cache=None):
+        
+        cache = cache or {}
         
         # Prime the cache with pre-configured values
-        cache = {
-            'rev_id': rev_id,
-            'session': self.session,
-            'dictionary': self.dictionary
-        }
+        cache.update({'rev_id': rev_id,
+                      'session': self.session,
+                      'lang': self.lang})
         
         return [solve(feature, cache) for feature in features]
