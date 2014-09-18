@@ -1,0 +1,1 @@
+class RevisionNotFoundError(Exception): pass

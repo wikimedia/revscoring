@@ -7,6 +7,6 @@ from ..util.returns import returns
 
 @depends(on=[revision_metadata])
 @returns(bool)
-def is_anon(revision_metadata):
+def user_is_anon(revision_metadata):
     
     return revision_metadata.user_id == 0 or revision_metadata.user_id is None

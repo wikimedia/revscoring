@@ -1,10 +1,7 @@
-import re
-
 from ..datasources import previous_revision_metadata, revision_metadata
 from ..util.dependencies import depends
 from ..util.returns import returns
 
-SECTION_COMMENT_RE = re.compile(r"\/\*([^\*]|\*[^\/])+\*\/")
 
 @depends(on=[previous_revision_metadata, revision_metadata])
 @returns(int)

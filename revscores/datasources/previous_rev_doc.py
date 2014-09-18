@@ -11,4 +11,4 @@ def previous_rev_doc(session, revision_metadata):
                                                 'flags', 'size'})
         return doc
     else:
-        return None
+        return {}

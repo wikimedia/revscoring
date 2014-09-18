@@ -10,4 +10,4 @@ def rev_doc(rev_id, session):
                                                 'flags', 'size'})
         return doc
     except KeyError:
-        raise RevisionDocumentNotFound(rev_id)
+        raise RevisionDocumentNotFound({'rev_id': rev_id})
