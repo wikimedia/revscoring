@@ -4,7 +4,7 @@ from ..util.returns import returns
 
 
 @depends(on=[previous_revision_metadata, revision_metadata])
-@returns(bool)
-def is_previous_user_same(previous_revision_metadata, revision_metadata):
+@returns(int)
+def seconds_since_last_page_edit(previous_revision_metadata, revision_metadata):
     
-    return previous_revision_metadata.user_text == revision_metadata.user_text
+    return revision_metadata.timestamp - previous_revision_metadata.timestamp
