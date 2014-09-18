@@ -14,19 +14,34 @@ Feature extraction:
         >>> from mw.api import Session
         >>>
         >>> from revscores import APIExtractor
-        >>> from revscores.feature_extractors import (bytes_changed, is_anon, is_mainspace,
-        ...                                           is_same_author, is_section_comment,
-        ...                                           num_words_added, num_words_removed)
+        >>> from revscores.feature_extractors import (bytes_changed, chars_added,
+        ...                                           day_of_week_in_utc,
+        ...                                           hour_of_day_in_utc, is_custom_comment,
+        ...                                           user_age_in_seconds, user_is_anon,
+        ...                                           user_is_bot)
         >>>
         >>> api_extractor = APIExtractor(Session("https://en.wikipedia.org/w/api.php"))
         >>>
+        >>> extractors = [bytes_changed, chars_added, day_of_week_in_utc,
+        ...               hour_of_day_in_utc, is_custom_comment, user_age_in_seconds,
+        ...               user_is_anon, user_is_bot]
+        >>>
         >>> features = api_extractor.extract(
         ...     624577024,
-        ...     [is_section_comment, is_anon, is_mainspace, bytes_changed, is_same_author,
-        ...      num_words_added, num_words_removed]
+        ...     extractors
         ... )
-        >>> print(features)
-        [True, False, True, -3, False, 2, 0]
+
+        >>> for extractor, feature in zip(extractors, features):
+        ...     print("{0}: {1}".format(extractor, feature))
+        ...
+        <bytes_changed>: 3
+        <chars_added>: 8
+        <day_of_week_in_utc>: 6
+        <hour_of_day_in_utc>: 19
+        <is_custom_comment>: True
+        <user_age_in_seconds>: 71821407
+        <user_is_anon>: False
+        <user_is_bot>: False
 
 
 Authors

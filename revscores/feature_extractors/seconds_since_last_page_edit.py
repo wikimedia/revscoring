@@ -7,4 +7,6 @@ from ..util.returns import returns
 @returns(int)
 def seconds_since_last_page_edit(previous_revision_metadata, revision_metadata):
     
-    return revision_metadata.timestamp - previous_revision_metadata.timestamp
+    return revision_metadata.timestamp - \
+           (previous_revision_metadata.timestamp or
+            revision_metadata.timestamp)

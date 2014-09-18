@@ -9,6 +9,7 @@ def user_doc(session, revision_metadata):
             properties={'blockinfo', 'implicitgroups', 'groups', 'registration',
                         'emailable', 'editcount', 'gender'})
     
+    user_docs = list(user_docs)
     if len(user_docs) >= 1:
         return user_docs[0]
     else:

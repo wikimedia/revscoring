@@ -1,3 +1,7 @@
+from collections import namedtuple
+
+from mw import Timestamp
+
 from ..util.dependencies import depends
 from .user_doc import user_doc
 
@@ -20,8 +24,8 @@ def user_info(user_doc):
         user_doc.get('name'),
         user_doc.get('editcount'),
         registration,
-        user_doc.get(groups, []),
-        user_doc.get(implicitgroups, []),
+        user_doc.get('groups', []),
+        user_doc.get('implicitgroups', []),
         "emailable" in user_doc,
         user_doc.get('gender'),
         user_doc.get('block_id'),

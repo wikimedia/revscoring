@@ -19,5 +19,8 @@ from .proportion_of_numeric_added import proportion_of_numeric_added
 from .proportion_of_uppercase_added import proportion_of_uppercase_added
 from .numeric_chars_added import numeric_chars_added
 from .seconds_since_last_page_edit import seconds_since_last_page_edit
+from .seconds_since_last_user_edit import seconds_since_last_user_edit
 from .uppercase_chars_added import uppercase_chars_added
+from .user_age_in_seconds import user_age_in_seconds
 from .user_is_anon import user_is_anon
+from .user_is_bot import user_is_bot
