@@ -7,7 +7,7 @@ from ..util.returns import returns
 
 @depends(on=[contiguous_segments_added])
 @returns(int)
-def longest_character_repetition_added(contiguous_segments_added):
+def longest_repeated_char_added(contiguous_segments_added):
     
     longest = 0
     
