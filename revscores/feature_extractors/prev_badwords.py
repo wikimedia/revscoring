@@ -8,12 +8,12 @@ WORD_RE = re.compile('[a-zA-Z]+', re.UNICODE)
 
 @depends(on=["language", revision_text])
 @returns(int)
-def prev_misspellings(language, revision_text):
+def prev_badwords(language, revision_text):
     
-    misspellings = 0
+    badwords = 0
     
     words = (m.group(0) for m in WORD_RE.finditer(revision_text))
-    for misspelling in language.misspellings(words):
-        misspellings += 1
+    for badword in language.badwords(words):
+        badwords += 1
         
-    return misspellings
+    return badwords

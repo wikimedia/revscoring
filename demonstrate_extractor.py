@@ -1,30 +1,35 @@
 from mw.api import Session
 
 from revscores import APIExtractor
-from revscores.feature_extractors import (bytes_changed, chars_added,
-                                          day_of_week_in_utc,
+from revscores.feature_extractors import (added_badwords_ratio,
+                                          added_misspellings_ratio,
+                                          badwords_added, bytes_changed,
+                                          chars_added, day_of_week_in_utc,
                                           hour_of_day_in_utc, is_custom_comment,
                                           is_mainspace, is_previous_user_same,
                                           is_section_comment,
                                           longest_repeated_char_added,
                                           longest_token_added,
-                                          num_badwords_added,
-                                          num_misspellings_added,
-                                          num_segments_added,
-                                          num_segments_removed, num_words_added,
-                                          num_words_removed,
+                                          misspellings_added,
                                           numeric_chars_added,
-                                          page_age_in_seconds,
+                                          page_age_in_seconds, prev_badwords,
+                                          prev_misspellings, prev_words,
+                                          proportion_of_badwords_added,
                                           proportion_of_markup_added,
+                                          proportion_of_misspellings_added,
                                           proportion_of_numeric_added,
+                                          proportion_of_prev_badwords,
+                                          proportion_of_prev_misspellings,
                                           proportion_of_symbolic_added,
                                           proportion_of_uppercase_added,
                                           seconds_since_last_page_edit,
                                           seconds_since_last_user_edit,
+                                          segments_added, segments_removed,
                                           symbolic_chars_added,
                                           uppercase_chars_added,
                                           user_age_in_seconds, user_is_anon,
-                                          user_is_bot)
+                                          user_is_bot, words_added,
+                                          words_removed)
 from revscores.language import English
 
 api_extractor = APIExtractor(
@@ -32,20 +37,38 @@ api_extractor = APIExtractor(
     language=English()
 )
 
-extractors = [bytes_changed, chars_added, day_of_week_in_utc,
-              hour_of_day_in_utc, is_custom_comment,is_mainspace,
-              is_previous_user_same, is_section_comment,
-              longest_repeated_char_added, longest_token_added,
-              num_badwords_added, num_misspellings_added,
-              num_segments_added, num_segments_removed, num_words_added,
-              num_words_removed, numeric_chars_added, page_age_in_seconds,
-              proportion_of_markup_added, proportion_of_symbolic_added,
-              proportion_of_numeric_added, proportion_of_uppercase_added,
-              seconds_since_last_page_edit, seconds_since_last_user_edit,
+extractors = [added_badwords_ratio,
+              added_misspellings_ratio,
+              badwords_added, bytes_changed,
+              chars_added, day_of_week_in_utc,
+              hour_of_day_in_utc, is_custom_comment,
+              is_mainspace, is_previous_user_same,
+              is_section_comment,
+              longest_repeated_char_added,
+              longest_token_added,
+              misspellings_added,
+              numeric_chars_added,
+              page_age_in_seconds, prev_badwords,
+              prev_misspellings, prev_words,
+              proportion_of_badwords_added,
+              proportion_of_markup_added,
+              proportion_of_misspellings_added,
+              proportion_of_numeric_added,
+              proportion_of_prev_misspellings,
+              proportion_of_prev_badwords,
+              proportion_of_symbolic_added,
+              proportion_of_uppercase_added,
+              seconds_since_last_page_edit,
+              seconds_since_last_user_edit,
+              segments_added, segments_removed,
               symbolic_chars_added,
-              uppercase_chars_added, user_age_in_seconds, user_is_anon,
-              user_is_bot]
+              uppercase_chars_added,
+              user_age_in_seconds, user_is_anon,
+              user_is_bot, words_added,
+              words_removed]
 
+print("Extracting features for "  +
+      "http://en.wikipedia.org/wiki/?oldid=626489778&diff=prev")
 features = api_extractor.extract(626489778, extractors)
 
 for extractor, feature in zip(extractors, features):

@@ -4,15 +4,16 @@ from ..datasources import revision_text
 from ..util.dependencies import depends
 from ..util.returns import returns
 
-WORD_RE = re.compile('\w+')
+WORD_RE = re.compile('[a-zA-Z]+', re.UNICODE)
 
-@depends(on=["language", revision_text])
+@depends(on=[revision_text])
 @returns(int)
 def prev_words(revision_text):
     
-    misspellings = 0
+    words = 0
     
-    for m in in WORD_RE.finditer(revision_text):
-        misspellings += 1
+    for m in WORD_RE.finditer(revision_text):
         
-    return misspellings
+        words += 1
+        
+    return words

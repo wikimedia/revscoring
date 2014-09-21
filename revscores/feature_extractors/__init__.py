@@ -1,4 +1,6 @@
 
+from .added_badwords_ratio import added_badwords_ratio
+from .added_misspellings_ratio import added_misspellings_ratio
 from .bytes_changed import bytes_changed
 from .chars_added import chars_added
 from .day_of_week_in_utc import day_of_week_in_utc
@@ -17,8 +19,15 @@ from .words_added import words_added
 from .words_removed import words_removed
 from .markup_chars_added import markup_chars_added
 from .page_age_in_seconds import page_age_in_seconds
-from .proportion_of_numeric_added import proportion_of_numeric_added
+from .prev_badwords import prev_badwords
+from .prev_misspellings import prev_misspellings
+from .prev_words import prev_words
+from .proportion_of_badwords_added import proportion_of_badwords_added
 from .proportion_of_markup_added import proportion_of_markup_added
+from .proportion_of_misspellings_added import proportion_of_misspellings_added
+from .proportion_of_numeric_added import proportion_of_numeric_added
+from .proportion_of_prev_misspellings import proportion_of_prev_misspellings
+from .proportion_of_prev_badwords import proportion_of_prev_badwords
 from .proportion_of_symbolic_added import proportion_of_symbolic_added
 from .proportion_of_uppercase_added import proportion_of_uppercase_added
 from .numeric_chars_added import numeric_chars_added
