@@ -9,10 +9,12 @@ from .is_previous_user_same import is_previous_user_same
 from .is_section_comment import is_section_comment
 from .longest_repeated_char_added import longest_repeated_char_added
 from .longest_token_added import longest_token_added
-from .num_segments_added import num_segments_added
-from .num_segments_removed import num_segments_removed
-from .num_words_added import num_words_added
-from .num_words_removed import num_words_removed
+from .badwords_added import badwords_added
+from .misspellings_added import misspellings_added
+from .segments_added import segments_added
+from .segments_removed import segments_removed
+from .words_added import words_added
+from .words_removed import words_removed
 from .markup_chars_added import markup_chars_added
 from .page_age_in_seconds import page_age_in_seconds
 from .proportion_of_numeric_added import proportion_of_numeric_added

@@ -8,7 +8,7 @@ WORD_RE = re.compile('\w+')
 
 @depends(on=[contiguous_segments_added])
 @returns(int)
-def num_words_added(contiguous_segments_added):
+def words_added(contiguous_segments_added):
     
     return sum(len(WORD_RE.findall(segment))
                for segment in contiguous_segments_added)

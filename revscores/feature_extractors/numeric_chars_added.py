@@ -12,10 +12,10 @@ def numeric_chars_added(contiguous_segments_added):
     
     concat = "".join(contiguous_segments_added)
     
-    num_chars_added = 0
+    chars_added = 0
     
     for match in NUMERIC_RE.finditer(concat):
-        num_chars_added += len(match.group(0))
+        chars_added += len(match.group(0))
         
     
-    return num_chars_added
+    return chars_added

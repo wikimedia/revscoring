@@ -8,6 +8,8 @@ from revscores.feature_extractors import (bytes_changed, chars_added,
                                           is_section_comment,
                                           longest_repeated_char_added,
                                           longest_token_added,
+                                          num_badwords_added,
+                                          num_misspellings_added,
                                           num_segments_added,
                                           num_segments_removed, num_words_added,
                                           num_words_removed,
@@ -23,13 +25,18 @@ from revscores.feature_extractors import (bytes_changed, chars_added,
                                           uppercase_chars_added,
                                           user_age_in_seconds, user_is_anon,
                                           user_is_bot)
+from revscores.language import English
 
-api_extractor = APIExtractor(Session("https://en.wikipedia.org/w/api.php"))
+api_extractor = APIExtractor(
+    Session("https://en.wikipedia.org/w/api.php"),
+    language=English()
+)
 
 extractors = [bytes_changed, chars_added, day_of_week_in_utc,
               hour_of_day_in_utc, is_custom_comment,is_mainspace,
               is_previous_user_same, is_section_comment,
               longest_repeated_char_added, longest_token_added,
+              num_badwords_added, num_misspellings_added,
               num_segments_added, num_segments_removed, num_words_added,
               num_words_removed, numeric_chars_added, page_age_in_seconds,
               proportion_of_markup_added, proportion_of_symbolic_added,
@@ -39,7 +46,7 @@ extractors = [bytes_changed, chars_added, day_of_week_in_utc,
               uppercase_chars_added, user_age_in_seconds, user_is_anon,
               user_is_bot]
 
-features = api_extractor.extract(624577025, extractors)
+features = api_extractor.extract(626489778, extractors)
 
 for extractor, feature in zip(extractors, features):
     print("{0}: {1}".format(extractor, feature))

@@ -3,9 +3,9 @@ from .util.dependencies import solve
 
 class APIExtractor:
     
-    def __init__(self, session, lang=None):
+    def __init__(self, session, language=None):
         self.session = session
-        self.lang = lang
+        self.language = language
         
     def extract(self, rev_id, features, cache=None):
         
@@ -14,6 +14,6 @@ class APIExtractor:
         # Prime the cache with pre-configured values
         cache.update({'rev_id': rev_id,
                       'session': self.session,
-                      'lang': self.lang})
+                      'language': self.language})
         
         return [solve(feature, cache) for feature in features]
