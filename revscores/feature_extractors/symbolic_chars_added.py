@@ -8,7 +8,7 @@ SYMBOLS = re.compile(r'[^\w\alpha\s]+')
 
 @depends(on=[contiguous_segments_added])
 @returns(int)
-def symbol_chars_added(contiguous_segments_added):
+def symbolic_chars_added(contiguous_segments_added):
     
     concat = "".join(contiguous_segments_added)
     

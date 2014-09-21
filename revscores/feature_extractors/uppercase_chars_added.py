@@ -5,6 +5,7 @@ from ..util.dependencies import depends
 from ..util.returns import returns
 
 UPPERCASE_RE = re.compile(r'[A-Z]+')
+# TODO: Does not work for non-latin uppercase letters
 
 @depends(on=[contiguous_segments_added])
 @returns(int)

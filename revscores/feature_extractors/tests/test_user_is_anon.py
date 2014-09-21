@@ -3,7 +3,7 @@ from collections import namedtuple
 from ..user_is_anon import user_is_anon
 
 
-def test_is_anon():
+def test_user_is_anon():
     FakeRevisionMeta = namedtuple("FakeRevisionMeta", ['user_id'])
     
     revision_meta = FakeRevisionMeta(0)

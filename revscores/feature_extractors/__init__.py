@@ -17,11 +17,12 @@ from .markup_chars_added import markup_chars_added
 from .page_age_in_seconds import page_age_in_seconds
 from .proportion_of_numeric_added import proportion_of_numeric_added
 from .proportion_of_markup_added import proportion_of_markup_added
-from .proportion_of_symbol_added import proportion_of_symbol_added
+from .proportion_of_symbolic_added import proportion_of_symbolic_added
 from .proportion_of_uppercase_added import proportion_of_uppercase_added
 from .numeric_chars_added import numeric_chars_added
 from .seconds_since_last_page_edit import seconds_since_last_page_edit
 from .seconds_since_last_user_edit import seconds_since_last_user_edit
+from .symbolic_chars_added import symbolic_chars_added
 from .uppercase_chars_added import uppercase_chars_added
 from .user_age_in_seconds import user_age_in_seconds
 from .user_is_anon import user_is_anon
