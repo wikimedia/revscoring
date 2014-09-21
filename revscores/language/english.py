@@ -10,6 +10,8 @@ STEMMER = SnowballStemmer("english")
 BADWORDS = set(STEMMER.stem(w) for w in [
     "shit",
     "piss",
+    "suck",
+    "lick",
     "fuck",
     "cunt",
     "cocksuck",
@@ -82,8 +84,13 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "wop",
     "yank",
     "yankee",
-    "zip",
-    "zipperhead"
+    "zipperhead",
+    "herpes",
+    "syphilis",
+    "chlamydia",
+    "gonorrhea",
+    "hiv",
+    "scabies"
 ])
 
 class English(Language):
