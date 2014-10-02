@@ -1,3 +1,16 @@
+Thursday, Oct. 2nd, 2014
+========================
+
+Quick idea.  I need to write up a model description format to configure a
+scorer with a list of features (probably a list of class paths).  A scorer class will load in the description and potentially a trained model.  
+
+
+Sunday, Sept. 21st, 2014
+========================
+Bad words list for ptwiki: https://pt.wikipedia.org/w/index.php?title=Wikip%C3%A9dia:Huggle/Config#Previs.C3.A3o
+
+
+
 Wednesday, Sept. 10th, 2014
 ===========================
 I flattened things.  I think this is nicer.
@@ -41,7 +54,7 @@ Pros:
 
 Cons:
 
-    * More abstraction.  
+    * More abstraction.
 
 Monday, Sept. 8th, 2014
 =======================

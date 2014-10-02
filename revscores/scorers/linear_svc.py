@@ -1,9 +1,9 @@
 from sklearn import svm
 
-from ..feature_extractors import (bytes_changed, is_anon, is_custom_comment,
+from ..feature_extractors import (bytes_changed, is_custom_comment,
                                   is_mainspace, is_previous_user_same,
-                                  is_section_comment, num_words_added,
-                                  num_words_removed)
+                                  is_section_comment, user_is_anon, words_added,
+                                  words_removed)
 from .scorer import Scorer
 
 
@@ -13,7 +13,7 @@ def LinearSVCDiff(ModelScorer):
     
     EXTRACTORS = [
         bytes_changed,
-        is_anon,
+        user_is_anon,
         is_custom_comment,
         is_mainspace,
         is_previous_user_same,
@@ -32,21 +32,21 @@ def LinearSVCDiff(ModelScorer):
         
         
     def _train(self, feature_sets, scores):
-        feature_sets = self._validate(feature_set) \
-                       for feature_set in feature_sets
+        feature_sets = (self._validate(feature_set)
+                        for feature_set in feature_sets)
         
         self.classifier.fit(feature_sets, scores)
     
     def _test(self, feature_sets, scores):
-        feature_sets = self._validate(feature_set) \
-                       for feature_set in feature_sets
+        feature_sets = (self._validate(feature_set)
+                        for feature_set in feature_sets)
         
         return self.classifier.score(feature_sets, scores)
     
     
     def _predict(self, feature_sets, proba=False):
-        feature_sets = self._validate(feature_set) \
-                       for feature_set in feature_sets
+        feature_sets = (self._validate(feature_set)
+                        for feature_set in feature_sets)
         
         if not proba:
             return self.classifier.predict_proba(feature_sets)
