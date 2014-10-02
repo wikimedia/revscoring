@@ -1,5 +1,4 @@
 nltk
-nose
 deltas
 pytz
 mediawiki-utilities
