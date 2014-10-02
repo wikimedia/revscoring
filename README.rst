@@ -4,6 +4,12 @@ A generic, machine learning-based revision scoring system designed to be used
 to automatically differentiate damage from productive contributory behavior on
 Wikipedia.
 
+Installation
+================
+In order to use this, you need to install a few packages first:
+
+``pip install nltk nose deltas pytz mediawiki-utilities``
+
 Examples
 ========
 
