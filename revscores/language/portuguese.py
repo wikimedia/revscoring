@@ -11,7 +11,7 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "",
 ])
 
-class English(Language):
+class Portuguese(Language):
     
     def badwords(self, words):
         
