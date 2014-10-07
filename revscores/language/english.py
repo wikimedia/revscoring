@@ -92,7 +92,9 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "hiv",
     "scabies",
     "stupid",
-    "idiot"
+    "idiot",
+    "wank",
+    "yid"
 ])
 
 class English(Language):
