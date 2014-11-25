@@ -54,3 +54,5 @@ Authors
 =======
     Aaron Halfaker:
         * `http://halfaker.info`
+    Helder:
+        * `https://github.com/he7d3r`
