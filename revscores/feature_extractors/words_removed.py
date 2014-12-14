@@ -4,7 +4,7 @@ from ..datasources import contiguous_segments_removed
 from ..util.dependencies import depends
 from ..util.returns import returns
 
-WORD_RE = re.compile('[a-zA-Z]+', re.UNICODE)
+WORD_RE = re.compile('\w+', re.UNICODE)
 
 @depends(on=[contiguous_segments_removed])
 @returns(int)
