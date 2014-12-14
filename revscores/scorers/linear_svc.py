@@ -1,54 +1,54 @@
+from numpy import array
 from sklearn import svm
 
-from ..feature_extractors import (bytes_changed, is_custom_comment,
-                                  is_mainspace, is_previous_user_same,
-                                  is_section_comment, user_is_anon, words_added,
-                                  words_removed)
-from .scorer import Scorer
+from .scorer import MLScorer, MLScorerModel
 
 
-def LinearSVCDiff(ModelScorer):
+class LinearSVCModel(MLScorerModel):
     
-    VERSION = "0.0.1"
+    def __init__(self, features, **kwargs):
+        super().__init__(features)
+        
+        self.svc = svm.SVC(**kwargs)
     
-    EXTRACTORS = [
-        bytes_changed,
-        user_is_anon,
-        is_custom_comment,
-        is_mainspace,
-        is_previous_user_same,
-        is_section_comment,
-        num_words_added,
-        num_words_removed
-    ]
+    def train(self, values_scores):
+        
+        x_values, y_values = self.convert_to_arrays(values_scores)
+        
+        return self.svc.fit(x_values, y_values)
     
-    def __init__(self, *, feature_extractor, classifier=None, **kwargs):
-        super().__init__(self, feature_extractor)
+    def test(self, values_scores):
         
-        if classifier is not None:
-            self.classifier = svm.SVC(**kwargs)
-        else:
-            self.classifier = classifier
+        x_values, y_values = self.convert_to_arrays(values_scores)
         
+        return self.svc.score(x_values, y_values)
         
-    def _train(self, feature_sets, scores):
-        feature_sets = (self._validate(feature_set)
-                        for feature_set in feature_sets)
-        
-        self.classifier.fit(feature_sets, scores)
     
-    def _test(self, feature_sets, scores):
-        feature_sets = (self._validate(feature_set)
-                        for feature_set in feature_sets)
+    @classmethod
+    def convert_to_arrays(cls, values_scores):
+        """
+        Converts an iterable of <values> and <score> into a column-major
+        array.
         
-        return self.classifier.score(feature_sets, scores)
-    
-    
-    def _predict(self, feature_sets, proba=False):
-        feature_sets = (self._validate(feature_set)
-                        for feature_set in feature_sets)
+        1  2  3
+        4  5  6
+        7  8  9
         
-        if not proba:
-            return self.classifier.predict_proba(feature_sets)
-        else:
-            return self.classifier.predict(feature_sets)
+        Column major = [[1,4,7], [2,5,8], [3,6,9]]
+        Row major = [[1,2,3], [4,5,6], [7,8,9]]
+        """
+        
+        # Convert input values into simple rows of data
+        rows = [values for values, _ in values_scores]
+        
+        # Convert to column major format
+        #columns = list(zip(*rows))
+        
+        x_values = array(rows)
+        y_values = array([score for _, score in values_scores])
+        
+        return x_values, y_values
+
+class LinearSVC(MLScorer):
+    
+    MODEL = LinearSVCModel

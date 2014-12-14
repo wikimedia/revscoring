@@ -10,5 +10,5 @@ from .proportion_of_prev_misspellings import proportion_of_prev_misspellings
 def added_misspellings_ratio(proportion_of_misspellings_added,
                              proportion_of_prev_misspellings):
     
-    return proportion_of_misspellings_added /\
-           (proportion_of_prev_misspellings or 0.01)
+    return (proportion_of_misspellings_added /
+            (proportion_of_prev_misspellings or 0.01))

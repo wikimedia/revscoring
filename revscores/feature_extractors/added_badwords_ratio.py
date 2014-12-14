@@ -10,5 +10,5 @@ from .proportion_of_prev_badwords import proportion_of_prev_badwords
 def added_badwords_ratio(proportion_of_badwords_added,
                          proportion_of_prev_badwords):
     
-    return proportion_of_badwords_added /\
-           (proportion_of_prev_badwords or 0.01)
+    return (proportion_of_badwords_added /
+            (proportion_of_prev_badwords or 0.01))
