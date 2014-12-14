@@ -92,3 +92,16 @@ class MLScorerModel:
         """
         return [feature.return_type(value)
                 for feature, value in zip(self.feature, values)]
+            
+    def dump(self, f):
+        """
+        Writes serialized model information to a file.
+        """
+        raise NotImplementedError()
+
+    @classmethod
+    def load(cls, f):
+        """
+        Reads serialized model information from a file.
+        """
+        raise NotImplementedError()
