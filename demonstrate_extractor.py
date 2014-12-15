@@ -30,11 +30,11 @@ from revscores.feature_extractors import (added_badwords_ratio,
                                           user_age_in_seconds, user_is_anon,
                                           user_is_bot, words_added,
                                           words_removed)
-from revscores.language import English
+from revscores.language import Portuguese
 
 api_extractor = APIExtractor(
     Session("https://pt.wikipedia.org/w/api.php"),
-    language=English()
+    language=Portuguese()
 )
 
 extractors = [added_badwords_ratio,
