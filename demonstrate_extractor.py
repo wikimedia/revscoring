@@ -30,11 +30,11 @@ from revscores.feature_extractors import (added_badwords_ratio,
                                           user_age_in_seconds, user_is_anon,
                                           user_is_bot, words_added,
                                           words_removed)
-from revscores.language import English
+from revscores.language import Portuguese
 
 api_extractor = APIExtractor(
-    Session("https://en.wikipedia.org/w/api.php"),
-    language=English()
+    Session("https://pt.wikipedia.org/w/api.php"),
+    language=Portuguese()
 )
 
 extractors = [added_badwords_ratio,
@@ -68,8 +68,8 @@ extractors = [added_badwords_ratio,
               words_removed]
 
 print("Extracting features for "  +
-      "http://en.wikipedia.org/wiki/?oldid=626489778&diff=prev")
-features = api_extractor.extract(626489778, extractors)
+      "http://pt.wikipedia.org/wiki/?oldid=40837209&diff=prev")
+features = api_extractor.extract(40837209, extractors)
 
 for extractor, feature in zip(extractors, features):
     print("{0}: {1}".format(extractor, feature))
