@@ -1,0 +1,46 @@
+Given a set of rev_ids.  Return the vandal scores.
+
+$ cat rev_ids.tsv | predict --source=ptwiki_api.yaml --scorer=ptwiki_svc.yaml > predictions.tsv
+
+^^ This imagines a UNIX command line utility that takes a set of rev_ids and
+makes predictions
+
+
+Imagine some python:
+
+# There exists a model file at ptwiki.model
+from itertools import groupby
+
+from mw import api
+from mw.lib import reverts
+
+from revscores import APIExtractor
+from revscores.scorers import LinearSVC
+
+model = LinearSVC.MODEL.from_file(open("ptwiki.model", 'rb'))
+
+session = api.Session("https://pt.wikipedia.org/w/api.php")
+extractor = APIExtractor(session)
+
+scorer = LinearSVC(extractor, model)
+
+revisions = session.revisions.query(after=<one week ago>,
+                                    before=<now>)
+
+
+page_revisions = groupby(revisions, r['pageid'])
+
+for page_id, revisions in page_revisions:
+    
+    detector = reverts.Detector()
+    
+    for rev in revisions:
+        
+        revert = detector.process(rev['sha1'], rev)
+        
+        if revert is None: # no revert happened
+            
+            score = scorer.score(rev['revid'])
+            
+            if score > .5:
+                print(rev['pagetitle'])

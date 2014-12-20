@@ -8,7 +8,29 @@ Installation
 ================
 In order to use this, you need to install a few packages first:
 
-``pip install nltk nose deltas pytz mediawiki-utilities``
+``pip install -r requirements.txt``
+
+You'll need to download NLTK data in order to make use of language features.
+
+.. code-block:: python
+
+    >>> python
+    >>> import nltk
+    >>> nltk.download()
+    >>> Downloader> d
+    >>> Identifier> wordnet
+    >>> Downloader> d
+    >>> Identifier> omw
+    >>> Downloader> q
+    >>> exit()
+
+
+You might need to install some other dependencies depending on your operating
+system.  
+
+Linux Mint 17: 
+
+1. ``sudo apt-get install g++ git python-sklearn python3.4-dev libatlas-base-dev gfortran``
 
 Examples
 ========

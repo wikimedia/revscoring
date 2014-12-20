@@ -1,0 +1,4 @@
+
+class: revscores.APIExtractor
+url: https://pt.wikipedia.org/w/api.php
+language: revscores.language.Portuguese
