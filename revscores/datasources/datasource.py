@@ -12,8 +12,8 @@ class Datasource(Dependent):
         process : `func`
             A function that will generate a data value
         dependencies : `list`(`hashable`)
-            A list of depenencies that must be matched before this data can be
-            processed.
+            An ordered list of dependencies dependencies that correspond
+            to the *args of `process`
     """
     pass
 
@@ -41,8 +41,8 @@ class datasource_processor:
     
     :Parameters:
         depends_on : `list`(`Dependent`)
-            A sorted of dependencies that correspond to the *args of the
-            function
+            An ordered list of dependencies that correspond to the *args of the
+            decorated function
     """
     def __init__(self, depends_on=None):
         self.dependencies = depends_on

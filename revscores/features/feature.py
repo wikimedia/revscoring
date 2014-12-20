@@ -14,8 +14,8 @@ class Feature(Dependent):
         return_type : `type`
             A type to compare the return of this function to.
         dependencies : `list`(`hashable`)
-            A list of depenencies that must be matched before this feature
-            can be processed.
+                An ordered list of dependencies dependencies that correspond
+                to the *args of `process`
     """
     def __init__(self, name, process, return_type, dependencies=None):
         super().__init__(name, process, dependencies)
@@ -69,9 +69,9 @@ class feature_processor:
         returns : `list`(`callable`)
             Types that this feature will return.  This is used to validate
             later.
-        depends_on : `list`(`Dependent`)
-            A sorted of dependencies that correspond to the *args of the
-            function
+        depends_on : `list`(`hashable`)
+            An ordered list of dependencies that correspond to the *args of the
+            decorated function
     """
     def __init__(self, returns, depends_on=None):
         self.return_types = returns
