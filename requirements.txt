@@ -1,4 +1,7 @@
-nltk
 deltas
-pytz
 mediawiki-utilities
+nltk
+numpy
+pytz
+scikit-learn
+scipy
