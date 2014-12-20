@@ -8,7 +8,17 @@ Installation
 ================
 In order to use this, you need to install a few packages first:
 
-``pip install nltk nose deltas pytz mediawiki-utilities``
+``pip install -r requirements.txt``
+
+You might need to install some other dependencies depending on your operating
+system.  
+
+Linux Mint 17: 
+
+* python-sklearn
+* python3.4-dev
+* libatlas-base-dev
+* gfortran
 
 Examples
 ========
