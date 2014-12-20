@@ -12,7 +12,7 @@ class Datasource(Dependent):
         process : `func`
             A function that will generate a data value
         dependencies : `list`(`hashable`)
-            An ordered list of dependencies dependencies that correspond
+            An ordered list of dependencies that correspond
             to the *args of `process`
     """
     pass

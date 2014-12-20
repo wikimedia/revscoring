@@ -14,7 +14,7 @@ class Feature(Dependent):
         return_type : `type`
             A type to compare the return of this function to.
         dependencies : `list`(`hashable`)
-                An ordered list of dependencies dependencies that correspond
+                An ordered list of dependencies that correspond
                 to the *args of `process`
     """
     def __init__(self, name, process, return_type, dependencies=None):
