@@ -1,8 +1,8 @@
-from ..util.dependencies import depends
+from .datasource import datasource_processor
 from .revision_metadata import revision_metadata
 
 
-@depends(on=['session', revision_metadata])
+@datasource_processor(['session', revision_metadata])
 def user_doc(session, revision_metadata):
     user_docs = session.users.query(
             users={revision_metadata.user_text},

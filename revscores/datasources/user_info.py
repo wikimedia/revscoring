@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from mw import Timestamp
 
-from ..util.dependencies import depends
+from .datasource import datasource_processor
 from .user_doc import user_doc
 
 UserInfo = namedtuple("UserInfo", ['id', 'name', 'editcount', 'registration',
@@ -11,7 +11,7 @@ UserInfo = namedtuple("UserInfo", ['id', 'name', 'editcount', 'registration',
                                    'blocked_by_id', 'block_reason',
                                    'block_expiry'])
 
-@depends(on=[user_doc])
+@datasource_processor([user_doc])
 def user_info(user_doc):
     
     try:
