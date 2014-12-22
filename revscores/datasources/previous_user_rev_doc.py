@@ -1,9 +1,9 @@
-from ..util.dependencies import depends
+from .datasource import datasource_processor
 from .rev_doc import rev_doc
 from .revision_metadata import revision_metadata
 
 
-@depends(on=['session', revision_metadata])
+@datasource_processor(['session', revision_metadata])
 def previous_user_rev_doc(session, revision_metadata):
     
     if revision_metadata.user_text is not None:

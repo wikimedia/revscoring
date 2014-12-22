@@ -3,12 +3,12 @@ from collections import namedtuple
 from deltas import segment_matcher
 from deltas.tokenizers import WikitextSplit
 
-from ..util.dependencies import depends
+from .datasource import datasource_processor
 from .previous_revision_text import previous_revision_text
 from .revision_text import revision_text
 
 
-@depends(on=[previous_revision_text, revision_text])
+@datasource_processor([previous_revision_text, revision_text])
 def revision_diff(previous_revision_text, revision_text):
     tokenizer = WikitextSplit()
     
