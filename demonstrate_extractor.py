@@ -56,7 +56,7 @@ features = [added_badwords_ratio, added_misspellings_ratio,
             words_removed]
 
 print("Extracting features for "  +
-      "http://pt.wikipedia.org/wiki/?oldid=40837209&diff=prev")
+      "https://pt.wikipedia.org/w/index.php?diff=40837209")
 values = api_extractor.extract(40837209, features)
 
 for feature, value in zip(features, values):
