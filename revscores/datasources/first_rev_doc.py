@@ -1,9 +1,8 @@
-from .datasource import datasource_processor
+from .datasource import Datasource
 from .revision_metadata import revision_metadata
 
 
-@datasource_processor(['session', revision_metadata])
-def first_rev_doc(session, revision_metadata):
+def process(session, revision_metadata):
     docs = session.revisions.query(pageids={revision_metadata.page_id},
                                    direction="newer",
                                    limit=1,
@@ -16,3 +15,6 @@ def first_rev_doc(session, revision_metadata):
         return docs[0]
     else:
         raise RevisionNotFoundError({'page_id': revision_metadata.page_id})
+
+first_rev_doc = Datasource("first_rev_doc", process,
+                           depends_on=['session', revision_metadata])
