@@ -1,5 +1,5 @@
+import functools
 import logging
-from functools import wraps
 
 logger = logging.getLogger("revscores.util.dependencies")
 
@@ -12,6 +12,7 @@ class Dependent:
         self.name = name
         self.process = process
         self.dependencies = dependencies if dependencies is not None else []
+        functools.update_wrapper(self, process)
     
     def __call__(self, *args, **kwargs):
         logger.debug("Executing {0}.".format(self))

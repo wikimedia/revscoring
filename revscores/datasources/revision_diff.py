@@ -10,6 +10,9 @@ from .revision_text import revision_text
 
 @datasource_processor([previous_revision_text, revision_text])
 def revision_diff(previous_revision_text, revision_text):
+    previous_revision_text = previous_revision_text or ''
+    revision_text = revision_text or ''
+    
     tokenizer = WikitextSplit()
     
     a = tokenizer.tokenize(previous_revision_text)
