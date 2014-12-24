@@ -1,7 +1,10 @@
 from ..datasources import contiguous_segments_removed
-from .feature import feature_processor
+from .feature import Feature
 
 
-@feature_processor(returns=int, depends_on=[contiguous_segments_removed])
-def segments_removed(contiguous_segments_removed):
+def process(contiguous_segments_removed):
     return len(contiguous_segments_removed)
+
+segments_removed = Feature("segments_removed", process,
+                           returns=int,
+                           depends_on=[contiguous_segments_removed])

@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from mw import Timestamp
 
-from .datasource import datasource_processor
+from .datasource import Datasource
 from .rev_doc import rev_doc
 
 RevisionMetadata = namedtuple("RevisionMetadata", ['rev_id',
@@ -16,13 +16,13 @@ RevisionMetadata = namedtuple("RevisionMetadata", ['rev_id',
                                                    'page_title',
                                                    'bytes',
                                                    'minor'])
-
-@datasource_processor([rev_doc])
-def revision_metadata(rev_doc):
+def process(rev_doc):
     
     return convert_doc(rev_doc)
     
 
+revision_metadata = Datasource("revision_metadata", process,
+                               depends_on=[rev_doc])
 
 def convert_doc(rev_doc):
     

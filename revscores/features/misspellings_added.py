@@ -1,13 +1,11 @@
 import re
 
 from ..datasources import contiguous_segments_added
-from .feature import feature_processor
+from .feature import Feature
 
 WORD_RE = re.compile('\w+')
 
-@feature_processor(returns=int,
-                   depends_on=["language", contiguous_segments_added])
-def misspellings_added(language, contiguous_segments_added):
+def process(language, contiguous_segments_added):
     
     misspellings = 0
     
@@ -18,3 +16,7 @@ def misspellings_added(language, contiguous_segments_added):
         
     
     return misspellings
+
+misspellings_added = Feature("misspellings_added", process,
+                             returns=int,
+                             depends_on=["language", contiguous_segments_added])
