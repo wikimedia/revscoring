@@ -34,10 +34,8 @@ print("")
 print("Making a prediction")
 pprint(list(model.score([[2.4, 2.1]], probabilities=True)))
 
-""" Doesn't work yet
 f = BytesIO()
-linear_svc_model.dump(f)
+model.dump(f)
 
 f.seek(0)
-linear_svc_model = LinearSVC.MODEL.load(f)
-"""
+model = LinearSVC.MODEL.load(f)
