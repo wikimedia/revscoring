@@ -46,8 +46,8 @@ class LinearSVCModel(MLScorerModel):
         else:
             for pred, proba in zip(self.svc.predict(values),
                                    self.svc.predict_proba(values)):
-                yield {'prediction': self.svc.predict(values),
-                       'probabilities': self.svc.predict_proba(values)}
+                yield {'prediction': pred,
+                       'probabilities': list(proba)}
                 
         
     

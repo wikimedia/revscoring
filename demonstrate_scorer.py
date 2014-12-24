@@ -22,17 +22,22 @@ test_set = [
     ([0.1, 3.1], False)
 ]
 
-linear_svc_model = LinearSVC.MODEL([proportion_of_badwords_added,
-                                    proportion_of_markup_added])
+model = LinearSVC.MODEL([proportion_of_badwords_added,
+                         proportion_of_markup_added])
 
 print("Training classifier")
-pprint(linear_svc_model.train(training_set))
+pprint(model.train(training_set))
 print("")
 print("Testing classifier")
-pprint(linear_svc_model.test(test_set))
+pprint(model.test(test_set))
+print("")
+print("Making a prediction")
+pprint(list(model.score([[2.4, 2.1]], probabilities=True)))
 
+""" Doesn't work yet
 f = BytesIO()
 linear_svc_model.dump(f)
 
 f.seek(0)
 linear_svc_model = LinearSVC.MODEL.load(f)
+"""
