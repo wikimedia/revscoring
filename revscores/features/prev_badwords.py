@@ -8,7 +8,7 @@ WORD_RE = re.compile('\w+', re.UNICODE)
 @feature_processor(returns=int,
                    depends_on=["language", revision_text])
 def prev_badwords(language, revision_text):
-    
+    revision_text = revision_text or ''
     badwords = 0
     
     words = (m.group(0) for m in WORD_RE.finditer(revision_text))
