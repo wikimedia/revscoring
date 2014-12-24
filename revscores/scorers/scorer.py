@@ -5,8 +5,8 @@ class Scorer:
     Interface for implementing a wide variety of scoring strategies.
     """
     
-    def __init__(self, source):
-        self.source = source
+    def __init__(self, extractor):
+        self.extractor = extractor
     
     def score(self, rev_ids):
         """
@@ -59,36 +59,68 @@ class MLScorerModel:
         Constructs a new Machine Learned scoring model.
         
         :Parameters:
-            extractors : `list`(`feature extractor`)
-                A list of extractors that will be used to train
+            extractors : `list`(`Feature`)
+                A list of `Feature` s that will be used to train the model and
+                score new observations.
         """
         self.features = tuple(features)
     
     
     def train(self, values_scores):
         """
-        Trains the model on an iterable of labeled data (<features>, <score>).
+        Trains the model on labeled data.
+        
+        :Parameters:
+            values_scores : `iterable`((`<feature_values>`, `<score>`))
+                an iterable of labeled data Where <values_scores> is an ordered
+                collection of predictive values that correspond to the
+                `Feature` s provided to the constructor
+        
+        :Returns:
+            A dictionary of model statistics.
         """
         raise NotImplementedError()
         
     
     def test(self, values_scores):
         """
-        Returns a dictionary of test results based on an iterable of labeled data (<features>, <score>)
+        Tests the model against a labeled data.  Note that test data should be
+        withheld from from train data.
+        
+        :Parameters:
+            values_scores : `iterable`((`<feature_values>`, `<score>`))
+                an iterable of labeled data Where <values_scores> is an ordered
+                collection of predictive values that correspond to the
+                `Feature` s provided to the constructor
+                
+        :Returns:
+            A dictionary of test results.
         """
         raise NotImplementedError()
     
     
-    def score(self, values):
+    def score(self, values, **opts):
         """
-        Returns a prediction based on a set of features.
+        Make a prediction or otherwise use the model to generate a score.
+        
+        :Parameters:
+            values_scores : `iterable`((`<feature_values>`, `<score>`))
+                an iterable of labeled data Where <values_scores> is an ordered
+                collection of predictive values that correspond to the
+                `Feature` s provided to the constructor
+            opts : dict
+                optional arguments to affect how scores are generated/returned
+                
+        :Returns:
+            A dictionary of score values
         """
         raise NotImplementedError()
     
     
     def _validate_features(self, values):
         """
-        Checks the features against provided values to confirm types, ordinality, etc.
+        Checks the features against provided values to confirm types,
+        ordinality, etc.
         """
         return [feature.return_type(value)
                 for feature, value in zip(self.feature, values)]

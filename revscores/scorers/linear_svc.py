@@ -1,5 +1,9 @@
+import pickle
+import time
+
 from numpy import array
 from sklearn import svm
+from sklearn.metrics import auc, roc_curve
 
 from .scorer import MLScorer, MLScorerModel
 
@@ -9,45 +13,76 @@ class LinearSVCModel(MLScorerModel):
     def __init__(self, features, **kwargs):
         super().__init__(features)
         
-        self.svc = svm.SVC(**kwargs)
+        self.svc = svm.SVC(kernel="linear", probability=True, **kwargs)
     
     def train(self, values_scores):
+        """
+        :Returns:
+            A dictionary with the fields:
+            
+            * seconds_elapsed -- Time in seconds that fitting the model took
+        """
+        values, scores = zip(*values_scores)
+        start = time.time()
+        self.svc.fit(values, scores)
         
-        x_values, y_values = self.convert_to_arrays(values_scores)
+        return {
+            'seconds_elapsed': time.time() - start
+        }
+    
+    def score(self, values, probabilities=False):
+        """
+        :Returns:
+            An iterable of dictionaries with the fields:
+            
+            * predicion -- The most likely class
+            * probabilities -- (optional) A vector of probabilities
+                               corresponding to the classes the classifier was
+                               trained on.  Generating this probability is
+                               slower than a simple prediction.
+        """
+        values = list(values)
+        if not probabilities:
+            for prediction in self.svc.predict(values):
+                yield {'prediction': prediction}
+        else:
+            for pred, proba in zip(self.svc.predict(values),
+                                   self.svc.predict_proba(values)):
+                yield {'prediction': pred,
+                       'probabilities': list(proba)}
+                
         
-        return self.svc.fit(x_values, y_values)
     
     def test(self, values_scores):
+        """
+        :Returns:
+            A dictionary of test statistics with the fields:
+            
+            * mean.accuracy -- The mean accuracy of classification
+        """
+        values, scores = zip(*values_scores)
         
-        x_values, y_values = self.convert_to_arrays(values_scores)
+        true_probas = [p[1] for p in self.svc.predict_proba(list(values))]
+        fpr, tpr, thresholds = roc_curve(scores, true_probas)
         
-        return self.svc.score(x_values, y_values)
+        return {
+            'mean.accuracy': self.svc.score(list(values), list(scores)),
+            'roc': {
+                'fpr': list(fpr),
+                'tpr': list(tpr),
+                'thresholds': list(thresholds)
+            },
+            'auc': auc(fpr, tpr)
+        }
         
+    def dump(self, f):
+        
+        pickle.dump(self, f)
     
     @classmethod
-    def convert_to_arrays(cls, values_scores):
-        """
-        Converts an iterable of <values> and <score> into a column-major
-        array.
+    def load(cls, f):
         
-        1  2  3
-        4  5  6
-        7  8  9
-        
-        Column major = [[1,4,7], [2,5,8], [3,6,9]]
-        Row major = [[1,2,3], [4,5,6], [7,8,9]]
-        """
-        
-        # Convert input values into simple rows of data
-        rows = [values for values, _ in values_scores]
-        
-        # Convert to column major format
-        #columns = list(zip(*rows))
-        
-        x_values = array(rows)
-        y_values = array([score for _, score in values_scores])
-        
-        return x_values, y_values
+        return pickle.load(f)
 
 class LinearSVC(MLScorer):
     
