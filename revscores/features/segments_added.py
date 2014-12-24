@@ -1,9 +1,7 @@
 from ..datasources import contiguous_segments_added
-from .feature import Feature
+from .feature import feature_processor
 
 
-def process(contiguous_segments_added):
+@feature_processor(returns=int, depends_on=[contiguous_segments_added])
+def segments_added(contiguous_segments_added):
     return len(contiguous_segments_added)
-
-segments_added = Feature("segments_added", process,
-                         returns=int, depends_on=[contiguous_segments_added])

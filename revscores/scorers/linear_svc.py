@@ -18,9 +18,7 @@ class LinearSVCModel(MLScorerModel):
     def train(self, values_scores):
         """
         :Returns:
-            A dictionary with the fields:
-            
-            * seconds_elapsed -- Time in seconds that fitting the model took
+            An empty dictionary
         """
         values, scores = zip(*values_scores)
         start = time.time()

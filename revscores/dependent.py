@@ -8,10 +8,10 @@ class DependencyLoop(RuntimeError):
 
 class Dependent:
     
-    def __init__(self, name, process, depends_on=None):
+    def __init__(self, name, process, dependencies=None):
         self.name = name
         self.process = process
-        self.depends_on = depends_on if depends_on is not None else []
+        self.dependencies = dependencies if dependencies is not None else []
         functools.update_wrapper(self, process)
     
     def __call__(self, *args, **kwargs):

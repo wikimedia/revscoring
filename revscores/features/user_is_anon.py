@@ -1,12 +1,10 @@
 import re
 
 from ..datasources import revision_metadata
-from .feature import Feature
+from .feature import feature_processor
 
 
-def process(revision_metadata):
+@feature_processor(returns=bool, depends_on=[revision_metadata])
+def user_is_anon(revision_metadata):
     
     return revision_metadata.user_id == 0 or revision_metadata.user_id is None
-
-user_is_anon = Feature("user_is_anon", process,
-                       returns=bool, depends_on=[revision_metadata])

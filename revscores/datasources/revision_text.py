@@ -1,8 +1,7 @@
-from .datasource import Datasource
+from .datasource import datasource_processor
 from .rev_doc import rev_doc
 
 
-def process(rev_doc):
+@datasource_processor([rev_doc])
+def revision_text(rev_doc):
     return rev_doc.get("*")
-
-revision_text = Datasource("revision_text", process, depends_on=[rev_doc])

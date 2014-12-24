@@ -1,10 +1,11 @@
 from itertools import groupby
 
 from ..datasources import contiguous_segments_added
-from .feature import Feature
+from .feature import feature_processor
 
 
-def process(contiguous_segments_added):
+@feature_processor(returns=int, depends_on=[contiguous_segments_added])
+def longest_repeated_char_added(contiguous_segments_added):
     
     longest = 0
     
@@ -16,7 +17,3 @@ def process(contiguous_segments_added):
         
     
     return longest
-
-longest_repeated_char_added = Feature("longest_repeated_char_added", process,
-                                      returns=int,
-                                      depends_on=[contiguous_segments_added])

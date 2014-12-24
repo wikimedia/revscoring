@@ -1,11 +1,13 @@
 import re
 
 from ..datasources import contiguous_segments_added
-from .feature import Feature
+from .feature import feature_processor
 
 NUMERIC_RE = re.compile(r'[0-9]+')
 
-def process(contiguous_segments_added):
+@feature_processor(returns=int,
+                   depends_on=[contiguous_segments_added])
+def numeric_chars_added(contiguous_segments_added):
     
     concat = "".join(contiguous_segments_added)
     
@@ -16,7 +18,3 @@ def process(contiguous_segments_added):
         
     
     return chars_added
-
-numeric_chars_added = Feature("numeric_chars_added", process,
-                              returns=int,
-                              depends_on=[contiguous_segments_added])

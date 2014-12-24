@@ -1,8 +1,9 @@
-from .datasource import Datasource
+from .datasource import datasource_processor
 from .revision_metadata import revision_metadata
 
 
-def process(session, revision_metadata):
+@datasource_processor(['session', revision_metadata])
+def user_doc(session, revision_metadata):
     user_docs = session.users.query(
             users={revision_metadata.user_text},
             properties={'blockinfo', 'implicitgroups', 'groups', 'registration',
@@ -13,6 +14,3 @@ def process(session, revision_metadata):
         return user_docs[0]
     else:
         return None
-
-user_doc = Datasource("user_doc", process,
-                      depends_on=['session', revision_metadata])

@@ -1,11 +1,13 @@
 import re
 
 from ..datasources import contiguous_segments_added
-from .feature import Feature
+from .feature import feature_processor
 
 WORD_RE = re.compile('\w+', re.UNICODE)
 
-def process(language, contiguous_segments_added):
+@feature_processor(returns=int, 
+                   depends_on=["language", contiguous_segments_added])
+def badwords_added(language, contiguous_segments_added):
     
     badwords = 0
     
@@ -16,6 +18,3 @@ def process(language, contiguous_segments_added):
         
     
     return badwords
-
-badwords_added = Feature("badwords_added", process, returns=int,
-                         depends_on=["language", contiguous_segments_added])

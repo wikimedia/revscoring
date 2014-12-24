@@ -1,10 +1,8 @@
 from ..datasources import user_info
-from .feature import Feature
+from .feature import feature_processor
 
 
-def process(user_info):
+@feature_processor(returns=bool, depends_on=[user_info])
+def user_is_bot(user_info):
     
     return "bot" in user_info.groups
-
-user_is_bot = Feature("user_is_bot", process,
-                      returns=bool, depends_on=[user_info])

@@ -17,9 +17,9 @@ class Feature(Dependent):
                 An ordered list of dependencies that correspond
                 to the *args of `process`
     """
-    def __init__(self, name, process, returns, depends_on=None):
-        super().__init__(name, process, depends_on)
-        self.returns = returns
+    def __init__(self, name, process, return_type, dependencies=None):
+        super().__init__(name, process, dependencies)
+        self.return_type = return_type
         
     
     def __call__(self, *args, **kwargs):
@@ -29,21 +29,20 @@ class Feature(Dependent):
         else: return value
     
     def __repr__(self):
-        return "{0}({1}, process={2}, returns={3}, depends_on={4})" \
+        return "{0}({1}, process={2}, return_type={3}, dependencies={4})" \
                .format(self.__class__.__name__,
                        self.name,
-                       repr(self.process),
-                       repr(self.returns),
-                       [str(d) for d in self.depends_on])
+                       self.process,
+                       self.return_type,
+                       [str(d) for d in self.dependencies])
     
     def validate(self, value):
-        if isinstance(value, self.returns):
+        if isinstance(value, self.return_type):
             return value
         else:
             raise ValueError("Expected {0}, but got {1} instead." \
                              .format(self.return_type, type(value)))
-
-''' Breaks pickling
+        
 class feature_processor:
     """
     Decorator for feature processor functions.  Functions
@@ -81,4 +80,3 @@ class feature_processor:
     def __call__(self, process):
         return Feature(process.__name__, process, self.return_types,
                        self.dependencies)
-'''

@@ -1,8 +1,9 @@
 from ..datasources import revision_diff
-from .feature import Feature
+from .feature import feature_processor
 
 
-def process(revision_diff):
+@feature_processor(returns=int, depends_on=[revision_diff])
+def longest_token_added(revision_diff):
     
     longest = 0
     
@@ -18,6 +19,3 @@ def process(revision_diff):
         
     
     return longest
-
-longest_token_added = Feature("longest_token_added", process,
-                              returns=int, depends_on=[revision_diff])

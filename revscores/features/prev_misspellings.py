@@ -1,12 +1,13 @@
 import re
 
 from ..datasources import revision_text
-from .feature import Feature
+from .feature import feature_processor
 
 WORD_RE = re.compile('\w+', re.UNICODE)
 
-
-def process(language, revision_text):
+@feature_processor(returns=int,
+                   depends_on=["language", revision_text])
+def prev_misspellings(language, revision_text):
     revision_text = revision_text or ''
     misspellings = 0
     
@@ -15,7 +16,3 @@ def process(language, revision_text):
         misspellings += 1
         
     return misspellings
-
-prev_misspellings = Feature("prev_misspellings", process,
-                            returns=int,
-                            depends_on=["language", revision_text])

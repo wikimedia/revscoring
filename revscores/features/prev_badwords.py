@@ -1,11 +1,13 @@
 import re
 
 from ..datasources import revision_text
-from .feature import Feature
+from .feature import feature_processor
 
 WORD_RE = re.compile('\w+', re.UNICODE)
 
-def process(language, revision_text):
+@feature_processor(returns=int,
+                   depends_on=["language", revision_text])
+def prev_badwords(language, revision_text):
     revision_text = revision_text or ''
     badwords = 0
     
@@ -14,7 +16,3 @@ def process(language, revision_text):
         badwords += 1
         
     return badwords
-
-prev_badwords = Feature("prev_badwords", process,
-                        returns=int,
-                        depends_on=["language", revision_text])

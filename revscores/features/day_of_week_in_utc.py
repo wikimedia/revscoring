@@ -3,13 +3,11 @@ from datetime import datetime
 from pytz import utc
 
 from ..datasources import revision_metadata
-from .feature import Feature
+from .feature import feature_processor
 
 
-def process(revision_metadata):
+@feature_processor(returns=int, depends_on=[revision_metadata])
+def day_of_week_in_utc(revision_metadata):
     
     dt = datetime.fromtimestamp(revision_metadata.timestamp.unix(), tz=utc)
     return dt.weekday()
-
-day_of_week_in_utc = Feature("day_of_week_in_utc", process,
-                             returns=int, depends_on=[revision_metadata])

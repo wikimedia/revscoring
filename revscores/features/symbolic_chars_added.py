@@ -1,11 +1,12 @@
 import re
 
 from ..datasources import contiguous_segments_added
-from .feature import Feature
+from .feature import feature_processor
 
-SYMBOLS = re.compile(r'[^\w\alpha\s]+', re.UNICODE)
+SYMBOLS = re.compile(r'[^\w\alpha\s]+')
 
-def process(contiguous_segments_added):
+@feature_processor(returns=int, depends_on=[contiguous_segments_added])
+def symbolic_chars_added(contiguous_segments_added):
     
     concat = "".join(contiguous_segments_added)
     
@@ -16,7 +17,3 @@ def process(contiguous_segments_added):
         
     
     return sym_chars_added
-
-symbolic_chars_added = Feature("symbolic_chars_added", process,
-                               returns=int,
-                               depends_on=[contiguous_segments_added])
