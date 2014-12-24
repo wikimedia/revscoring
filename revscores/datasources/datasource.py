@@ -11,11 +11,13 @@ class Datasource(Dependent):
             The name of the feature
         process : `func`
             A function that will generate a data value
-        dependencies : `list`(`hashable`)
+        depends_on : `list`(`hashable`)
             An ordered list of dependencies that correspond
             to the *args of `process`
     """
-    pass
+    
+    def __init__(self, name, process, depends_on=None):
+        super().__init__(name, process, depends_on)
 
 class datasource_processor:
     """
