@@ -1,12 +1,11 @@
 import re
 
 from ..datasources import revision_metadata
-from .feature import feature_processor
+from .feature import Feature
 from .is_section_comment import SECTION_COMMENT_RE
 
 
-@feature_processor(returns=bool, depends_on=[revision_metadata])
-def is_custom_comment(revision_metadata):
+def process(revision_metadata):
     
     if revision_metadata.comment is not None:
         trimmed_comment = SECTION_COMMENT_RE.sub("", revision_metadata.comment)
@@ -15,3 +14,6 @@ def is_custom_comment(revision_metadata):
         return len(trimmed_comment) > 1
     else:
         return False
+
+is_custom_comment = Feature("is_custom_comment", process,
+                            returns=bool, depends_on=[revision_metadata])

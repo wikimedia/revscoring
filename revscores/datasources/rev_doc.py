@@ -1,8 +1,7 @@
-from .datasource import datasource_processor
+from .datasource import Datasource
 
 
-@datasource_processor(['rev_id', 'session'])
-def rev_doc(rev_id, session):
+def process(rev_id, session):
     try:
         doc = session.revisions.get(rev_id=rev_id,
                                     properties={'ids', 'user', 'timestamp',
@@ -11,3 +10,5 @@ def rev_doc(rev_id, session):
         return doc
     except KeyError:
         raise RevisionDocumentNotFound({'rev_id': rev_id})
+
+rev_doc = Datasource("rev_doc", process, depends_on=['rev_id', 'session'])

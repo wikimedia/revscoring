@@ -1,10 +1,12 @@
 import re
 
 from ..datasources import revision_metadata
-from .feature import feature_processor
+from .feature import Feature
 
 
-@feature_processor(returns=bool, depends_on=[revision_metadata])
-def is_mainspace(revision_metadata):
+def process(revision_metadata):
     
     return revision_metadata.page_namespace == 0
+
+is_mainspace = Feature("is_mainspace", process, returns=bool,
+                       depends_on=[revision_metadata])
