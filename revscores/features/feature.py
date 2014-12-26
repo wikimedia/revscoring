@@ -41,7 +41,7 @@ class Feature(Dependent):
             return value
         else:
             raise ValueError("Expected {0}, but got {1} instead." \
-                             .format(self.return_type, type(value)))
+                             .format(self.returns, type(value)))
 
 ''' Breaks pickling
 class feature_processor:

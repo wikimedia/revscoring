@@ -17,8 +17,8 @@ def test_feature():
     
     eq_(pickle.loads(pickle.dumps(foobar))(5), 5)
 
-#@raises(TypeError)
-def teat_feature_type():
+@raises(ValueError)
+def test_feature_type():
     
     foobar = Feature("foobar", return_foo, returns=int, depends_on=["foo"])
     
