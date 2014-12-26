@@ -1,13 +1,12 @@
 import re
 
 from ..datasources import contiguous_segments_added
-from .feature import feature_processor
+from .feature import Feature
 
 UPPERCASE_RE = re.compile(r'[A-Z]+', re.UNICODE)
 # TODO: Does not work for non-latin uppercase letters
 
-@feature_processor(returns=int, depends_on=[contiguous_segments_added])
-def uppercase_chars_added(contiguous_segments_added):
+def process(contiguous_segments_added):
     
     concat = "".join(contiguous_segments_added)
     
@@ -18,3 +17,7 @@ def uppercase_chars_added(contiguous_segments_added):
         
     
     return chars_added
+
+uppercase_chars_added = Feature("uppercase_chars_added", process,
+                                returns=int,
+                                depends_on=[contiguous_segments_added])

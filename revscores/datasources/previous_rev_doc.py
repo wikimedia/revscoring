@@ -1,9 +1,8 @@
-from .datasource import datasource_processor
+from .datasource import Datasource
 from .revision_metadata import revision_metadata
 
 
-@datasource_processor(['session', revision_metadata])
-def previous_rev_doc(session, revision_metadata):
+def process(session, revision_metadata):
     if revision_metadata.parent_id is not None and \
        revision_metadata.parent_id > 0:
         doc = session.revisions.get(rev_id=revision_metadata.parent_id,
@@ -13,3 +12,6 @@ def previous_rev_doc(session, revision_metadata):
         return doc
     else:
         return {}
+
+previous_rev_doc = Datasource("previous_rev_doc", process,
+                              depends_on=['session', revision_metadata])
