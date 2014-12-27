@@ -1,4 +1,4 @@
-from ..dependent import Dependent, depends
+from ..dependent import Dependent
 
 
 class Datasource(Dependent):
@@ -19,6 +19,7 @@ class Datasource(Dependent):
     def __init__(self, name, process, depends_on=None):
         super().__init__(name, process, depends_on)
 
+''' Breaks pickling
 class datasource_processor:
     """
     Decorator for datasource processor functions.  Functions
@@ -51,3 +52,4 @@ class datasource_processor:
     
     def __call__(self, process):
         return Datasource(process.__name__, process, self.dependencies)
+'''
