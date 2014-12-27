@@ -34,7 +34,7 @@ class Feature(Dependent):
                        self.name,
                        repr(self.process),
                        repr(self.returns),
-                       [str(d) for d in self.depends_on])
+                       [str(d) for d in self.dependencies])
     
     def validate(self, value):
         if isinstance(value, self.returns):
