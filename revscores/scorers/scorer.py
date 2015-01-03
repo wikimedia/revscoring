@@ -23,20 +23,20 @@ class MLScorer(Scorer):
     
     MODEL = NotImplemented
     
-    def __init__(self, source, model):
+    def __init__(self, extractor, model):
         """
         Constructs a new scorer with a given model.  Note this scorer expects
         the model to already be trained.
         """
-        super().__init__(source)
+        super().__init__(extractor)
         
         assert isinstance(model, self.MODEL)
         self.model = model
     
-    def score(self, rev_ids):
+    def score(self, rev_ids, **kwargs):
         values = self.extract(rev_ids)
         
-        scores = self.model.score(values)
+        scores = self.model.score(values, **kwargs)
         
         return scores
     
@@ -44,7 +44,7 @@ class MLScorer(Scorer):
         """
         Extracts the model's features for a set of rev_ids.
         """
-        return (self.source.extract(rev_id, self.model.features)
+        return (self.extractor.extract(rev_id, self.model.features)
                 for rev_id in rev_ids)
         
     

@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-logger = logging.getLogger("revscores.util.dependencies")
+logger = logging.getLogger("revscores.dependent")
 
 class DependencyLoop(RuntimeError):
     pass
@@ -28,6 +28,7 @@ class Dependent:
                        [str(d) for d in self.dependencies])
     
 
+''' Breaks pickling
 class depends:
     """
     Decorator for functions that adds a list of dependencies.  Functions
@@ -60,6 +61,7 @@ class depends:
     def __call__(self, process):
         return Dependent(process.__name__, process, self.dependencies)
     
+'''
 
 def solve(dependent, cache=None, history=None):
     """
@@ -116,6 +118,6 @@ def solve(dependent, cache=None, history=None):
             # Generate value
             value = dependent(*args)
             
-            #
+            # Add value to cache
             cache[dependent] = value
             return cache[dependent]
