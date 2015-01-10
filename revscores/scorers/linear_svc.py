@@ -1,9 +1,9 @@
 import pickle
 import time
 
-from numpy import array
 from sklearn import svm
 from sklearn.metrics import auc, roc_curve
+from statistics import mean, stdev
 
 from .scorer import MLScorer, MLScorerModel
 
@@ -14,7 +14,8 @@ class LinearSVCModel(MLScorerModel):
         super().__init__(features)
         
         self.svc = svm.SVC(kernel="linear", probability=True, **kwargs)
-    
+        self.feature_stats = None
+        
     def train(self, values_scores):
         """
         :Returns:
@@ -22,9 +23,12 @@ class LinearSVCModel(MLScorerModel):
             
             * seconds_elapsed -- Time in seconds that fitting the model took
         """
-        values, scores = zip(*values_scores)
         start = time.time()
-        self.svc.fit(values, scores)
+        
+        values, scores = zip(*values_scores)
+        self.feature_stats = self._generate_stats(values)
+        scaled_values = list(self._scale_and_center(values, self.feature_stats))
+        self.svc.fit(scaled_values, scores)
         
         return {
             'seconds_elapsed': time.time() - start
@@ -41,13 +45,13 @@ class LinearSVCModel(MLScorerModel):
                                trained on.  Generating this probability is
                                slower than a simple prediction.
         """
-        values = list(values)
+        scaled_values = list(self._scale_and_center(values, self.feature_stats))
         if not probabilities:
-            for prediction in self.svc.predict(values):
+            for prediction in self.svc.predict(scaled_values):
                 yield {'prediction': prediction}
         else:
-            for pred, proba in zip(self.svc.predict(values),
-                                   self.svc.predict_proba(values)):
+            for pred, proba in zip(self.svc.predict(scaled_values),
+                                   self.svc.predict_proba(scaled_values)):
                 yield {'prediction': pred,
                        'probabilities': list(proba)}
                 
@@ -74,7 +78,20 @@ class LinearSVCModel(MLScorerModel):
             },
             'auc': auc(fpr, tpr)
         }
+    
+    def _generate_stats(self, values):
+        columns = zip(*values)
         
+        stats = tuple((mean(c), stdev(c)) for c in columns)
+        
+        return stats
+    
+    def _scale_and_center(self, values, stats):
+        
+        for feature_values in values:
+            yield tuple((val-mean)/max(sd, 0.01)
+                        for (mean, sd), val in zip(stats, feature_values))
+    
     def dump(self, f):
         
         pickle.dump(self, f)
