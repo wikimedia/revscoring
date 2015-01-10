@@ -1,2 +1,2 @@
-from .english import English
-from .portuguese import Portuguese
+from .english import english
+from .portuguese import portuguese
