@@ -24,11 +24,11 @@ from revscores.features import (added_badwords_ratio, added_misspellings_ratio,
                                 uppercase_chars_added, user_age_in_seconds,
                                 user_is_anon, user_is_bot, words_added,
                                 words_removed)
-from revscores.language import Portuguese
+from revscores.languages import portuguese
 
 api_extractor = APIExtractor(
     Session("https://pt.wikipedia.org/w/api.php"),
-    language=Portuguese()
+    language=portuguese
 )
 
 features = [added_badwords_ratio, added_misspellings_ratio,
