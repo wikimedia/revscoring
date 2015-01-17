@@ -1,8 +1,8 @@
-
 class Language:
     """
-    Constructs a Language instance that wraps two functions, "is_badword" and "is_misspelled" -- which will
-    check if a word is "bad" or does not appear in the dictionary.
+    Constructs a Language instance that wraps two functions, "is_badword" and
+    "is_misspelled" -- which will check if a word is "bad" or does not appear
+    in the dictionary.
     """
     def __init__(self, is_badword, is_misspelled):
         self.is_badword = is_badword

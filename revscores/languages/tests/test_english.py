@@ -15,5 +15,5 @@ def test_language():
     eq_(list(english.badwords(["good", "slut", "bad", "ugly", "fucker"])),
         ["slut", "fucker"])
     
-    eq_(list(english.misspellings(["waffles", "oof", "dog", "oof"])),
-        ["oof", "oof"])
+    eq_(list(english.misspellings(["waffles", "oof", "dog", "blarg"])),
+        ["oof", "blarg"])

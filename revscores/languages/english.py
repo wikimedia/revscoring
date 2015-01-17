@@ -28,7 +28,6 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "fat",
     "fuck",
     "fucker",
-    "fucking",
     "gipp",
     "gippo",
     "gonorrhea",

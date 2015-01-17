@@ -1068,7 +1068,7 @@ def is_badword(word):
     return STEMMER.stem(word).lower() in BADWORDS
                 
 def is_misspelled(word):
-    if word in ("a", "A"): return False
+    if word in ("a", "A", "e", "E"): return False
     
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
