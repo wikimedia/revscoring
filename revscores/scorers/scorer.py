@@ -133,7 +133,14 @@ class MLScorerModel:
 
     @classmethod
     def load(cls, f):
-        """
-        Reads serialized model information from a file.
-        """
-        raise NotImplementedError()
+	"""
+    Reads serialized model information from a file.
+    """
+        return pickle.load(f)
+    
+    def dump(self, f):
+	"""
+    Writes serialized model information to a file.
+    """
+        pickle.dump(self, f)
+	
