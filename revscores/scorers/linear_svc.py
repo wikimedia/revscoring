@@ -92,15 +92,6 @@ class LinearSVCModel(MLScorerModel):
             yield tuple((val-mean)/max(sd, 0.01)
                         for (mean, sd), val in zip(stats, feature_values))
     
-    def dump(self, f):
-        
-        pickle.dump(self, f)
-    
-    @classmethod
-    def load(cls, f):
-        
-        return pickle.load(f)
-
 class LinearSVC(MLScorer):
     
     MODEL = LinearSVCModel
