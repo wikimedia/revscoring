@@ -133,7 +133,7 @@ class MLScorerModel:
 
     @classmethod
     def load(cls, f):
-	"""
+    """
     Reads serialized model information from a file.
     """
         return pickle.load(f)
