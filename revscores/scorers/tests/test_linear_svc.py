@@ -43,5 +43,6 @@ def test_serialization():
     model.dump(f)
     f.seek(0) # Rewind the file
     reconstructed_model = MLScorerModel.load(f)
-    eq_(reconstructed_model.features, model.features)
+    eq_([f.name for f in reconstructed_model.features], 
+        [f.name for f in model.features])
     eq_(type(reconstructed_model), type(model))
