@@ -25,3 +25,12 @@ def test_feature_type():
     foobar(11)
     
     foobar("not int")
+
+def test_feature():
+    
+    foobar = Feature("foobar", return_foo,
+                     returns=int, depends_on=["foo"])
+    
+    foobar_plus_one = foobar + 1
+    
+    eq_(foobar_plus_one(5), 6)
