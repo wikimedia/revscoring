@@ -1,7 +1,9 @@
 import pickle
+from math import log as math_log
 
 from nose.tools import eq_, raises
 
+from .. import modifiers
 from ..feature import Feature
 
 
@@ -26,11 +28,22 @@ def test_feature_type():
     
     foobar("not int")
 
-def test_feature():
+def test_add_sub():
     
     foobar = Feature("foobar", return_foo,
                      returns=int, depends_on=["foo"])
     
     foobar_plus_one = foobar + 1
     
+    eq_(foobar_plus_one.returns, int)
     eq_(foobar_plus_one(5), 6)
+
+def test_log():
+    
+    foobar = Feature("foobar", return_foo,
+                     returns=int, depends_on=["foo"])
+    
+    log_foobar_plus_one = modifiers.log(foobar + 1)
+    
+    eq_(log_foobar_plus_one.returns, float)
+    eq_(log_foobar_plus_one(5), math_log(5+1))
