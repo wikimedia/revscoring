@@ -53,8 +53,9 @@ class Feature(Dependent):
 
 class Modifier(Feature):
     
-    def __init__(self, feature):
+    def __init__(self, feature, returns):
         self.feature = feature
+        self.returns = returns
     
     def __call__(self, *args, **kwargs):
         raise NotImplementedError()
@@ -71,14 +72,24 @@ class Modifier(Feature):
 
 class log(Modifier):
     
+    def __init__(self, feature):
+        super().__init__(feature, float)
+    
     def __call__(self, *args, **kwargs):
         value = self.feature(*args, **kwargs)
+        
         return math_log(value)
 
 class add(Modifier):
     
     def __init__(self, feature, summand):
-        super().__init__(feature)
+        if feature.returns == int:
+            returns = int
+        else:
+            returns = float
+        
+        super().__init__(feature, returns)
+        
         self.summand = summand
     
     def __call__(self, *args, **kwargs):
@@ -86,7 +97,7 @@ class add(Modifier):
         return feature_value + self.summand
     
     def __str__(self):
-        return "(" + str(self.feature) + " + " + str(self.subband) + ")"
+        return "(" + str(self.feature) + " + " + str(self.summand) + ")"
     
     def __repr__(self):
         return self.__class__.__name__ + "(" + repr(self.feature) + ", " + \
@@ -95,7 +106,13 @@ class add(Modifier):
 class sub(Modifier):
     
     def __init__(self, feature, subband):
-        super().__init__(feature)
+        if feature.returns == int:
+            returns = int
+        else:
+            returns = float
+        
+        super().__init__(feature, returns)
+        
         self.subband = subband
     
     def __call__(self, *args, **kwargs):
