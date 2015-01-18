@@ -51,16 +51,18 @@ class Feature(Dependent):
             raise ValueError("Expected {0}, but got {1} instead." \
                              .format(self.returns, type(value)))
 
-class Modifier(Feature):
+class Modifier(Dependent):
     
     def __init__(self, feature, returns):
         self.feature = feature
         self.returns = returns
+        self.dependencies = feature.dependencies
     
     def __call__(self, *args, **kwargs):
         raise NotImplementedError()
     
     def __getattr__(self, attr):
+        #print(attr)
         return getattr(self.feature, attr)
     
     def __str__(self):
@@ -70,6 +72,36 @@ class Modifier(Feature):
         return self.__class__.__name__ + "(" + repr(self.feature) + ")"
     
 
+def log(feature):
+    def process(feature_value):
+        return math_log(feature_value)
+    
+    return Feature("log({0})".format(feature.name), process,
+                   returns=float,
+                   depends_on=[feature])
+
+def add(feature, summand):
+    def process(feature_value):
+        return feature_value + summand
+    
+    returns = type(feature.returns() + type(summand)())
+    
+    return Feature("{0} + {1}".format(feature.name, repr(summand)), process,
+                  returns=returns,
+                  depends_on=[feature])
+
+
+def sub(feature, subband):
+    def process(feature_value):
+        return feature_value - subband
+    
+    returns = type(feature.returns() - type(subband)())
+    
+    return Feature("{0} + {1}".format(feature.name, repr(subband)), process,
+                  returns=returns,
+                  depends_on=[feature])
+
+'''
 class log(Modifier):
     
     def __init__(self, feature):
@@ -79,6 +111,7 @@ class log(Modifier):
         value = self.feature(*args, **kwargs)
         
         return math_log(value)
+
 
 class add(Modifier):
     
@@ -125,7 +158,7 @@ class sub(Modifier):
     def __repr__(self):
         return self.__class__.__name__ + "(" + repr(self.feature) + ", " + \
                                                repr(self.subband) + ")"
-
+'''
 ''' Breaks pickling
 class feature_processor:
     """
