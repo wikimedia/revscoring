@@ -1,4 +1,5 @@
 from .feature import Feature
+from . import modifiers
 from .added_badwords_ratio import added_badwords_ratio
 from .added_misspellings_ratio import added_misspellings_ratio
 from .bytes_changed import bytes_changed

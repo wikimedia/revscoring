@@ -1,3 +1,5 @@
+from math import log as math_log
+
 from ..dependent import Dependent
 
 
@@ -36,12 +38,76 @@ class Feature(Dependent):
                        repr(self.returns),
                        [str(d) for d in self.dependencies])
     
+    def __add__(self, summand):
+        return add(self, summand)
+    
+    def __sub__(self, subband):
+        return add(self, subband)
+    
     def validate(self, value):
         if isinstance(value, self.returns):
             return value
         else:
             raise ValueError("Expected {0}, but got {1} instead." \
                              .format(self.returns, type(value)))
+
+class Modifier(Feature):
+    
+    def __init__(self, feature):
+        self.feature = feature
+    
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError()
+    
+    def __getattr__(self, attr):
+        return getattr(self.feature, attr)
+    
+    def __str__(self):
+        return self.__class__.__name__ + "(" + str(self.feature) + ")"
+    
+    def __repr__(self):
+        return self.__class__.__name__ + "(" + repr(self.feature) + ")"
+    
+
+class log(Modifier):
+    
+    def __call__(self, *args, **kwargs):
+        value = self.feature(*args, **kwargs)
+        return math_log(value)
+
+class add(Modifier):
+    
+    def __init__(self, feature, summand):
+        super().__init__(feature)
+        self.summand = summand
+    
+    def __call__(self, *args, **kwargs):
+        feature_value = self.feature(*args, **kwargs)
+        return feature_value + self.summand
+    
+    def __str__(self):
+        return "(" + str(self.feature) + " + " + str(self.subband) + ")"
+    
+    def __repr__(self):
+        return self.__class__.__name__ + "(" + repr(self.feature) + ", " + \
+                                               repr(self.summand) + ")"
+
+class sub(Modifier):
+    
+    def __init__(self, feature, subband):
+        super().__init__(feature)
+        self.subband = subband
+    
+    def __call__(self, *args, **kwargs):
+        feature_value = self.feature(*args, **kwargs)
+        return feature_value - self.subband
+    
+    def __str__(self):
+        return "(" + str(self.feature) + " - " + str(self.subband) + ")"
+    
+    def __repr__(self):
+        return self.__class__.__name__ + "(" + repr(self.feature) + ", " + \
+                                               repr(self.subband) + ")"
 
 ''' Breaks pickling
 class feature_processor:
