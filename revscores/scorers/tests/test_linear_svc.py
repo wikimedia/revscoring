@@ -39,7 +39,7 @@ def test_model():
     def test_serialization():
         model = LinearSVC.MODEL([proportion_of_badwords_added,
                                  proportion_of_symbolic_added])
-        f = BytesIO() # open("/tmp/aksjbdkasbdka", 'wb')
+        f = BytesIO()
         model.dump(f)
         f.seek(0) # Rewind the file
         reconstructed_model = MLScorerModel.load(f)
