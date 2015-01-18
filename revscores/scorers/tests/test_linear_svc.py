@@ -1,5 +1,5 @@
 from io import BytesIO
-from revscoring.scorers import MLScorerModel
+from ..scorer import MLScorerModel
 from nose.tools import eq_
 
 from ...features import (proportion_of_badwords_added,
