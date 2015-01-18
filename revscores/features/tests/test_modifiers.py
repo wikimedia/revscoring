@@ -1,4 +1,5 @@
-from math import log
+import pickle
+from math import log as math_log
 
 from nose.tools import eq_
 
@@ -7,22 +8,20 @@ from ...dependent import solve
 from ..feature import Feature
 
 
+def return_five(): return 5
+
 def test_log():
     
-    def process(): return 5
-    
-    five = Feature("five", process, returns=int, depends_on=[])
+    five = Feature("five", return_five, returns=int, depends_on=[])
     
     log_five = modifiers.log(five)
     
-    eq_(solve(log_five), log(5))
+    eq_(solve(log_five), math_log(5))
 
 
 def test_sum_sub():
     
-    def process(): return 5
-    
-    five = Feature("five", process, returns=int, depends_on=[])
+    five = Feature("five", return_five, returns=int, depends_on=[])
     
     five_plus_one = modifiers.add(five, 1)
     
@@ -32,3 +31,15 @@ def test_sum_sub():
     
     print(five_minus_one)
     eq_(solve(five_minus_one), 4)
+    
+def test_pickling():
+    
+    five = Feature("five", return_five, returns=int, depends_on=[])
+    
+    five_plus_one = modifiers.add(five, 1)
+    
+    eq_(solve(pickle.loads(pickle.dumps(five_plus_one))), 6)
+    
+    log_five = modifiers.log(five)
+    
+    eq_(solve(pickle.loads(pickle.dumps(log_five))), math_log(5))

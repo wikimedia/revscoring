@@ -51,34 +51,50 @@ class Feature(Dependent):
             raise ValueError("Expected {0}, but got {1} instead." \
                              .format(self.returns, type(value)))
 
-class Modifier(Dependent):
+
+class Modifier(Feature): pass
+
+
+class log(Modifier):
     
-    def __init__(self, feature, returns):
-        self.feature = feature
-        self.returns = returns
-        self.dependencies = feature.dependencies
+    def __init__(self, feature):
+        super().__init__("log({0})".format(feature.name), self._process,
+                         returns=float, depends_on=[feature])
     
-    def __call__(self, *args, **kwargs):
-        raise NotImplementedError()
-    
-    def __getattr__(self, attr):
-        #print(attr)
-        return getattr(self.feature, attr)
-    
-    def __str__(self):
-        return self.__class__.__name__ + "(" + str(self.feature) + ")"
-    
-    def __repr__(self):
-        return self.__class__.__name__ + "(" + repr(self.feature) + ")"
+    def _process(self, feature_value): return math_log(feature_value)
     
 
+class add(Modifier):
+    
+    def __init__(self, feature, summand):
+        super().__init__("{0} + {1}".format(feature.name, repr(summand)),
+                         self._process,
+                         returns=type(feature.returns() + summand),
+                         depends_on=[feature])
+        self.summand = summand
+    
+    def _process(self, feature_value): return feature_value + self.summand
+
+class sub(Modifier):
+    
+    def __init__(self, feature, subband):
+        super().__init__("{0} - {1}".format(feature.name, repr(subband)),
+                         self._process,
+                         returns=type(feature.returns() - subband),
+                         depends_on=[feature])
+        self.subband = subband
+    
+    def _process(self, feature_value): return feature_value - self.subband
+
+'''
 def log(feature):
     def process(feature_value):
         return math_log(feature_value)
     
-    return Feature("log({0})".format(feature.name), process,
+    return Feature(, process,
                    returns=float,
                    depends_on=[feature])
+
 
 def add(feature, summand):
     def process(feature_value):
@@ -100,101 +116,4 @@ def sub(feature, subband):
     return Feature("{0} + {1}".format(feature.name, repr(subband)), process,
                   returns=returns,
                   depends_on=[feature])
-
-'''
-class log(Modifier):
-    
-    def __init__(self, feature):
-        super().__init__(feature, float)
-    
-    def __call__(self, *args, **kwargs):
-        value = self.feature(*args, **kwargs)
-        
-        return math_log(value)
-
-
-class add(Modifier):
-    
-    def __init__(self, feature, summand):
-        if feature.returns == int:
-            returns = int
-        else:
-            returns = float
-        
-        super().__init__(feature, returns)
-        
-        self.summand = summand
-    
-    def __call__(self, *args, **kwargs):
-        feature_value = self.feature(*args, **kwargs)
-        return feature_value + self.summand
-    
-    def __str__(self):
-        return "(" + str(self.feature) + " + " + str(self.summand) + ")"
-    
-    def __repr__(self):
-        return self.__class__.__name__ + "(" + repr(self.feature) + ", " + \
-                                               repr(self.summand) + ")"
-
-class sub(Modifier):
-    
-    def __init__(self, feature, subband):
-        if feature.returns == int:
-            returns = int
-        else:
-            returns = float
-        
-        super().__init__(feature, returns)
-        
-        self.subband = subband
-    
-    def __call__(self, *args, **kwargs):
-        feature_value = self.feature(*args, **kwargs)
-        return feature_value - self.subband
-    
-    def __str__(self):
-        return "(" + str(self.feature) + " - " + str(self.subband) + ")"
-    
-    def __repr__(self):
-        return self.__class__.__name__ + "(" + repr(self.feature) + ", " + \
-                                               repr(self.subband) + ")"
-'''
-''' Breaks pickling
-class feature_processor:
-    """
-    Decorator for feature processor functions.  Functions
-    decorated with this decorator will be wrapped as a `Feature` and can expect
-    to be called with their dependencies solved as *args by the `solve()`
-    function.
-    
-    :Example:
-        >>> from revscores.feature_extraction.features import feature_processor
-        >>> @feature_processor(returns=int)
-        ... def foo():
-        ...     return 5
-        ...
-        >>> @feature_processor(returns=bool, depends_on=[foo])
-        ... def bar(foo):
-        ...     return foo == 5
-        ...
-        >>> bar
-        <bar>
-        >>> bar.dependencies
-        [<foo>]
-    
-    :Parameters:
-        returns : `list`(`callable`)
-            Types that this feature will return.  This is used to validate
-            later.
-        depends_on : `list`(`hashable`)
-            An ordered list of dependencies that correspond to the *args of the
-            decorated function
-    """
-    def __init__(self, returns, depends_on=None):
-        self.return_types = returns
-        self.dependencies = depends_on
-    
-    def __call__(self, process):
-        return Feature(process.__name__, process, self.return_types,
-                       self.dependencies)
 '''
