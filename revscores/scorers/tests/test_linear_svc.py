@@ -36,12 +36,12 @@ def test_model():
     f.seek(0)
     model = LinearSVC.MODEL.load(f)
 
-    def test_serialization():
-        model = LinearSVC.MODEL([proportion_of_badwords_added,
-                                 proportion_of_symbolic_added])
-        f = BytesIO()
-        model.dump(f)
-        f.seek(0) # Rewind the file
-        reconstructed_model = MLScorerModel.load(f)
-        eq_(reconstructed_model.features, model.features)
-        eq_(type(reconstructed_model), type(model))
+def test_serialization():
+    model = LinearSVC.MODEL([proportion_of_badwords_added,
+                             proportion_of_symbolic_added])
+    f = BytesIO()
+    model.dump(f)
+    f.seek(0) # Rewind the file
+    reconstructed_model = MLScorerModel.load(f)
+    eq_(reconstructed_model.features, model.features)
+    eq_(type(reconstructed_model), type(model))
