@@ -8,12 +8,19 @@ from statistics import mean, stdev
 from .scorer import MLScorer, MLScorerModel
 
 
-class LinearSVCModel(MLScorerModel):
+class SVCModel(MLScorerModel):
     
-    def __init__(self, features, **kwargs):
+    def __init__(self, features, svc=None, **kwargs):
         super().__init__(features)
         
-        self.svc = svm.SVC(kernel="linear", probability=True, **kwargs)
+        if 'probabily' not in kwargs:
+            kwargs['probability'] = True
+        
+        if svc is None:
+            self.svc = svm.SVC(**kwargs)
+        else:
+            self.svc = svc
+        
         self.feature_stats = None
         
     def train(self, values_scores, balanced_weight=True):
@@ -110,7 +117,34 @@ class LinearSVCModel(MLScorerModel):
         for feature_values in values:
             yield tuple((val-mean)/max(sd, 0.01)
                         for (mean, sd), val in zip(stats, feature_values))
+
+class SVC(MLScorer):
     
-class LinearSVC(MLScorer):
+    MODEL = SVCModel
+
+
+class LinearSVCModel(SVCModel):
+    
+    def __init__(self, features, **kwargs):
+        
+        if 'kernel' not in kwargs:
+            kwargs['kernel'] = "linear"
+        
+        super().__init__(features, **kwargs)
+
+class LinearSVC(SVC):
     
     MODEL = LinearSVCModel
+
+class RBFSVCModel(SVCModel):
+    
+    def __init__(self, features, **kwargs):
+        
+        if 'kernel' not in kwargs:
+            kwargs['kernel'] = "rbf"
+        
+        super().__init__(features, **kwargs)
+
+class RBFSVC(SVC):
+    
+    MODEL = RBFSVCModel
