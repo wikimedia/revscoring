@@ -16,7 +16,7 @@ class LinearSVCModel(MLScorerModel):
         self.svc = svm.SVC(kernel="linear", probability=True, **kwargs)
         self.feature_stats = None
         
-    def train(self, values_scores):
+    def train(self, values_scores, balanced_weight=True):
         """
         :Returns:
             A dictionary with the fields:
@@ -28,7 +28,17 @@ class LinearSVCModel(MLScorerModel):
         values, scores = zip(*values_scores)
         self.feature_stats = self._generate_stats(values)
         scaled_values = list(self._scale_and_center(values, self.feature_stats))
-        self.svc.fit(scaled_values, scores)
+        
+        if balanced_weight:
+            scores = list(scores)
+            counts = {}
+            for score in scores:
+                counts[score] = counts.get(score, 0) + 1
+
+            weights = [1/(counts[s]/len(scores)) for s in scores]
+            self.svc.fit(scaled_values, scores, weights)
+        else:
+            self.svc.fit(scaled_values, scores)
         
         return {
             'seconds_elapsed': time.time() - start
@@ -50,10 +60,11 @@ class LinearSVCModel(MLScorerModel):
             for prediction in self.svc.predict(scaled_values):
                 yield {'prediction': prediction}
         else:
-            for pred, proba in zip(self.svc.predict(scaled_values),
+            for pred, probas in zip(self.svc.predict(scaled_values),
                                    self.svc.predict_proba(scaled_values)):
                 yield {'prediction': pred,
-                       'probabilities': list(proba)}
+                       'probabilities': probas
+                }
                 
         
     
@@ -66,10 +77,18 @@ class LinearSVCModel(MLScorerModel):
         """
         values, scores = zip(*values_scores)
         
-        true_probas = [p[1] for p in self.svc.predict_proba(list(values))]
+        scaled_values = list(self._scale_and_center(values, self.feature_stats))
+        
+        true_probas = [p[1] for p in self.svc.predict_proba(scaled_values)]
         fpr, tpr, thresholds = roc_curve(scores, true_probas)
         
+        table = {}
+        predicteds = self.svc.predict(scaled_values)
+        for score, predicted in zip(scores, predicteds):
+            table[(score, predicted)] = table.get((score, predicted), 0) + 1
+        
         return {
+            'table': table,
             'mean.accuracy': self.svc.score(list(values), list(scores)),
             'roc': {
                 'fpr': list(fpr),
