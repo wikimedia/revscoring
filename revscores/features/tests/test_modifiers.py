@@ -43,3 +43,12 @@ def test_pickling():
     log_five = modifiers.log(five)
     
     eq_(solve(pickle.loads(pickle.dumps(log_five))), math_log(5))
+
+def test_str_and_repr():
+    
+    five = Feature("five", return_five, returns=int, depends_on=[])
+    
+    log_five_plus_one = modifiers.log(five + 1)
+    
+    eq_(str(log_five_plus_one), "<log(five + 1)>")
+    eq_(repr(log_five_plus_one), "<log(five + 1)>")

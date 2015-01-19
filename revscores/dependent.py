@@ -17,15 +17,10 @@ class Dependent:
         logger.debug("Executing {0}.".format(self))
         return self.process(*args, **kwargs)
     
-    def __str__(self):
-        return "<" + self.name + ">"
+    def __str__(self): return self.__repr__()
     
     def __repr__(self):
-        return "{0}({1}, process={2}, dependencies={3})" \
-               .format(self.__class__.__name__,
-                       self.name,
-                       self.process,
-                       [str(d) for d in self.dependencies])
+        return "<" + self.name + ">"
     
 
 ''' Breaks pickling

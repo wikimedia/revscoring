@@ -30,14 +30,6 @@ class Feature(Dependent):
         if __debug__: return self.validate(value)
         else: return value
     
-    def __repr__(self):
-        return "{0}({1}, process={2}, returns={3}, depends_on={4})" \
-               .format(self.__class__.__name__,
-                       self.name,
-                       repr(self.process),
-                       repr(self.returns),
-                       [str(d) for d in self.dependencies])
-    
     def __add__(self, summand):
         return add(self, summand)
     
