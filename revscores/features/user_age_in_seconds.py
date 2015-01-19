@@ -10,7 +10,6 @@ Date that registrations started being recorded
 
 def process(user_info, revision_metadata):
     
-    print(user_info)
     if user_info.id is None: # Anonymous
         return 0
     else:

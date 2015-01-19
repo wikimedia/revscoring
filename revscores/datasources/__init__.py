@@ -2,6 +2,7 @@
 from .contiguous_segments_added import contiguous_segments_added
 from .contiguous_segments_removed import contiguous_segments_removed
 from .first_revision_metadata import first_revision_metadata
+from .namespaces import namespaces
 from .rev_doc import rev_doc
 from .revision_diff import revision_diff
 from .revision_metadata import revision_metadata, RevisionMetadata
