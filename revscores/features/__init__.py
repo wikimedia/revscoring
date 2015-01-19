@@ -6,6 +6,7 @@ from .bytes_changed import bytes_changed
 from .chars_added import chars_added
 from .day_of_week_in_utc import day_of_week_in_utc
 from .hour_of_day_in_utc import hour_of_day_in_utc
+from .is_content_namespace import is_content_namespace
 from .is_custom_comment import is_custom_comment
 from .is_mainspace import is_mainspace
 from .is_previous_user_same import is_previous_user_same
