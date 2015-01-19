@@ -1,5 +1,3 @@
-
-
 from .feature import Feature
 from .proportion_of_badwords_added import proportion_of_badwords_added
 from .proportion_of_prev_badwords import proportion_of_prev_badwords

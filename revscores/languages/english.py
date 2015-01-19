@@ -27,6 +27,7 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "fart",
     "fat",
     "fuck",
+    "fucker",
     "gipp",
     "gippo",
     "gonorrhea",
@@ -74,6 +75,9 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "roundeye",
     "scabies",
     "shit",
+    "shitty",
+    "slut",
+    "slutty",
     "spic",
     "spick",
     "spig",
@@ -97,21 +101,19 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "zipperhead"
 ])
 
-class English(Language):
-    
-    def badwords(self, words):
-        
-        for word in words:
-            
-            if STEMMER.stem(word).lower() in BADWORDS:
-                yield word
-                    
-    def misspellings(self, words):
-        
-        for word in words:
-            
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+
+def is_badword(word):
+    return STEMMER.stem(word).lower() in BADWORDS
                 
-                if len(wordnet.synsets(word)) == 0:
-                    yield word
+def is_misspelled(word):
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        
+        return len(wordnet.synsets(word)) == 0
+
+english = Language(
+    is_badword,
+    is_misspelled
+)
+english.STEMMER = STEMMER
+english.BADWORDS = BADWORDS

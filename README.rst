@@ -26,11 +26,15 @@ You'll need to download NLTK data in order to make use of language features.
 
 
 You might need to install some other dependencies depending on your operating
-system.  
+system.
 
-Linux Mint 17: 
+Linux Mint 17:
 
 1. ``sudo apt-get install g++ git python-sklearn python3.4-dev libatlas-base-dev gfortran``
+
+Ubuntu 14.04:
+
+1. ``sudo apt-get install python3-dev gfortran libopenblas-dev liblapack-dev''`
 
 Examples
 ========

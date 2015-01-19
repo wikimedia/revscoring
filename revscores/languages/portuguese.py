@@ -1064,21 +1064,20 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "zueira"
 ])
 
-class Portuguese(Language):
-    
-    def badwords(self, words):
-        
-        for word in words:
-            
-            if STEMMER.stem(word).lower() in BADWORDS:
-                yield word
-                    
-    def misspellings(self, words):
-        
-        for word in words:
-            
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+def is_badword(word):
+    return STEMMER.stem(word).lower() in BADWORDS
                 
-                if len(wordnet.synsets(word, lang="por")) == 0:
-                    yield word
+def is_misspelled(word):
+    if word in ("a", "A", "e", "E"): return False
+    
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        
+        return len(wordnet.synsets(word, lang="por")) == 0
+
+portuguese = Language(
+    is_badword,
+    is_misspelled
+)
+portuguese.STEMMER = STEMMER
+portuguese.BADWORDS = BADWORDS
