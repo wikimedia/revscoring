@@ -1,9 +1,9 @@
 from io import BytesIO
 from pprint import pprint
 
-from revscores.features import (proportion_of_badwords_added,
-                                proportion_of_markup_added)
-from revscores.scorers import LinearSVC
+from revscoring.features import (proportion_of_badwords_added,
+                                 proportion_of_markup_added)
+from revscoring.scorers import LinearSVC
 
 training_set = [
     ([10.1, 20.1], True),

@@ -8,11 +8,11 @@ def read(fname):
 
 
 def requirements(fname):
-    return [line.strip() 
+    return [line.strip()
             for line in open(os.path.join(os.path.dirname(__file__), fname))]
 
 setup(
-    name="revscores",
+    name="revscoring",
     version=read('VERSION').strip(),
     author="Aaron Halfaker",
     author_email="ahalfaker@wikimedia.org",
