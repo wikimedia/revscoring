@@ -1,9 +1,9 @@
 from mw.api import Session
 
-from revscores.extractors import APIExtractor
-from revscores.features import (bytes_changed, chars_added, day_of_week_in_utc,
-                                hour_of_day_in_utc, is_custom_comment,
-                                user_age_in_seconds, user_is_anon, user_is_bot)
+from revscoring.extractors import APIExtractor
+from revscoring.features import (bytes_changed, chars_added, day_of_week_in_utc,
+                                 hour_of_day_in_utc, is_custom_comment,
+                                 user_age_in_seconds, user_is_anon, user_is_bot)
 
 api_extractor = APIExtractor(Session("https://en.wikipedia.org/w/api.php"))
 

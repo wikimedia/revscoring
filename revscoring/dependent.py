@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-logger = logging.getLogger("revscores.dependent")
+logger = logging.getLogger("revscoring.dependent")
 
 class DependencyLoop(RuntimeError):
     pass
@@ -21,42 +21,6 @@ class Dependent:
     
     def __repr__(self):
         return "<" + self.name + ">"
-    
-
-''' Breaks pickling
-class depends:
-    """
-    Decorator for functions that adds a list of dependencies.  Functions
-    decorated with this decorator can expect to be called with their
-    dependencies solved as *args by the `solve()` function.
-    
-    :Example:
-        >>> from revscores.util.dependencies import depends
-        >>> @depends()
-        ... def foo():
-        ...     return 5
-        ...
-        >>> @depends(on=[foo])
-        ... def bar(foo):
-        ...     return "Bar value: {0}".format(foo)
-        ...
-        >>> bar
-        <bar>
-        >>> bar.dependencies
-        [<foo>]
-    
-    :Parameters:
-        on : `list`
-            A sorted of dependencies that correspond to the *args of the
-            function
-    """
-    def __init__(self, on=None):
-        self.dependencies = on
-    
-    def __call__(self, process):
-        return Dependent(process.__name__, process, self.dependencies)
-    
-'''
 
 def solve(dependent, cache=None, history=None):
     """
