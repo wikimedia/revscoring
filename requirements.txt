@@ -5,3 +5,4 @@ numpy
 pytz
 scikit-learn
 scipy
+statistics
