@@ -70,7 +70,7 @@ class SVCModel(MLScorerModel):
             for pred, probas in zip(self.svc.predict(scaled_values),
                                    self.svc.predict_proba(scaled_values)):
                 yield {'prediction': pred,
-                       'probabilities': probas
+                       'probabilities': list(probas)
                 }
                 
         
