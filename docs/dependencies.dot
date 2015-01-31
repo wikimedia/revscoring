@@ -1,91 +1,153 @@
 digraph G {
-	label = "Dependencies between features and data sources of revscoring";
-	rankdir = "TB";
-	node [style="filled",fillcolor="palegreen"];
-	added_badwords_ratio -> proportion_of_badwords_added
-	added_badwords_ratio -> proportion_of_prev_badwords
-	added_misspellings_ratio -> proportion_of_misspellings_added
-	added_misspellings_ratio -> proportion_of_prev_misspellings
-	badwords_added -> contiguous_segments_added
-	badwords_added -> "'language'"
-	bytes_changed -> previous_revision_metadata
-	bytes_changed -> revision_metadata
-	chars_added -> contiguous_segments_added
-	contiguous_segments_added -> revision_diff
-	contiguous_segments_removed -> revision_diff
-	day_of_week_in_utc -> revision_metadata
-	first_revision_metadata -> first_rev_doc
-	first_rev_doc -> revision_metadata
-	first_rev_doc -> "'session'"
-	hour_of_day_in_utc -> revision_metadata
-	is_content_namespace -> namespaces
-	is_content_namespace -> revision_metadata
-	is_custom_comment -> revision_metadata
-	is_mainspace -> revision_metadata
-	is_previous_user_same -> previous_revision_metadata
-	is_previous_user_same -> revision_metadata
-	is_section_comment -> revision_metadata
-	longest_repeated_char_added -> contiguous_segments_added
-	longest_token_added -> revision_diff
-	markup_chars_added -> contiguous_segments_added
-	misspellings_added -> contiguous_segments_added
-	misspellings_added -> "'language'"
-	namespaces -> site_info_doc
-	numeric_chars_added -> contiguous_segments_added
-	page_age_in_seconds -> first_revision_metadata
-	page_age_in_seconds -> revision_metadata
-	previous_revision_metadata -> previous_rev_doc
-	previous_revision_text -> previous_rev_doc
-	previous_rev_doc -> revision_metadata
-	previous_rev_doc -> "'session'"
-	previous_user_revision_metadata -> previous_user_rev_doc
-	previous_user_rev_doc -> revision_metadata
-	previous_user_rev_doc -> "'session'"
-	prev_badwords -> "'language'"
-	prev_badwords -> revision_text
-	prev_misspellings -> "'language'"
-	prev_misspellings -> revision_text
-	prev_words -> revision_text
-	proportion_of_badwords_added -> badwords_added
-	proportion_of_badwords_added -> words_added
-	proportion_of_markup_added -> chars_added
-	proportion_of_markup_added -> markup_chars_added
-	proportion_of_misspellings_added -> misspellings_added
-	proportion_of_misspellings_added -> words_added
-	proportion_of_numeric_added -> chars_added
-	proportion_of_numeric_added -> numeric_chars_added
-	proportion_of_prev_badwords -> prev_badwords
-	proportion_of_prev_badwords -> prev_words
-	proportion_of_prev_misspellings -> prev_misspellings
-	proportion_of_prev_misspellings -> prev_words
-	proportion_of_symbolic_added -> chars_added
-	proportion_of_symbolic_added -> symbolic_chars_added
-	proportion_of_uppercase_added -> chars_added
-	proportion_of_uppercase_added -> uppercase_chars_added
-	revision_diff -> previous_revision_text
-	revision_diff -> revision_text
-	revision_metadata -> rev_doc
-	revision_text -> rev_doc
-	rev_doc -> "'rev_id'"
-	rev_doc -> "'session'"
-	seconds_since_last_page_edit -> previous_revision_metadata
-	seconds_since_last_page_edit -> revision_metadata
-	seconds_since_last_user_edit -> previous_user_revision_metadata
-	seconds_since_last_user_edit -> revision_metadata
-	segments_added -> contiguous_segments_added
-	segments_removed -> contiguous_segments_removed
-	site_info_doc -> "'session'"
-	symbolic_chars_added -> contiguous_segments_added
-	tokens_added -> revision_diff
-	tokens_removed -> revision_diff
-	uppercase_chars_added -> contiguous_segments_added
-	user_age_in_seconds -> revision_metadata
-	user_age_in_seconds -> user_info
-	user_doc -> revision_metadata
-	user_doc -> "'session'"
-	user_info -> user_doc
-	user_is_anon -> revision_metadata
-	user_is_bot -> user_info
-	words_added -> contiguous_segments_added
-	words_removed -> contiguous_segments_removed
+    label = "Dependencies between features and data sources of revscoring";
+    rankdir = "TB";
+    node [style="filled",fillcolor="palegreen"];
+    0 [label="<added_badwords_ratio>"];
+    1 [label="<added_misspellings_ratio>"];
+    2 [label="<badwords_added>"];
+    3 [label="<bytes_changed>"];
+    4 [label="<chars_added>"];
+    5 [label="<day_of_week_in_utc>"];
+    6 [label="<hour_of_day_in_utc>"];
+    7 [label="<is_content_namespace>"];
+    8 [label="<is_custom_comment>"];
+    9 [label="<is_mainspace>"];
+    10 [label="<is_previous_user_same>"];
+    11 [label="<is_section_comment>"];
+    12 [label="<longest_repeated_char_added>"];
+    13 [label="<longest_token_added>"];
+    14 [label="<markup_chars_added>"];
+    15 [label="<misspellings_added>"];
+    16 [label="<numeric_chars_added>"];
+    17 [label="<page_age_in_seconds>"];
+    18 [label="<prev_badwords>"];
+    19 [label="<prev_misspellings>"];
+    20 [label="<prev_words>"];
+    21 [label="<proportion_of_badwords_added>"];
+    22 [label="<proportion_of_markup_added>"];
+    23 [label="<proportion_of_misspellings_added>"];
+    24 [label="<proportion_of_numeric_added>"];
+    25 [label="<proportion_of_prev_badwords>"];
+    26 [label="<proportion_of_prev_misspellings>"];
+    27 [label="<proportion_of_symbolic_added>"];
+    28 [label="<proportion_of_uppercase_added>"];
+    29 [label="<seconds_since_last_page_edit>"];
+    30 [label="<seconds_since_last_user_edit>"];
+    31 [label="<segments_added>"];
+    32 [label="<segments_removed>"];
+    33 [label="<symbolic_chars_added>"];
+    34 [label="<uppercase_chars_added>"];
+    35 [label="<user_age_in_seconds>"];
+    36 [label="<user_is_anon>"];
+    37 [label="<user_is_bot>"];
+    38 [label="<words_added>"];
+    39 [label="<words_removed>"];
+    40 [label="<contiguous_segments_added>"fillcolor="orange"];
+    41 [label="<contiguous_segments_removed>"fillcolor="orange"];
+    42 [label="<first_rev_doc>"fillcolor="orange"];
+    43 [label="<first_revision_metadata>"fillcolor="orange"];
+    44 [label="<namespaces>"fillcolor="orange"];
+    45 [label="<previous_rev_doc>"fillcolor="orange"];
+    46 [label="<previous_revision_metadata>"fillcolor="orange"];
+    47 [label="<previous_revision_text>"fillcolor="orange"];
+    48 [label="<previous_user_rev_doc>"fillcolor="orange"];
+    49 [label="<previous_user_revision_metadata>"fillcolor="orange"];
+    50 [label="<rev_doc>"fillcolor="orange"];
+    51 [label="<revision_diff>"fillcolor="orange"];
+    52 [label="<revision_metadata>"fillcolor="orange"];
+    53 [label="<revision_text>"fillcolor="orange"];
+    54 [label="<site_info_doc>"fillcolor="orange"];
+    55 [label="<tokens_added>"fillcolor="orange"];
+    56 [label="<tokens_removed>"fillcolor="orange"];
+    57 [label="<user_doc>"fillcolor="orange"];
+    58 [label="<user_info>"fillcolor="orange"];
+    59 [label="language"fillcolor="orange"];
+    60 [label="session"fillcolor="orange"];
+    61 [label="rev_id"fillcolor="orange"];
+    0 -> 21;
+    0 -> 25;
+    1 -> 23;
+    1 -> 26;
+    2 -> 59;
+    2 -> 40;
+    3 -> 46;
+    3 -> 52;
+    4 -> 40;
+    5 -> 52;
+    6 -> 52;
+    7 -> 52;
+    7 -> 44;
+    8 -> 52;
+    9 -> 52;
+    10 -> 46;
+    10 -> 52;
+    11 -> 52;
+    12 -> 40;
+    13 -> 51;
+    14 -> 40;
+    15 -> 59;
+    15 -> 40;
+    16 -> 40;
+    17 -> 43;
+    17 -> 52;
+    18 -> 59;
+    18 -> 53;
+    19 -> 59;
+    19 -> 53;
+    20 -> 53;
+    21 -> 38;
+    21 -> 2;
+    22 -> 4;
+    22 -> 14;
+    23 -> 38;
+    23 -> 15;
+    24 -> 4;
+    24 -> 16;
+    25 -> 20;
+    25 -> 18;
+    26 -> 20;
+    26 -> 19;
+    27 -> 4;
+    27 -> 33;
+    28 -> 4;
+    28 -> 34;
+    29 -> 46;
+    29 -> 52;
+    30 -> 49;
+    30 -> 52;
+    31 -> 40;
+    32 -> 41;
+    33 -> 40;
+    34 -> 40;
+    35 -> 58;
+    35 -> 52;
+    36 -> 52;
+    37 -> 58;
+    38 -> 40;
+    39 -> 41;
+    40 -> 51;
+    41 -> 51;
+    42 -> 60;
+    42 -> 52;
+    43 -> 42;
+    44 -> 54;
+    45 -> 60;
+    45 -> 52;
+    46 -> 45;
+    47 -> 45;
+    48 -> 60;
+    48 -> 52;
+    49 -> 48;
+    50 -> 61;
+    50 -> 60;
+    51 -> 47;
+    51 -> 53;
+    52 -> 50;
+    53 -> 50;
+    54 -> 60;
+    55 -> 51;
+    56 -> 51;
+    57 -> 60;
+    57 -> 52;
+    58 -> 57;
 }
