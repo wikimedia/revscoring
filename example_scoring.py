@@ -10,4 +10,8 @@ extractor = APIExtractor(api_session, english)
 filename = "models/reverts.halfak_mix.trained.model"
 model = MLScorerModel.load(open(filename, 'rb'))
 
-[s for s in model.score([extractor.extract(642215410, model.features)])]
+rev_ids = [105, 642215410, 638307884]
+feature_values = [extractor.extract(id, model.features) for id in rev_ids]
+scores = model.score(feature_values, probabilities=True)
+for rev_id, score in zip(rev_ids, scores):
+    print("{0}: {1}".format(rev_id, score))
