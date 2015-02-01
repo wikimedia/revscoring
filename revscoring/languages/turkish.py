@@ -5,7 +5,7 @@ from nltk.stem.snowball import SnowballStemmer
 
 from .language import Language
 
-STEMMER = SnowballStemmer("turkish")
+STEMMER = SnowballStemmer("turkish") #It seems like Turkish stemmer isn't in the nltk snowball library for some reason: http://www.nltk.org/_modules/nltk/stem/snowball.html
 
 BADWORDS = set(STEMMER.stem(w) for w in [
     "ağzına sıçayım",
