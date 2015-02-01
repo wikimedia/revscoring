@@ -2,26 +2,26 @@ import pickle
 import time
 
 from sklearn import svm
-from sklearn.metrics import auc, roc_curve
 from statistics import mean, stdev
 
 from .scorer import MLScorer, MLScorerModel
 
+
+# Rescales based on prior weights of classes
+#def true_proba(p, prior): return (p/prior)/((p/prior)+1)
 
 class SVCModel(MLScorerModel):
     
     def __init__(self, features, svc=None, **kwargs):
         super().__init__(features)
         
-        if 'probabily' not in kwargs:
-            kwargs['probability'] = True
-        
         if svc is None:
-            self.svc = svm.SVC(**kwargs)
+            self.svc = svm.SVC(probability=True, **kwargs)
         else:
             self.svc = svc
         
         self.feature_stats = None
+        self.weights = None
         
     def train(self, values_scores, balanced_weight=True):
         """
@@ -41,9 +41,11 @@ class SVCModel(MLScorerModel):
             counts = {}
             for score in scores:
                 counts[score] = counts.get(score, 0) + 1
-
-            weights = [1/(counts[s]/len(scores)) for s in scores]
-            self.svc.fit(scaled_values, scores, weights)
+            
+            self.weights = {s:1-(counts[s]/len(scores)) for s in counts}
+            
+            score_weights = [self.weights[s] for s in scores]
+            self.svc.fit(scaled_values, scores, score_weights)
         else:
             self.svc.fit(scaled_values, scores)
         
@@ -51,27 +53,29 @@ class SVCModel(MLScorerModel):
             'seconds_elapsed': time.time() - start
         }
     
-    def score(self, values, probabilities=False):
+    def score(self, values):
         """
         :Returns:
             An iterable of dictionaries with the fields:
             
             * predicion -- The most likely class
-            * probabilities -- (optional) A vector of probabilities
-                               corresponding to the classes the classifier was
-                               trained on.  Generating this probability is
-                               slower than a simple prediction.
+            * probability -- A mapping of probabilities for input classes
+                             corresponding to the classes the classifier was
+                             trained on.  Generating this probability is
+                             slower than a simple prediction.
         """
         scaled_values = list(self._scale_and_center(values, self.feature_stats))
-        if not probabilities:
-            for prediction in self.svc.predict(scaled_values):
-                yield {'prediction': prediction}
-        else:
-            for pred, probas in zip(self.svc.predict(scaled_values),
-                                   self.svc.predict_proba(scaled_values)):
-                yield {'prediction': pred,
-                       'probabilities': list(probas)
-                }
+        predictions = self.svc.predict(scaled_values)
+        probabilities = (
+            {c:proba for c, proba in zip(self.svc.classes_, probas)}
+            for probas in self.svc.predict_proba(scaled_values)
+        )
+        
+        for prediction, probability in zip(predictions, probabilities):
+            yield {
+                'prediction': prediction,
+                'probability': probability
+            }
                 
         
     
@@ -81,18 +85,28 @@ class SVCModel(MLScorerModel):
             A dictionary of test statistics with the fields:
             
             * mean.accuracy -- The mean accuracy of classification
+            * auc --
+            * table --
+            * roc
+                * fpr --
+                * tpr --
+                
         """
         values, scores = zip(*values_scores)
         
         scaled_values = list(self._scale_and_center(values, self.feature_stats))
         
-        true_probas = [p[1] for p in self.svc.predict_proba(scaled_values)]
-        fpr, tpr, thresholds = roc_curve(scores, true_probas)
+        pred_scores = self.score(scaled_values)
+        
+        true_probas = [s['probability'][self.svc.classes_[1]]
+                       for s in pred_scores]
+        fpr, tpr, thresholds = roc_curve(scores == self.svc.classes_[1],
+                                         true_probas)
         
         table = {}
-        predicteds = self.svc.predict(scaled_values)
-        for score, predicted in zip(scores, predicteds):
-            table[(score, predicted)] = table.get((score, predicted), 0) + 1
+        for score, predicted in zip(scores, pred_scores):
+            table[(score, predicted['prediction'])] = \
+                    table.get((score, predicted['prediction']), 0) + 1
         
         return {
             'table': table,
