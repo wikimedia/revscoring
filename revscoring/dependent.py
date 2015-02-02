@@ -44,7 +44,6 @@ def _solve(dependent, cache, history):
     cache = cache or {}
     history = history or set()
     
-    #print("Solving {0} with cache={1} and history={2}".format(dependent, cache, history))
     
     # Check if we've already got this dependency
     if dependent in cache:
