@@ -8,9 +8,9 @@ Examples
 ========
 
 Scoring models:
-    
+
     .. code-block:: python
-    
+
         >>> from mw.api import Session
         >>>
         >>> from revscoring.extractors import APIExtractor
@@ -36,9 +36,9 @@ Scoring models:
         638307884: {'probabilities': array([ 0.98441738,  0.01558262]), 'prediction': False}
 
 Feature extraction:
-    
+
     .. code-block:: python
-    
+
         >>> from mw.api import Session
         >>>
         >>> from revscoring.extractors import APIExtractor
@@ -96,13 +96,13 @@ You'll need to download NLTK data in order to make use of language features.
 You might need to install some other dependencies depending on your operating
 system.  These are for ``scipy`` and ``numpy``.
 
-Linux Mint 17:
+Linux Mint 17.1:
 
-1. ``sudo apt-get install g++ git python-sklearn python3.4-dev libatlas-base-dev gfortran``
+1. ``sudo apt-get install gfortran liblapack-dev python3-dev git g++``
 
 Ubuntu 14.04:
 
-1. ``sudo apt-get install python3-dev gfortran libopenblas-dev liblapack-dev``
+1. ``sudo apt-get install gfortran liblapack-dev libopenblas-dev python3-dev``
 
 Authors
 =======
