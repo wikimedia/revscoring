@@ -31,11 +31,11 @@ def train_score(model):
         zip(((some, other) for some, other in
              zip((deterministic.normalvariate(1, .3) for i in range(500)),
                  (deterministic.normalvariate(2, .5) for i in range(500)))),
-            (True for i in range(100))),
+            (True for i in range(500))),
         zip(((some, other) for some, other in
              zip((deterministic.normalvariate(-1, .5) for i in range(35)),
                  (deterministic.normalvariate(-2, .3) for i in range(35)))),
-            (False for i in range(100)))
+            (False for i in range(35)))
     ))
     deterministic.shuffle(observations)
     

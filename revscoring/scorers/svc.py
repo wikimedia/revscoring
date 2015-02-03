@@ -1,5 +1,6 @@
 import pickle
 import time
+from collections import autovivifyingdict
 
 from sklearn import svm
 from sklearn.metrics import auc, roc_curve
@@ -24,7 +25,7 @@ class SVCModel(MLScorerModel):
         self.feature_stats = None
         self.weights = None
         
-    def train(self, values_scores, balanced_obs=True):
+    def train(self, values_scores, balanced_weight=True):
         """
         :Returns:
             A dictionary with the fields:
@@ -100,7 +101,7 @@ class SVCModel(MLScorerModel):
         
         if comparison_class == "auto":
             comparison_class = self.svc.classes_[1]
-        elif comparison_class not in self.svc.classes_[1]:
+        elif comparison_class not in self.svc.classes_:
             raise TypeError("comparison_class {0} is not in {1}" \
                             .format(comparison_class, self.svc.classes_))
         
@@ -109,7 +110,6 @@ class SVCModel(MLScorerModel):
                          for s in scores]
         predicteds = [s['prediction'] for s in scores]
         
-        predicted_true = [p == comparison_class for p in predicteds]
         true_positives = [l == comparison_class for l in labels]
         
         fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
