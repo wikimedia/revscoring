@@ -1,6 +1,5 @@
 import pickle
 import time
-from collections import autovivifyingdict
 
 from sklearn import svm
 from sklearn.metrics import auc, roc_curve
