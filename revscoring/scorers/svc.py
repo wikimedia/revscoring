@@ -24,7 +24,7 @@ class SVCModel(MLScorerModel):
         self.feature_stats = None
         self.weights = None
         
-    def train(self, values_scores, balanced_weight=True):
+    def train(self, values_scores, balanced_obs=True):
         """
         :Returns:
             A dictionary with the fields:
