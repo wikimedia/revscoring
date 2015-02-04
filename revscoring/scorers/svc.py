@@ -8,27 +8,28 @@ from statistics import mean, stdev
 from .scorer import MLScorer, MLScorerModel
 
 
+# Rescales based on prior weights of classes
+#def true_proba(p, prior): return (p/prior)/((p/prior)+1)
+
 class SVCModel(MLScorerModel):
     
-    def __init__(self, features, svc=None, **kwargs):
-        super().__init__(features)
-        
-        if 'probabily' not in kwargs:
-            kwargs['probability'] = True
+    def __init__(self, features, language=None, svc=None, **kwargs):
+        super().__init__(features, language=language)
         
         if svc is None:
-            self.svc = svm.SVC(**kwargs)
+            self.svc = svm.SVC(probability=True, **kwargs)
         else:
             self.svc = svc
         
         self.feature_stats = None
+        self.weights = None
         
     def train(self, values_scores, balanced_weight=True):
         """
         :Returns:
             A dictionary with the fields:
             
-            * seconds_elapsed -- Time in seconds that fitting the model took
+            * seconds_elapsed -- Time in seconds spent fitting the model
         """
         start = time.time()
         
@@ -41,9 +42,11 @@ class SVCModel(MLScorerModel):
             counts = {}
             for score in scores:
                 counts[score] = counts.get(score, 0) + 1
-
-            weights = [1/(counts[s]/len(scores)) for s in scores]
-            self.svc.fit(scaled_values, scores, weights)
+            
+            self.weights = {s:1-(counts[s]/len(scores)) for s in counts}
+            
+            score_weights = [self.weights[s] for s in scores]
+            self.svc.fit(scaled_values, scores, score_weights)
         else:
             self.svc.fit(scaled_values, scores)
         
@@ -51,52 +54,72 @@ class SVCModel(MLScorerModel):
             'seconds_elapsed': time.time() - start
         }
     
-    def score(self, values, probabilities=False):
+    def score(self, values):
         """
         :Returns:
             An iterable of dictionaries with the fields:
             
             * predicion -- The most likely class
-            * probabilities -- (optional) A vector of probabilities
-                               corresponding to the classes the classifier was
-                               trained on.  Generating this probability is
-                               slower than a simple prediction.
+            * probability -- A mapping of probabilities for input classes
+                             corresponding to the classes the classifier was
+                             trained on.  Generating this probability is
+                             slower than a simple prediction.
         """
         scaled_values = list(self._scale_and_center(values, self.feature_stats))
-        if not probabilities:
-            for prediction in self.svc.predict(scaled_values):
-                yield {'prediction': prediction}
-        else:
-            for pred, probas in zip(self.svc.predict(scaled_values),
-                                   self.svc.predict_proba(scaled_values)):
-                yield {'prediction': pred,
-                       'probabilities': list(probas)
-                }
+        predictions = self.svc.predict(scaled_values)
+        probabilities = (
+            {c:proba for c, proba in zip(self.svc.classes_, probas)}
+            for probas in self.svc.predict_proba(scaled_values)
+        )
+        
+        for prediction, probability in zip(predictions, probabilities):
+            yield {
+                'prediction': prediction,
+                'probability': probability
+            }
                 
         
     
-    def test(self, values_scores):
+    def test(self, values_labels, comparison_class="auto"):
         """
         :Returns:
             A dictionary of test statistics with the fields:
             
             * mean.accuracy -- The mean accuracy of classification
+            * auc --
+            * table --
+            * roc
+                * fpr --
+                * tpr --
+                
         """
-        values, scores = zip(*values_scores)
+        values, labels = zip(*values_labels)
+        values, labels = list(values), list(labels)
         
-        scaled_values = list(self._scale_and_center(values, self.feature_stats))
+        scores = list(self.score(values))
         
-        true_probas = [p[1] for p in self.svc.predict_proba(scaled_values)]
-        fpr, tpr, thresholds = roc_curve(scores, true_probas)
+        if comparison_class == "auto":
+            comparison_class = self.svc.classes_[1]
+        elif comparison_class not in self.svc.classes_:
+            raise TypeError("comparison_class {0} is not in {1}" \
+                            .format(comparison_class, self.svc.classes_))
+        
+        
+        probabilities = [s['probability'][comparison_class]
+                         for s in scores]
+        predicteds = [s['prediction'] for s in scores]
+        
+        true_positives = [l == comparison_class for l in labels]
+        
+        fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
         
         table = {}
-        predicteds = self.svc.predict(scaled_values)
-        for score, predicted in zip(scores, predicteds):
-            table[(score, predicted)] = table.get((score, predicted), 0) + 1
+        for pair in zip(labels, predicteds):
+            table[pair] = table.get(pair, 0) + 1
         
         return {
             'table': table,
-            'mean.accuracy': self.svc.score(list(values), list(scores)),
+            'mean.accuracy': self.svc.score(values, labels),
             'roc': {
                 'fpr': list(fpr),
                 'tpr': list(tpr),
@@ -118,33 +141,22 @@ class SVCModel(MLScorerModel):
             yield tuple((val-mean)/max(sd, 0.01)
                         for (mean, sd), val in zip(stats, feature_values))
 
-class SVC(MLScorer):
-    
-    MODEL = SVCModel
-
 
 class LinearSVCModel(SVCModel):
     
-    def __init__(self, features, **kwargs):
-        
-        if 'kernel' not in kwargs:
-            kwargs['kernel'] = "linear"
-        
-        super().__init__(features, **kwargs)
+    def __init__(self, *args, **kwargs):
+        if 'kernel' in kwargs:
+            raise TypeError("'kernel' is hard-coded to 'linear'. If you'd " +
+                            "like to use a different kernel, use SVCModel.")
+        super().__init__(*args, kernel="linear", **kwargs)
 
-class LinearSVC(SVC):
-    
-    MODEL = LinearSVCModel
 
 class RBFSVCModel(SVCModel):
     
-    def __init__(self, features, **kwargs):
-        
-        if 'kernel' not in kwargs:
-            kwargs['kernel'] = "rbf"
-        
-        super().__init__(features, **kwargs)
-
-class RBFSVC(SVC):
+    DEFAULTS = {}
     
-    MODEL = RBFSVCModel
+    def __init__(self, *args, **kwargs):
+        if 'kernel' in kwargs:
+            raise TypeError("'kernel' is hard-coded to 'rbf'. If you'd " +
+                            "like to use a different kernel, try SVCModel.")
+        super().__init__(*args, kernel="rbf", **kwargs)

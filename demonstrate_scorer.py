@@ -3,7 +3,7 @@ from pprint import pprint
 
 from revscoring.features import (proportion_of_badwords_added,
                                  proportion_of_markup_added)
-from revscoring.scorers import LinearSVC
+from revscoring.scorers import LinearSVCModel, MLScorerModel
 
 training_set = [
     ([10.1, 20.1], True),
@@ -22,8 +22,8 @@ test_set = [
     ([0.1, 3.1], False)
 ]
 
-model = LinearSVC.MODEL([proportion_of_badwords_added,
-                         proportion_of_markup_added])
+model = LinearSVCModel([proportion_of_badwords_added,
+                        proportion_of_markup_added])
 
 print("Training classifier")
 pprint(model.train(training_set))
@@ -32,10 +32,10 @@ print("Testing classifier")
 pprint(model.test(test_set))
 print("")
 print("Making a prediction")
-pprint(list(model.score([[2.4, 2.1]], probabilities=True)))
+pprint(list(model.score([[2.4, 2.1]])))
 
 f = BytesIO()
 model.dump(f)
 
 f.seek(0)
-model = LinearSVC.MODEL.load(f)
+model = MLScorerModel.load(f)

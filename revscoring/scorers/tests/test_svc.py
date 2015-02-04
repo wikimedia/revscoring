@@ -1,34 +1,56 @@
+import random
 from io import BytesIO
+from itertools import chain
 
 from nose.tools import eq_
 
-from ...features import (proportion_of_badwords_added,
-                         proportion_of_symbolic_added)
+from ...features import Feature
+from ...languages import Language
 from ..scorer import MLScorerModel
-from ..svc import LinearSVC, RBFSVC, SVC
+from ..svc import LinearSVCModel, RBFSVCModel, SVCModel
 
+
+def process_float(): return float()
+some_float = Feature("some_float", process_float(),
+                      depends_on=[], returns=float)
+
+def process_other_float(): return float()
+other_float = Feature("other_float", process_other_float(),
+                      depends_on=[], returns=float)
+FEATURES = [some_float, other_float]
+
+
+def is_badword(word): return word == "badword"
+def is_misspelled(word): return word == "misspelled"
+some_language = Language(is_badword, is_misspelled)
+LANGUAGE = some_language
 
 def train_score(model):
-    train_stats = model.train([
-        ([10.1, 20.1], True),
-        ([19.2, 15.3], True),
-        ([13.1, 12.5], True),
-        ([0.5, 0.6], False),
-        ([2.4, 0.1], False),
-        ([0.9, 3.1], False)
-    ])
+    deterministic = random.Random(0)
+    observations = list(chain(
+        zip(((some, other) for some, other in
+             zip((deterministic.normalvariate(1, .3) for i in range(500)),
+                 (deterministic.normalvariate(2, .5) for i in range(500)))),
+            (True for i in range(500))),
+        zip(((some, other) for some, other in
+             zip((deterministic.normalvariate(-1, .5) for i in range(35)),
+                 (deterministic.normalvariate(-2, .3) for i in range(35)))),
+            (False for i in range(35)))
+    ))
+    deterministic.shuffle(observations)
     
-    score_doc = next(model.score([[0.5,1.0]]))
+    mid = int(len(observations)/2)
+    train_set = observations[:mid]
+    test_set = observations[mid:]
+    
+    model.train(train_set)
+    score_doc = next(model.score([(-1,-2)]))
     eq_(score_doc['prediction'], False)
     
-    test_stats = model.test([
-        ([13.1, 12.1], True),
-        ([9.2, 19.3], True),
-        ([12.1, 14.5], True),
-        ([19.5, 19.6], False),
-        ([2.4, 2.1], False),
-        ([0.1, 3.1], False)
-    ])
+    test_stats = model.test(test_set)
+    
+    del test_stats['roc']
+    print(test_stats)
     assert test_stats['auc'] > 0.5
 
 def pickle_and_unpickle(model):
@@ -41,19 +63,16 @@ def pickle_and_unpickle(model):
     eq_(type(reconstructed_model), type(model))
 
 def test_svc():
-    model = SVC.MODEL([proportion_of_badwords_added,
-                       proportion_of_symbolic_added])
+    model = SVCModel(FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)
     
 def test_linear_svc():
-    model = LinearSVC.MODEL([proportion_of_badwords_added,
-                             proportion_of_symbolic_added])
+    model = LinearSVCModel(FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)
     
 def test_rbf_svc():
-    model = RBFSVC.MODEL([proportion_of_badwords_added,
-                       proportion_of_symbolic_added])
+    model = RBFSVCModel(FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)
