@@ -1,3 +1,4 @@
+import json
 import random
 from io import BytesIO
 from itertools import chain
@@ -29,9 +30,9 @@ def train_score(model):
     deterministic = random.Random(0)
     observations = list(chain(
         zip(((some, other) for some, other in
-             zip((deterministic.normalvariate(1, .3) for i in range(500)),
-                 (deterministic.normalvariate(2, .5) for i in range(500)))),
-            (True for i in range(500))),
+             zip((deterministic.normalvariate(1, .3) for i in range(200)),
+                 (deterministic.normalvariate(2, .5) for i in range(200)))),
+            (True for i in range(200))),
         zip(((some, other) for some, other in
              zip((deterministic.normalvariate(-1, .5) for i in range(35)),
                  (deterministic.normalvariate(-2, .3) for i in range(35)))),
@@ -45,7 +46,11 @@ def train_score(model):
     
     model.train(train_set)
     score_doc = next(model.score([(-1,-2)]))
+    
     eq_(score_doc['prediction'], False)
+    print(score_doc)
+    print(type(list(score_doc['probability'].keys())[0]))
+    json.dumps(score_doc) # Checks if the doc is JSONable
     
     test_stats = model.test(test_set)
     
