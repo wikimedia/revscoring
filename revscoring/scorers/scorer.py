@@ -1,5 +1,6 @@
 import pickle
 
+
 class Scorer:
     """
     Interface for implementing a wide variety of scoring strategies.
@@ -30,7 +31,7 @@ class MLScorer(Scorer):
         """
         super().__init__(extractor)
         
-        assert isinstance(model, self.MODEL)
+        assert isinstance(model, MLScorerModel)
         self.model = model
     
     def score(self, rev_ids, **kwargs):
@@ -54,7 +55,7 @@ class MLScorerModel:
     A machine learned model to be used by a MLScorer
     """
     
-    def __init__(self, features):
+    def __init__(self, features, language=None):
         """
         Constructs a new Machine Learned scoring model.
         
@@ -64,6 +65,7 @@ class MLScorerModel:
                 score new observations.
         """
         self.features = tuple(features)
+        self.language = language
     
     
     def train(self, values_scores):
@@ -137,4 +139,3 @@ class MLScorerModel:
         Writes serialized model information to a file.
         """
         pickle.dump(self, f)
-    

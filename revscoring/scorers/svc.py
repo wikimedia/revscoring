@@ -2,6 +2,7 @@ import pickle
 import time
 
 from sklearn import svm
+from sklearn.metrics import auc, roc_curve
 from statistics import mean, stdev
 
 from .scorer import MLScorer, MLScorerModel
@@ -12,8 +13,8 @@ from .scorer import MLScorer, MLScorerModel
 
 class SVCModel(MLScorerModel):
     
-    def __init__(self, features, svc=None, **kwargs):
-        super().__init__(features)
+    def __init__(self, features, language=None, svc=None, **kwargs):
+        super().__init__(features, language=language)
         
         if svc is None:
             self.svc = svm.SVC(probability=True, **kwargs)
@@ -28,7 +29,7 @@ class SVCModel(MLScorerModel):
         :Returns:
             A dictionary with the fields:
             
-            * seconds_elapsed -- Time in seconds that fitting the model took
+            * seconds_elapsed -- Time in seconds spent fitting the model
         """
         start = time.time()
         
@@ -79,7 +80,7 @@ class SVCModel(MLScorerModel):
                 
         
     
-    def test(self, values_scores):
+    def test(self, values_labels, comparison_class="auto"):
         """
         :Returns:
             A dictionary of test statistics with the fields:
@@ -92,25 +93,33 @@ class SVCModel(MLScorerModel):
                 * tpr --
                 
         """
-        values, scores = zip(*values_scores)
+        values, labels = zip(*values_labels)
+        values, labels = list(values), list(labels)
         
-        scaled_values = list(self._scale_and_center(values, self.feature_stats))
+        scores = list(self.score(values))
         
-        pred_scores = self.score(scaled_values)
+        if comparison_class == "auto":
+            comparison_class = self.svc.classes_[1]
+        elif comparison_class not in self.svc.classes_:
+            raise TypeError("comparison_class {0} is not in {1}" \
+                            .format(comparison_class, self.svc.classes_))
         
-        true_probas = [s['probability'][self.svc.classes_[1]]
-                       for s in pred_scores]
-        fpr, tpr, thresholds = roc_curve(scores == self.svc.classes_[1],
-                                         true_probas)
+        
+        probabilities = [s['probability'][comparison_class]
+                         for s in scores]
+        predicteds = [s['prediction'] for s in scores]
+        
+        true_positives = [l == comparison_class for l in labels]
+        
+        fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
         
         table = {}
-        for score, predicted in zip(scores, pred_scores):
-            table[(score, predicted['prediction'])] = \
-                    table.get((score, predicted['prediction']), 0) + 1
+        for pair in zip(labels, predicteds):
+            table[pair] = table.get(pair, 0) + 1
         
         return {
             'table': table,
-            'mean.accuracy': self.svc.score(list(values), list(scores)),
+            'mean.accuracy': self.svc.score(values, labels),
             'roc': {
                 'fpr': list(fpr),
                 'tpr': list(tpr),
@@ -132,33 +141,22 @@ class SVCModel(MLScorerModel):
             yield tuple((val-mean)/max(sd, 0.01)
                         for (mean, sd), val in zip(stats, feature_values))
 
-class SVC(MLScorer):
-    
-    MODEL = SVCModel
-
 
 class LinearSVCModel(SVCModel):
     
-    def __init__(self, features, **kwargs):
-        
-        if 'kernel' not in kwargs:
-            kwargs['kernel'] = "linear"
-        
-        super().__init__(features, **kwargs)
+    def __init__(self, *args, **kwargs):
+        if 'kernel' in kwargs:
+            raise TypeError("'kernel' is hard-coded to 'linear'. If you'd " +
+                            "like to use a different kernel, use SVCModel.")
+        super().__init__(*args, kernel="linear", **kwargs)
 
-class LinearSVC(SVC):
-    
-    MODEL = LinearSVCModel
 
 class RBFSVCModel(SVCModel):
     
-    def __init__(self, features, **kwargs):
-        
-        if 'kernel' not in kwargs:
-            kwargs['kernel'] = "rbf"
-        
-        super().__init__(features, **kwargs)
-
-class RBFSVC(SVC):
+    DEFAULTS = {}
     
-    MODEL = RBFSVCModel
+    def __init__(self, *args, **kwargs):
+        if 'kernel' in kwargs:
+            raise TypeError("'kernel' is hard-coded to 'rbf'. If you'd " +
+                            "like to use a different kernel, try SVCModel.")
+        super().__init__(*args, kernel="rbf", **kwargs)
