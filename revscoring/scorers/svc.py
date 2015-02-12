@@ -6,6 +6,7 @@ from sklearn.metrics import auc, roc_curve
 from statistics import mean, stdev
 
 from .scorer import MLScorer, MLScorerModel
+from .util import normalize_json
 
 
 # Rescales based on prior weights of classes
@@ -73,10 +74,11 @@ class SVCModel(MLScorerModel):
         )
         
         for prediction, probability in zip(predictions, probabilities):
-            yield {
+            doc = {
                 'prediction': prediction,
                 'probability': probability
             }
+            yield normalize_json(doc)
                 
         
     
