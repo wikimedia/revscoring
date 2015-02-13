@@ -98,11 +98,11 @@ system.  These are for ``scipy`` and ``numpy``.
 
 Linux Mint 17.1:
 
-1. ``sudo apt-get install gfortran liblapack-dev python3-dev git g++``
+1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev``
 
 Ubuntu 14.04:
 
-1. ``sudo apt-get install gfortran liblapack-dev libopenblas-dev python3-dev``
+1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev``
 
 Authors
 =======
