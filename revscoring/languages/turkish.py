@@ -5,7 +5,7 @@ from nltk.stem.snowball import SnowballStemmer
 
 from .language import Language
 
-STEMMER = SnowballStemmer("turkish") #It seems like Turkish stemmer isn't in the nltk snowball library for some reason: http://www.nltk.org/_modules/nltk/stem/snowball.html
+#STEMMER = SnowballStemmer("turkish") #It seems like Turkish stemmer isn't in the nltk snowball library for some reason: http://www.nltk.org/_modules/nltk/stem/snowball.html
 
 BADWORDS = set(STEMMER.stem(w) for w in [
     "ağzına sıçayım",
@@ -56,21 +56,18 @@ BADWORDS = set(STEMMER.stem(w) for w in [
     "yarrak"
 ])
 
-class Turkish(Language):
-    
-    def badwords(self, words):
+def is_badword(word):
+    return STEMMER.stem(word).lower() in BADWORDS
+
+def is_misspelled(word):
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
         
-        for word in words:
-            
-            if STEMMER.stem(word).lower() in BADWORDS:
-                yield word
-                    
-    def misspellings(self, words):
-        
-        for word in words:
-            
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                
-                if len(wordnet.synsets(word, lang="tur")) == 0:
-                    yield word
+        return len(wordnet.synsets(word, lang="tur")) == 0
+
+turkish = Language(
+    is_badword,
+    is_misspelled
+)
+#turkish.STEMMER = STEMMER
+turkish.BADWORDS = BADWORDS
