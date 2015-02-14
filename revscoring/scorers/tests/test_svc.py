@@ -48,8 +48,6 @@ def train_score(model):
     score_doc = next(model.score([(-1,-2)]))
     
     eq_(score_doc['prediction'], False)
-    print(score_doc)
-    print(type(list(score_doc['probability'].keys())[0]))
     json.dumps(score_doc) # Checks if the doc is JSONable
     
     test_stats = model.test(test_set)
