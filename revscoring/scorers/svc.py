@@ -35,11 +35,12 @@ class SVCModel(MLScorerModel):
         start = time.time()
         
         values, scores = zip(*values_scores)
+        values, scores = list(values), list(scores)
+        
         self.feature_stats = self._generate_stats(values)
         scaled_values = list(self._scale_and_center(values, self.feature_stats))
         
         if balanced_weight:
-            scores = list(scores)
             counts = {}
             for score in scores:
                 counts[score] = counts.get(score, 0) + 1
