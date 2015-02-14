@@ -1,11 +1,23 @@
 import warnings
 
 from nltk.corpus import wordnet
-from nltk.stem.snowball import SnowballStemmer
+#from nltk.stem.snowball import SnowballStemmer
 
 from .language import Language
 
-#STEMMER = SnowballStemmer("turkish") #It seems like Turkish stemmer isn't in the nltk snowball library for some reason: http://www.nltk.org/_modules/nltk/stem/snowball.html
+# It seems like Turkish stemmer isn't in the nltk snowball library for some reason:
+# http://www.nltk.org/_modules/nltk/stem/snowball.html
+# STEMMER = SnowballStemmer("turkish")
+class STEMMER:
+    """
+    Dummy stemmer for turkish
+    """
+
+    def stem(word):
+        """
+        Do not change the word
+        """
+        return word
 
 BADWORDS = set(STEMMER.stem(w) for w in [
     "ağzına sıçayım",
@@ -62,12 +74,14 @@ def is_badword(word):
 def is_misspelled(word):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        
-        return len(wordnet.synsets(word, lang="tur")) == 0
+
+        # It seems we don't have a wordnet for Turkish in the Open Multilingual Wordnet (omw) data provided by NLTK
+        # return len(wordnet.synsets(word, lang="tur")) == 0
+        return False
 
 turkish = Language(
     is_badword,
     is_misspelled
 )
-#turkish.STEMMER = STEMMER
+turkish.STEMMER = STEMMER
 turkish.BADWORDS = BADWORDS
