@@ -6,6 +6,7 @@ from sklearn.metrics import auc, roc_curve
 from statistics import mean, stdev
 
 from .scorer import MLScorer, MLScorerModel
+from .util import normalize_json
 
 
 # Rescales based on prior weights of classes
@@ -34,11 +35,12 @@ class SVCModel(MLScorerModel):
         start = time.time()
         
         values, scores = zip(*values_scores)
+        values, scores = list(values), list(scores)
+        
         self.feature_stats = self._generate_stats(values)
         scaled_values = list(self._scale_and_center(values, self.feature_stats))
         
         if balanced_weight:
-            scores = list(scores)
             counts = {}
             for score in scores:
                 counts[score] = counts.get(score, 0) + 1
@@ -73,10 +75,11 @@ class SVCModel(MLScorerModel):
         )
         
         for prediction, probability in zip(predictions, probabilities):
-            yield {
+            doc = {
                 'prediction': prediction,
                 'probability': probability
             }
+            yield normalize_json(doc)
                 
         
     
@@ -100,7 +103,7 @@ class SVCModel(MLScorerModel):
         
         if comparison_class == "auto":
             comparison_class = self.svc.classes_[1]
-        elif comparison_class not in self.svc.classes_[1]:
+        elif comparison_class not in self.svc.classes_:
             raise TypeError("comparison_class {0} is not in {1}" \
                             .format(comparison_class, self.svc.classes_))
         
@@ -109,7 +112,6 @@ class SVCModel(MLScorerModel):
                          for s in scores]
         predicteds = [s['prediction'] for s in scores]
         
-        predicted_true = [p == comparison_class for p in predicteds]
         true_positives = [l == comparison_class for l in labels]
         
         fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
