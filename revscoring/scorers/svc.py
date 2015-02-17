@@ -126,17 +126,44 @@ class SVCModel(MLScorerModel):
         }
     
     def _balance_labels(self, values_labels):
-        groups = defaultdict(lambda: [])
+        """
+        Rebalances a set of a labels based on the label with the most
+        observations by sampling from lesser labels with replacement.
+        
+        For example, the following dataset has unbalanced observations:
+            
+            (0.10  0.20  0.30),  True
+            (0.20  0.10  0.30),  False
+            (0.10  0.15  0.40),  True
+            (0.09  0.40  0.30),  False
+            (0.15  0.00  0.28),  True
+        
+        False occurs twice while True only occus once.  This function would
+        randomly duplicate one of the False observations to make the labels
+        balanced.  For example:
+            
+            (0.10  0.20  0.30),  True
+            (0.20  0.10  0.30),  False
+            (0.20  0.10  0.30),  False
+            (0.10  0.15  0.40),  True
+            (0.09  0.40  0.30),  False
+            (0.15  0.00  0.28),  True
+        """
+        #Group observations by label
+        groups = defaultdict(list)
         for feature_values, label in values_labels:
             groups[label].append(feature_values)
         
+        # Find out which label occurs most often and how often
         max_label_n = max(len(groups[label]) for label in groups)
         
+        # Resample the max observations from each group of observations.
         new_values_labels = []
         for label in groups:
             new_values_labels.extend((random.choice(groups[label]), label)
                                       for i in range(max_label_n))
         
+        # Shuffle the observations again before returning.
         random.shuffle(new_values_labels)
         return new_values_labels
     

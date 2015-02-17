@@ -48,7 +48,6 @@ def train_score(model):
     score_doc = next(model.score([(-.3,-.3)]))
     
     eq_(score_doc['prediction'], True)
-    print(score_doc)
     assert score_doc['probability'][True] > 0.5, \
            "Probability of True {0} is not > 0.5" \
            .format(score_doc['probability'][True])
