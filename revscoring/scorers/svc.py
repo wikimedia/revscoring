@@ -128,7 +128,7 @@ class SVCModel(MLScorerModel):
     def _balance_labels(self, values_labels):
         """
         Rebalances a set of a labels based on the label with the most
-        observations by sampling from lesser labels with replacement.
+        observations by sampling (with replacement[1]) from lesser labels.
         
         For example, the following dataset has unbalanced observations:
             
@@ -138,8 +138,8 @@ class SVCModel(MLScorerModel):
             (0.09  0.40  0.30),  False
             (0.15  0.00  0.28),  True
         
-        False occurs twice while True only occus once.  This function would
-        randomly duplicate one of the False observations to make the labels
+        False occurs twice while False only occus twice.  This function would
+        randomly choose one of the False observations to make the labels
         balanced.  For example:
             
             (0.10  0.20  0.30),  True
@@ -148,6 +148,10 @@ class SVCModel(MLScorerModel):
             (0.10  0.15  0.40),  True
             (0.09  0.40  0.30),  False
             (0.15  0.00  0.28),  True
+        
+        1. See https://www.ma.utexas.edu/users/parker/sampling/repl.htm for a
+           discussion of "sampling with replacement".
+                
         """
         #Group observations by label
         groups = defaultdict(list)
