@@ -138,9 +138,9 @@ class SVCModel(MLScorerModel):
             (0.09  0.40  0.30),  False
             (0.15  0.00  0.28),  True
         
-        False occurs twice while False only occus twice.  This function would
-        randomly choose one of the False observations to make the labels
-        balanced.  For example:
+        True` occurs three times while `False` only occurs twice.  This
+        function would randomly choose one of the False observations to
+        duplicate in order to balance the labels.  For example:
             
             (0.10  0.20  0.30),  True
             (0.20  0.10  0.30),  False
@@ -148,6 +148,11 @@ class SVCModel(MLScorerModel):
             (0.10  0.15  0.40),  True
             (0.09  0.40  0.30),  False
             (0.15  0.00  0.28),  True
+        
+        Why would anyone want to do this?  If you don't, SVM's
+        predict_proba() will return values that don't represent it's
+        predictions.  This is a hack.  It seems to work in practice with large
+        numbers of observations.
         
         1. See https://www.ma.utexas.edu/users/parker/sampling/repl.htm for a
            discussion of "sampling with replacement".
