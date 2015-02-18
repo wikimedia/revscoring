@@ -1,5 +1,6 @@
-import pickle
+import random
 import time
+from collections import defaultdict
 
 from sklearn import svm
 from sklearn.metrics import auc, roc_curve
@@ -25,8 +26,9 @@ class SVCModel(MLScorerModel):
         self.feature_stats = None
         self.weights = None
         
-    def train(self, values_scores, balanced_weight=True):
+    def train(self, values_labels, balance_labels=True):
         """
+        
         :Returns:
             A dictionary with the fields:
             
@@ -34,23 +36,15 @@ class SVCModel(MLScorerModel):
         """
         start = time.time()
         
-        values, scores = zip(*values_scores)
-        values, scores = list(values), list(scores)
+        if balance_labels: values_labels = self._balance_labels(values_labels)
+        values, labels = zip(*values_labels)
         
+        # Scale and center
         self.feature_stats = self._generate_stats(values)
         scaled_values = list(self._scale_and_center(values, self.feature_stats))
         
-        if balanced_weight:
-            counts = {}
-            for score in scores:
-                counts[score] = counts.get(score, 0) + 1
-            
-            self.weights = {s:1-(counts[s]/len(scores)) for s in counts}
-            
-            score_weights = [self.weights[s] for s in scores]
-            self.svc.fit(scaled_values, scores, score_weights)
-        else:
-            self.svc.fit(scaled_values, scores)
+        # Fit SVC model
+        self.svc.fit(scaled_values, labels)
         
         return {
             'seconds_elapsed': time.time() - start
@@ -70,7 +64,7 @@ class SVCModel(MLScorerModel):
         scaled_values = list(self._scale_and_center(values, self.feature_stats))
         predictions = self.svc.predict(scaled_values)
         probabilities = (
-            {c:proba for c, proba in zip(self.svc.classes_, probas)}
+            {label:proba for label, proba in zip(self.svc.classes_, probas)}
             for probas in self.svc.predict_proba(scaled_values)
         )
         
@@ -131,6 +125,57 @@ class SVCModel(MLScorerModel):
             'auc': auc(fpr, tpr)
         }
     
+    def _balance_labels(self, values_labels):
+        """
+        Rebalances a set of a labels based on the label with the most
+        observations by sampling (with replacement[1]) from lesser labels.
+        
+        For example, the following dataset has unbalanced observations:
+            
+            (0.10  0.20  0.30),  True
+            (0.20  0.10  0.30),  False
+            (0.10  0.15  0.40),  True
+            (0.09  0.40  0.30),  False
+            (0.15  0.00  0.28),  True
+        
+        True` occurs three times while `False` only occurs twice.  This
+        function would randomly choose one of the False observations to
+        duplicate in order to balance the labels.  For example:
+            
+            (0.10  0.20  0.30),  True
+            (0.20  0.10  0.30),  False
+            (0.20  0.10  0.30),  False
+            (0.10  0.15  0.40),  True
+            (0.09  0.40  0.30),  False
+            (0.15  0.00  0.28),  True
+        
+        Why would anyone want to do this?  If you don't, SVM's
+        predict_proba() will return values that don't represent it's
+        predictions.  This is a hack.  It seems to work in practice with large
+        numbers of observations.
+        
+        1. See https://www.ma.utexas.edu/users/parker/sampling/repl.htm for a
+           discussion of "sampling with replacement".
+                
+        """
+        #Group observations by label
+        groups = defaultdict(list)
+        for feature_values, label in values_labels:
+            groups[label].append(feature_values)
+        
+        # Find out which label occurs most often and how often
+        max_label_n = max(len(groups[label]) for label in groups)
+        
+        # Resample the max observations from each group of observations.
+        new_values_labels = []
+        for label in groups:
+            new_values_labels.extend((random.choice(groups[label]), label)
+                                      for i in range(max_label_n))
+        
+        # Shuffle the observations again before returning.
+        random.shuffle(new_values_labels)
+        return new_values_labels
+    
     def _generate_stats(self, values):
         columns = zip(*values)
         
@@ -141,8 +186,8 @@ class SVCModel(MLScorerModel):
     def _scale_and_center(self, values, stats):
         
         for feature_values in values:
-            yield tuple((val-mean)/max(sd, 0.01)
-                        for (mean, sd), val in zip(stats, feature_values))
+            yield (tuple((val-mean)/max(sd, 0.01)
+                   for (mean, sd), val in zip(stats, feature_values)))
 
 
 class LinearSVCModel(SVCModel):

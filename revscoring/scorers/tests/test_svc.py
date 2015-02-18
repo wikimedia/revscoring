@@ -30,13 +30,13 @@ def train_score(model):
     deterministic = random.Random(0)
     observations = list(chain(
         zip(((some, other) for some, other in
-             zip((deterministic.normalvariate(1, .3) for i in range(200)),
-                 (deterministic.normalvariate(2, .5) for i in range(200)))),
-            (True for i in range(200))),
+             zip((deterministic.normalvariate(1, .3) for i in range(500)),
+                 (deterministic.normalvariate(2, .5) for i in range(500)))),
+            (False for i in range(500))),
         zip(((some, other) for some, other in
-             zip((deterministic.normalvariate(-1, .5) for i in range(35)),
-                 (deterministic.normalvariate(-2, .3) for i in range(35)))),
-            (False for i in range(35)))
+             zip((deterministic.normalvariate(-1, .5) for i in range(50)),
+                 (deterministic.normalvariate(-2, .3) for i in range(50)))),
+            (True for i in range(50)))
     ))
     deterministic.shuffle(observations)
     
@@ -45,9 +45,12 @@ def train_score(model):
     test_set = observations[mid:]
     
     model.train(train_set)
-    score_doc = next(model.score([(-1,-2)]))
+    score_doc = next(model.score([(-.3,-.3)]))
     
-    eq_(score_doc['prediction'], False)
+    eq_(score_doc['prediction'], True)
+    assert score_doc['probability'][True] > 0.5, \
+           "Probability of True {0} is not > 0.5" \
+           .format(score_doc['probability'][True])
     json.dumps(score_doc) # Checks if the doc is JSONable
     
     test_stats = model.test(test_set)
