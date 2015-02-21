@@ -1076,6 +1076,7 @@ def is_misspelled(word):
         return len(wordnet.synsets(word, lang="por")) == 0
 
 portuguese = Language(
+    "revscoring.languagues.portuguese",
     is_badword,
     is_misspelled
 )

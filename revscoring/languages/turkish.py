@@ -1,9 +1,12 @@
 import warnings
 
 from nltk.corpus import wordnet
-#from nltk.stem.snowball import SnowballStemmer
 
 from .language import Language
+
+
+#from nltk.stem.snowball import SnowballStemmer
+
 
 # It seems like Turkish stemmer isn't in the nltk snowball library for some reason:
 # http://www.nltk.org/_modules/nltk/stem/snowball.html
@@ -80,6 +83,7 @@ def is_misspelled(word):
         return False
 
 turkish = Language(
+    "revscoring.languagues.turkish",
     is_badword,
     is_misspelled
 )

@@ -1,13 +1,20 @@
+import pickle
+from io import BytesIO
+
 from nose.tools import eq_
 
 from ..language import Language
 
 
+def is_badword(word): return word == "bad"
+def is_misspelled(word): return word not in {"foo", "bar", "baz"}
+
 def test_language():
     
     l = Language(
-        lambda w: w == "bad",
-        lambda w: w not in {"foo", "bar", "baz"}
+        "Test Language",
+        is_badword,
+        is_misspelled
     )
     
     assert l.is_badword("bad")
@@ -21,3 +28,21 @@ def test_language():
     
     eq_(list(l.misspellings(["foo", "oof", "baz", "oof"])),
         ["oof", "oof"])
+
+def test_pickle_hash():
+    
+    l = Language(
+        "Test Language",
+        is_badword,
+        is_misspelled
+    )
+    
+    f = BytesIO()
+    
+    pickle.dump(l, f)
+    
+    f.seek(0)
+    
+    l2 = pickle.load(f)
+    
+    eq_(l, l2)

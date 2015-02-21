@@ -23,7 +23,7 @@ FEATURES = [some_float, other_float]
 
 def is_badword(word): return word == "badword"
 def is_misspelled(word): return word == "misspelled"
-some_language = Language(is_badword, is_misspelled)
+some_language = Language("Test language", is_badword, is_misspelled)
 LANGUAGE = some_language
 
 def train_score(model):
@@ -69,16 +69,16 @@ def pickle_and_unpickle(model):
     eq_(type(reconstructed_model), type(model))
 
 def test_svc():
-    model = SVCModel(FEATURES, LANGUAGE)
+    model = SVCModel("Test classifier", FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)
     
 def test_linear_svc():
-    model = LinearSVCModel(FEATURES, LANGUAGE)
+    model = LinearSVCModel("Test classifier", FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)
     
 def test_rbf_svc():
-    model = RBFSVCModel(FEATURES, LANGUAGE)
+    model = RBFSVCModel("Test classifier", FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)

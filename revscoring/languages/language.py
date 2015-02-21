@@ -4,7 +4,8 @@ class Language:
     "is_misspelled" -- which will check if a word is "bad" or does not appear
     in the dictionary.
     """
-    def __init__(self, is_badword, is_misspelled):
+    def __init__(self, name, is_badword, is_misspelled):
+        self.name = str(name)
         self.is_badword = is_badword
         self.is_misspelled = is_misspelled
     
@@ -17,3 +18,12 @@ class Language:
         
         for word in words:
             if self.is_misspelled(word): yield word
+    
+    def __hash__(self):
+        return hash(self.name)
+    
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+    
+    def __ne__(self, other):
+        return not hash(self) == hash(other)
