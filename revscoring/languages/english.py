@@ -112,7 +112,7 @@ def is_misspelled(word):
         return len(wordnet.synsets(word)) == 0
 
 english = Language(
-    "English",
+    "revscoring.languages.English",
     is_badword,
     is_misspelled
 )
