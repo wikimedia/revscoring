@@ -105,8 +105,9 @@ class mul(BinaryOperator):
 class div(BinaryOperator):
     
     CHAR = "/"
-    def __init__(self, feature, divisor, returns=float):
-        super().__init__(feature, divisor, returns)
+    def __init__(self, feature, divisor):
+        # All division returns a float, so we are hardcoding it. 
+        super().__init__(feature, divisor, returns=float)
     
     def operate(self, left, right): return left / right
         
