@@ -32,7 +32,7 @@ print("Testing classifier")
 pprint(model.test(test_set))
 print("")
 print("Making a prediction")
-pprint(list(model.score([[2.4, 2.1]])))
+pprint(model.score([2.4, 2.1]))
 
 f = BytesIO()
 model.dump(f)

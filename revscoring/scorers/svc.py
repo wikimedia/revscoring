@@ -3,21 +3,19 @@ import time
 from collections import defaultdict
 
 from sklearn import svm
-from statistics import mean, stdev
 
 from .scorer import ScikitLearnClassifier
-from .util import normalize_json
 
 
 class SVCModel(ScikitLearnClassifier):
     
-    def __init__(self, name, features, language=None, svc=None, **kwargs):
+    def __init__(self, features, language=None, svc=None, **kwargs):
         if svc is None:
             classifier_model = svm.SVC(probability=True, **kwargs)
         else:
             classifier_model = svc
         
-        super().__init__(name, features, classifier_model, language=language)
+        super().__init__(features, classifier_model, language=language)
         
         self.feature_stats = None
         self.weights = None
@@ -52,8 +50,9 @@ class SVCModel(ScikitLearnClassifier):
         
         return stats
     
-    def score(self, values):
-        scaled_values = list(self._scale_and_center(values, self.feature_stats))
+    def score(self, feature_values):
+        scaled_values = next(self._scale_and_center([feature_values],
+                                                    self.feature_stats))
         
         return super().score(scaled_values)
     
@@ -109,19 +108,6 @@ class SVCModel(ScikitLearnClassifier):
         # Shuffle the observations again before returning.
         random.shuffle(new_values_labels)
         return new_values_labels
-    
-    def _generate_stats(self, values):
-        columns = zip(*values)
-        
-        stats = tuple((mean(c), stdev(c)) for c in columns)
-        
-        return stats
-    
-    def _scale_and_center(self, values, stats):
-        
-        for feature_values in values:
-            yield (tuple((val-mean)/max(sd, 0.01)
-                   for (mean, sd), val in zip(stats, feature_values)))
 
 
 class LinearSVCModel(SVCModel):

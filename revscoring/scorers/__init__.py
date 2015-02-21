@@ -1,2 +1,2 @@
 from .svc import SVCModel, LinearSVCModel, RBFSVCModel
-from .scorer import MLScorerModel
+from .scorer import Scorer, MLScorerModel

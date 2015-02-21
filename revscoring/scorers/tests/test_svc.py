@@ -45,7 +45,7 @@ def train_score(model):
     test_set = observations[mid:]
     
     model.train(train_set)
-    score_doc = next(model.score([(-.3,-.3)]))
+    score_doc = model.score((-.3,-.3))
     
     eq_(score_doc['prediction'], True)
     assert score_doc['probability'][True] > 0.5, \
@@ -69,16 +69,16 @@ def pickle_and_unpickle(model):
     eq_(type(reconstructed_model), type(model))
 
 def test_svc():
-    model = SVCModel("Test classifier", FEATURES, LANGUAGE)
+    model = SVCModel(FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)
     
 def test_linear_svc():
-    model = LinearSVCModel("Test classifier", FEATURES, LANGUAGE)
+    model = LinearSVCModel(FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)
     
 def test_rbf_svc():
-    model = RBFSVCModel("Test classifier", FEATURES, LANGUAGE)
+    model = RBFSVCModel(FEATURES, LANGUAGE)
     train_score(model)
     pickle_and_unpickle(model)
