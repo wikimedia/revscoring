@@ -53,36 +53,65 @@ class Feature(Dependent):
 class Modifier(Feature): pass
 
 
-class BinaryOperator(Modifier):
+class FeatureFunction(Modifier):
     
-    CHAR = "?"
+    FUNC = "?"
     
-    def __init__(self, feature, operand, returns=None):
-        if isinstance(operand, Feature):
-            self.operand_value = None
-            operand_name = operand.name
-            operand_type = operand.returns
-            depends_on = [feature, operand]
+    def __init__(self, *args, returns=None):
+        depends_on = []
+        self.names = []
+        self.values = []
+        for arg in args:
+            if isinstance(arg, Feature):
+                depends_on.append(arg)
+        if isinstance(left, Feature):
+            self.left_value = None
+            left_name = operand.name
+            left_returns = operand.returns
+            depends_on.append(left)
         else:
-            self.operand_value = operand
-            operand_name = str(operand)
-            operand_type = type(operand)
-            depends_on = [feature]
+            self.left_value = left
+            left_name = str(operand)
+            left_returns = type(operand)
         
-        name = "{0} {1} {2}".format(feature.name, self.CHAR, operand_name)
+        if isinstance(right, Feature):
+            self.right_value = None
+            right_name = operand.name
+            right_returns = operand.returns
+            depends_on.append(right)
+        else:
+            self.right_value = right
+            right_name = str(operand)
+            right_returns = type(operand)
+        
+        name = "{0} {1} {2}".format(left_name, self.CHAR, operand_name)
         if returns is None:
             returns = type(self.operate(feature.returns(), operand_type()))
         super().__init__(name, self._process, returns=returns,
                          depends_on=depends_on)
+    
+    def _format_name(self, left_name, right_name):
+        name = "{0}({1}, {2})".format(self.FUNC, left_name, right_name)
+    
+    def _process(self, left_value=None, right_value=None):
         
-    def _process(self, feature_value, operand_value=None):
+        left_value = left_value if left_value is not None \
+                     else self.left_value
         
-        operand_value = operand_value if operand_value is not None \
-                        else self.operand_value
+        right_value = right_value if right_value is not None \
+                      else self.right_value
         
-        return self.operate(feature_value, operand_value)
+        return self.operate(left_value, right_value)
         
     def operate(self, left, right): raise NotImplementedError()
+
+class BinaryOperator(BinaryFunction):
+    
+    CHAR = "?"
+    
+    def _format_name(self, left_name, right_name):
+        name = "{0} {1} {2}".format(left_name, self.CHAR, right_name)
+    
 
 class add(BinaryOperator):
     
@@ -105,12 +134,28 @@ class mul(BinaryOperator):
 class div(BinaryOperator):
     
     CHAR = "/"
-    def __init__(self, feature, divisor, returns=float):
-        super().__init__(feature, divisor, returns)
+    def __init__(self, feature, divisor):
+        # Explicitly setting return type to float.
+        super().__init__(feature, divisor, returns=float)
     
     def operate(self, left, right): return left / right
-        
 
+class max(Modifier):
+    
+    def __init__(self, left, right):
+        depends_on = []
+        if isinstance(left, Feature):
+            depends_on.append(left)
+            left_returns = left.returns
+            left_name    = left.name
+        else:
+            left_returns = type(left)
+            
+        super().__init__("log({0})".format(feature.name), self._process,
+                         returns=float, depends_on=[feature])
+    
+    def _process(self, feature_value): return math_log(feature_value)
+    
 class log(Modifier):
     
     def __init__(self, feature):
@@ -118,27 +163,3 @@ class log(Modifier):
                          returns=float, depends_on=[feature])
     
     def _process(self, feature_value): return math_log(feature_value)
-
-'''
-class add(Modifier):
-
-def __init__(self, feature, summand):
-    super().__init__("{0} + {1}".format(feature.name, repr(summand)),
-                     self._process,
-                     returns=type(feature.returns() + summand),
-                     depends_on=[feature])
-    self.summand = summand
-
-def _process(self, feature_value): return feature_value + self.summand
-
-class sub(Modifier):
-
-def __init__(self, feature, subband):
-    super().__init__("{0} - {1}".format(feature.name, repr(subband)),
-                     self._process,
-                     returns=type(feature.returns() - subband),
-                     depends_on=[feature])
-    self.subband = subband
-
-def _process(self, feature_value): return feature_value - self.subband
-'''
