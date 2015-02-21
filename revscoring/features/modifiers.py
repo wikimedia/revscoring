@@ -1,1 +1,1 @@
-from .feature import add, log, sub
+from .feature import log, max
