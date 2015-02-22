@@ -133,7 +133,6 @@ class mul(BinaryOperator):
     CHAR = "*"
     
     def operate(self, left, right):
-        print(str(left) + " * " + str(right))
         return left * right
 
 class div(BinaryOperator):
@@ -196,7 +195,7 @@ class max(Modifier):
                         # shouldn't ever do that
         
         name = "max({0})".format(", ".join(f.name for f in dependencies))
-        super().__init__(name, self._process, returns=float,
+        super().__init__(name, self._process, returns=returns,
                          depends_on=dependencies)
     
     def _process(self, *feature_values): return float(math_max(*feature_values))
@@ -209,7 +208,7 @@ class min(Modifier):
                         # shouldn't ever do that
         
         name = "min({0})".format(", ".join(f.name for f in dependencies))
-        super().__init__(name, self._process, returns=float,
+        super().__init__(name, self._process, returns=returns,
                          depends_on=dependencies)
     
     def _process(self, *feature_values): return float(math_min(*feature_values))
