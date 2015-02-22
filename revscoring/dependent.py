@@ -23,6 +23,10 @@ class Dependent:
         return "<" + self.name + ">"
 
 def solve(dependent, cache=None, history=None):
+    value, cache, history = _solve(dependent, cache, history)
+    return value
+
+def _solve(dependent, cache, history):
     """
     Calculates a dependent's value by solving dependencies.
     
@@ -40,9 +44,10 @@ def solve(dependent, cache=None, history=None):
     cache = cache or {}
     history = history or set()
     
+    
     # Check if we've already got this dependency
     if dependent in cache:
-        return cache[dependent]
+        return cache[dependent], cache, history
     else:
         
         # Check if the dependency is callable.  If not, we're SOL
@@ -58,7 +63,6 @@ def solve(dependent, cache=None, history=None):
         
         # All is good.  Time to generate a value
         else:
-            
             # Add to history so we can detect any loops on the way down.
             history.add(dependent)
             
@@ -70,13 +74,14 @@ def solve(dependent, cache=None, history=None):
                 dependencies = []
             
             # Generate args from dependencies
-            args = [solve(dependency, cache, history=history)
-                    for dependency in dependencies]
-            
+            values = []
+            for dependency in dependencies:
+                value, cache, history = _solve(dependency, cache, history)
+                values.append(value)
             
             # Generate value
-            value = dependent(*args)
+            value = dependent(*values)
             
             # Add value to cache
             cache[dependent] = value
-            return cache[dependent]
+            return cache[dependent], cache, history
