@@ -1,21 +1,16 @@
 import re
 
 from ..datasources import contiguous_segments_added
+from ..languages import is_badword
 from .feature import Feature
 
 WORD_RE = re.compile('\w+', re.UNICODE)
 
-def process(language, contiguous_segments_added):
+def process(is_badword, contiguous_segments_added):
     
-    badwords = 0
-    
-    for segment in contiguous_segments_added:
-        words = (m.group(0) for m in WORD_RE.finditer(segment))
-        for badword in language.badwords(words):
-            badwords += 1
-        
-    
-    return badwords
+    words_added = (match.group(0) for segment in contiguous_segments_added
+                                  for match in WORD_RE.finditer(segment))
+    return sum(is_badword(word) for word in words_added)
 
 badwords_added = Feature("badwords_added", process, returns=int,
-                         depends_on=["language", contiguous_segments_added])
+                         depends_on=[is_badword, contiguous_segments_added])

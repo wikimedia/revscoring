@@ -1,19 +1,39 @@
+from ..dependent import Dependent, solve_many
+
+
 class Language:
-    """
-    Constructs a Language instance that wraps two functions, "is_badword" and
-    "is_misspelled" -- which will check if a word is "bad" or does not appear
-    in the dictionary.
-    """
-    def __init__(self, is_badword, is_misspelled):
-        self.is_badword = is_badword
-        self.is_misspelled = is_misspelled
+    def __init__(self, name, utilities):
+        self.name = str(name)
+        self.utilities = list(utilities)
     
-    def badwords(self, words):
+    def cache(self):
+        utility_methods = zip(self.utilities, solve_many(self.utilities))
+        return {utility:method for utility, method in utility_methods}
         
-        for word in words:
-            if self.is_badword(word): yield word
+
+def not_implemented_processor():
+    raise NotImplementedError()
+
+class LanguageUtility(Dependent):
     
-    def misspellings(self, words):
+    def __init__(self, name, processor=None, depends_on=None):
+        depends_on = depends_on or []
+        processors = processor or not_implemented_processor
         
-        for word in words:
-            if self.is_misspelled(word): yield word
+        super().__init__(name, processor, dependencies=depends_on)
+    
+    def __hash__(self):
+        return hash((self.__class__.__name__, self.name))
+    
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+    
+    def __ne__(self, other):
+        return hash(self) != hash(other)
+
+# Define placeholder utilities.  These will need to be replaced inside of a
+# language, but they will provide names to match against within the cache.
+stem_word = LanguageUtility("stem_word")
+is_badword = LanguageUtility("is_badword")
+is_misspelled = LanguageUtility("is_misspelled")
+is_stopword = LanguageUtility("is_stopword")
