@@ -12,9 +12,11 @@ class Dependent:
         self.name = name
         self.process = process
         self.dependencies = dependencies if dependencies is not None else []
+        self.calls = 0
     
     def __call__(self, *args, **kwargs):
         logger.debug("Executing {0}.".format(self))
+        self.calls += 1
         return self.process(*args, **kwargs)
     
     def __str__(self): return self.__repr__()
@@ -22,11 +24,20 @@ class Dependent:
     def __repr__(self):
         return "<" + self.name + ">"
 
-def solve(dependent, cache=None, history=None):
-    value, cache, history = _solve(dependent, cache, history)
+def solve_many(dependents, cache=None):
+    cache = cache or {}
+    
+    for dependent in dependents:
+        value, cache, history = _solve(dependent, cache)
+        yield value
+
+def solve(dependent, cache=None):
+    cache = cache or {}
+    
+    value, cache, history = _solve(dependent, cache)
     return value
 
-def _solve(dependent, cache, history):
+def _solve(dependent, cache, history=None):
     """
     Calculates a dependent's value by solving dependencies.
     
@@ -41,9 +52,7 @@ def _solve(dependent, cache, history):
     :Returns:
         The result of executing the dependent with all dependencies resolved
     """
-    cache = cache or {}
     history = history or set()
-    
     
     # Check if we've already got this dependency
     if dependent in cache:
