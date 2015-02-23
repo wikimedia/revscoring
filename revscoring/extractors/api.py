@@ -1,4 +1,4 @@
-from ..dependent import solve
+from ..dependent import solve_many
 from .extractor import Extractor
 
 
@@ -17,4 +17,4 @@ class APIExtractor(Extractor):
                       'session': self.session,
                       'language': self.language})
         
-        return [solve(feature, cache) for feature in features]
+        return solve_many(features, cache=cache)
