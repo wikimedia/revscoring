@@ -1,5 +1,6 @@
 from .contiguous_segments_added import contiguous_segments_added
 from .contiguous_segments_removed import contiguous_segments_removed
+from .datasource import Datasource
 from .first_rev_doc import first_rev_doc
 from .first_revision_metadata import first_revision_metadata
 from .namespaces import namespaces
