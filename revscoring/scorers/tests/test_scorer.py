@@ -26,3 +26,7 @@ def test_scorer():
     score_doc = scorer.score(1234567890)
     eq_(score_doc['divide'], 3/5)
     eq_(score_doc['multiply'], 3*5)
+    
+    score_doc = scorer.score(1234567890, models=['multiply'])
+    eq_(score_doc['multiply'], 3*5)
+    assert 'divide' not in score_doc
