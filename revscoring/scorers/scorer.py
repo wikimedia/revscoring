@@ -20,19 +20,23 @@ class Scorer:
         self._check_compatibility(model_map, extractor)
         self.model_map = model_map
         self.extractor = extractor
-        
-        self.features = tuple({feature for model in model_map.values()
-                                       for feature in model.features})
     
-    def score(self, rev_id):
+    def score(self, rev_id, models=None):
+        # If a set of models isn't specified, score with all of 'em
+        models = models or self.model_map.keys()
         
-        feature_values = self.extractor.extract(rev_id, self.features)
-        feature_map = {f:v for f,v in zip(self.features, feature_values)}
+        # Gather a single tuple of unique features needed by the models
+        features = tuple({feature for name in models
+                                  for feature in self.model_map[name].features})
+        
+        feature_values = self.extractor.extract(rev_id, features)
+        feature_map = {f:v for f,v in zip(features, feature_values)}
         
         scores = {}
-        for name, model in self.model_map.items():
-            model_fvs = [feature_map[f] for f in model.features]
-            scores[name] = model.score(model_fvs)
+        for name in models:
+            model = self.model_map[name]
+            feature_values = [feature_map[f] for f in model.features]
+            scores[name] = model.score(feature_values)
         
         return scores
     
