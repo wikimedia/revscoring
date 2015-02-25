@@ -1,48 +1,29 @@
 import pickle
-from io import BytesIO
 
 from nose.tools import eq_
 
-from ..language import Language
+from ..language import Language, LanguageUtility
 
 
-def is_badword(word): return word == "bad"
-def is_misspelled(word): return word not in {"foo", "bar", "baz"}
+def process_is_badword():
+    def is_badword(word):
+        return word == "badword"
+    return is_badword
+
+is_badword = LanguageUtility("is_badword", process_is_badword)
 
 def test_language():
     
-    l = Language(
-        "Test Language",
-        is_badword,
-        is_misspelled
-    )
+    l = Language('revscoring.languages.test', [is_badword])
     
-    assert l.is_badword("bad")
-    assert not l.is_badword("good")
+    cache = l.cache()
+    assert is_badword in cache
+    eq_(cache[is_badword]("badword"), True)
     
-    assert l.is_misspelled("oof")
-    assert not l.is_misspelled("foo")
+    recovered_l = pickle.loads(pickle.dumps(l))
+    recovered_cache = recovered_l.cache()
     
-    eq_(list(l.badwords(["good", "bad", "ugly", "bad"])),
-        ["bad", "bad"])
+    print(hash(is_badword) == hash(recovered_l.utilities[0]))
     
-    eq_(list(l.misspellings(["foo", "oof", "baz", "oof"])),
-        ["oof", "oof"])
-
-def test_pickle_hash():
-    
-    l = Language(
-        "Test Language",
-        is_badword,
-        is_misspelled
-    )
-    
-    f = BytesIO()
-    
-    pickle.dump(l, f)
-    
-    f.seek(0)
-    
-    l2 = pickle.load(f)
-    
-    eq_(l, l2)
+    assert is_badword in recovered_cache
+    eq_(recovered_cache[is_badword]("badword"), True)

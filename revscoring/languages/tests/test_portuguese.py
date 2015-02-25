@@ -1,19 +1,21 @@
 from nose.tools import eq_
 
-from ..portuguese import portuguese
+from ..portuguese import is_badword, is_misspelled, is_stopword, stem_word
 
 
 def test_language():
     
-    assert portuguese.is_badword("merda")
-    assert portuguese.is_badword("merdar")
-    assert not portuguese.is_badword("arvere")
+    eq_(stem_word()("merda"), "merd")
+    eq_(stem_word()("Merda"), "merd")
     
-    assert portuguese.is_misspelled("wjwkjb")
-    assert not portuguese.is_misspelled("Esta")
+    assert is_badword(stem_word())("merda")
+    assert is_badword(stem_word())("merdar")
+    assert is_badword(stem_word())("Merdar")
+    assert not is_badword(stem_word())("arvere")
     
-    eq_(list(portuguese.badwords(["Esta", "porra", "parece", "merda"])),
-        ["porra", "merda"])
+    assert is_misspelled()("wjwkjb")
+    assert not is_misspelled()("Esta")
     
-    eq_(list(portuguese.misspellings(["O", "urso", "abraca", "a", "arvere"])),
-        ["abraca", "arvere"])
+    assert is_stopword()("A")
+    assert is_stopword()("o")
+    assert not is_stopword()("arvere")
