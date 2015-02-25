@@ -1,2 +1,2 @@
 from .svc import SVCModel, LinearSVCModel, RBFSVCModel
-from .scorer import Scorer, MLScorer, MLScorerModel
+from .scorer import Scorer, MLScorerModel, ScikitLearnClassifier

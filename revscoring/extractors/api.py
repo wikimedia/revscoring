@@ -7,8 +7,8 @@ class APIExtractor(Extractor):
     def __init__(self, session, language=None):
         self.session = session
         self.language = language
-        
-    def extract(self, rev_id, features):
+    
+    def extract(self, rev_id, features, insert=None):
         # Prime the cache with pre-configured values
         cache = {'rev_id': rev_id,
                  'session': self.session}
@@ -16,5 +16,8 @@ class APIExtractor(Extractor):
         # If language is available, load utilities into the cache
         if self.language != None:
             cache.update(self.language.cache())
+        
+        # Insert values into cache
+        cache.update(insert or {})
         
         return solve_many(features, cache=cache)

@@ -1,80 +1,168 @@
 import pickle
+import time
+
+from sklearn.metrics import auc, roc_curve
+from statistics import mean, stdev
+
+from .util import normalize_json
 
 
 class Scorer:
-    """
-    Interface for implementing a wide variety of scoring strategies.
-    """
     
-    def __init__(self, extractor):
+    def __init__(self, model_map, extractor):
+        """
+        :Parameters:
+            model_map : dict
+                A mapping between model names and `ScorerModel` s.
+            extractor : `revscoring.extractors.Extractor`
+                An extractor to use for gathering feature values
+        """
+        self._check_compatibility(model_map, extractor)
+        self.model_map = model_map
         self.extractor = extractor
     
-    def score(self, rev_ids):
-        """
-        Returns a sequence of scores that correspond to <rev_ids>.
-        """
-        raise NotImplementedError()
-    
- 
-class MLScorer(Scorer):
-    """
-    Machine Learning Scorer -- a type of Scorer design to support a machine
-    learned model of some sort.
-    """
-    
-    MODEL = NotImplemented
-    
-    def __init__(self, extractor, model):
-        """
-        Constructs a new scorer with a given model.  Note this scorer expects
-        the model to already be trained.
-        """
-        super().__init__(extractor)
+    def score(self, rev_id, models=None):
+        # If a set of models isn't specified, score with all of 'em
+        models = models or self.model_map.keys()
         
-        assert isinstance(model, MLScorerModel)
-        self.model = model
-    
-    def score(self, rev_ids, **kwargs):
-        values = self.extract(rev_ids)
+        # Gather a single tuple of unique features needed by the models
+        features = tuple({feature for name in models
+                                  for feature in self.model_map[name].features})
         
-        scores = self.model.score(values, **kwargs)
+        feature_values = self.extractor.extract(rev_id, features)
+        feature_map = {f:v for f,v in zip(features, feature_values)}
+        
+        scores = {}
+        for name in models:
+            model = self.model_map[name]
+            feature_values = [feature_map[f] for f in model.features]
+            scores[name] = model.score(feature_values)
         
         return scores
     
-    def extract(self, rev_ids):
-        """
-        Extracts the model's features for a set of rev_ids.
-        """
-        return (self.extractor.extract(rev_id, self.model.features)
-                for rev_id in rev_ids)
-        
+    def _check_compatibility(self, model_map, extractor):
+        for _, model in model_map.items():
+            if extractor.language != model.language:
+                raise ValueError(("Model language {0} does not match " +
+                                  "extractor language {1}")\
+                                 .format(model.language.name,
+                                         extractor.language.name))
     
+    @classmethod
+    def from_config(cls, config, key=None):
+        """
+        Expects:
+        
+            scorers:
+                enwiki:
+                    models:
+                        damaging: enwiki_damaging_2014
+                        good-faith: enwiki_good-faith_2014
+                    extractor: enwiki
+                ptwiki:
+                    models:
+                        damaging: ptwiki_damaging_2014
+                        good-faith: ptwiki_good-faith_2014
+                    extractor: ptwiki
+            
+            extractors:
+                enwiki: ...
+                ptwiki: ...
+            
+            models:
+                enwiki_damaging_2014: ...
+                enwiki_good-faith_2014: ...
+        """
+        section = config['scorers'][key]
+        
+        model_map = {}
+        for name, key in section['models']:
+            model = ScorerModel.from_config(config, key)
+            model_map[name] = model
+        
+        extractor = Extractor.from_config(config, section['extractor'])
+        
+        return cls(model_map, extractor)
 
-class MLScorerModel:
+
+class ScorerModel:
     """
-    A machine learned model to be used by a MLScorer
+    A model used to score a revision based on a set of features.
     """
     
     def __init__(self, features, language=None):
         """
-        Constructs a new Machine Learned scoring model.
-        
         :Parameters:
-            extractors : `list`(`Feature`)
+            features : `list`(`Feature`)
                 A list of `Feature` s that will be used to train the model and
                 score new observations.
+            language : `Language`
+                A language to use when applying a feature set.
         """
         self.features = tuple(features)
         self.language = language
     
     
-    def train(self, values_scores):
+    def score(self, feature_values):
+        """
+        Make a prediction or otherwise use the model to generate a score.
+        
+        :Parameters:
+            feature_values : collection(`mixed`)
+                an ordered collection of values that correspond to the
+                `Feature` s provided to the constructor
+                
+        :Returns:
+            A `dict` of statistics
+        """
+        raise NotImplementedError()
+    
+    
+    def _validate_features(self, feature_values):
+        """
+        Checks the features against provided values to confirm types,
+        ordinality, etc.
+        """
+        return [feature.validate(feature_values)
+                for feature, value in zip(self.feature, feature_values)]
+            
+    def _generate_stats(self, values):
+        columns = zip(*values)
+        
+        stats = tuple((mean(c), stdev(c)) for c in columns)
+        
+        return stats
+    
+    def _scale_and_center(self, values, stats):
+        
+        for feature_values in values:
+            yield (tuple((val-mean)/max(sd, 0.01)
+                   for (mean, sd), val in zip(stats, feature_values)))
+    
+    @classmethod
+    def from_config(cls, config, key):
+        section = config['m    odels'][key]
+        
+        class_path = section['class']
+        Class = import_from_classpath(class_path)
+        assert cls != Class
+        return Class.from_config(config, key)
+    
+
+class MLScorerModel(ScorerModel):
+    """
+    A machine learned model used to score a revision based on a set of features.
+    
+    Machine learned models are trained and tested against labeled data.
+    """
+    
+    def train(self, values_labels):
         """
         Trains the model on labeled data.
         
         :Parameters:
-            values_scores : `iterable`((`<feature_values>`, `<score>`))
-                an iterable of labeled data Where <values_scores> is an ordered
+            values_scores : `iterable`((`<values_labels>`, `<label>`))
+                an iterable of labeled data Where <values_labels> is an ordered
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
         
@@ -84,14 +172,14 @@ class MLScorerModel:
         raise NotImplementedError()
         
     
-    def test(self, values_scores):
+    def test(self, values_labels):
         """
         Tests the model against a labeled data.  Note that test data should be
         withheld from from train data.
         
         :Parameters:
-            values_scores : `iterable`((`<feature_values>`, `<score>`))
-                an iterable of labeled data Where <values_scores> is an ordered
+            values_labels : `iterable`((`<feature_values>`, `<label>`))
+                an iterable of labeled data Where <values_labels> is an ordered
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
                 
@@ -101,41 +189,132 @@ class MLScorerModel:
         raise NotImplementedError()
     
     
-    def score(self, values, **opts):
-        """
-        Make a prediction or otherwise use the model to generate a score.
-        
-        :Parameters:
-            values_scores : `iterable`((`<feature_values>`, `<score>`))
-                an iterable of labeled data Where <values_scores> is an ordered
-                collection of predictive values that correspond to the
-                `Feature` s provided to the constructor
-            opts : dict
-                optional arguments to affect how scores are generated/returned
-                
-        :Returns:
-            A dictionary of score values
-        """
-        raise NotImplementedError()
-    
-    
-    def _validate_features(self, values):
-        """
-        Checks the features against provided values to confirm types,
-        ordinality, etc.
-        """
-        return [feature.return_type(value)
-                for feature, value in zip(self.feature, values)]
-            
+     
     @classmethod
     def load(cls, f):
         """
-        Reads serialized model information from a file.
+        Reads serialized model information from a file.  Make sure to open
+        the file as a binary stream.
         """
         return pickle.load(f)
-    
+
     def dump(self, f):
         """
-        Writes serialized model information to a file.
+        Writes serialized model information to a file.  Make sure to open the
+        file as a binary stream.
         """
         pickle.dump(self, f)
+
+    @classmethod
+    def from_config(self, config, key):
+        """
+        Constructs a model from configuration.
+        """
+        section = config['models'][key]
+        return cls.load(open(section['file'], 'rb'))
+        
+
+
+class ScikitLearnClassifier(MLScorerModel):
+    
+    def __init__(self, features, classifier_model, language=None):
+        super().__init__(features, language=language)
+        self.classifier_model = classifier_model
+    
+    def train(self, values_labels):
+        """
+        
+        :Returns:
+            A dictionary with the fields:
+            
+            * seconds_elapsed -- Time in seconds spent fitting the model
+        """
+        start = time.time()
+        
+        values, labels = zip(*values_labels)
+        
+        # Fit SVC model
+        self.classifier_model.fit(values, labels)
+        
+        return {
+            'seconds_elapsed': time.time() - start
+        }
+    
+    def score(self, feature_values):
+        """
+        Generates a score for a single revision based on a set of extracted
+        feature_values.
+        
+        :Parameters:
+            feature_values : collection(`mixed`)
+                an ordered collection of values that correspond to the
+                `Feature` s provided to the constructor
+                
+        :Returns:
+            A dict with the fields:
+            
+            * predicion -- The most likely class
+            * probability -- A mapping of probabilities for input classes
+                             corresponding to the classes the classifier was
+                             trained on.  Generating this probability is
+                             slower than a simple prediction.
+        """
+        prediction = self.classifier_model.predict([feature_values])[0]
+        labels = self.classifier_model.classes_
+        probas = self.classifier_model.predict_proba([feature_values])[0]
+        probability = {label:proba for label, proba in zip(labels, probas)}
+        
+        doc = {
+            'prediction': prediction,
+            'probability': probability
+        }
+        return normalize_json(doc)
+        
+    
+    def test(self, values_labels, comparison_class=None):
+        """
+        :Returns:
+            A dictionary of test statistics with the fields:
+            
+            * mean.accuracy -- The mean accuracy of classification
+            * auc -- The area under the ROC curve
+            * table -- A truth table for classification
+            * roc
+                * fpr -- A list of false-positive rate values
+                * tpr -- A list of true-positive rate values
+                
+        """
+        values, labels = zip(*values_labels)
+        
+        scores = [self.score(feature_values) for feature_values in values]
+        
+        if comparison_class == None:
+            comparison_class = self.classifier_model.classes_[1]
+        elif comparison_class not in self.classifier_model.classes_:
+            raise TypeError("comparison_class {0} is not in {1}" \
+                            .format(comparison_class,
+                                    self.classifier_model.classes_))
+        
+        
+        probabilities = [s['probability'][comparison_class]
+                         for s in scores]
+        predicteds = [s['prediction'] for s in scores]
+        
+        true_positives = [l == comparison_class for l in labels]
+        
+        fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
+        
+        table = {}
+        for pair in zip(labels, predicteds):
+            table[pair] = table.get(pair, 0) + 1
+        
+        return {
+            'table': table,
+            'mean.accuracy': self.classifier_model.score(values, labels),
+            'roc': {
+                'fpr': list(fpr),
+                'tpr': list(tpr),
+                'thresholds': list(thresholds)
+            },
+            'auc': auc(fpr, tpr)
+        }

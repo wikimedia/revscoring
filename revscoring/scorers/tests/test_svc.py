@@ -39,7 +39,7 @@ def train_score(model):
     test_set = observations[mid:]
     
     model.train(train_set)
-    score_doc = next(model.score([(-.3,-.3)]))
+    score_doc = model.score((-.3,-.3))
     
     eq_(score_doc['prediction'], True)
     assert score_doc['probability'][True] > 0.5, \

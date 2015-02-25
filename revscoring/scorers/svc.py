@@ -3,25 +3,19 @@ import time
 from collections import defaultdict
 
 from sklearn import svm
-from sklearn.metrics import auc, roc_curve
-from statistics import mean, stdev
 
-from .scorer import MLScorer, MLScorerModel
-from .util import normalize_json
+from .scorer import ScikitLearnClassifier
 
 
-# Rescales based on prior weights of classes
-#def true_proba(p, prior): return (p/prior)/((p/prior)+1)
-
-class SVCModel(MLScorerModel):
+class SVCModel(ScikitLearnClassifier):
     
     def __init__(self, features, language=None, svc=None, **kwargs):
-        super().__init__(features, language=language)
-        
         if svc is None:
-            self.svc = svm.SVC(probability=True, **kwargs)
+            classifier_model = svm.SVC(probability=True, **kwargs)
         else:
-            self.svc = svc
+            classifier_model = svc
+        
+        super().__init__(features, classifier_model, language=language)
         
         self.feature_stats = None
         self.weights = None
@@ -36,94 +30,32 @@ class SVCModel(MLScorerModel):
         """
         start = time.time()
         
+        # Balance labels
         if balance_labels: values_labels = self._balance_labels(values_labels)
-        values, labels = zip(*values_labels)
         
-        # Scale and center
-        self.feature_stats = self._generate_stats(values)
-        scaled_values = list(self._scale_and_center(values, self.feature_stats))
+        # Split out feature_values
+        feature_values, labels = zip(*values_labels)
         
-        # Fit SVC model
-        self.svc.fit(scaled_values, labels)
-        
-        return {
-            'seconds_elapsed': time.time() - start
-        }
-    
-    def score(self, values):
-        """
-        :Returns:
-            An iterable of dictionaries with the fields:
+        # Scale and center feature_values
+        self.feature_stats = self._generate_stats(feature_values)
+        scaled_values = self._scale_and_center(feature_values,
+                                               self.feature_stats)
             
-            * predicion -- The most likely class
-            * probability -- A mapping of probabilities for input classes
-                             corresponding to the classes the classifier was
-                             trained on.  Generating this probability is
-                             slower than a simple prediction.
-        """
-        scaled_values = list(self._scale_and_center(values, self.feature_stats))
-        predictions = self.svc.predict(scaled_values)
-        probabilities = (
-            {label:proba for label, proba in zip(self.svc.classes_, probas)}
-            for probas in self.svc.predict_proba(scaled_values)
-        )
+        # Train the classifier
+        stats = super().train(zip(scaled_values, labels))
         
-        for prediction, probability in zip(predictions, probabilities):
-            doc = {
-                'prediction': prediction,
-                'probability': probability
-            }
-            yield normalize_json(doc)
-                
+        # Overwrite seconds elapsed to account for time spent
+        # balancing and scaling
+        stats['seconds_elapsed'] = time.time() - start
         
+        return stats
     
-    def test(self, values_labels, comparison_class="auto"):
-        """
-        :Returns:
-            A dictionary of test statistics with the fields:
-            
-            * mean.accuracy -- The mean accuracy of classification
-            * auc --
-            * table --
-            * roc
-                * fpr --
-                * tpr --
-                
-        """
-        values, labels = zip(*values_labels)
-        values, labels = list(values), list(labels)
+    def score(self, feature_values):
+        scaled_values = next(self._scale_and_center([feature_values],
+                                                    self.feature_stats))
         
-        scores = list(self.score(values))
-        
-        if comparison_class == "auto":
-            comparison_class = self.svc.classes_[1]
-        elif comparison_class not in self.svc.classes_:
-            raise TypeError("comparison_class {0} is not in {1}" \
-                            .format(comparison_class, self.svc.classes_))
-        
-        
-        probabilities = [s['probability'][comparison_class]
-                         for s in scores]
-        predicteds = [s['prediction'] for s in scores]
-        
-        true_positives = [l == comparison_class for l in labels]
-        
-        fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
-        
-        table = {}
-        for pair in zip(labels, predicteds):
-            table[pair] = table.get(pair, 0) + 1
-        
-        return {
-            'table': table,
-            'mean.accuracy': self.svc.score(values, labels),
-            'roc': {
-                'fpr': list(fpr),
-                'tpr': list(tpr),
-                'thresholds': list(thresholds)
-            },
-            'auc': auc(fpr, tpr)
-        }
+        return super().score(scaled_values)
+    
     
     def _balance_labels(self, values_labels):
         """
@@ -152,10 +84,11 @@ class SVCModel(MLScorerModel):
         Why would anyone want to do this?  If you don't, SVM's
         predict_proba() will return values that don't represent it's
         predictions.  This is a hack.  It seems to work in practice with large
-        numbers of observations.
+        numbers of observations[2].
         
         1. See https://www.ma.utexas.edu/users/parker/sampling/repl.htm for a
            discussion of "sampling with replacement".
+        2. http://nbviewer.ipython.org/github/halfak/Objective-Revision-Evaluation-Service/blob/ipython/ipython/Wat%20predict_proba.ipynb
                 
         """
         #Group observations by label
@@ -175,19 +108,6 @@ class SVCModel(MLScorerModel):
         # Shuffle the observations again before returning.
         random.shuffle(new_values_labels)
         return new_values_labels
-    
-    def _generate_stats(self, values):
-        columns = zip(*values)
-        
-        stats = tuple((mean(c), stdev(c)) for c in columns)
-        
-        return stats
-    
-    def _scale_and_center(self, values, stats):
-        
-        for feature_values in values:
-            yield (tuple((val-mean)/max(sd, 0.01)
-                   for (mean, sd), val in zip(stats, feature_values)))
 
 
 class LinearSVCModel(SVCModel):
@@ -200,8 +120,6 @@ class LinearSVCModel(SVCModel):
 
 
 class RBFSVCModel(SVCModel):
-    
-    DEFAULTS = {}
     
     def __init__(self, *args, **kwargs):
         if 'kernel' in kwargs:

@@ -6,6 +6,13 @@ class Language:
         self.name = str(name)
         self.utilities = list(utilities)
     
+    def __eq__(self, other):
+        try:
+            return self.name == other.name and \
+                   self.utilities == other.utilities
+        except AttributeError as e:
+            return False
+    
     def cache(self):
         utility_methods = zip(self.utilities, solve_many(self.utilities))
         return {utility:method for utility, method in utility_methods}

@@ -40,5 +40,6 @@ def is_stopword_process():
     return is_stopword
 is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
 
+
 turkish = Language("revscoring.languages.turkish",
                    [is_badword, is_stopword])
