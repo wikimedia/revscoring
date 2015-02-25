@@ -2,7 +2,7 @@ from ..datasources import previous_user_revision_metadata, revision_metadata
 from .feature import Feature
 
 
-def process(previous_user_revision_metadata,revision_metadata):
+def process(previous_user_revision_metadata, revision_metadata):
     
     return revision_metadata.timestamp - \
            (previous_user_revision_metadata.timestamp or

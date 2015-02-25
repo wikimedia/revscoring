@@ -19,6 +19,9 @@ class Dependent:
         self.calls += 1
         return self.process(*args, **kwargs)
     
+    def __hash__(self):
+        return hash((self.__class__.__name__, self.name))
+    
     def __str__(self): return self.__repr__()
     
     def __repr__(self):

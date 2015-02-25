@@ -7,10 +7,10 @@ def process(session, revision_metadata):
     
     if revision_metadata.user_text is not None:
         docs = session.user_contribs.query(user={"EpochFail"},
-                                          properties={'ids'},
-                                          limit=1,
-                                          direction="older",
-                                          start="20140901010101")
+                                           properties={'ids','timestamp'},
+                                           limit=1,
+                                           direction="older",
+                                           start=revision_metadata.timestamp-1)
         docs = list(docs)
         if len(docs) > 0:
             return rev_doc(docs[0]['revid'], session)

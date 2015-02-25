@@ -1,19 +1,28 @@
 from nose.tools import eq_
 
-from ..english import english
+from .. import language
+from ..english import is_badword, is_misspelled, is_stopword, stem_word
 
 
 def test_language():
     
-    assert english.is_badword("shit")
-    assert english.is_badword("shitty")
-    assert not english.is_badword("hat")
+    eq_(stem_word()("shitting"), "shit")
+    eq_(stem_word()("Shitting"), "shit")
+    eq_(hash(stem_word), hash(language.stem_word))
     
-    assert english.is_misspelled("wjwkjb")
-    assert not english.is_misspelled("waffles")
+    assert is_badword(stem_word())("shit")
+    assert is_badword(stem_word())("shitty")
+    assert is_badword(stem_word())("Shitty")
+    assert not is_badword(stem_word())("hat")
+    eq_(hash(is_badword), hash(language.is_badword))
     
-    eq_(list(english.badwords(["good", "slut", "bad", "ugly", "fucker"])),
-        ["slut", "fucker"])
+    assert is_misspelled()("wjwkjb")
+    assert not is_misspelled()("waffles")
+    assert not is_misspelled()("Waffles")
+    eq_(hash(is_misspelled), hash(language.is_misspelled))
     
-    eq_(list(english.misspellings(["waffles", "oof", "dog", "blarg"])),
-        ["oof", "blarg"])
+    assert is_stopword()("A")
+    assert is_stopword()("in")
+    assert is_stopword()("about")
+    assert not is_stopword()("waffles")
+    eq_(hash(is_stopword), hash(language.is_stopword))

@@ -20,12 +20,6 @@ other_float = Feature("other_float", process_other_float(),
                       depends_on=[], returns=float)
 FEATURES = [some_float, other_float]
 
-
-def is_badword(word): return word == "badword"
-def is_misspelled(word): return word == "misspelled"
-some_language = Language(is_badword, is_misspelled)
-LANGUAGE = some_language
-
 def train_score(model):
     deterministic = random.Random(0)
     observations = list(chain(
@@ -69,16 +63,16 @@ def pickle_and_unpickle(model):
     eq_(type(reconstructed_model), type(model))
 
 def test_svc():
-    model = SVCModel(FEATURES, LANGUAGE)
+    model = SVCModel(FEATURES)
     train_score(model)
     pickle_and_unpickle(model)
     
 def test_linear_svc():
-    model = LinearSVCModel(FEATURES, LANGUAGE)
+    model = LinearSVCModel(FEATURES)
     train_score(model)
     pickle_and_unpickle(model)
     
 def test_rbf_svc():
-    model = RBFSVCModel(FEATURES, LANGUAGE)
+    model = RBFSVCModel(FEATURES)
     train_score(model)
     pickle_and_unpickle(model)

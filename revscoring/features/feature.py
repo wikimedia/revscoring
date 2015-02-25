@@ -34,7 +34,7 @@ class Feature(Dependent):
         else: return value
     
     def __hash__(self):
-        return hash(self.name)
+        return super().__hash__()
     
     # Binary math
     def __add__(self, summand):
