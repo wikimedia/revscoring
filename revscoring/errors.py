@@ -1,1 +1,1 @@
-class RevisionNotFoundError(Exception): pass
+class RevisionDocumentNotFound(Exception): pass

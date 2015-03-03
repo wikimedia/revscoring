@@ -1,5 +1,6 @@
 from . import revision
 from .datasource import Datasource
+from .types import RevisionMetadata
 
 
 def process_doc(session, revision_metadata):
@@ -22,10 +23,8 @@ doc = Datasource("previous_user_revision.doc", process_doc,
                  depends_on=['session', revision.metadata])
 
 def process_metadata(previous_user_revision_doc):
-    if previous_user_revision_doc is not None:
-        return RevisionMetadata.from_doc(previous_user_revision_doc)
-    else:
-        return None
+    return RevisionMetadata.from_doc(previous_user_revision_doc) \
+           if previous_user_revision_doc is not None else None
 
 metadata = Datasource("previous_user_revision.metadata", process_metadata,
-                      depends_on=['session', revision.metadata])
+                      depends_on=[doc])

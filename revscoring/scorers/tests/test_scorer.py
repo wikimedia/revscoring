@@ -8,8 +8,10 @@ from ..scorer import Scorer
 
 def test_scorer():
     FakeExtractor = namedtuple("FakeExtractor", ['extract', 'language'])
-    extractor = FakeExtractor(lambda rid, features: [3, 5],
-                              "herpderp")
+    def fake_extract(rev_id, features):
+        d = {'foo': 3, 'bar': 5}
+        return (d[f] for f in features)
+    extractor = FakeExtractor(fake_extract, "herpderp")
     
     FakeModel = namedtuple("FakeModel", ['score', 'features', 'language'])
     multiply = FakeModel(lambda feature_values:feature_values[0] * \

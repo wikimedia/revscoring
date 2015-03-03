@@ -1,3 +1,6 @@
+from mw import Timestamp
+
+
 class RevisionMetadata:
     __slots__ = ('rev_id', 'parent_id', 'user_text', 'user_id', 'timestamp',
                  'comment', 'page_id', 'page_namespace', 'page_title', 'bytes',
@@ -19,9 +22,9 @@ class RevisionMetadata:
     
     @classmethod
     def from_doc(cls, rev_doc):
-        try:
+        if 'timestamp' in rev_doc and rev_doc['timestamp'] is not None:
             timestamp = Timestamp(rev_doc.get('timestamp'))
-        except ValueError:
+        else:
             timestamp = None
         
         return cls(rev_doc.get('revid'),
@@ -47,7 +50,7 @@ class UserInfo:
                  groups, implicitgroups, emailable,
                  gender, block_id, blocked_by,
                  blocked_by_id, blocked_timestamp, block_reason,
-                 block_expiry)
+                 block_expiry):
         self.id = int(id) if id is not None else None
         self.name = str(name) if name is not None else None
         self.editcount = int(editcount) if editcount is not None else None
@@ -67,13 +70,14 @@ class UserInfo:
         self.block_expiry = str(block_expiry) \
                             if block_expiry is not None else None
     
+    @classmethod
     def from_doc(cls, user_doc):
         try:
             registration = Timestamp(user_doc.get('registration'))
         except ValueError:
             registration = None
         
-        cls(
+        return cls(
             user_doc.get('userid'),
             user_doc.get('name'),
             user_doc.get('editcount'),

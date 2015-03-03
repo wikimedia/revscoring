@@ -1,25 +1,24 @@
 from deltas import segment_matcher
 from deltas.tokenizers import WikitextSplit
 
-from . import previous_revision, revision
+from . import parent_revision, revision
 from .datasource import Datasource
+from .util import WORD_RE
 
-# Used to identify and extract words.
-WORD_RE = re.compile('\w+', re.UNICODE)
 
-def process_operations(previous_revision_text, revision_text):
-    previous_revision_text = previous_revision_text or ''
+def process_operations(parent_revision_text, revision_text):
+    parent_revision_text = parent_revision_text or ''
     revision_text = revision_text or ''
     
     tokenizer = WikitextSplit()
     
-    a = tokenizer.tokenize(previous_revision_text)
+    a = tokenizer.tokenize(parent_revision_text)
     b = tokenizer.tokenize(revision_text)
     
     return [op for op in segment_matcher.diff(a, b)], a, b
 
 operations = Datasource("diff.operations", process_operations,
-                        depends_on=[previous_revision.text, revision.text])
+                        depends_on=[parent_revision.text, revision.text])
 
 def process_added_tokens(diff_operations):
     

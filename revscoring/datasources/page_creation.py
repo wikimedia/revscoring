@@ -1,6 +1,7 @@
 from . import revision
 from ..errors import RevisionDocumentNotFound
 from .datasource import Datasource
+from .types import RevisionMetadata
 
 
 def process_doc(session, revision_metadata):
@@ -24,4 +25,4 @@ def process_metadata(page_creation_doc):
     return RevisionMetadata.from_doc(page_creation_doc)
     
 metadata = Datasource("page_creation.metadata", process_metadata,
-                      depends_on=['session', doc])
+                      depends_on=[doc])

@@ -1,5 +1,6 @@
 from . import revision
 from .datasource import Datasource
+from .types import UserInfo
 
 
 def process_doc(session, revision_metadata):
