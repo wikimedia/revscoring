@@ -4,11 +4,12 @@ from datetime import datetime
 from pytz import utc
 from revscoring.languages import is_stopword, stem_word
 
+from . import modifiers
 from ..datasources import revision
+from ..languages import is_badword, is_misspelled, is_stopword, stem_word
 from .feature import Feature
-from .modifiers import max
-from .util import (CATEGORY_RE, CITE_RE, IMAGE_RE, INFOBOX_RE,
-                   SECTION_COMMENT_RE, SYMBOLIC_RE)
+from .util import (CATEGORY_RE, CITE_RE, IMAGE_RE, INFOBOX_RE, MARKUP_RE,
+                   NUMERIC_RE, SECTION_COMMENT_RE, SYMBOLIC_RE)
 
 
 ################################# Time #########################################
@@ -55,87 +56,127 @@ def process_has_section_comment(revision_metadata):
 has_section_comment = \
         Feature("revision.has_section_comment", process_has_section_comment,
                 returns=bool, depends_on=[revision.metadata])
+                
+################################# Bytes ########################################
+
+def process_bytes(revision_metadata):
+    return revision_metadata.bytes or 0
+
+bytes = Feature("revision.bytes", process_bytes,
+                returns=int, depends_on=[revision.metadata])
 
 ################################ Characters ####################################
 
 def process_chars(revision_text):
     return len(revision_text)
 
-chars = Feature("parent_revision.chars", process_chars,
+chars = Feature("revision.chars", process_chars,
                 returns=int, depends_on=[revision.text])
 
 def process_markup_chars(revision_text):
-    return sum(1 for _ in MARKUP_RE.finditer(revision_text))
+    return sum(len(m.group(0)) for m in MARKUP_RE.finditer(revision_text))
 
-markup_chars = Feature("parent_revision.markup_chars", process_markup_chars,
+markup_chars = Feature("revision.markup_chars", process_markup_chars,
                        returns=int, depends_on=[revision.text])
 
-proportion_of_markup_chars = markup_chars / max(chars, 1)
+proportion_of_markup_chars = markup_chars / modifiers.max(chars, 1)
 
 def process_numeric_chars(revision_text):
-    return sum(1 for _ in NUMERIC_RE.finditer(revision_text))
+    return sum(len(m.group(0)) for m in NUMERIC_RE.finditer(revision_text))
 
-numeric_chars = Feature("parent_revision.numeric_chars", process_numeric_chars,
+numeric_chars = Feature("revision.numeric_chars", process_numeric_chars,
                         returns=int, depends_on=[revision.text])
 
-proportion_of_numeric_chars = numeric_chars / max(chars, 1)
+proportion_of_numeric_chars = numeric_chars / modifiers.max(chars, 1)
 
 def process_symbolic_chars(revision_text):
-    return sum(1 for _ in SYMBOLIC_RE.finditer(revision_text))
+    return sum(len(m.group(0)) for m in SYMBOLIC_RE.finditer(revision_text))
 
-symbolic_chars = Feature("parent_revision.symbolic_chars",
+symbolic_chars = Feature("revision.symbolic_chars",
                          process_symbolic_chars,
                          returns=int, depends_on=[revision.text])
 
-proportion_of_symbolic_chars = symbolic_chars / max(chars, 1)
+proportion_of_symbolic_chars = symbolic_chars / modifiers.max(chars, 1)
 
 def process_uppercase_chars(revision_text):
-    return sum(c.upper() == c for c in revision_text)
+    return sum(c.lower() != c for c in revision_text)
 
-uppercase_chars = Feature("parent_revision.uppercase_chars",
+uppercase_chars = Feature("revision.uppercase_chars",
                           process_uppercase_chars,
                           returns=int, depends_on=[revision.text])
 
-proportion_of_uppercase_chars = uppercase_chars / max(chars, 1)
+proportion_of_uppercase_chars = uppercase_chars / modifiers.max(chars, 1)
+
+################################## Words #######################################
+
+def process_words(revision_words):
+    return len(revision_words)
+
+words = Feature("revision.words", process_words,
+                returns=int, depends_on=[revision.words])
+
+def process_badwords(is_badword, revision_words):
+    return sum(is_badword(word) for word in revision_words)
+
+badwords = Feature("revision.badwords", process_badwords,
+                   returns=int,
+                   depends_on=[is_badword, revision.words])
+
+proportion_of_badwords = badwords / modifiers.max(words, 1)
+
+def process_misspellings(is_misspelled, revision_words):
+    return sum(is_misspelled(word) for word in revision_words)
+
+misspellings = Feature("revision.misspellings", process_misspellings,
+                       returns=int,
+                       depends_on=[is_misspelled, revision.words])
+
+proportion_of_misspellings = badwords / modifiers.max(words, 1)
 
 
 ################################ Parse tree ####################################
 
-def level_1_headings_process(headings):
-    return sum(h.level==2 for h in headings)
+def process_level_1_headings(headings):
+    return sum(h.level==1 for h in headings)
 
-level_1_headings = Feature("level_1_headings", level_1_headings_process,
-                           returns=int, depends_on=[revision.headings])
+level_1_headings = \
+        Feature("revision.level_1_headings", process_level_1_headings,
+                returns=int, depends_on=[revision.headings])
                            
-def level_2_headings_process(headings):
+def process_level_2_headings(headings):
    return sum(h.level==2 for h in headings)
 
-level_2_headings = Feature("level_2_headings", level_2_headings_process,
-                          returns=int, depends_on=[revision.headings])
+level_2_headings = \
+        Feature("revision.level_2_headings", process_level_2_headings,
+                returns=int, depends_on=[revision.headings])
 
-def level_3_headings_process(headings):
+def process_level_3_headings(headings):
     return sum(h.level==3 for h in headings)
 
-level_3_headings = Feature("level_3_headings", level_3_headings_process,
-                           returns=int, depends_on=[revision.headings])
+level_3_headings = \
+        Feature("revision.level_3_headings", process_level_3_headings,
+                returns=int, depends_on=[revision.headings])
 
-def level_4_headings_process(headings):
+def process_level_4_headings(headings):
     return sum(h.level==4 for h in headings)
 
-level_4_headings = Feature("level_4_headings", level_4_headings_process,
-                           returns=int, depends_on=[revision.headings])
+level_4_headings = \
+        Feature("revision.level_4_headings", process_level_4_headings,
+                returns=int, depends_on=[revision.headings])
 
-def level_5_headings_process(headings):
+def process_level_5_headings(headings):
     return sum(h.level==5 for h in headings)
 
-level_5_headings = Feature("level_5_headings", level_5_headings_process,
-                           returns=int, depends_on=[revision.headings])
+level_5_headings = \
+        Feature("revision.level_5_headings", process_level_5_headings,
+                returns=int, depends_on=[revision.headings])
 
-def level_6_headings_process(headings):
+def process_level_6_headings(headings):
     return sum(h.level==5 for h in headings)
 
-level_6_headings = Feature("level_6_headings", level_6_headings_process,
-                           returns=int, depends_on=[revision.headings])
+level_6_headings = \
+        Feature("revision.level_6_headings", process_level_6_headings,
+                returns=int, depends_on=[revision.headings])
 
 def process_infonoise(is_stopword, stem_word, content_words):
     non_stopwords = (w for w in content_words if not is_stopword(w))
@@ -144,51 +185,51 @@ def process_infonoise(is_stopword, stem_word, content_words):
     return sum(len(w) for w in non_stopword_stems) / \
            max(sum(len(w) for w in content_words), 1)
 
-infonoise = Feature("infonoise", process_infonoise, returns=float,
+infonoise = Feature("revision.infonoise", process_infonoise, returns=float,
                     depends_on=[is_stopword, stem_word, revision.content_words])
 
 def process_internal_links(revision_internal_links):
     return len(revision_internal_links)
 
-internal_links = Feature("internal_links", process_internal_links,
+internal_links = Feature("revision.internal_links", process_internal_links,
                          returns=int, depends_on=[revision.internal_links])
 
 def process_image_links(revision_internal_links):
-    return sum(1 for _ in revision_internal_links
+    return sum(1 for l in revision_internal_links
                  if IMAGE_RE.match(str(l.title)))
 
-image_links = Feature("image_links_process", process_image_links,
+image_links = Feature("revision.image_links", process_image_links,
                       returns=int, depends_on=[revision.internal_links])
                       
 def process_category_links(revision_internal_links):
-    return sum(1 for _ in revision_internal_links
+    return sum(1 for l in revision_internal_links
                  if CATEGORY_RE.match(str(l.title)))
 
-category_links = Feature("category_links", process_category_links,
+category_links = Feature("revision.category_links", process_category_links,
                          returns=int, depends_on=[revision.internal_links])
 
 def ref_tags_process(revision_tags):
     return sum(1 for tag in revision_tags if tag.tag == "ref")
 
-ref_tags = Feature("ref_tags", ref_tags_process, returns=int,
+ref_tags = Feature("revision.ref_tags", ref_tags_process, returns=int,
                    depends_on=[revision.tags])
 
 def process_templates(revision_templates):
-    return len(templates_process)
+    return len(revision_templates)
 
-templates = Feature("templates", process_templates,
+templates = Feature("revision.templates", process_templates,
                     returns=int, depends_on=[revision.templates])
 
 def process_cite_templates(revision_templates):
-    return sum(1 for t in templates if CITE_RE.search(str(t.name)))
+    return sum(1 for t in revision_templates if CITE_RE.search(str(t.name)))
 
-cite_templates = Feature("cite_templates", process_cite_templates,
+cite_templates = Feature("revision.cite_templates", process_cite_templates,
                          returns=int, depends_on=[revision.templates])
 
-proportion_of_templated_references = cite_templates / max(ref_tags, 1)
+proportion_of_templated_references = cite_templates / modifiers.max(ref_tags, 1)
 
 def process_infobox_templates(revision_templates):
-    return sum(1 for t in templates if INFOBOX_RE.search(str(t.name)))
+    return sum(1 for t in revision_templates if INFOBOX_RE.search(str(t.name)))
 
-infobox_templates = Feature("infobox_templates", process_infobox_templates,
+infobox_templates = Feature("revision.infobox_templates", process_infobox_templates,
                             returns=int, depends_on=[revision.templates])

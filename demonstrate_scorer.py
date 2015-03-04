@@ -1,8 +1,7 @@
 from io import BytesIO
 from pprint import pprint
 
-from revscoring.features import (proportion_of_badwords_added,
-                                 proportion_of_markup_added)
+from revscoring.features import diff
 from revscoring.scorers import LinearSVCModel, MLScorerModel
 
 training_set = [
@@ -22,8 +21,8 @@ test_set = [
     ([0.1, 3.1], False)
 ]
 
-model = LinearSVCModel([proportion_of_badwords_added,
-                        proportion_of_markup_added])
+model = LinearSVCModel([diff.proportion_of_badwords_added,
+                        diff.proportion_of_markup_chars_added])
 
 print("Training classifier")
 pprint(model.train(training_set))

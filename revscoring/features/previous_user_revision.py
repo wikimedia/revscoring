@@ -1,9 +1,8 @@
-from ..datasources import previous_user_revision
+from ..datasources import previous_user_revision, revision
 from .feature import Feature
 
 
-def process_seconds_since(previous_user_revision_metadata, revision_metadata):
-    pur_metadata = previous_user_revision_metadata
+def process_seconds_since(pur_metadata, revision_metadata):
     revision_timestamp = revision_metadata.timestamp \
                          if revision_metadata is not None and \
                             revision_metadata.timestamp is not None \
@@ -17,4 +16,5 @@ def process_seconds_since(previous_user_revision_metadata, revision_metadata):
 
 seconds_since = Feature("previous_user_revision", process_seconds_since,
                         returns=int,
-                        depends_on=[previous_user_revision.metadata])
+                        depends_on=[previous_user_revision.metadata,
+                                    revision.metadata])

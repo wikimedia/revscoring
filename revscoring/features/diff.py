@@ -1,15 +1,12 @@
 import re
 from itertools import groupby
 
-from . import parent_revision, revision
+from . import modifiers, parent_revision, revision
 from ..datasources import diff
 from ..languages import is_badword, is_misspelled
-from .feature import max as max_modifier
 from .feature import Feature
 from .util import MARKUP_RE, NUMERIC_RE, SYMBOLIC_RE
 
-math_max = max
-max = max_modifier
 
 def process_segments_added(diff_added_segments):
     return len(diff_added_segments)
@@ -38,9 +35,9 @@ chars_removed = Feature("diff.chars_removed", process_chars_removed,
                         returns=int, depends_on=[diff.removed_segments])
 
 proportion_of_chars_removed = chars_removed / \
-              max(parent_revision.chars, 1)
+              modifiers.max(parent_revision.chars, 1)
 proportion_of_chars_added = chars_removed / \
-            max(revision.chars, 1)
+            modifiers.max(revision.chars, 1)
 
 def process_markup_chars_added(diff_added_segments):
     concat = "".join(diff_added_segments)
@@ -58,10 +55,11 @@ markup_chars_removed = \
         Feature("diff.markup_chars_removed", process_markup_chars_removed,
                 returns=int, depends_on=[diff.removed_segments])
 
-proportion_of_markup_chars_added = markup_chars_added / max(chars_added, 1)
+proportion_of_markup_chars_added = \
+        markup_chars_added / modifiers.max(chars_added, 1)
 added_markup_chars_ratio = \
         proportion_of_markup_chars_added / \
-         max(parent_revision.proportion_of_markup_chars, 1)
+        modifiers.max(parent_revision.proportion_of_markup_chars, 1)
 
 def process_numeric_chars_added(diff_added_segments):
     concat = "".join(diff_added_segments)
@@ -80,10 +78,10 @@ numeric_chars_removed = \
                 returns=int, depends_on=[diff.removed_segments])
 
 proportion_of_numeric_chars_added = \
-    numeric_chars_added / max(chars_added, 1)
+    numeric_chars_added / modifiers.max(chars_added, 1)
 added_number_chars_ratio = \
         proportion_of_numeric_chars_added / \
-        max(parent_revision.proportion_of_numeric_chars, 1)
+        modifiers.max(parent_revision.proportion_of_numeric_chars, 1)
 
 def process_symbolic_chars_added(diff_added_segments):
     concat = "".join(diff_added_segments)
@@ -101,10 +99,10 @@ symbolic_chars_removed = \
         Feature("diff.symbolic_chars_removed", process_symbolic_chars_removed,
                 returns=int, depends_on=[diff.removed_segments])
 
-proportion_of_symbolic_chars_added = symbolic_chars_added / max(chars_added, 1)
+proportion_of_symbolic_chars_added = symbolic_chars_added / modifiers.max(chars_added, 1)
 added_symbolic_chars_ratio = \
         proportion_of_symbolic_chars_added / \
-        max(parent_revision.proportion_of_symbolic_chars, 1)
+        modifiers.max(parent_revision.proportion_of_symbolic_chars, 1)
 
 def process_uppercase_chars_added(diff_added_segments):
     return sum((not c.lower() == c) for segment in diff_added_segments
@@ -123,13 +121,13 @@ uppercase_chars_removed = \
                 returns=int, depends_on=[diff.removed_segments])
 
 proportion_of_uppercase_chars_added = \
-    uppercase_chars_added / max(chars_added, 1)
+    uppercase_chars_added / modifiers.max(chars_added, 1)
 added_uppercase_chars_ratio = \
         proportion_of_uppercase_chars_added / \
-        max(parent_revision.proportion_of_uppercase_chars, 1)
+        modifiers.max(parent_revision.proportion_of_uppercase_chars, 1)
 
 def process_longest_repeated_char_added(diff_added_segments):
-    return math_max(sum(1 for _ in group)
+    return      max(sum(1 for _ in group)
                     for segment in diff_added_segments
                     for _, group in groupby(segment.lower()))
 
@@ -158,9 +156,9 @@ def process_badwords_added(is_badword, diff_added_words):
 badwords_added = Feature("diff.badwords_added", process_badwords_added,
                          returns=int, depends_on=[is_badword, diff.added_words])
 
-proportion_of_badwords_added = badwords_added / max(words_added, 1)
+proportion_of_badwords_added = badwords_added / modifiers.max(words_added, 1)
 added_badwords_ratio = proportion_of_badwords_added / \
-                       max(parent_revision.proportion_of_badwords, 1)
+                       modifiers.max(parent_revision.proportion_of_badwords, 1)
    
 def process_badwords_removed(is_badword, diff_removed_words):
    return sum(is_badword(word) for word in diff_removed_words)
@@ -169,9 +167,9 @@ badwords_removed = Feature("diff.badwords_removed", process_badwords_removed,
                            returns=int,
                            depends_on=[is_badword, diff.removed_words])
 
-proportion_of_badwords_removed = badwords_removed / max(words_added, 1)
+proportion_of_badwords_removed = badwords_removed / modifiers.max(words_added, 1)
 removed_badwords_ratio = proportion_of_badwords_removed / \
-                         max(parent_revision.proportion_of_badwords, 1)
+                         modifiers.max(parent_revision.proportion_of_badwords, 1)
 
 def process_misspellings_added(is_misspelled, diff_added_words):
     return sum(is_misspelled(word) for word in diff_added_words)
@@ -181,10 +179,10 @@ misspellings_added = Feature("diff.misspellings_added", process_badwords_added,
                             depends_on=[is_misspelled, diff.added_words])
 
 proportion_of_misspellings_added = \
-        misspellings_added / max(words_added, 1)
+        misspellings_added / modifiers.max(words_added, 1)
 added_misspellings_ratio = \
         proportion_of_misspellings_added / \
-        max(parent_revision.proportion_of_misspellings, 1)
+        modifiers.max(parent_revision.proportion_of_misspellings, 1)
 
 def process_misspellings_removed(is_misspelled, diff_removed_words):
     return sum(is_misspelled(word) for word in diff_removed_words)
@@ -194,15 +192,15 @@ misspellings_removed = \
                 returns=int, depends_on=[is_misspelled, diff.removed_words])
     
 proportion_of_misspellings_removed = \
-        misspellings_removed / max(words_removed, 1)
+        misspellings_removed / modifiers.max(words_removed, 1)
 removed_misspellings_ratio = \
         proportion_of_misspellings_removed / \
-        max(parent_revision.proportion_of_misspellings, 1)
+        modifiers.max(parent_revision.proportion_of_misspellings, 1)
 
 ############################## tokens ##########################################
 
 def process_longest_token_added(diff_added_tokens):
-    return math_max(len(token) for token in diff_added_tokens)
+    return max(len(token) for token in diff_added_tokens)
 
 longest_token_added = \
         Feature("diff.longest_token_added", process_longest_token_added,

@@ -2,7 +2,6 @@ from collections import namedtuple
 
 from nose.tools import eq_
 
-from ...features import badwords_added, misspellings_added
 from ..scorer import Scorer
 
 

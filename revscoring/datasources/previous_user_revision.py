@@ -13,7 +13,7 @@ def process_doc(session, revision_metadata):
                                            start=revision_metadata.timestamp-1)
         docs = list(docs)
         if len(docs) > 0:
-            return rev_doc(docs[0]['revid'], session)
+            return docs[0]
         else:
             return None
     else:

@@ -1,32 +1,23 @@
+from . import modifiers
 from ..datasources import parent_revision, revision
 from ..languages import is_badword, is_misspelled
-from .feature import Feature, max
-from .util import MARKUP_RE, SYMBOLIC_RE
+from .feature import Feature
+from .revision import bytes as revision_bytes
+from .util import MARKUP_RE, NUMERIC_RE, SYMBOLIC_RE
 
 
 ################################## Bytes #######################################
 
 def process_bytes(parent_revision_metadata):
     return parent_revision_metadata.bytes \
-           if previous_revision_metadata is not None else 0
+           if parent_revision_metadata is not None else 0
 
 bytes = Feature("parent_revision.bytes_changed", process_bytes,
                 returns=int, depends_on=[parent_revision.metadata])
 
-def process_bytes_changed(parent_revision_metadata, revision_metadata):
-    old_bytes = parent_revision_metadata.bytes \
-                if previous_revision_metadata is not None else 0
-    new_bytes = revision_metadata.bytes \
-                if revision_metadata is not None else 0
-    
-    return new_bytes - old_bytes
+bytes_changed = revision_bytes - bytes
 
-bytes_changed = Feature("parent_revision.bytes_changed", process_bytes_changed,
-                        returns=int,
-                        depends_on=[parent_revision.metadata,
-                                    revision.metadata])
-
-bytes_changed_ratio = bytes_changed / max(bytes, 1)
+bytes_changed_ratio = bytes_changed / modifiers.max(bytes, 1)
 
 def process_was_same_user(parent_revision_metadata, revision_metadata):
     
@@ -70,38 +61,38 @@ chars = Feature("parent_revision.chars", process_chars,
                 returns=int, depends_on=[parent_revision.text])
 
 def process_markup_chars(parent_revision_text):
-    return sum(1 for _ in MARKUP_RE.finditer(parent_revision_text))
+    return sum(len(m.group(0)) for m  in MARKUP_RE.finditer(parent_revision_text))
 
 markup_chars = Feature("parent_revision.markup_chars", process_markup_chars,
                        returns=int, depends_on=[parent_revision.text])
 
-proportion_of_markup_chars = markup_chars / max(chars, 1)
+proportion_of_markup_chars = markup_chars / modifiers.max(chars, 1)
 
 def process_numeric_chars(parent_revision_text):
-    return sum(1 for _ in NUMERIC_RE.finditer(parent_revision_text))
+    return sum(len(m.group(0)) for m  in NUMERIC_RE.finditer(parent_revision_text))
 
 numeric_chars = Feature("parent_revision.numeric_chars", process_numeric_chars,
                         returns=int, depends_on=[parent_revision.text])
 
-proportion_of_numeric_chars = numeric_chars / max(chars, 1)
+proportion_of_numeric_chars = numeric_chars / modifiers.max(chars, 1)
 
 def process_symbolic_chars(parent_revision_text):
-    return sum(1 for _ in SYMBOLIC_RE.finditer(parent_revision_text))
+    return sum(len(m.group(0)) for m  in SYMBOLIC_RE.finditer(parent_revision_text))
 
 symbolic_chars = Feature("parent_revision.symbolic_chars",
                          process_symbolic_chars,
                          returns=int, depends_on=[parent_revision.text])
 
-proportion_of_symbolic_chars = symbolic_chars / max(chars, 1)
+proportion_of_symbolic_chars = symbolic_chars / modifiers.max(chars, 1)
 
 def process_uppercase_chars(parent_revision_text):
-    return sum(c.upper() == c for c in parent_revision_text)
+    return sum(c.lower() != c for c in parent_revision_text)
 
 uppercase_chars = Feature("parent_revision.uppercase_chars",
                           process_uppercase_chars,
                           returns=int, depends_on=[parent_revision.text])
 
-proportion_of_uppercase_chars = uppercase_chars / max(chars, 1)
+proportion_of_uppercase_chars = uppercase_chars / modifiers.max(chars, 1)
 
 
 ################################## Words #######################################
@@ -119,7 +110,7 @@ badwords = Feature("parent_revision.badwords", process_badwords,
                    returns=int,
                    depends_on=[is_badword, parent_revision.words])
 
-proportion_of_badwords = badwords / max(words, 1)
+proportion_of_badwords = badwords / modifiers.max(words, 1)
 
 def process_misspellings(is_misspelled, parent_revision_words):
     return sum(is_misspelled(word) for word in parent_revision_words)
@@ -128,4 +119,4 @@ misspellings = Feature("parent_revision.misspellings", process_misspellings,
                        returns=int,
                        depends_on=[is_misspelled, parent_revision.words])
 
-proportion_of_misspellings = badwords / max(words, 1)
+proportion_of_misspellings = badwords / modifiers.max(words, 1)

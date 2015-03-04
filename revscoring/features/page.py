@@ -1,12 +1,9 @@
-from ..datasources import revision, site
+from ..datasources import page_creation, revision, site
 from .feature import Feature
 
 
 def process_is_content_namespace(revision_metadata, namespace_map):
-    content_namespace_ids = set(ns.id for ns in namespace_map.values()
-                                      if ns.content)
-    
-    return revision_metadata.page_namespace in content_namespace_ids
+    return namespace_map[revision_metadata.page_namespace].content
 
 is_content_namespace = \
         Feature("page.is_content_namespace", process_is_content_namespace,

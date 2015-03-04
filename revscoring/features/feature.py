@@ -106,7 +106,7 @@ class BinaryOperator(Modifier):
         left = Feature.or_constant(left)
         right = Feature.or_constant(right)
         
-        name = "{0} {1} {2}".format(left.name, self.CHAR, right.name)
+        name = "({0} {1} {2})".format(left.name, self.CHAR, right.name)
         if returns is None:
             returns = type(self.operate(left.returns(), right.returns()))
         
