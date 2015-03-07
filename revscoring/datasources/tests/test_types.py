@@ -19,7 +19,7 @@ def test_revision_metadata():
         }
     }
     metadata = RevisionMetadata.from_doc(doc)
-    
+
     eq_(metadata.rev_id, 3456789)
     eq_(metadata.parent_id, 54678)
     eq_(metadata.user_id, 34567890)
@@ -29,8 +29,14 @@ def test_revision_metadata():
     eq_(metadata.page_id, 347)
     eq_(metadata.page_namespace, 0)
     eq_(metadata.page_title, "Hats")
-    
-    
+
+
+    doc = {}
+    metadata = RevisionMetadata.from_doc(doc)
+
+    eq_(metadata.timestamp, None)
+
+
 def test_user_info():
     doc = {
         "userid": 24278012,
@@ -54,7 +60,7 @@ def test_user_info():
         "gender": "unknown"
     }
     user_info = UserInfo.from_doc(doc)
-    
+
     eq_(user_info.id, doc['userid'])
     eq_(user_info.name, doc['name'])
     eq_(user_info.editcount, doc['editcount'])
@@ -67,3 +73,21 @@ def test_user_info():
     eq_(user_info.blocked_timestamp, Timestamp(doc['blockedtimestamp']))
     eq_(user_info.block_reason, doc['blockreason'])
     eq_(user_info.block_expiry, doc['blockexpiry'])
+
+
+    doc = {
+        "userid": 24278012,
+        "name": "Hoardablehotsauce",
+        "editcount": 5,
+        "groups": [
+            "*",
+            "user"
+        ],
+        "implicitgroups": [
+            "*",
+            "user"
+        ]
+    }
+    user_info = UserInfo.from_doc(doc)
+    eq_(user_info.registration, None)
+    eq_(user_info.blocked_timestamp, None)

@@ -21,9 +21,9 @@ def test_metadata():
             }
         }
     }
-    
+
     metadata = solve(revision.metadata, cache=cache)
-    
+
     eq_(metadata.rev_id, 3456789)
     eq_(metadata.parent_id, 54678)
     eq_(metadata.user_id, 34567890)
@@ -47,17 +47,17 @@ def test_words():
 
 def test_content():
     text = "This is some {{markup}} and [[stuff]]."
-    
+
     content = solve(revision.content, cache={revision.text: text})
-    
+
     eq_(content, "This is some  and stuff.")
 
 
 def test_content_words():
     text = "This is some {{markup}} and [[stuff]]."
-    
+
     content_words = solve(revision.content_words, cache={revision.text: text})
-    
+
     eq_(content_words, ["This", "is", "some", "and", "stuff"])
 
 def test_headings():
@@ -74,23 +74,23 @@ Testing some text.
 ====== HEADING 6 ======
     """
     headings = solve(revision.headings, cache={revision.text: text})
-    
+
     eq_([h.level for h in headings], [1,2,2,6])
 
 
 def test_intental_links():
     text = "This is some [[Text]] with [http://foobar] [[links|hyperlinks]]"
-    
+
     internal_links = solve(revision.internal_links, cache={revision.text: text})
-    
+
     eq_([str(l.title) for l in internal_links], ["Text", "links"])
 
 
-def test_intental_links():
+def test_tags():
     text = "This <span>is</span> <ref>tags</ref> to <!--<ref>detect</ref>-->"
-    
+
     tags = solve(revision.tags, cache={revision.text: text})
-    
+
     eq_([str(t.tag) for t in tags], ["span", "ref"])
 
 def test_templates():
@@ -107,6 +107,6 @@ Testing some text. {{:User:Hats/Template3}}
 ====== HEADING 6 ======
     """
     templates = solve(revision.templates, cache={revision.text: text})
-    
+
     eq_([str(t.name) for t in templates], ["template0", "template1",
                                            ":User:Hats/Template3"])

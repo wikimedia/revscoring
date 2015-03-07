@@ -5,7 +5,6 @@ from nose.tools import eq_
 from .. import page_creation
 from ...dependent import solve
 
-
 def test_metadata():
     cache = {
         page_creation.doc: {
@@ -14,9 +13,9 @@ def test_metadata():
             "timestamp": "2015-01-07T12:23:57Z"
         }
     }
-    
+
     metadata = solve(page_creation.metadata, cache=cache)
-    
+
     eq_(metadata.rev_id, 3456789)
     eq_(metadata.parent_id, None)
     eq_(metadata.user_id, None)

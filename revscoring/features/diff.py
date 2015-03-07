@@ -42,11 +42,11 @@ proportion_of_chars_added = chars_removed / \
 def process_markup_chars_added(diff_added_segments):
     concat = "".join(diff_added_segments)
     return sum(len(m.group(0)) for m in MARKUP_RE.finditer(concat))
-    
+
 markup_chars_added = \
         Feature("diff.markup_chars_added", process_markup_chars_added,
                 returns=int, depends_on=[diff.added_segments])
-       
+
 def process_markup_chars_removed(diff_removed_segments):
     concat = "".join(diff_removed_segments)
     return sum(len(m.group(0)) for m in MARKUP_RE.finditer(concat))
@@ -64,11 +64,11 @@ added_markup_chars_ratio = \
 def process_numeric_chars_added(diff_added_segments):
     concat = "".join(diff_added_segments)
     return sum(len(m.group(0)) for m in NUMERIC_RE.finditer(concat))
-    
+
 numeric_chars_added = \
         Feature("diff.numeric_chars_added", process_numeric_chars_added,
                 returns=int, depends_on=[diff.added_segments])
-       
+
 def process_numeric_chars_removed(diff_removed_segments):
     concat = "".join(diff_removed_segments)
     return sum(len(m.group(0)) for m in NUMERIC_RE.finditer(concat))
@@ -86,11 +86,11 @@ added_number_chars_ratio = \
 def process_symbolic_chars_added(diff_added_segments):
     concat = "".join(diff_added_segments)
     return sum(len(m.group(0)) for m in SYMBOLIC_RE.finditer(concat))
-    
+
 symbolic_chars_added = \
         Feature("diff.symbolic_chars_added", process_symbolic_chars_added,
                 returns=int, depends_on=[diff.added_segments])
-       
+
 def process_symbolic_chars_removed(diff_removed_segments):
     concat = "".join(diff_removed_segments)
     return sum(len(m.group(0)) for m in SYMBOLIC_RE.finditer(concat))
@@ -111,7 +111,7 @@ def process_uppercase_chars_added(diff_added_segments):
 uppercase_chars_added = \
         Feature("diff.uppercase_chars_added", process_uppercase_chars_added,
                 returns=int, depends_on=[diff.added_segments])
-       
+
 def process_uppercase_chars_removed(diff_removed_segments):
     return sum((not c.lower() == c) for segment in diff_removed_segments
                                     for c in segment)
@@ -159,7 +159,7 @@ badwords_added = Feature("diff.badwords_added", process_badwords_added,
 proportion_of_badwords_added = badwords_added / modifiers.max(words_added, 1)
 added_badwords_ratio = proportion_of_badwords_added / \
                        modifiers.max(parent_revision.proportion_of_badwords, 1)
-   
+
 def process_badwords_removed(is_badword, diff_removed_words):
    return sum(is_badword(word) for word in diff_removed_words)
 
@@ -174,9 +174,9 @@ removed_badwords_ratio = proportion_of_badwords_removed / \
 def process_misspellings_added(is_misspelled, diff_added_words):
     return sum(is_misspelled(word) for word in diff_added_words)
 
-misspellings_added = Feature("diff.misspellings_added", process_badwords_added,
-                            returns=int,
-                            depends_on=[is_misspelled, diff.added_words])
+misspellings_added = \
+    Feature("diff.misspellings_added", process_misspellings_added,
+            returns=int, depends_on=[is_misspelled, diff.added_words])
 
 proportion_of_misspellings_added = \
         misspellings_added / modifiers.max(words_added, 1)
@@ -188,9 +188,9 @@ def process_misspellings_removed(is_misspelled, diff_removed_words):
     return sum(is_misspelled(word) for word in diff_removed_words)
 
 misspellings_removed = \
-        Feature("diff.misspellings_removed", process_badwords_removed,
+        Feature("diff.misspellings_removed", process_misspellings_removed,
                 returns=int, depends_on=[is_misspelled, diff.removed_words])
-    
+
 proportion_of_misspellings_removed = \
         misspellings_removed / modifiers.max(words_removed, 1)
 removed_misspellings_ratio = \

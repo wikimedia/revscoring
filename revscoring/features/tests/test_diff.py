@@ -51,7 +51,20 @@ def test_markup_chars_removed():
         diff_datasource.removed_segments: ["foo[[bar]][HAT]", "{| |}"]
     }
     eq_(solve(markup_chars_removed, cache=cache), 10)
-    
+
+
+def test_numeric_chars_added():
+    cache = {
+        diff_datasource.added_segments: ["foo, '\"?.!2 and 43", "Wut"]
+    }
+    eq_(solve(numeric_chars_added, cache=cache), 3)
+
+def test_numeric_chars_removed():
+    cache = {
+        diff_datasource.removed_segments: ["foo, '\"?.5!#105$%", "Wut"]
+    }
+    eq_(solve(numeric_chars_removed, cache=cache), 4)
+
 
 def test_symbolic_chars_added():
     cache = {
@@ -71,7 +84,7 @@ def test_uppercase_chars_added():
                                            "characterS"]
     }
     eq_(solve(uppercase_chars_added, cache=cache), 14)
-    
+
 def test_uppercase_chars_removed():
     cache = {
         diff_datasource.removed_segments: ["THIS has 5 upper case",

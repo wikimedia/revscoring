@@ -13,7 +13,7 @@ from ..revision import (badwords, bytes, category_links, chars, cite_templates,
                         level_3_headings, level_4_headings, level_5_headings,
                         level_6_headings, markup_chars, misspellings,
                         numeric_chars, ref_tags, symbolic_chars,
-                        uppercase_chars, words)
+                        uppercase_chars, words, templates)
 
 
 def test_day_of_week():
@@ -36,22 +36,27 @@ def test_hour_of_day():
 
 def test_has_custom_comment():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata", ['comment'])
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata("I did stuff!")
     }
     assert solve(has_custom_comment, cache=cache)
-    
+
+    cache = {
+        revision.metadata: FakeRevisionMetadata(None)
+    }
+    assert not solve(has_custom_comment, cache=cache)
+
     cache = {
         revision.metadata: FakeRevisionMetadata("/* Foobar */ I did stuff!")
     }
     assert solve(has_custom_comment, cache=cache)
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata("")
     }
     assert not solve(has_custom_comment, cache=cache)
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata("/* Foobar */")
     }
@@ -59,17 +64,22 @@ def test_has_custom_comment():
 
 def test_has_section_comment():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata", ['comment'])
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata("I did stuff!")
     }
     assert not solve(has_section_comment, cache=cache)
-    
+
+    cache = {
+        revision.metadata: FakeRevisionMetadata(None)
+    }
+    assert not solve(has_section_comment, cache=cache)
+
     cache = {
         revision.metadata: FakeRevisionMetadata("/* Foobar */ I did stuff!")
     }
     assert solve(has_section_comment, cache=cache)
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata("/* Foobar */")
     }
@@ -149,7 +159,7 @@ def test_level_1_headings():
                              FakeHeading(2)]
     }
     eq_(solve(level_1_headings, cache=cache), 0)
-    
+
 def test_level_2_headings():
     FakeHeading = namedtuple("FakeHeading", ['level'])
     cache = {
@@ -240,6 +250,21 @@ def test_ref_tags():
 
 
 
+def test_templates():
+    FakeTemplate = namedtuple("FakeTemplate", ['name'])
+    cache = {
+        revision.templates: [FakeTemplate("Hat"),
+                             FakeTemplate("Cite"),
+                             FakeTemplate("Cite waffle"),
+                             FakeTemplate("Research project/Infobox"),
+                             FakeTemplate("Infobox"),
+                             FakeTemplate("DerpInfobox"),
+                             FakeTemplate("Anarchism/Sidebar")]
+    }
+    eq_(solve(templates, cache=cache), 7)
+
+
+
 def test_cite_templates():
     FakeTemplate = namedtuple("FakeTemplate", ['name'])
     cache = {
@@ -252,7 +277,7 @@ def test_cite_templates():
                              FakeTemplate("Anarchism/Sidebar")]
     }
     eq_(solve(cite_templates, cache=cache), 2)
-    
+
 def test_infobox_templates():
     FakeTemplate = namedtuple("FakeTemplate", ['name'])
     cache = {

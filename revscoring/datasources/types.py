@@ -19,14 +19,14 @@ class RevisionMetadata:
         self.page_title = str(page_title) if page_title is not None else None
         self.bytes = int(bytes) if bytes is not None else None
         self.minor = bool(minor)
-    
+
     @classmethod
     def from_doc(cls, rev_doc):
         if 'timestamp' in rev_doc and rev_doc['timestamp'] is not None:
             timestamp = Timestamp(rev_doc.get('timestamp'))
         else:
             timestamp = None
-        
+
         return cls(rev_doc.get('revid'),
                    rev_doc.get('parentid'),
                    rev_doc.get('user'),
@@ -45,7 +45,7 @@ class UserInfo:
                  'gender', 'block_id', 'blocked_by',
                  'blocked_by_id', 'blocked_timestamp', 'block_reason',
                  'block_expiry')
-    
+
     def __init__(self, id, name, editcount, registration,
                  groups, implicitgroups, emailable,
                  gender, block_id, blocked_by,
@@ -54,7 +54,7 @@ class UserInfo:
         self.id = int(id) if id is not None else None
         self.name = str(name) if name is not None else None
         self.editcount = int(editcount) if editcount is not None else None
-        self.registration = Timestamp(registration)
+        self.registration = Timestamp(registration) if registration is not None else None
         self.groups = groups or []
         self.implicitgroups = implicitgroups or []
         self.emailable = bool(emailable)
@@ -69,14 +69,14 @@ class UserInfo:
                             if block_reason is not None else None
         self.block_expiry = str(block_expiry) \
                             if block_expiry is not None else None
-    
+
     @classmethod
     def from_doc(cls, user_doc):
         try:
             registration = Timestamp(user_doc.get('registration'))
         except ValueError:
             registration = None
-        
+
         return cls(
             user_doc.get('userid'),
             user_doc.get('name'),
