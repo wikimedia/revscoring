@@ -24,4 +24,4 @@ is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
 
 
 azerbaijani = Language("revscoring.languages.azerbaijani",
-                   [is_badword, is_stopword])
+                   [])
