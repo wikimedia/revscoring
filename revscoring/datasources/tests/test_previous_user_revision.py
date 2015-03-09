@@ -1,4 +1,3 @@
-from deltas import Delete, Equal, Insert
 from mw import Timestamp
 from nose.tools import eq_
 
@@ -14,9 +13,9 @@ def test_metadata():
             "timestamp": "2015-01-07T12:23:57Z"
         }
     }
-    
+
     metadata = solve(previous_user_revision.metadata, cache=cache)
-    
+
     eq_(metadata.rev_id, 3456789)
     eq_(metadata.parent_id, None)
     eq_(metadata.user_id, None)
@@ -26,8 +25,8 @@ def test_metadata():
     eq_(metadata.page_id, None)
     eq_(metadata.page_namespace, None)
     eq_(metadata.page_title, None)
-    
-    
+
+
     metadata = solve(previous_user_revision.metadata,
                      cache={previous_user_revision.doc: None})
     eq_(metadata, None)

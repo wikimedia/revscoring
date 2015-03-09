@@ -76,8 +76,8 @@ def process_tags(revision_parse_tree):
 tags = Datasource("revision.tags", process_tags, depends_on=[parse_tree])
 
 
-def profess_templates(revision_parse_tree):
+def process_templates(revision_parse_tree):
     return revision_parse_tree.filter_templates()
 
-templates = Datasource("revision.templates", profess_templates,
+templates = Datasource("revision.templates", process_templates,
                        depends_on=[parse_tree])
