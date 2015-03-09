@@ -12,7 +12,7 @@ def process_bytes(parent_revision_metadata):
     return parent_revision_metadata.bytes \
            if parent_revision_metadata is not None else 0
 
-bytes = Feature("parent_revision.bytes_changed", process_bytes,
+bytes = Feature("parent_revision.bytes", process_bytes,
                 returns=int, depends_on=[parent_revision.metadata])
 
 bytes_changed = revision_bytes - bytes
@@ -20,12 +20,12 @@ bytes_changed = revision_bytes - bytes
 bytes_changed_ratio = bytes_changed / modifiers.max(bytes, 1)
 
 def process_was_same_user(parent_revision_metadata, revision_metadata):
-    
+
     parent_user_id = parent_revision_metadata.user_id \
                      if parent_revision_metadata is not None else None
     parent_user_text = parent_revision_metadata.user_text \
                        if parent_revision_metadata is not None else None
-    
+
     return (parent_user_id is not None and
             parent_user_id == revision_metadata.user_id) or \
            (parent_user_text is not None and
@@ -37,14 +37,14 @@ was_same_user = Feature("parent_revision.was_same_user", process_was_same_user,
                                     revision.metadata])
 
 def process_seconds_since(parent_revision_metadata, revision_metadata):
-    
+
     revision_timestamp = revision_metadata.timestamp \
                          if revision_metadata is not None else Timestamp(0)
     previous_timestamp = parent_revision_metadata.timestamp \
                          if parent_revision_metadata is not None and \
                             parent_revision_metadata.timestamp is not None \
                          else revision_timestamp
-    
+
     return revision_timestamp - previous_timestamp
 
 seconds_since = Feature("parent_revision.seconds_since", process_seconds_since,
