@@ -85,15 +85,32 @@ def _solve(dependent, cache, history=None):
                 # No dependencies?  OK.  Let's try that.
                 dependencies = []
 
-            # Generate args from dependencies
-            values = []
+            # Generate args for process function from dependencies (if any)
+            args = []
             for dependency in dependencies:
                 value, cache, history = _solve(dependency, cache, history)
-                values.append(value)
+                args.append(value)
 
             # Generate value
-            value = dependent(*values)
+            value = dependent(*args)
 
             # Add value to cache
             cache[dependent] = value
             return cache[dependent], cache, history
+
+
+def draw(dependent, cache=None, depth=0):
+    print("\t" * depth + " - " + str(dependent))
+
+    cache = cache or {}
+
+    # Check if we're a dependent with explicit dependencies
+    if hasattr(dependent, "dependencies"):
+        for dependency in dependent.dependencies:
+            if dependency not in cache:
+                draw(dependency, depth=depth+1)
+            else:
+                draw("CACHED", depth=depth+1)
+    else:
+        # No dependencies?  OK.  Let's try that.
+        dependencies = []
