@@ -15,10 +15,6 @@ def process_bytes(parent_revision_metadata):
 bytes = Feature("parent_revision.bytes", process_bytes,
                 returns=int, depends_on=[parent_revision.metadata])
 
-bytes_changed = revision_bytes - bytes
-
-bytes_changed_ratio = bytes_changed / modifiers.max(bytes, 1)
-
 def process_was_same_user(parent_revision_metadata, revision_metadata):
 
     parent_user_id = parent_revision_metadata.user_id \

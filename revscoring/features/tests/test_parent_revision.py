@@ -6,7 +6,7 @@ from nose.tools import eq_
 from ... import languages
 from ...datasources import parent_revision, revision
 from ...dependent import solve
-from ..parent_revision import (badwords, bytes, bytes_changed, chars,
+from ..parent_revision import (badwords, bytes, chars,
                                markup_chars, misspellings, numeric_chars,
                                seconds_since, symbolic_chars, uppercase_chars,
                                was_same_user, words)
@@ -15,19 +15,19 @@ from ..parent_revision import (badwords, bytes, bytes_changed, chars,
 def test_was_same_user():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['user_id', 'user_text'])
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata(10, "Foobar"),
         parent_revision.metadata: FakeRevisionMetadata(10, "Foobar")
     }
     eq_(solve(was_same_user, cache=cache), True)
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata(10, "Foobar"),
         parent_revision.metadata: FakeRevisionMetadata(10, "Fleebar")
     }
     eq_(solve(was_same_user, cache=cache), True)
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata(None, "127.4.5.6"),
         parent_revision.metadata: FakeRevisionMetadata(None, "127.4.5.6")
@@ -37,7 +37,7 @@ def test_was_same_user():
 def test_seconds_since():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['timestamp'])
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata(Timestamp(10)),
         parent_revision.metadata: FakeRevisionMetadata(Timestamp(1))
@@ -47,21 +47,11 @@ def test_seconds_since():
 def test_bytes():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['bytes'])
-    
+
     cache = {
         parent_revision.metadata: FakeRevisionMetadata(25)
     }
     eq_(solve(bytes, cache=cache), 25)
-
-def test_byte_changed():
-    FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
-                                      ['bytes'])
-    
-    cache = {
-        revision.metadata: FakeRevisionMetadata(5),
-        parent_revision.metadata: FakeRevisionMetadata(25)
-    }
-    eq_(solve(bytes_changed, cache=cache), -20)
 
 def test_chars():
     cache = {

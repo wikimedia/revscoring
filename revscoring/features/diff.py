@@ -8,6 +8,12 @@ from .feature import Feature
 from .util import MARKUP_RE, NUMERIC_RE, SYMBOLIC_RE
 
 
+
+bytes_changed = revision.bytes - parent_revision.bytes
+
+bytes_changed_ratio = bytes_changed / modifiers.max(parent_revision.bytes, 1)
+
+
 def process_segments_added(diff_added_segments):
     return len(diff_added_segments)
 
