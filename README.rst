@@ -90,6 +90,8 @@ You'll need to download NLTK data in order to make use of language features.
     >>> Identifier> wordnet
     >>> Downloader> d
     >>> Identifier> omw
+    >>> Downloader> d
+    >>> Identifier> stopwords
     >>> Downloader> q
     >>> exit()
 
