@@ -1,0 +1,3 @@
+#!/usr/bin/env python3
+from revscoring import revscoring
+revscoring.main()
