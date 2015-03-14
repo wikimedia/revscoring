@@ -204,7 +204,7 @@ def is_misspelled_process():
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            
+
             return len(wordnet.synsets(word, lang="por")) == 0
     return is_misspelled
 is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,

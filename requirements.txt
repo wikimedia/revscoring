@@ -6,3 +6,4 @@ pytz
 scikit-learn
 scipy
 statistics
+mwparserfromhell

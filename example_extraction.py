@@ -1,15 +1,18 @@
 from mw.api import Session
 
 from revscoring.extractors import APIExtractor
-from revscoring.features import (bytes_changed, chars_added, day_of_week_in_utc,
-                                 hour_of_day_in_utc, is_custom_comment,
-                                 user_age_in_seconds, user_is_anon, user_is_bot)
+from revscoring.features import diff, parent_revision, revision, user
 
 api_extractor = APIExtractor(Session("https://en.wikipedia.org/w/api.php"))
 
-features = [bytes_changed, chars_added, day_of_week_in_utc,
-              hour_of_day_in_utc, is_custom_comment, user_age_in_seconds,
-              user_is_anon, user_is_bot]
+features = [revision.day_of_week,
+            revision.hour_of_day,
+            revision.has_custom_comment,
+            parent_revision.bytes_changed,
+            diff.chars_added,
+            user.age,
+            user.is_anon,
+            user.is_bot]
 
 values = api_extractor.extract(
     624577024,

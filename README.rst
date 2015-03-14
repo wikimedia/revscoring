@@ -40,21 +40,21 @@ Feature extraction:
     .. code-block:: python
 
         >>> from mw.api import Session
-        >>>
+        >>> 
         >>> from revscoring.extractors import APIExtractor
-        >>> from revscoring.features import (bytes_changed, chars_added,
-        ...                                  day_of_week_in_utc,
-        ...                                  hour_of_day_in_utc,
-        ...                                  is_custom_comment,
-        ...                                  user_age_in_seconds, user_is_anon,
-        ...                                  user_is_bot)
+        >>> from revscoring.features import diff, parent_revision, revision, user
         >>>
         >>> api_extractor = APIExtractor(Session("https://en.wikipedia.org/w/api.php"))
         Sending requests with default User-Agent.  Set 'user_agent' on api.Session to quiet this message.
         >>>
-        >>> features = [bytes_changed, chars_added, day_of_week_in_utc,
-        ...               hour_of_day_in_utc, is_custom_comment, user_age_in_seconds,
-        ...               user_is_anon, user_is_bot]
+        >>> features = [revision.day_of_week,
+        ...             revision.hour_of_day,
+        ...             revision.has_custom_comment,
+        ...             parent_revision.bytes_changed,
+        ...             diff.chars_added,
+        ...             user.age,
+        ...             user.is_anon,
+        ...             user.is_bot]
         >>>
         >>> values = api_extractor.extract(
         ...     624577024,
@@ -63,14 +63,15 @@ Feature extraction:
         >>> for feature, value in zip(features, values):
         ...     print("{0}: {1}".format(feature, value))
         ...
-        <bytes_changed>: 3
-        <chars_added>: 8
-        <day_of_week_in_utc>: 6
-        <hour_of_day_in_utc>: 19
-        <is_custom_comment>: True
-        <user_age_in_seconds>: 71821407
-        <user_is_anon>: False
-        <user_is_bot>: False
+        <revision.day_of_week>: 6
+        <revision.hour_of_day>: 19
+        <revision.has_custom_comment>: True
+        <(revision.bytes - parent_revision.bytes_changed)>: 3
+        <diff.chars_added>: 8
+        <user.age>: 71821407
+        <user.is_anon>: False
+        <user.is_bot>: False
+
 
 Installation
 ================
