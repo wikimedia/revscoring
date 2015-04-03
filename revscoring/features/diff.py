@@ -210,7 +210,7 @@ def process_longest_token_added(diff_added_tokens):
     try:
         return max(len(token) for token in diff_added_tokens)
     except ValueError:
-        # Happens when there's no segments added
+        # Happens when there's no tokens added
         return 0
 
 longest_token_added = \
