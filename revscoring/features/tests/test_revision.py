@@ -7,13 +7,13 @@ from ... import languages
 from ...datasources import revision
 from ...dependent import solve
 from ..revision import (badwords, bytes, category_links, chars, cite_templates,
-                        day_of_week, has_custom_comment, has_section_comment,
-                        hour_of_day, image_links, infobox_templates, infonoise,
-                        internal_links, level_1_headings, level_2_headings,
-                        level_3_headings, level_4_headings, level_5_headings,
-                        level_6_headings, markup_chars, misspellings,
-                        numeric_chars, ref_tags, symbolic_chars,
-                        uppercase_chars, words, templates)
+                        content_chars, day_of_week, has_custom_comment,
+                        has_section_comment, hour_of_day, image_links,
+                        infobox_templates, infonoise, internal_links,
+                        level_1_headings, level_2_headings, level_3_headings,
+                        level_4_headings, level_5_headings, level_6_headings,
+                        markup_chars, misspellings, numeric_chars, ref_tags,
+                        symbolic_chars, templates, uppercase_chars, words)
 
 
 def test_day_of_week():
@@ -199,6 +199,12 @@ def test_level_6_headings():
                              FakeHeading(2)]
     }
     eq_(solve(level_6_headings, cache=cache), 0)
+
+def test_content_chars():
+    cache = {
+        revision.content: "Thisistwelve" # 12 characters of content
+    }
+    eq_(solve(content_chars, cache=cache), 12)
 
 def test_infonoise():
     cache = {
