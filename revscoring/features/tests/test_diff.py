@@ -10,8 +10,8 @@ from ..diff import (badwords_added, badwords_removed, chars_added,
                     misspellings_removed, numeric_chars_added,
                     numeric_chars_removed, segments_added, segments_removed,
                     symbolic_chars_added, symbolic_chars_removed,
-                    uppercase_chars_added, uppercase_chars_removed, words_added,
-                    words_removed)
+                    uppercase_chars_added, uppercase_chars_removed,
+                    words_added, words_removed)
 
 
 ################################## Segments ####################################
@@ -98,6 +98,10 @@ def test_longest_repeated_char_added():
                                            "aaa bah"]
     }
     eq_(solve(longest_repeated_char_added, cache=cache), 4)
+    cache = {
+        diff_datasource.added_segments: []
+    }
+    eq_(solve(longest_repeated_char_added, cache=cache), 0)
 
 ################################ Words #########################################
 def test_words_added():
@@ -150,3 +154,7 @@ def test_longest_token_added():
         diff_datasource.added_tokens: ["Some", "badword", "refridgerator"]
     }
     eq_(solve(longest_token_added, cache=cache), len("refridgerator"))
+    cache = {
+        diff_datasource.added_tokens: []
+    }
+    eq_(solve(longest_token_added, cache=cache), len(""))
