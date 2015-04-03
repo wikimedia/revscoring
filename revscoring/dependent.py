@@ -6,6 +6,11 @@ logger = logging.getLogger("revscoring.dependent")
 class DependencyLoop(RuntimeError):
     pass
 
+class DependencyError(RuntimeError):
+    def __init__(self, message, exception):
+        super().__init__(message)
+        self.exception = exception
+
 class Dependent:
 
     def __init__(self, name, process, dependencies=None):
@@ -89,10 +94,15 @@ def _solve(dependent, cache, history=None):
             args = []
             for dependency in dependencies:
                 value, cache, history = _solve(dependency, cache, history)
+
                 args.append(value)
 
             # Generate value
-            value = dependent(*args)
+            try:
+                value = dependent(*args)
+            except Exception as e:
+                raise DependencyError("Failed to process {0}: {1}" \
+                                      .format(dependent, e), e)
 
             # Add value to cache
             cache[dependent] = value
