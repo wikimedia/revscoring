@@ -7,8 +7,6 @@ from ..languages import is_badword, is_misspelled
 from .feature import Feature
 from .util import MARKUP_RE, NUMERIC_RE, SYMBOLIC_RE
 
-
-
 bytes_changed = revision.bytes - parent_revision.bytes
 
 bytes_changed_ratio = bytes_changed / modifiers.max(parent_revision.bytes, 1)
@@ -133,10 +131,13 @@ added_uppercase_chars_ratio = \
         modifiers.max(parent_revision.proportion_of_uppercase_chars, 1)
 
 def process_longest_repeated_char_added(diff_added_segments):
-    return      max(sum(1 for _ in group)
-                    for segment in diff_added_segments
-                    for _, group in groupby(segment.lower()))
-
+    try:
+        return max(sum(1 for _ in group)
+                   for segment in diff_added_segments
+                   for _, group in groupby(segment.lower()))
+    except ValueError:
+        # Happens when there's no segments added
+        return 0
 longest_repeated_char_added = \
         Feature("diff.longest_repeated_char_added",
                 process_longest_repeated_char_added,
@@ -206,7 +207,11 @@ removed_misspellings_ratio = \
 ############################## tokens ##########################################
 
 def process_longest_token_added(diff_added_tokens):
-    return max(len(token) for token in diff_added_tokens)
+    try:
+        return max(len(token) for token in diff_added_tokens)
+    except ValueError:
+        # Happens when there's no segments added
+        return 0
 
 longest_token_added = \
         Feature("diff.longest_token_added", process_longest_token_added,
