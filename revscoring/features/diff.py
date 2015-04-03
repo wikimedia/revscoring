@@ -137,7 +137,8 @@ def process_longest_repeated_char_added(diff_added_segments):
                    for _, group in groupby(segment.lower()))
     except ValueError:
         # Happens when there's no segments added
-        return 0
+        return 1
+
 longest_repeated_char_added = \
         Feature("diff.longest_repeated_char_added",
                 process_longest_repeated_char_added,
@@ -211,7 +212,7 @@ def process_longest_token_added(diff_added_tokens):
         return max(len(token) for token in diff_added_tokens)
     except ValueError:
         # Happens when there's no tokens added
-        return 0
+        return 1
 
 longest_token_added = \
         Feature("diff.longest_token_added", process_longest_token_added,
