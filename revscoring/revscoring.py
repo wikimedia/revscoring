@@ -3,9 +3,9 @@ Provides access to a set of utilities for working with revision scorer models.
 
 Utilities
 
-* score       Scores a set of revisions
-* extract     Extracts a list of features for a set of revisions
-* train_test  Trains and tests a MLScorerModel with extracted features.
+* score             Scores a set of revisions
+* extract_features  Extracts a list of features for a set of revisions
+* train_test        Trains and tests a MLScorerModel with extracted features.
 
 Usage:
     revscoring (-h | --help)
