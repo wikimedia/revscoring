@@ -108,9 +108,9 @@ def draw(dependent, cache=None, depth=0):
     if hasattr(dependent, "dependencies"):
         for dependency in dependent.dependencies:
             if dependency not in cache:
-                draw(dependency, depth=depth+1)
+                draw(dependency, cache=cache, depth=depth+1)
             else:
-                draw("CACHED", depth=depth+1)
+                draw("CACHED", cache=cache, depth=depth+1)
     else:
         # No dependencies?  OK.  Let's try that.
         dependencies = []
