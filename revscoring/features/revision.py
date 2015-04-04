@@ -15,7 +15,7 @@ from .util import (CATEGORY_RE, CITE_RE, IMAGE_RE, INFOBOX_RE, MARKUP_RE,
 ################################# Time #########################################
 
 def process_day_of_week(revision_metadata):
-    
+
     dt = datetime.fromtimestamp(revision_metadata.timestamp.unix(), tz=utc)
     return dt.weekday()
 
@@ -23,7 +23,7 @@ day_of_week= Feature("revision.day_of_week", process_day_of_week,
                      returns=int, depends_on=[revision.metadata])
 
 def process_hour_of_day(revision_metadata):
-    
+
     dt = datetime.fromtimestamp(revision_metadata.timestamp.unix(), tz=utc)
     return dt.hour
 
@@ -33,11 +33,11 @@ hour_of_day = Feature("revision.hour_of_day", process_hour_of_day,
 ################################ Comment #######################################
 
 def process_has_custom_comment(revision_metadata):
-    
+
     if revision_metadata.comment is not None:
         trimmed_comment = SECTION_COMMENT_RE.sub("", revision_metadata.comment)
         trimmed_comment = trimmed_comment.strip()
-    
+
         return len(trimmed_comment) > 1
     else:
         return False
@@ -47,7 +47,7 @@ has_custom_comment = Feature("revision.has_custom_comment",
                              returns=bool, depends_on=[revision.metadata])
 
 def process_has_section_comment(revision_metadata):
-    
+
     if revision_metadata.comment is not None:
         return SECTION_COMMENT_RE.match(revision_metadata.comment) is not None
     else:
@@ -56,7 +56,7 @@ def process_has_section_comment(revision_metadata):
 has_section_comment = \
         Feature("revision.has_section_comment", process_has_section_comment,
                 returns=bool, depends_on=[revision.metadata])
-                
+
 ################################# Bytes ########################################
 
 def process_bytes(revision_metadata):
@@ -142,7 +142,7 @@ def process_level_1_headings(headings):
 level_1_headings = \
         Feature("revision.level_1_headings", process_level_1_headings,
                 returns=int, depends_on=[revision.headings])
-                           
+
 def process_level_2_headings(headings):
    return sum(h.level==2 for h in headings)
 
@@ -181,7 +181,7 @@ level_6_headings = \
 def process_infonoise(is_stopword, stem_word, content_words):
     non_stopwords = (w for w in content_words if not is_stopword(w))
     non_stopword_stems = (stem_word(w) for w in non_stopwords)
-    
+
     return sum(len(w) for w in non_stopword_stems) / \
            max(sum(len(w) for w in content_words), 1)
 
@@ -200,7 +200,7 @@ def process_image_links(revision_internal_links):
 
 image_links = Feature("revision.image_links", process_image_links,
                       returns=int, depends_on=[revision.internal_links])
-                      
+
 def process_category_links(revision_internal_links):
     return sum(1 for l in revision_internal_links
                  if CATEGORY_RE.match(str(l.title)))
@@ -233,3 +233,16 @@ def process_infobox_templates(revision_templates):
 
 infobox_templates = Feature("revision.infobox_templates", process_infobox_templates,
                             returns=int, depends_on=[revision.templates])
+
+
+all = [day_of_week, hour_of_day,
+       has_custom_comment, has_section_comment,
+       bytes,
+       chars, markup_chars, numeric_chars, symbolic_chars, uppercase_chars,
+       proportion_of_markup_chars, proportion_of_numeric_chars,
+       proportion_of_symbolic_chars, proportion_of_uppercase_chars,
+       words, badwords, misspellings,
+       level_1_headings, level_2_headings, level_3_headings, level_4_headings,
+       level_5_headings, level_6_headings, infonoise, internal_links,
+       image_links, category_links, ref_tags, templates, cite_templates,
+       infobox_templates]
