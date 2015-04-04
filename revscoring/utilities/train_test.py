@@ -4,20 +4,19 @@ tab-separated feature values and labels from which to construct a model.
 
 Usage:
     train_test -h | --help
-    train_test <model> <features> [--language=<module>]
-                                  [--values-labels=<path>]
-                                  [--boolean-labels]
-                                  [--numeric-labels]
+    train_test <model> [--language=<module>]
+                       [--values-labels=<path>]
+                       [--model-file=<path>]
+                       [--label-type=<type>]
 
 Options:
     -h --help                Prints this documentation
-    <model>                  Classpath to a instance of MLScorerModel to train
-    <features>               Classpath to a set of features to expect as input.
-    --language=<module>      Classpath to an instance of Language
+    <model>                  Classpath to an instance of MLScorerModel to train
     --values-labels=<path>   Path to a file containing feature values and labels
                              [default: <stdin>]
-    --boolean-labels         Interprets the labels as boolean values.
-    --numeric-labels         Interprets the labels as numeric (float) values.
+    --model-file=<math>      Path to write a model file to [default: <stdout>]
+    --label-type=<type>      Interprets the labels as the appropriate type
+                             (int, float, str, bool) [default: str]
 """
 import pprint
 import random
@@ -25,44 +24,45 @@ import sys
 
 import docopt
 
-from .util import import_from_path
+from .util import encode, import_from_path
 
 
-def main():
-    args = docopt.docopt(__doc__)
+def main(argv=None):
+    args = docopt.docopt(__doc__, argv=argv)
 
-    Model = import_from_path(args['<model>'])
-    features = import_from_path(args['<features>'])
-
-    if args['--language'] is not None:
-        language = import_from_path(args['--language'])
-    else:
-        language = None
-
-    model = Model(features, language=language)
+    model = import_from_path(args['<model>'])
 
     if args['--values-labels'] == "<stdin>":
         values_labels_file = sys.stdin
     else:
         values_labels_file = open(args['--values-labels'], 'r')
 
-    boolean_labels = args['--boolean-labels']
+    if args['--model-file'] == "<stdout>":
+        model_file = sys.stdout.buffer
+    else:
+        model_file = open(args['--model-file'], 'wb')
 
-    feature_labels = read_value_labels(values_labels_file, features,
-                                       boolean_labels, numeric_labels)
+    decode_label = DECODERS[args['--label-type']]
+
+    feature_labels = read_value_labels(values_labels_file, model.features,
+                                       decode_label)
 
     run(feature_labels, model)
 
-def read_value_labels(f, features, boolean_labels):
+DECODERS = {
+    'int': lambda v: int(v),
+    'float': lambda v: float(v),
+    'str': lambda v: str(v),
+    'bool': lambda v: v in ("True", "true", "1", "T", "y", "Y")
+}
+
+def read_value_labels(f, features, decode_label):
     for line in f:
         parts = line.strip().split("\t")
         values = parts[:-1]
         label = parts[-1]
 
-        if boolean_labels:
-            label = label == "True"
-        elif numeric_labels:
-            label = float(label)
+        label = decode_label(label)
 
         feature_values = []
         for feature, value in zip(features, values):
@@ -90,12 +90,3 @@ def run(feature_labels, model):
     sys.stderr.write(pprint.pformat(stats) + "\n")
 
     model.dump(sys.stdout.buffer)
-
-"""
-./train_test \
-    revscoring.scorers.LinearSVCModel \
-    ores.features.enwiki.damaging \
-    --language=revscoring.languages.english \
-    --feature-scores=datasets/enwiki.features_reverted.20k.tsv > \
-models/enwiki.reverted.linear_svc.model
-"""

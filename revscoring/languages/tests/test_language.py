@@ -1,9 +1,9 @@
 import pickle
 
-from nose.tools import eq_, assert_not_equal, raises
+from nose.tools import assert_not_equal, eq_, raises
 
-from ..language import Language, LanguageUtility, is_stopword
 from ...dependent import solve
+from ..language import Language, LanguageUtility, is_stopword
 
 
 def process_is_badword():

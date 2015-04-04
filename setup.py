@@ -19,6 +19,11 @@ setup(
     description=("A set of utilities for generating quality scores for " + \
                  "MediaWiki revisions"),
     license="MIT",
+    entry_points = {
+        'console_scripts': [
+            'revscoring = revscoring.revscoring:main',                  
+        ],
+    },
     url="https://github.com/halfak/Revision-Scores",
     packages=find_packages(),
     long_description=read('README.rst'),
