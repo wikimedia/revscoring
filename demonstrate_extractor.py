@@ -1,7 +1,6 @@
 import sys
 
 from mw.api import Session
-
 from revscoring.extractors import APIExtractor
 from revscoring.features import (diff, page, parent_revision,
                                  previous_user_revision, revision, user)
@@ -59,6 +58,7 @@ features = [diff.added_badwords_ratio, diff.added_markup_chars_ratio,
             revision.day_of_week, revision.has_custom_comment,
             revision.has_section_comment, revision.hour_of_day,
             revision.image_links, revision.infobox_templates,
+            revision.content_chars,
             revision.infonoise, revision.internal_links,
             revision.level_1_headings,
             revision.level_2_headings,
