@@ -101,7 +101,7 @@ def test_longest_repeated_char_added():
     cache = {
         diff_datasource.added_segments: []
     }
-    eq_(solve(longest_repeated_char_added, cache=cache), 0)
+    eq_(solve(longest_repeated_char_added, cache=cache), 1)
 
 ################################ Words #########################################
 def test_words_added():
@@ -157,4 +157,4 @@ def test_longest_token_added():
     cache = {
         diff_datasource.added_tokens: []
     }
-    eq_(solve(longest_token_added, cache=cache), len(""))
+    eq_(solve(longest_token_added, cache=cache), 1)

@@ -6,10 +6,10 @@ from nose.tools import eq_
 from ... import languages
 from ...datasources import parent_revision, revision
 from ...dependent import solve
-from ..parent_revision import (badwords, bytes, chars,
-                               markup_chars, misspellings, numeric_chars,
-                               seconds_since, symbolic_chars, uppercase_chars,
-                               was_same_user, words)
+from ..parent_revision import (badwords, bytes, chars, markup_chars,
+                               misspellings, numeric_chars, seconds_since,
+                               symbolic_chars, uppercase_chars, was_same_user,
+                               words)
 
 
 def test_was_same_user():
@@ -65,11 +65,21 @@ def test_markup_chars():
     }
     eq_(solve(markup_chars, cache=cache), 4)
 
+    cache = {
+        parent_revision.text: None
+    }
+    eq_(solve(markup_chars, cache=cache), 0)
+
 def test_numeric_chars():
     cache = {
         parent_revision.text: "Twelve hats pants 95 bananas!"
     }
     eq_(solve(numeric_chars, cache=cache), 2)
+
+    cache = {
+        parent_revision.text: None
+    }
+    eq_(solve(numeric_chars, cache=cache), 0)
 
 def test_symbolic_chars():
     cache = {
@@ -77,11 +87,21 @@ def test_symbolic_chars():
     }
     eq_(solve(symbolic_chars, cache=cache), 4)
 
+    cache = {
+        parent_revision.text: None
+    }
+    eq_(solve(symbolic_chars, cache=cache), 0)
+
 def test_uppercase_chars():
     cache = {
         parent_revision.text: "Twelve hats?  Pants, #95 bananas!"
     }
     eq_(solve(uppercase_chars, cache=cache), 2)
+
+    cache = {
+        parent_revision.text: None
+    }
+    eq_(solve(uppercase_chars, cache=cache), 0)
 
 def test_words():
     cache = {
