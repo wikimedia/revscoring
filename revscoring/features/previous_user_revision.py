@@ -11,10 +11,13 @@ def process_seconds_since(pur_metadata, revision_metadata):
                          if pur_metadata is not None and \
                             pur_metadata.timestamp is not None \
                          else revision_timestamp
-    
+
     return revision_timestamp - previous_timestamp
 
 seconds_since = Feature("previous_user_revision", process_seconds_since,
                         returns=int,
                         depends_on=[previous_user_revision.metadata,
                                     revision.metadata])
+
+
+all = [seconds_since]

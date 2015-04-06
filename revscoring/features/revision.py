@@ -240,3 +240,16 @@ def process_infobox_templates(revision_templates):
 
 infobox_templates = Feature("revision.infobox_templates", process_infobox_templates,
                             returns=int, depends_on=[revision.templates])
+
+
+all = [day_of_week, hour_of_day,
+       has_custom_comment, has_section_comment,
+       bytes,
+       chars, markup_chars, numeric_chars, symbolic_chars, uppercase_chars,
+       proportion_of_markup_chars, proportion_of_numeric_chars,
+       proportion_of_symbolic_chars, proportion_of_uppercase_chars,
+       words, badwords, misspellings,
+       level_1_headings, level_2_headings, level_3_headings, level_4_headings,
+       level_5_headings, level_6_headings, infonoise, internal_links,
+       image_links, category_links, ref_tags, templates, cite_templates,
+       infobox_templates]
