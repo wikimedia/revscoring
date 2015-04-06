@@ -116,3 +116,12 @@ misspellings = Feature("parent_revision.misspellings", process_misspellings,
                        depends_on=[is_misspelled, parent_revision.words])
 
 proportion_of_misspellings = badwords / modifiers.max(words, 1)
+
+all = [bytes, was_same_user, seconds_since, chars,
+       markup_chars, proportion_of_markup_chars,
+       numeric_chars, proportion_of_numeric_chars,
+       symbolic_chars, proportion_of_symbolic_chars,
+       uppercase_chars, proportion_of_uppercase_chars,
+       words,
+       badwords, proportion_of_badwords,
+       misspellings, proportion_of_misspellings]
