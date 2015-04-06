@@ -51,13 +51,14 @@ seconds_since = Feature("parent_revision.seconds_since", process_seconds_since,
 ################################# Characters ###################################
 
 def process_chars(parent_revision_text):
-    return len(parent_revision_text)
+    return len(parent_revision_text or "")
 
 chars = Feature("parent_revision.chars", process_chars,
                 returns=int, depends_on=[parent_revision.text])
 
 def process_markup_chars(parent_revision_text):
-    return sum(len(m.group(0)) for m  in MARKUP_RE.finditer(parent_revision_text))
+    parent_revision_text = parent_revision_text or ""
+    return sum(len(m.group(0)) for m in MARKUP_RE.finditer(parent_revision_text))
 
 markup_chars = Feature("parent_revision.markup_chars", process_markup_chars,
                        returns=int, depends_on=[parent_revision.text])
@@ -65,7 +66,8 @@ markup_chars = Feature("parent_revision.markup_chars", process_markup_chars,
 proportion_of_markup_chars = markup_chars / modifiers.max(chars, 1)
 
 def process_numeric_chars(parent_revision_text):
-    return sum(len(m.group(0)) for m  in NUMERIC_RE.finditer(parent_revision_text))
+    parent_revision_text = parent_revision_text or ""
+    return sum(len(m.group(0)) for m in NUMERIC_RE.finditer(parent_revision_text))
 
 numeric_chars = Feature("parent_revision.numeric_chars", process_numeric_chars,
                         returns=int, depends_on=[parent_revision.text])
@@ -73,7 +75,8 @@ numeric_chars = Feature("parent_revision.numeric_chars", process_numeric_chars,
 proportion_of_numeric_chars = numeric_chars / modifiers.max(chars, 1)
 
 def process_symbolic_chars(parent_revision_text):
-    return sum(len(m.group(0)) for m  in SYMBOLIC_RE.finditer(parent_revision_text))
+    parent_revision_text = parent_revision_text or ""
+    return sum(len(m.group(0)) for m in SYMBOLIC_RE.finditer(parent_revision_text))
 
 symbolic_chars = Feature("parent_revision.symbolic_chars",
                          process_symbolic_chars,
@@ -82,6 +85,7 @@ symbolic_chars = Feature("parent_revision.symbolic_chars",
 proportion_of_symbolic_chars = symbolic_chars / modifiers.max(chars, 1)
 
 def process_uppercase_chars(parent_revision_text):
+    parent_revision_text = parent_revision_text or ""
     return sum(c.lower() != c for c in parent_revision_text)
 
 uppercase_chars = Feature("parent_revision.uppercase_chars",

@@ -2,7 +2,7 @@ import pickle
 
 from nose.tools import assert_not_equal, eq_, raises
 
-from ...dependent import solve
+from ...dependent import DependencyError, solve
 from ..language import Language, LanguageUtility, is_stopword
 
 
@@ -37,7 +37,7 @@ def test_language():
     assert is_badword in recovered_cache
     eq_(recovered_cache[is_badword]("badword"), True)
 
-@raises(NotImplementedError)
+@raises(DependencyError)
 def test_not_implemented():
 
     l = Language('revscoring.languages.test', [])
