@@ -47,7 +47,7 @@ def main(argv=None):
     feature_labels = read_value_labels(values_labels_file, model.features,
                                        decode_label)
 
-    run(feature_labels, model)
+    run(feature_labels, model_file, model)
 
 DECODERS = {
     'int': lambda v: int(v),
@@ -74,7 +74,7 @@ def read_value_labels(f, features, decode_label):
 
         yield feature_values, label
 
-def run(feature_labels, model):
+def run(feature_labels, model_file, model):
 
     feature_labels = list(feature_labels)
     random.shuffle(feature_labels)
@@ -89,4 +89,4 @@ def run(feature_labels, model):
     del stats['roc']
     sys.stderr.write(pprint.pformat(stats) + "\n")
 
-    model.dump(sys.stdout.buffer)
+    model.dump(model_file)
