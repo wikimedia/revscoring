@@ -55,7 +55,7 @@ def main(argv=None):
     if args['--rev-labels'] == "<stdin>":
         rev_labels = read_rev_labels(sys.stdin)
     else:
-        rev_labels = read_rev_lavels(open(args['--rev-labels']))
+        rev_labels = read_rev_labels(open(args['--rev-labels']))
 
     if args['--value-labels'] == "<stdout>":
         value_labels = sys.stdout
