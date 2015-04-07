@@ -200,7 +200,7 @@ is_badword = LanguageUtility("is_badword", is_badword_process,
 
 def is_misspelled_process():
     def is_misspelled(word):
-        if word in ("a", "A", "e", "E"): return False
+        if word.lower() in STOPWORDS: return False
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
