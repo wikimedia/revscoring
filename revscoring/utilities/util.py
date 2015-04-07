@@ -1,6 +1,7 @@
+import sys
 from importlib import import_module
 
-
+sys.path.insert(0, ".") # Necessary for working in other modules
 def import_from_path(path):
     parts = path.split(".")
     module_path = ".".join(parts[:-1])
