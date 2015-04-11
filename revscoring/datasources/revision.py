@@ -22,15 +22,18 @@ def process_doc(rev_id, session):
 
 doc = Datasource("revision.doc", process_doc, depends_on=['rev_id', 'session'])
 
+
 def process_metadata(revision_doc):
     return RevisionMetadata.from_doc(revision_doc)
 
 metadata = Datasource("revision.metadata", process_metadata, depends_on=[doc])
 
+
 def process_text(revision_doc):
     return revision_doc.get("*", "")
 
 text = Datasource("revision.text", process_text, depends_on=[doc])
+
 
 def process_words(revision_text):
     return [m.group(0) for m in WORD_RE.finditer(revision_text)]
@@ -38,13 +41,15 @@ def process_words(revision_text):
 words = Datasource("revision.words", process_words, depends_on=[text])
 
 
-################################# Parsed text ##################################
+################################# Parsed text ################################
+
 
 def process_parse_tree(revision_text):
     return mwp.parse(revision_text or "")
 
 parse_tree = Datasource("revision.parse_tree",
-                         process_parse_tree, depends_on=[text])
+                        process_parse_tree, depends_on=[text])
+
 
 def process_content(revision_parse_tree):
     return revision_parse_tree.strip_code()
@@ -52,11 +57,13 @@ def process_content(revision_parse_tree):
 content = Datasource("revision.content", process_content,
                      depends_on=[parse_tree])
 
+
 def process_content_words(content):
     return [m.group(0) for m in WORD_RE.finditer(content)]
 
 content_words = Datasource("revision.content_words", process_content_words,
                            depends_on=[content])
+
 
 def process_headings(revision_parse_tree):
     return revision_parse_tree.filter_headings()
@@ -64,11 +71,13 @@ def process_headings(revision_parse_tree):
 headings = Datasource("revision.headings", process_headings,
                       depends_on=[parse_tree])
 
+
 def process_internal_links(revision_parse_tree):
     return revision_parse_tree.filter_wikilinks()
 
 internal_links = Datasource("revision.internal_links", process_internal_links,
                             depends_on=[parse_tree])
+
 
 def process_tags(revision_parse_tree):
     return revision_parse_tree.filter_tags()

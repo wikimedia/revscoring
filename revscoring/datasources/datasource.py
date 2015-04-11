@@ -5,7 +5,7 @@ class Datasource(Dependent):
     """
     Represents a data source for generating features.  Unlike features,
     datasources do not necessarily generate simple scalar values.
-    
+
     :Parameters:
         name : str
             The name of the feature
@@ -15,6 +15,6 @@ class Datasource(Dependent):
             An ordered list of dependencies that correspond
             to the *args of `process`
     """
-    
+
     def __init__(self, name, process, depends_on=None):
         super().__init__(name, process, depends_on)

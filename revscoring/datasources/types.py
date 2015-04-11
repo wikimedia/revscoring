@@ -5,6 +5,7 @@ class RevisionMetadata:
     __slots__ = ('rev_id', 'parent_id', 'user_text', 'user_id', 'timestamp',
                  'comment', 'page_id', 'page_namespace', 'page_title', 'bytes',
                  'minor')
+
     def __init__(self, rev_id, parent_id, user_text, user_id, timestamp,
                  comment, page_id, page_namespace, page_title, bytes, minor):
         self.rev_id = int(rev_id) if rev_id is not None else None

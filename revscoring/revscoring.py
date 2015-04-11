@@ -38,7 +38,8 @@ def main():
 
     module_name = sys.argv[1]
     try:
-        module = import_module(".utilities." + module_name, package="revscoring")
+        module = import_module(".utilities." + module_name,
+                               package="revscoring")
     except ImportError:
         sys.stderr.write(traceback.format_exc())
         sys.stderr.write("Could not find utility {0}.\n".format(module_name))
@@ -46,4 +47,5 @@ def main():
 
     module.main(sys.argv[2:])
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()

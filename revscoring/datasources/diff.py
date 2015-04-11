@@ -18,6 +18,7 @@ def process_operations(parent_revision_text, revision_text):
 operations = Datasource("diff.operations", process_operations,
                         depends_on=[parent_revision.text, revision.text])
 
+
 def process_added_tokens(diff_operations):
 
     operations, a, b = diff_operations
@@ -28,6 +29,7 @@ def process_added_tokens(diff_operations):
 
 added_tokens = Datasource("diff.added_tokens", process_added_tokens,
                           depends_on=[operations])
+
 
 def process_removed_tokens(diff_operations):
 
@@ -40,36 +42,41 @@ def process_removed_tokens(diff_operations):
 removed_tokens = Datasource("removed_tokens", process_removed_tokens,
                             depends_on=[operations])
 
+
 def process_added_segments(diff_operations):
     operations, a, b = diff_operations
 
     return ["".join(b[op.b1:op.b2])
-            for op in operations\
+            for op in operations
             if op.name == "insert"]
 
 added_segments = Datasource("diff.added_segments", process_added_segments,
                             depends_on=[operations])
 
+
 def process_removed_segments(revision_diff):
     operations, a, b = revision_diff
 
     return ["".join(a[op.a1:op.a2])
-            for op in operations\
+            for op in operations
             if op.name == "delete"]
 
-removed_segments = Datasource("diff.removed_segments", process_removed_segments,
+removed_segments = Datasource("diff.removed_segments",
+                              process_removed_segments,
                               depends_on=[operations])
+
 
 def process_added_words(diff_added_segments):
     return [match.group(0) for segment in diff_added_segments
-                           for match in WORD_RE.finditer(segment)]
+            for match in WORD_RE.finditer(segment)]
 
 added_words = Datasource("diff.added_words", process_added_words,
-                           depends_on=[added_segments])
+                         depends_on=[added_segments])
+
 
 def process_removed_words(diff_removed_segments):
-   return [match.group(0) for segment in diff_removed_segments
-                          for match in WORD_RE.finditer(segment)]
+    return [match.group(0) for segment in diff_removed_segments
+            for match in WORD_RE.finditer(segment)]
 
 removed_words = Datasource("diff.removed_words", process_removed_words,
-                          depends_on=[removed_segments])
+                           depends_on=[removed_segments])
