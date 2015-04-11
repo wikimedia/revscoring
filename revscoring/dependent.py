@@ -3,13 +3,16 @@ from functools import wraps
 
 logger = logging.getLogger("revscoring.dependent")
 
+
 class DependencyLoop(RuntimeError):
     pass
+
 
 class DependencyError(RuntimeError):
     def __init__(self, message, exception):
         super().__init__(message)
         self.exception = exception
+
 
 class Dependent:
 
@@ -27,10 +30,12 @@ class Dependent:
     def __hash__(self):
         return hash((self.__class__.__name__, self.name))
 
-    def __str__(self): return self.__repr__()
+    def __str__(self):
+        return self.__repr__()
 
     def __repr__(self):
         return "<" + self.name + ">"
+
 
 def solve_many(dependents, cache=None):
     cache = cache or {}
@@ -39,11 +44,13 @@ def solve_many(dependents, cache=None):
         value, cache, history = _solve(dependent, cache)
         yield value
 
+
 def solve(dependent, cache=None):
     cache = cache or {}
 
     value, cache, history = _solve(dependent, cache)
     return value
+
 
 def _solve(dependent, cache, history=None):
     """
@@ -69,13 +76,13 @@ def _solve(dependent, cache, history=None):
 
         # Check if the dependency is callable.  If not, we're SOL
         if not callable(dependent):
-            raise RuntimeError("Can't solve dependency " + repr(dependent) + \
-                               ".  " + type(dependent).__name__ + \
+            raise RuntimeError("Can't solve dependency " + repr(dependent) +
+                               ".  " + type(dependent).__name__ +
                                " is not callable.")
 
         # Check if we're in a loop.
         elif dependent in history:
-            raise DependencyLoop("Dependency loop detected at " + \
+            raise DependencyLoop("Dependency loop detected at " +
                                  repr(dependent))
 
         # All is good.  Time to generate a value
@@ -101,7 +108,7 @@ def _solve(dependent, cache, history=None):
             try:
                 value = dependent(*args)
             except Exception as e:
-                raise DependencyError("Failed to process {0}: {1}" \
+                raise DependencyError("Failed to process {0}: {1}"
                                       .format(dependent, e), e)
 
             # Add value to cache
