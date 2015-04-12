@@ -4,13 +4,13 @@ from .feature import Feature
 
 def process_seconds_since(pur_metadata, revision_metadata):
     revision_timestamp = revision_metadata.timestamp \
-                         if revision_metadata is not None and \
-                            revision_metadata.timestamp is not None \
-                         else Timestamp(0)
+        if revision_metadata is not None and \
+        revision_metadata.timestamp is not None \
+        else Timestamp(0)
     previous_timestamp = pur_metadata.timestamp \
-                         if pur_metadata is not None and \
-                            pur_metadata.timestamp is not None \
-                         else revision_timestamp
+        if pur_metadata is not None and \
+        pur_metadata.timestamp is not None \
+        else revision_timestamp
 
     return revision_timestamp - previous_timestamp
 
