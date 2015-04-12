@@ -5,6 +5,7 @@ from nose.tools import eq_
 from .. import page_creation
 from ...dependent import solve
 
+
 def test_metadata():
     cache = {
         page_creation.doc: {

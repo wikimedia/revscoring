@@ -34,10 +34,12 @@ def test_metadata():
     eq_(metadata.page_namespace, 0)
     eq_(metadata.page_title, "Hats")
 
+
 def test_text():
     text = solve(revision.text,
                  cache={revision.doc: {"*": "Some text"}})
     eq_(text, "Some text")
+
 
 def test_words():
     words = solve(revision.words,
@@ -60,6 +62,7 @@ def test_content_words():
 
     eq_(content_words, ["This", "is", "some", "and", "stuff"])
 
+
 def test_headings():
     text = """
 = Heading 1 =
@@ -75,13 +78,14 @@ Testing some text.
     """
     headings = solve(revision.headings, cache={revision.text: text})
 
-    eq_([h.level for h in headings], [1,2,2,6])
+    eq_([h.level for h in headings], [1, 2, 2, 6])
 
 
 def test_intental_links():
     text = "This is some [[Text]] with [http://foobar] [[links|hyperlinks]]"
 
-    internal_links = solve(revision.internal_links, cache={revision.text: text})
+    internal_links = solve(revision.internal_links,
+                           cache={revision.text: text})
 
     eq_([str(l.title) for l in internal_links], ["Text", "links"])
 
@@ -92,6 +96,7 @@ def test_tags():
     tags = solve(revision.tags, cache={revision.text: text})
 
     eq_([str(t.tag) for t in tags], ["span", "ref"])
+
 
 def test_templates():
     text = """

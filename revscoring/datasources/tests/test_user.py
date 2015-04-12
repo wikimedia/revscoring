@@ -26,7 +26,8 @@ def test_info():
             "blockedby": "Cryptic",
             "blockedbyid": "295294",
             "blockedtimestamp": "2015-02-28T22:43:23Z",
-            "blockreason": "{{uw-softerblock}} <!-- Promotional username, soft block -->",
+            "blockreason": "{{uw-softerblock}} <!-- Promotional username, "
+                           "soft block -->",
             "blockexpiry": "infinity",
             "gender": "unknown"
         }
@@ -42,10 +43,10 @@ def test_info():
     eq_(info.blocked_by, "Cryptic")
     eq_(info.blocked_by_id, 295294)
     eq_(info.blocked_timestamp, Timestamp("2015-02-28T22:43:23Z"))
-    eq_(info.block_reason, "{{uw-softerblock}} <!-- Promotional username, soft block -->")
+    eq_(info.block_reason,
+        "{{uw-softerblock}} <!-- Promotional username, soft block -->")
     eq_(info.block_expiry, "infinity")
     eq_(info.gender, "unknown")
-
 
     cache = {
         user.doc: {
@@ -66,7 +67,6 @@ def test_info():
     info = solve(user.info, cache=cache)
     eq_(info.registration, None)
     eq_(info.blocked_timestamp, None)
-
 
     cache = {
         user.doc: None

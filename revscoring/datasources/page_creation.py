@@ -9,10 +9,10 @@ def process_doc(session, revision_metadata):
                                    direction="newer",
                                    limit=1,
                                    properties={'ids', 'user', 'timestamp',
-                                              'userid', 'comment',
-                                              'flags', 'size'})
+                                               'userid', 'comment',
+                                               'flags', 'size'})
     docs = list(docs)
-    
+
     if len(docs) == 1:
         return docs[0]
     else:
@@ -21,8 +21,9 @@ def process_doc(session, revision_metadata):
 doc = Datasource("page_creation.doc", process_doc,
                  depends_on=['session', revision.metadata])
 
+
 def process_metadata(page_creation_doc):
     return RevisionMetadata.from_doc(page_creation_doc)
-    
+
 metadata = Datasource("page_creation.metadata", process_metadata,
                       depends_on=[doc])
