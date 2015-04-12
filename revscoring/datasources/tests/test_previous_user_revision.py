@@ -26,7 +26,6 @@ def test_metadata():
     eq_(metadata.page_namespace, None)
     eq_(metadata.page_title, None)
 
-
     metadata = solve(previous_user_revision.metadata,
                      cache={previous_user_revision.doc: None})
     eq_(metadata, None)

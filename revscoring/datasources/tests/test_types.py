@@ -30,7 +30,6 @@ def test_revision_metadata():
     eq_(metadata.page_namespace, 0)
     eq_(metadata.page_title, "Hats")
 
-
     doc = {}
     metadata = RevisionMetadata.from_doc(doc)
 
@@ -55,7 +54,8 @@ def test_user_info():
         "blockedby": "Cryptic",
         "blockedbyid": "295294",
         "blockedtimestamp": "2015-02-28T22:43:23Z",
-        "blockreason": "{{uw-softerblock}} <!-- Promotional username, soft block -->",
+        "blockreason": "{{uw-softerblock}} <!-- Promotional username, "
+                       "soft block -->",
         "blockexpiry": "infinity",
         "gender": "unknown"
     }
@@ -73,7 +73,6 @@ def test_user_info():
     eq_(user_info.blocked_timestamp, Timestamp(doc['blockedtimestamp']))
     eq_(user_info.block_reason, doc['blockreason'])
     eq_(user_info.block_expiry, doc['blockexpiry'])
-
 
     doc = {
         "userid": 24278012,

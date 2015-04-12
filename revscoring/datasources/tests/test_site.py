@@ -5,7 +5,7 @@ from ...dependent import solve
 
 
 def test_namespace_map():
-    
+
     cache = {
         site.doc: {
             "namespaces": {
@@ -38,8 +38,8 @@ def test_namespace_map():
             ]
         }
     }
-    
+
     namespace_map = solve(site.namespace_map, cache=cache)
-    
+
     eq_(len(namespace_map), 3)
     eq_(sum(ns.content for ns in namespace_map.values()), 1)

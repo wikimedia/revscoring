@@ -13,9 +13,9 @@ def test_metadata():
             "timestamp": "2015-01-07T12:23:57Z"
         }
     }
-    
+
     metadata = solve(parent_revision.metadata, cache=cache)
-    
+
     eq_(metadata.rev_id, 3456789)
     eq_(metadata.parent_id, None)
     eq_(metadata.user_id, None)
@@ -25,27 +25,29 @@ def test_metadata():
     eq_(metadata.page_id, None)
     eq_(metadata.page_namespace, None)
     eq_(metadata.page_title, None)
-    
-    
-    metadata = solve(parent_revision.metadata, cache={parent_revision.doc: None})
+
+    metadata = solve(parent_revision.metadata,
+                     cache={parent_revision.doc: None})
     eq_(metadata, None)
 
+
 def test_text():
-    
+
     text = solve(parent_revision.text,
                  cache={parent_revision.doc: {"*": "Some text"}})
     eq_(text, "Some text")
-    
+
     text = solve(parent_revision.text,
                  cache={parent_revision.doc: None})
     eq_(text, None)
 
+
 def test_words():
-    
+
     words = solve(parent_revision.words,
-                 cache={parent_revision.text: "Some text words 55."})
+                  cache={parent_revision.text: "Some text words 55."})
     eq_(words, ["Some", "text", "words"])
-    
+
     words = solve(parent_revision.words,
-                 cache={parent_revision.text: None})
+                  cache={parent_revision.text: None})
     eq_(words, [])
