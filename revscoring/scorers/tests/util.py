@@ -31,22 +31,22 @@ def train_score(model):
             (True for i in range(50)))
     ))
     deterministic.shuffle(observations)
-    
+
     mid = int(len(observations)/2)
     train_set = observations[:mid]
     test_set = observations[mid:]
-    
+
     model.train(train_set)
     score_doc = model.score((-.3,-.3))
-    
+
     eq_(score_doc['prediction'], True)
     assert score_doc['probability'][True] > 0.5, \
            "Probability of True {0} is not > 0.5" \
            .format(score_doc['probability'][True])
     json.dumps(score_doc) # Checks if the doc is JSONable
-    
+
     test_stats = model.test(test_set)
-    
+
     del test_stats['roc']
     print(test_stats)
     assert test_stats['auc'] > 0.5
@@ -59,3 +59,4 @@ def pickle_and_unpickle(model):
     eq_([f.name for f in reconstructed_model.features],
         [f.name for f in model.features])
     eq_(type(reconstructed_model), type(model))
+    train_score(reconstructed_model)

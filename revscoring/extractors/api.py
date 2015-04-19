@@ -14,7 +14,7 @@ class APIExtractor(Extractor):
                  'session': self.session}
 
         # If language is available, load utilities into the cache
-        if self.language is None:
+        if self.language is not None:
             cache.update(self.language.cache())
 
         # Insert values into cache
