@@ -1,3 +1,7 @@
+from mw import api
+
+import yamlconf
+
 from ..dependent import solve_many
 from .extractor import Extractor
 
@@ -21,3 +25,13 @@ class APIExtractor(Extractor):
         cache.update(insert or {})
 
         return solve_many(features, cache=cache)
+
+    @classmethod
+    def from_config(cls, config, section_key="extractors"):
+        section = config[section_key]
+        session = api.Session(section['api_url'],
+                              user_agent=section['user_agent'])
+
+        language = Language.from_config(config)
+
+        return cls(session, language)

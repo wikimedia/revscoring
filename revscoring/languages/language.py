@@ -17,6 +17,15 @@ class Language:
         utility_methods = zip(self.utilities, solve_many(self.utilities))
         return {utility:method for utility, method in utility_methods}
 
+    @classmethod
+    def from_config(self, config, name, section_key="extractors"):
+        section = config[section_key][name]
+        if 'module' in section:
+            return yamlconf.import_module(section['module'])
+        elif 'class' in section:
+            Class = yamlconf.import_module(section['class'])
+            return Class.from_config(config, section_key)
+
 
 def not_implemented_processor():
     raise NotImplementedError()

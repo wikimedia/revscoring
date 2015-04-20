@@ -4,6 +4,8 @@ from statistics import mean, stdev
 
 from sklearn.metrics import auc, roc_curve
 
+import yamlconf
+
 from .util import normalize_json
 
 
@@ -49,7 +51,7 @@ class Scorer:
                                          extractor.language.name))
 
     @classmethod
-    def from_config(cls, config, key=None):
+    def from_config(cls, config, name, section_key="scorers"):
         """
         Expects:
 
@@ -73,10 +75,10 @@ class Scorer:
                 enwiki_damaging_2014: ...
                 enwiki_good-faith_2014: ...
         """
-        section = config['scorers'][key]
+        section = config[section_key][name]
 
         model_map = {}
-        for name, key in section['models']:
+        for name, key in section['models'].items():
             model = ScorerModel.from_config(config, key)
             model_map[name] = model
 
@@ -140,13 +142,16 @@ class ScorerModel:
                    for (mean, sd), val in zip(stats, feature_values)))
 
     @classmethod
-    def from_config(cls, config, key):
-        section = config['m    odels'][key]
+    def from_config(cls, config, name, section_key='scorer_models'):
+        section = config[section_key][name]
 
-        class_path = section['class']
-        Class = import_from_classpath(class_path)
-        assert cls != Class
-        return Class.from_config(config, key)
+        if 'module' in section:
+            return yamlconf.import_module(section['module'])
+        elif 'class' in section:
+            class_path = section['class']
+            Class = yamlconf.import_module(class_path)
+            assert cls != Class
+            return Class.from_config(config, name)
 
 
 class MLScorerModel(ScorerModel):
@@ -206,12 +211,15 @@ class MLScorerModel(ScorerModel):
         pickle.dump(self, f)
 
     @classmethod
-    def from_config(self, config, key):
+    def from_config(cls, config, name, section_key="scorer_models"):
         """
         Constructs a model from configuration.
         """
-        section = config['models'][key]
-        return cls.load(open(section['file'], 'rb'))
+        section = config['scorer_models'][name]
+        if 'model_file' in section:
+            return cls.load(open(section['model_file'], 'rb'))
+        else:
+            return cls(**{k:v for k,v in section.items() if k != "class"})
 
 
 
