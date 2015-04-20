@@ -77,7 +77,8 @@ def read_rev_labels(f):
         yield int(rev_id), label
 
 def run(rev_labels, value_labels, features, extractor, verbose=False):
-    if verbose: logging.basicConfig(level=logging.DEBUG)
+    #if verbose: logging.basicConfig(level=logging.DEBUG)
+    # This is far too verbose.
 
     for rev_id, label in rev_labels:
 

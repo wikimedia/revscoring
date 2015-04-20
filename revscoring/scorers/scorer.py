@@ -1,14 +1,14 @@
 import pickle
 import time
+from statistics import mean, stdev
 
 from sklearn.metrics import auc, roc_curve
-from statistics import mean, stdev
 
 from .util import normalize_json
 
 
 class Scorer:
-    
+
     def __init__(self, model_map, extractor):
         """
         :Parameters:
@@ -20,26 +20,26 @@ class Scorer:
         self._check_compatibility(model_map, extractor)
         self.model_map = model_map
         self.extractor = extractor
-    
+
     def score(self, rev_id, models=None):
         # If a set of models isn't specified, score with all of 'em
         models = models or self.model_map.keys()
-        
+
         # Gather a single tuple of unique features needed by the models
         features = tuple({feature for name in models
                                   for feature in self.model_map[name].features})
-        
+
         feature_values = self.extractor.extract(rev_id, features)
         feature_map = {f:v for f,v in zip(features, feature_values)}
-        
+
         scores = {}
         for name in models:
             model = self.model_map[name]
             feature_values = [feature_map[f] for f in model.features]
             scores[name] = model.score(feature_values)
-        
+
         return scores
-    
+
     def _check_compatibility(self, model_map, extractor):
         for _, model in model_map.items():
             if extractor.language != model.language:
@@ -47,12 +47,12 @@ class Scorer:
                                   "extractor language {1}")\
                                  .format(model.language.name,
                                          extractor.language.name))
-    
+
     @classmethod
     def from_config(cls, config, key=None):
         """
         Expects:
-        
+
             scorers:
                 enwiki:
                     models:
@@ -64,24 +64,24 @@ class Scorer:
                         damaging: ptwiki_damaging_2014
                         good-faith: ptwiki_good-faith_2014
                     extractor: ptwiki
-            
+
             extractors:
                 enwiki: ...
                 ptwiki: ...
-            
+
             models:
                 enwiki_damaging_2014: ...
                 enwiki_good-faith_2014: ...
         """
         section = config['scorers'][key]
-        
+
         model_map = {}
         for name, key in section['models']:
             model = ScorerModel.from_config(config, key)
             model_map[name] = model
-        
+
         extractor = Extractor.from_config(config, section['extractor'])
-        
+
         return cls(model_map, extractor)
 
 
@@ -89,7 +89,7 @@ class ScorerModel:
     """
     A model used to score a revision based on a set of features.
     """
-    
+
     def __init__(self, features, language=None):
         """
         :Parameters:
@@ -101,23 +101,23 @@ class ScorerModel:
         """
         self.features = tuple(features)
         self.language = language
-    
-    
+
+
     def score(self, feature_values):
         """
         Make a prediction or otherwise use the model to generate a score.
-        
+
         :Parameters:
             feature_values : collection(`mixed`)
                 an ordered collection of values that correspond to the
                 `Feature` s provided to the constructor
-                
+
         :Returns:
             A `dict` of statistics
         """
         raise NotImplementedError()
-    
-    
+
+
     def _validate_features(self, feature_values):
         """
         Checks the features against provided values to confirm types,
@@ -125,71 +125,71 @@ class ScorerModel:
         """
         return [feature.validate(feature_values)
                 for feature, value in zip(self.feature, feature_values)]
-            
+
     def _generate_stats(self, values):
         columns = zip(*values)
-        
+
         stats = tuple((mean(c), stdev(c)) for c in columns)
-        
+
         return stats
-    
+
     def _scale_and_center(self, values, stats):
-        
+
         for feature_values in values:
             yield (tuple((val-mean)/max(sd, 0.01)
                    for (mean, sd), val in zip(stats, feature_values)))
-    
+
     @classmethod
     def from_config(cls, config, key):
         section = config['m    odels'][key]
-        
+
         class_path = section['class']
         Class = import_from_classpath(class_path)
         assert cls != Class
         return Class.from_config(config, key)
-    
+
 
 class MLScorerModel(ScorerModel):
     """
     A machine learned model used to score a revision based on a set of features.
-    
+
     Machine learned models are trained and tested against labeled data.
     """
-    
+
     def train(self, values_labels):
         """
         Trains the model on labeled data.
-        
+
         :Parameters:
             values_scores : `iterable`((`<values_labels>`, `<label>`))
                 an iterable of labeled data Where <values_labels> is an ordered
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
-        
+
         :Returns:
             A dictionary of model statistics.
         """
         raise NotImplementedError()
-        
-    
+
+
     def test(self, values_labels):
         """
         Tests the model against a labeled data.  Note that test data should be
         withheld from from train data.
-        
+
         :Parameters:
             values_labels : `iterable`((`<feature_values>`, `<label>`))
                 an iterable of labeled data Where <values_labels> is an ordered
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
-                
+
         :Returns:
             A dictionary of test results.
         """
         raise NotImplementedError()
-    
-    
-     
+
+
+
     @classmethod
     def load(cls, f):
         """
@@ -212,47 +212,47 @@ class MLScorerModel(ScorerModel):
         """
         section = config['models'][key]
         return cls.load(open(section['file'], 'rb'))
-        
+
 
 
 class ScikitLearnClassifier(MLScorerModel):
-    
+
     def __init__(self, features, classifier_model, language=None):
         super().__init__(features, language=language)
         self.classifier_model = classifier_model
-    
+
     def train(self, values_labels):
         """
-        
+
         :Returns:
             A dictionary with the fields:
-            
+
             * seconds_elapsed -- Time in seconds spent fitting the model
         """
         start = time.time()
-        
+
         values, labels = zip(*values_labels)
-        
+
         # Fit SVC model
         self.classifier_model.fit(values, labels)
-        
+
         return {
             'seconds_elapsed': time.time() - start
         }
-    
+
     def score(self, feature_values):
         """
         Generates a score for a single revision based on a set of extracted
         feature_values.
-        
+
         :Parameters:
             feature_values : collection(`mixed`)
                 an ordered collection of values that correspond to the
                 `Feature` s provided to the constructor
-                
+
         :Returns:
             A dict with the fields:
-            
+
             * predicion -- The most likely class
             * probability -- A mapping of probabilities for input classes
                              corresponding to the classes the classifier was
@@ -263,51 +263,51 @@ class ScikitLearnClassifier(MLScorerModel):
         labels = self.classifier_model.classes_
         probas = self.classifier_model.predict_proba([feature_values])[0]
         probability = {label:proba for label, proba in zip(labels, probas)}
-        
+
         doc = {
             'prediction': prediction,
             'probability': probability
         }
         return normalize_json(doc)
-        
-    
+
+
     def test(self, values_labels, comparison_class=None):
         """
         :Returns:
             A dictionary of test statistics with the fields:
-            
+
             * mean.accuracy -- The mean accuracy of classification
             * auc -- The area under the ROC curve
             * table -- A truth table for classification
             * roc
                 * fpr -- A list of false-positive rate values
                 * tpr -- A list of true-positive rate values
-                
+
         """
         values, labels = zip(*values_labels)
-        
+
         scores = [self.score(feature_values) for feature_values in values]
-        
+
         if comparison_class == None:
             comparison_class = self.classifier_model.classes_[1]
         elif comparison_class not in self.classifier_model.classes_:
             raise TypeError("comparison_class {0} is not in {1}" \
                             .format(comparison_class,
                                     self.classifier_model.classes_))
-        
-        
+
+
         probabilities = [s['probability'][comparison_class]
                          for s in scores]
         predicteds = [s['prediction'] for s in scores]
-        
+
         true_positives = [l == comparison_class for l in labels]
-        
+
         fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
-        
+
         table = {}
         for pair in zip(labels, predicteds):
             table[pair] = table.get(pair, 0) + 1
-        
+
         return {
             'table': table,
             'mean.accuracy': self.classifier_model.score(values, labels),
