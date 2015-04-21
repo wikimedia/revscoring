@@ -1,3 +1,5 @@
+import yamlconf
+
 from ..dependent import Dependent, solve_many
 
 
@@ -18,7 +20,7 @@ class Language:
         return {utility:method for utility, method in utility_methods}
 
     @classmethod
-    def from_config(self, config, name, section_key="extractors"):
+    def from_config(self, config, name, section_key="languages"):
         section = config[section_key][name]
         if 'module' in section:
             return yamlconf.import_module(section['module'])
