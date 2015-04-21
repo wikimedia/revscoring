@@ -6,6 +6,7 @@ from sklearn.metrics import auc, roc_curve
 
 import yamlconf
 
+from ..extractors import Extractor
 from .util import normalize_json
 
 
@@ -68,10 +69,10 @@ class Scorer:
                     extractor: ptwiki
 
             extractors:
-                enwiki: ...
-                ptwiki: ...
+                enwiki_api: ...
+                ptwiki_api: ...
 
-            models:
+            scorer_models:
                 enwiki_damaging_2014: ...
                 enwiki_good-faith_2014: ...
         """
@@ -215,7 +216,7 @@ class MLScorerModel(ScorerModel):
         """
         Constructs a model from configuration.
         """
-        section = config['scorer_models'][name]
+        section = config[section_key][name]
         if 'model_file' in section:
             return cls.load(open(section['model_file'], 'rb'))
         else:
