@@ -34,7 +34,7 @@ BADWORDS = set([
     "yank", "yankee", "yid",
     "zipperhead"
 ])
-STEMMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
+STEMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
 
 def stem_word_process():
     def stem_word(word):
@@ -44,7 +44,7 @@ stem_word = LanguageUtility("stem_word", stem_word_process, depends_on=[])
 
 def is_badword_process(stem_word):
     def is_badword(word):
-        return stem_word(word) in STEMMMED_BADWORDS
+        return stem_word(word) in STEMMED_BADWORDS
     return is_badword
 is_badword = LanguageUtility("is_badword", is_badword_process, depends_on=[stem_word])
 
