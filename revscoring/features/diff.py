@@ -81,10 +81,17 @@ characters in parent revision.
             extractor.extract(609079959, [diff.proportion_of_chars_removed]))
         [1.0]
 """
+<<<<<<< HEAD
 proportion_of_chars_added = chars_added / \
             modifiers.max(revision.chars, 1)
 """
 Represents ratio of characters added in this edit compared to overall
+=======
+proportion_of_chars_added = chars_removed / \
+            modifiers.max(revision.chars, 1)
+"""
+Represents ratio of characters removed in this edit compared to overall
+>>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
 characters in revision.
 
 :Returns:
@@ -95,8 +102,13 @@ characters in revision.
 
         >>> from revscoring.features import diff
         >>> list(
+<<<<<<< HEAD
             extractor.extract(655097130, [diff.proportion_of_chars_added]))
         [0.012366755496335776]
+=======
+            extractor.extract(609079959, [diff.proportion_of_chars_added]))
+        [4600.0]
+>>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
 """
 
 def process_markup_chars_added(diff_added_segments):
@@ -173,6 +185,7 @@ uppercase_chars_added = \
                 returns=int, depends_on=[diff.added_segments])
 """
 Represents number of uppercase characters added in this edit.
+<<<<<<< HEAD
 
 :Returns:
     int
@@ -180,6 +193,15 @@ Represents number of uppercase characters added in this edit.
 :Example:
     ..code_block :: python
 
+=======
+
+:Returns:
+    int
+
+:Example:
+    ..code_block :: python
+
+>>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
         >>> from revscoring.features import diff
         >>> list(extractor.extract(655097130, [diff.uppercase_chars_added]))
         [9]
@@ -193,6 +215,7 @@ uppercase_chars_removed = \
                 returns=int, depends_on=[diff.removed_segments])
 """
 Represents number of uppercase characters removed in this edit.
+<<<<<<< HEAD
 
 :Returns:
     int
@@ -200,6 +223,15 @@ Represents number of uppercase characters removed in this edit.
 :Example:
     ..code_block :: python
 
+=======
+
+:Returns:
+    int
+
+:Example:
+    ..code_block :: python
+
+>>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
         >>> from revscoring.features import diff
         >>> list(extractor.extract(659049823, [diff.uppercase_chars_removed]))
         [3]
@@ -256,10 +288,17 @@ longest_repeated_char_added = \
                 returns=int, depends_on=[diff.added_segments])
 """
 Represents number of the most repeated character added.
+<<<<<<< HEAD
 
 :Returns:
     int
 
+=======
+
+:Returns:
+    int
+
+>>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
 :Example:
     ..code_block :: python
 
@@ -280,10 +319,17 @@ Represents number of added words in this edit.
 
 :Returns:
     int
+<<<<<<< HEAD
 
 :Example:
     ..code_block :: python
 
+=======
+
+:Example:
+    ..code_block :: python
+
+>>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
         >>> from revscoring.features import diff
         >>> list(extractor.extract(655097130, [diff.words_added]))
         [50]
@@ -295,10 +341,17 @@ words_removed = Feature("diff.words_removed", process_words_removed,
                         returns=int, depends_on=[diff.removed_words])
 """
 Represents number of words removed in this edit.
+<<<<<<< HEAD
 
 :Returns:
     int
 
+=======
+
+:Returns:
+    int
+
+>>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
 :Example:
     ..code_block :: python
 
