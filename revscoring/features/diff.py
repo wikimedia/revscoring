@@ -81,17 +81,10 @@ characters in parent revision.
             extractor.extract(609079959, [diff.proportion_of_chars_removed]))
         [1.0]
 """
-<<<<<<< HEAD
 proportion_of_chars_added = chars_added / \
             modifiers.max(revision.chars, 1)
 """
-Represents ratio of characters added in this edit compared to overall
-=======
-proportion_of_chars_added = chars_removed / \
-            modifiers.max(revision.chars, 1)
-"""
 Represents ratio of characters removed in this edit compared to overall
->>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
 characters in revision.
 
 :Returns:
@@ -102,13 +95,8 @@ characters in revision.
 
         >>> from revscoring.features import diff
         >>> list(
-<<<<<<< HEAD
             extractor.extract(655097130, [diff.proportion_of_chars_added]))
         [0.012366755496335776]
-=======
-            extractor.extract(609079959, [diff.proportion_of_chars_added]))
-        [4600.0]
->>>>>>> a787e86f52e305c8d688dd4cd47362b10dc36ab8
 """
 
 def process_markup_chars_added(diff_added_segments):
