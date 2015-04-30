@@ -31,17 +31,73 @@ def process_chars_added(diff_added_segments):
 
 chars_added = Feature("diff.chars_added", process_chars_added,
                       returns=int, depends_on=[diff.added_segments])
+"""
+Represents number of characters added in this edit.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(655097130, [diff.chars_added]))
+        [297]
+"""
 
 def process_chars_removed(diff_removed_segments):
     return len("".join(diff_removed_segments))
 
 chars_removed = Feature("diff.chars_removed", process_chars_removed,
                         returns=int, depends_on=[diff.removed_segments])
+"""
+Represents number of characters removed in this edit.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(655097130, [diff.chars_removed]))
+        [297]
+"""
 
 proportion_of_chars_removed = chars_removed / \
               modifiers.max(parent_revision.chars, 1)
-proportion_of_chars_added = chars_removed / \
+"""
+Represents ratio of characters removed in this edit compared to overall
+characters in parent revision.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(
+            extractor.extract(609079959, [diff.proportion_of_chars_removed]))
+        [1.0]
+"""
+proportion_of_chars_added = chars_added / \
             modifiers.max(revision.chars, 1)
+"""
+Represents ratio of characters removed in this edit compared to overall
+characters in revision.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(
+            extractor.extract(655097130, [diff.proportion_of_chars_added]))
+        [0.012366755496335776]
+"""
 
 def process_markup_chars_added(diff_added_segments):
     concat = "".join(diff_added_segments)
@@ -115,7 +171,19 @@ def process_uppercase_chars_added(diff_added_segments):
 uppercase_chars_added = \
         Feature("diff.uppercase_chars_added", process_uppercase_chars_added,
                 returns=int, depends_on=[diff.added_segments])
+"""
+Represents number of uppercase characters added in this edit.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(655097130, [diff.uppercase_chars_added]))
+        [9]
+"""
 def process_uppercase_chars_removed(diff_removed_segments):
     return sum((not c.lower() == c) for segment in diff_removed_segments
                                     for c in segment)
@@ -123,12 +191,55 @@ def process_uppercase_chars_removed(diff_removed_segments):
 uppercase_chars_removed = \
         Feature("diff.uppercase_chars_removed", process_uppercase_chars_removed,
                 returns=int, depends_on=[diff.removed_segments])
+"""
+Represents number of uppercase characters removed in this edit.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(659049823, [diff.uppercase_chars_removed]))
+        [3]
+"""
 proportion_of_uppercase_chars_added = \
     uppercase_chars_added / modifiers.max(chars_added, 1)
+"""
+Represents ratio of uppercase characters added compared to overall characters
+added in this edit.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(
+            655097130, [diff.proportion_of_uppercase_chars_added]))
+        [0.030303030303030304]
+"""
+
 added_uppercase_chars_ratio = \
         proportion_of_uppercase_chars_added / \
         modifiers.max(parent_revision.proportion_of_uppercase_chars, 1)
+"""
+Represents ratio of uppercase characters added compared to overall uppercase
+characters in parent revision.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(
+            extractor.extract(655097130, [diff.added_uppercase_chars_ratio]))
+        [0.030303030303030304]
+"""
 
 def process_longest_repeated_char_added(diff_added_segments):
     try:
@@ -143,7 +254,20 @@ longest_repeated_char_added = \
         Feature("diff.longest_repeated_char_added",
                 process_longest_repeated_char_added,
                 returns=int, depends_on=[diff.added_segments])
+"""
+Represents number of the most repeated character added.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(
+            extractor.extract(655097130, [diff.longest_repeated_char_added]))
+        [4]
+"""
 ############################### Words ##########################################
 
 def process_words_added(diff_added_words):
@@ -151,13 +275,37 @@ def process_words_added(diff_added_words):
 
 words_added = Feature("diff.words_added", process_words_added,
                       returns=int, depends_on=[diff.added_words])
+"""
+Represents number of added words in this edit.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(655097130, [diff.words_added]))
+        [50]
+"""
 def process_words_removed(diff_removed_words):
     return len(diff_removed_words)
 
 words_removed = Feature("diff.words_removed", process_words_removed,
                         returns=int, depends_on=[diff.removed_words])
+"""
+Represents number of words removed in this edit.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(659049823, [diff.words_removed]))
+        [3]
+"""
 def process_badwords_added(is_badword, diff_added_words):
     return sum(is_badword(word) for word in diff_added_words)
 
@@ -165,8 +313,37 @@ badwords_added = Feature("diff.badwords_added", process_badwords_added,
                          returns=int, depends_on=[is_badword, diff.added_words])
 
 proportion_of_badwords_added = badwords_added / modifiers.max(words_added, 1)
+"""
+Represents the ratio of 'badwords' added in this edit compared to the overall
+words added in that edit.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(655097130, [diff.proportion_of_badwords_added]))
+        [0.04]
+"""
 added_badwords_ratio = proportion_of_badwords_added / \
                        modifiers.max(parent_revision.proportion_of_badwords, 1)
+"""
+Represents the ratio of 'badwords' added in this edit compared to the overall
+ratio of 'badwords' in the article before the edit was made.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(655097130, [diff.added_badwords_ratio]))
+        [0.04]
+"""
+
 
 def process_badwords_removed(is_badword, diff_removed_words):
    return sum(is_badword(word) for word in diff_removed_words)
