@@ -21,6 +21,19 @@ def process_day_of_week(revision_metadata):
 
 day_of_week= Feature("revision.day_of_week", process_day_of_week,
                      returns=int, depends_on=[revision.metadata])
+"""
+Represents day of week when the edit was made in UTC.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.day_of_week]))
+        [6]
+"""
 
 def process_hour_of_day(revision_metadata):
 
@@ -29,6 +42,19 @@ def process_hour_of_day(revision_metadata):
 
 hour_of_day = Feature("revision.hour_of_day", process_hour_of_day,
                       returns=int, depends_on=[revision.metadata])
+"""
+Represents hour of day when the edit was made in UTC.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.hour_of_day]))
+        [21]
+"""
 
 ################################ Comment #######################################
 
@@ -45,6 +71,19 @@ def process_has_custom_comment(revision_metadata):
 has_custom_comment = Feature("revision.has_custom_comment",
                              process_has_custom_comment,
                              returns=bool, depends_on=[revision.metadata])
+"""
+Represents whether the edit has custom edit summary.
+
+:Returns:
+    bool
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.has_custom_comment]))
+        [False]
+"""
 
 def process_has_section_comment(revision_metadata):
 
@@ -56,7 +95,22 @@ def process_has_section_comment(revision_metadata):
 has_section_comment = \
         Feature("revision.has_section_comment", process_has_section_comment,
                 returns=bool, depends_on=[revision.metadata])
+"""
+Represents whether the edit has section edit summary.
 
+Section edit summaries are like "/* <section title> */" which mediawiki
+automatically creates them when a user edit a section.
+
+:Returns:
+    bool
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.has_section_comment]))
+        [True]
+"""
 ################################# Bytes ########################################
 
 def process_bytes(revision_metadata):
@@ -64,7 +118,19 @@ def process_bytes(revision_metadata):
 
 bytes = Feature("revision.bytes", process_bytes,
                 returns=int, depends_on=[revision.metadata])
+"""
+Represents size of the revision's content in bytes. It uses UTF-8 encoding.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.bytes]))
+        [24028]
+"""
 ################################ Characters ####################################
 
 def process_chars(revision_text):
@@ -72,41 +138,153 @@ def process_chars(revision_text):
 
 chars = Feature("revision.chars", process_chars,
                 returns=int, depends_on=[revision.text])
+"""
+Represents number of characters in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.chars]))
+        [24016]
+"""
 def process_markup_chars(revision_text):
     return sum(len(m.group(0)) for m in MARKUP_RE.finditer(revision_text))
 
 markup_chars = Feature("revision.markup_chars", process_markup_chars,
                        returns=int, depends_on=[revision.text])
+"""
+Represents number of markup characters in the revision.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.markup_chars]))
+        [704]
+"""
 
 proportion_of_markup_chars = markup_chars / modifiers.max(chars, 1)
+"""
+Represents ratio of markup characters compared to all characters in revision.
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.proportion_of_markup_chars]))
+        [0.029313790806129246]
+"""
 def process_numeric_chars(revision_text):
     return sum(len(m.group(0)) for m in NUMERIC_RE.finditer(revision_text))
 
 numeric_chars = Feature("revision.numeric_chars", process_numeric_chars,
                         returns=int, depends_on=[revision.text])
+"""
+Represents number of numeric characters in the revision.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.numeric_chars]))
+        [203]
+"""
 
 proportion_of_numeric_chars = numeric_chars / modifiers.max(chars, 1)
+"""
+Represents ratio of numeric characters compared to all characters in revision.
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.proportion_of_numeric_chars]))
+        [0.008452698201199201]
+"""
 def process_symbolic_chars(revision_text):
     return sum(len(m.group(0)) for m in SYMBOLIC_RE.finditer(revision_text))
 
 symbolic_chars = Feature("revision.symbolic_chars",
                          process_symbolic_chars,
                          returns=int, depends_on=[revision.text])
+"""
+Represents number of symbolic characters in the revision.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.symbolic_chars]))
+        [2559]
+"""
 
 proportion_of_symbolic_chars = symbolic_chars / modifiers.max(chars, 1)
+"""
+Represents ratio of symbolic characters compared to all characters in revision.
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.proportion_of_symbolic_chars]))
+        [0.10655396402398401]
+"""
 def process_uppercase_chars(revision_text):
     return sum(c.lower() != c for c in revision_text)
 
 uppercase_chars = Feature("revision.uppercase_chars",
                           process_uppercase_chars,
                           returns=int, depends_on=[revision.text])
+"""
+Represents number of uppercase characters in the revision.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.uppercase_chars]))
+        [742]
+"""
 
 proportion_of_uppercase_chars = uppercase_chars / modifiers.max(chars, 1)
+"""
+Represents ratio of uppercase characters compared to all characters in revision.
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.proportion_of_uppercase_chars]))
+        [0.030896069287141906]
+"""
 ################################## Words #######################################
 
 def process_words(revision_words):

@@ -8,9 +8,35 @@ from .feature import Feature
 from .util import MARKUP_RE, NUMERIC_RE, SYMBOLIC_RE
 
 bytes_changed = revision.bytes - parent_revision.bytes
+"""
+Represents encoded content bytes changed in this edit. It uses UTF-8 encoding.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import parent_revision
+        >>> list(extractor.extract(655097130, [diff.bytes_changed]))
+        [297]
+"""
 
 bytes_changed_ratio = bytes_changed / modifiers.max(parent_revision.bytes, 1)
+"""
+Represents ratio of bytes changed in this edit compared to parent revision
+size (in bytes).
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import parent_revision
+        >>> list(extractor.extract(655097130, [diff.bytes_changed_ratio]))
+        [0.012515275378197294]
+"""
 
 def process_segments_added(diff_added_segments):
     return len(diff_added_segments)
@@ -128,6 +154,19 @@ def process_numeric_chars_added(diff_added_segments):
 numeric_chars_added = \
         Feature("diff.numeric_chars_added", process_numeric_chars_added,
                 returns=int, depends_on=[diff.added_segments])
+"""
+Represents number of numeric characters added in this edit.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(660405663, [diff.numeric_chars_added]))
+        [52]
+"""
 
 def process_numeric_chars_removed(diff_removed_segments):
     concat = "".join(diff_removed_segments)
@@ -136,9 +175,37 @@ def process_numeric_chars_removed(diff_removed_segments):
 numeric_chars_removed = \
         Feature("diff.numeric_chars_removed", process_numeric_chars_removed,
                 returns=int, depends_on=[diff.removed_segments])
+"""
+Represents number of numeric characters removed in this edit.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(656508079, [diff.numeric_chars_removed]))
+        [6]
+"""
 
 proportion_of_numeric_chars_added = \
     numeric_chars_added / modifiers.max(chars_added, 1)
+"""
+Represents ratio of numeric characters added compared to all characters added
+in this edit.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(660405663, [diff.proportion_of_numeric_chars_added]))
+        [0.0363382250174703]
+"""
+
 added_number_chars_ratio = \
         proportion_of_numeric_chars_added / \
         modifiers.max(parent_revision.proportion_of_numeric_chars, 1)
@@ -351,7 +418,19 @@ def process_badwords_removed(is_badword, diff_removed_words):
 badwords_removed = Feature("diff.badwords_removed", process_badwords_removed,
                            returns=int,
                            depends_on=[is_badword, diff.removed_words])
+"""
+Represents number of words 'badwords' removed in this edit.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import diff
+        >>> list(extractor.extract(602101288, [diff.badwords_removed]))
+        [1]
+"""
 proportion_of_badwords_removed = badwords_removed / modifiers.max(words_added, 1)
 removed_badwords_ratio = proportion_of_badwords_removed / \
                          modifiers.max(parent_revision.proportion_of_badwords, 1)
