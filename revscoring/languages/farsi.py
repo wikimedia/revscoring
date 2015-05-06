@@ -14,4 +14,4 @@ def is_misspelled_process():
 is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,
                                 depends_on=[])
 
-english = Language("revscoring.languages.english", [is_misspelled])
+english = Language("revscoring.languages.farsi", [is_misspelled])
