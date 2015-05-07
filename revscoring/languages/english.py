@@ -35,7 +35,7 @@ BADWORDS = set([
     "yank", "yankee", "yid",
     "zipperhead"
 ])
-STEMMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
+STEMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
 DICTIONARY = enchant.Dict("en")
 
 def stem_word_process():
