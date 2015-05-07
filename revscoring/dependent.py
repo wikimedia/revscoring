@@ -51,6 +51,27 @@ def solve(dependent, cache=None):
     value, cache, history = _solve(dependent, cache)
     return value
 
+def expand(dependent, cache=None):
+    cache = cache or set()
+
+    cache.add(dependent)
+
+    if hasattr(dependent, "dependencies"):
+
+        for dependency in dependent.dependencies:
+            if dependency not in cache:
+                cache = expand(dependency, cache)
+
+    return cache
+
+def expand_many(dependents, cache=None):
+    cache = cache or set()
+
+    for dependent in dependents:
+        cache = expand(dependent, cache)
+
+    return cache
+
 
 def _solve(dependent, cache, history=None):
     """
