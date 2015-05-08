@@ -20,7 +20,19 @@ def process_age(user_info, revision_metadata):
 
 age = Feature("user.age", process_age,
               returns=int, depends_on=[user.info, revision.metadata])
+"""
+Represents age of user when the edit was made in seconds.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [user.age]))
+        [33260354]
+"""
 
 def process_is_anon(revision_metadata):
 
@@ -28,7 +40,19 @@ def process_is_anon(revision_metadata):
 
 is_anon = Feature("user.is_anon", process_is_anon,
                   returns=bool, depends_on=[revision.metadata])
+"""
+Represents whether the user is anonymous or registered.
 
+:Returns:
+    bool
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [user.is_anon]))
+        [False]
+"""
 
 def process_is_bot(user_info):
 
@@ -36,5 +60,18 @@ def process_is_bot(user_info):
 
 is_bot = Feature("user.is_bot", process_is_bot,
                  returns=bool, depends_on=[user.info])
+"""
+Represents whether the user is bot or not.
+
+:Returns:
+    bool
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [user.is_bot]))
+        [False]
+"""
 
 all = [age, is_anon, is_bot]
