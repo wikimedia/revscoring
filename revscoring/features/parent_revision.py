@@ -275,17 +275,67 @@ def process_badwords(is_badword, parent_revision_words):
 badwords = Feature("parent_revision.badwords", process_badwords,
                    returns=int,
                    depends_on=[is_badword, parent_revision.words])
+"""
+Represents number of bad words in parent revision's content.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import parent_revision
+        >>> list(extractor.extract(655097130, [parent_revision.badwords]))
+        [136]
+"""
 
 proportion_of_badwords = badwords / modifiers.max(words, 1)
+"""
+Represents ratio of bad words compared to all words in parent revision.
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import parent_revision
+        >>> list(extractor.extract(655097130, [parent_revision.proportion_of_badwords]))
+        [0.0366182014001077]
+"""
 def process_misspellings(is_misspelled, parent_revision_words):
     return sum(is_misspelled(word) for word in parent_revision_words)
 
 misspellings = Feature("parent_revision.misspellings", process_misspellings,
                        returns=int,
                        depends_on=[is_misspelled, parent_revision.words])
+"""
+Represents number of misspelled words in parent revision's content.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import parent_revision
+        >>> list(extractor.extract(646076603, [parent_revision.misspellings]))
+        [4524]
+"""
 proportion_of_misspellings = badwords / modifiers.max(words, 1)
+"""
+Represents ratio of misspelled words compared to all words in parent revision.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import parent_revision
+        >>> list(extractor.extract(646076603, [parent_revision.proportion_of_misspellings]))
+        [0.0006516587677725119]
+"""
 
 all = [bytes, was_same_user, seconds_since, chars,
        markup_chars, proportion_of_markup_chars,

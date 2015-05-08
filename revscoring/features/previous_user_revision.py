@@ -18,6 +18,18 @@ seconds_since = Feature("previous_user_revision", process_seconds_since,
                         returns=int,
                         depends_on=[previous_user_revision.metadata,
                                     revision.metadata])
+"""
+Represents seconds between last edit and the edit before that.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [previous_user_revision.seconds_since]))
+        [438]
+"""
 
 all = [seconds_since]

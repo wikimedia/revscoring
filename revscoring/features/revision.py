@@ -292,6 +292,19 @@ def process_words(revision_words):
 
 words = Feature("revision.words", process_words,
                 returns=int, depends_on=[revision.words])
+"""
+Represents number of words in the revision.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.words]))
+        [3764]
+"""
 
 def process_badwords(is_badword, revision_words):
     return sum(is_badword(word) for word in revision_words)
@@ -299,18 +312,66 @@ def process_badwords(is_badword, revision_words):
 badwords = Feature("revision.badwords", process_badwords,
                    returns=int,
                    depends_on=[is_badword, revision.words])
+"""
+Represents number of 'badwords' in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.badwords]))
+        [138]
+"""
 proportion_of_badwords = badwords / modifiers.max(words, 1)
+"""
+Represents ratio of 'badwords' compared to all words in the revision.
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.proportion_of_badwords]))
+        [0.036663124335812966]
+"""
 def process_misspellings(is_misspelled, revision_words):
     return sum(is_misspelled(word) for word in revision_words)
 
 misspellings = Feature("revision.misspellings", process_misspellings,
                        returns=int,
                        depends_on=[is_misspelled, revision.words])
+"""
+Represents number of misspelled words in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.misspellings]))
+        [866]
+"""
 proportion_of_misspellings = badwords / modifiers.max(words, 1)
+"""
+Represents ratio of misspelled words compared to all words in the revision.
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.proportion_of_misspellings]))
+        [0.036663124335812966]
+"""
 
 ################################ Parse tree ####################################
 
@@ -320,49 +381,133 @@ def process_level_1_headings(headings):
 level_1_headings = \
         Feature("revision.level_1_headings", process_level_1_headings,
                 returns=int, depends_on=[revision.headings])
+"""
+Represents number of first level headings in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.level_1_headings]))
+        [0]
+"""
 def process_level_2_headings(headings):
    return sum(h.level==2 for h in headings)
 
 level_2_headings = \
         Feature("revision.level_2_headings", process_level_2_headings,
                 returns=int, depends_on=[revision.headings])
+"""
+Represents number of second level headings in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.level_2_headings]))
+        [6]
+"""
 def process_level_3_headings(headings):
     return sum(h.level==3 for h in headings)
 
 level_3_headings = \
         Feature("revision.level_3_headings", process_level_3_headings,
                 returns=int, depends_on=[revision.headings])
+"""
+Represents number of third level headings in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.level_3_headings]))
+        [13]
+"""
 def process_level_4_headings(headings):
     return sum(h.level==4 for h in headings)
 
 level_4_headings = \
         Feature("revision.level_4_headings", process_level_4_headings,
                 returns=int, depends_on=[revision.headings])
+"""
+Represents number of forth level headings in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.level_4_headings]))
+        [4]
+"""
 def process_level_5_headings(headings):
     return sum(h.level==5 for h in headings)
 
 level_5_headings = \
         Feature("revision.level_5_headings", process_level_5_headings,
                 returns=int, depends_on=[revision.headings])
+"""
+Represents number of fifth level headings in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.level_5_headings]))
+        [0]
+"""
 def process_level_6_headings(headings):
     return sum(h.level==5 for h in headings)
 
 level_6_headings = \
         Feature("revision.level_6_headings", process_level_6_headings,
                 returns=int, depends_on=[revision.headings])
+"""
+Represents number of sixth level headings in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.level_6_headings]))
+        [0]
+"""
 
 def process_content_chars(content):
     return len(content)
 
 content_chars = Feature("revision.content_chars", process_content_chars,
                         returns=int, depends_on=[revision.content])
+"""
+Represents number of content characters in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.content_chars]))
+        [19363]
+"""
 def process_infonoise(is_stopword, stem_word, content_words):
     non_stopwords = (w for w in content_words if not is_stopword(w))
     non_stopword_stems = (stem_word(w) for w in non_stopwords)
@@ -372,53 +517,163 @@ def process_infonoise(is_stopword, stem_word, content_words):
 
 infonoise = Feature("revision.infonoise", process_infonoise, returns=float,
                     depends_on=[is_stopword, stem_word, revision.content_words])
+"""
+Represents ratio of non stop words compared to all content words in revision.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.infonoise]))
+        [0.6406679764243615]
+"""
 
 def process_internal_links(revision_internal_links):
     return len(revision_internal_links)
 
 internal_links = Feature("revision.internal_links", process_internal_links,
                          returns=int, depends_on=[revision.internal_links])
+"""
+Represents number of internal links in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.internal_links]))
+        [146]
+"""
 def process_image_links(revision_internal_links):
     return sum(1 for l in revision_internal_links
                  if IMAGE_RE.match(str(l.title)))
 
 image_links = Feature("revision.image_links", process_image_links,
                       returns=int, depends_on=[revision.internal_links])
+"""
+Represents number of image links in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(661258898, [revision.image_links]))
+        [13]
+"""
 def process_category_links(revision_internal_links):
     return sum(1 for l in revision_internal_links
                  if CATEGORY_RE.match(str(l.title)))
 
 category_links = Feature("revision.category_links", process_category_links,
                          returns=int, depends_on=[revision.internal_links])
+"""
+Represents number of category links in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(661258898, [revision.category_links]))
+        [50]
+"""
 def ref_tags_process(revision_tags):
     return sum(1 for tag in revision_tags if tag.tag == "ref")
 
 ref_tags = Feature("revision.ref_tags", ref_tags_process, returns=int,
                    depends_on=[revision.tags])
+"""
+Represents number of reference tags in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(661258898, [revision.ref_tags]))
+        [228]
+"""
 def process_templates(revision_templates):
     return len(revision_templates)
 
 templates = Feature("revision.templates", process_templates,
                     returns=int, depends_on=[revision.templates])
+"""
+Represents number of templates in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(661258898, [revision.templates]))
+        [287]
+"""
 def process_cite_templates(revision_templates):
     return sum(1 for t in revision_templates if CITE_RE.search(str(t.name)))
 
 cite_templates = Feature("revision.cite_templates", process_cite_templates,
                          returns=int, depends_on=[revision.templates])
+"""
+Represents number of citation templates (e.g. "Cite web") in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(661258898, [revision.cite_templates]))
+        [175]
+"""
 proportion_of_templated_references = cite_templates / modifiers.max(ref_tags, 1)
+"""
+Represents ratio of number of citation templates compared to number of
+reference tags in the revision.
 
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.proportion_of_templated_references]))
+        [0.7272727272727273]
+"""
 def process_infobox_templates(revision_templates):
     return sum(1 for t in revision_templates if INFOBOX_RE.search(str(t.name)))
 
 infobox_templates = Feature("revision.infobox_templates", process_infobox_templates,
                             returns=int, depends_on=[revision.templates])
+"""
+Represents number of infobox templates (e.g. "Infobox scientist") in the revision.
 
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(661258898, [revision.infobox_templates]))
+        [1]
+"""
 
 all = [day_of_week, hour_of_day,
        has_custom_comment, has_section_comment,
