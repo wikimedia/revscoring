@@ -1,6 +1,7 @@
 import warnings
 
-from nltk.corpus import stopwords, wordnet
+import enchant
+from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 
 from .language import Language, LanguageUtility
@@ -183,6 +184,7 @@ BADWORDS = set([
     "zipi", "zizi", "zoando", "zoar", "zoeira", "zuando", "zuar", "zueira"
 ])
 STEMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
+DICTIONARY = enchant.Dict("pt")
 
 def stem_word_process():
     def stem_word(word):
@@ -200,12 +202,7 @@ is_badword = LanguageUtility("is_badword", is_badword_process,
 
 def is_misspelled_process():
     def is_misspelled(word):
-        if word.lower() in STOPWORDS: return False
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-
-            return len(wordnet.synsets(word, lang="por")) == 0
+        return not DICTIONARY.check(word)
     return is_misspelled
 is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,
                                 depends_on=[])

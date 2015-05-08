@@ -40,7 +40,7 @@ Feature extraction:
     .. code-block:: python
 
         >>> from mw.api import Session
-        >>> 
+        >>>
         >>> from revscoring.extractors import APIExtractor
         >>> from revscoring.features import diff, parent_revision, revision, user
         >>>
@@ -101,11 +101,11 @@ system.  These are for ``scipy`` and ``numpy``.
 
 Linux Mint 17.1:
 
-1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev``
+1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev myspell-pt myspell-fa myspell-en-au  myspell-en-gb  myspell-en-us  myspell-en-za``
 
 Ubuntu 14.04:
 
-1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev``
+1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev myspell-pt myspell-fa myspell-en-au  myspell-en-gb  myspell-en-us  myspell-en-za``
 
 Authors
 =======
