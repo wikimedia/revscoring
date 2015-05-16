@@ -1,38 +1,31 @@
 from collections import namedtuple
 
+import mwparserfromhell as mwp
 from mw import Timestamp
 
-import mwparserfromhell as mwp
-
-from ..errors import RevisionDocumentNotFound
 from .datasource import Datasource
 from .types import RevisionMetadata
 from .util import WORD_RE
 
 
-def process_doc(rev_id, session):
-    try:
-        doc = session.revisions.get(rev_id=rev_id,
-                                    properties={'ids', 'user', 'timestamp',
-                                                'userid', 'comment', 'content',
-                                                'flags', 'size'})
-        return doc
-    except KeyError:
-        raise RevisionDocumentNotFound({'rev_id': rev_id})
+def process_id():
+    raise NotImplementedError()
 
-doc = Datasource("revision.doc", process_doc, depends_on=['rev_id', 'session'])
+id = Datasource("revision.id", process_id, depends_on=[])
 
 
-def process_metadata(revision_doc):
-    return RevisionMetadata.from_doc(revision_doc)
+def process_metadata():
+    raise NotImplementedError()
 
-metadata = Datasource("revision.metadata", process_metadata, depends_on=[doc])
+metadata = Datasource("revision.metadata", process_metadata, depends_on=[])
 
 
-def process_text(revision_doc):
-    return revision_doc.get("*", "")
+def process_text():
+    raise NotImplementedError()
 
-text = Datasource("revision.text", process_text, depends_on=[doc])
+text = Datasource("revision.text", process_text, depends_on=[])
+
+################################# Words ########################################
 
 
 def process_words(revision_text):
@@ -41,7 +34,7 @@ def process_words(revision_text):
 words = Datasource("revision.words", process_words, depends_on=[text])
 
 
-################################# Parsed text ################################
+################################# Parsed text ##################################
 
 
 def process_parse_tree(revision_text):

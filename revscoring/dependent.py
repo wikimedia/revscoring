@@ -13,13 +13,16 @@ class DependencyError(RuntimeError):
         super().__init__(message)
         self.exception = exception
 
+def not_implemented():
+    raise NotImplementedError()
 
 class Dependent:
 
-    def __init__(self, name, process, dependencies=None):
+    def __init__(self, name, process=not_implemented, depends_on=None,
+                             dependencies=None):
         self.name = name
         self.process = process
-        self.dependencies = dependencies if dependencies is not None else []
+        self.dependencies = dependencies or depends_on or []
         self.calls = 0
 
     def __call__(self, *args, **kwargs):
@@ -28,7 +31,13 @@ class Dependent:
         return self.process(*args, **kwargs)
 
     def __hash__(self):
-        return hash((self.__class__.__name__, self.name))
+        return hash(('dependent', self.name))
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return not self == other
 
     def __str__(self):
         return self.__repr__()
@@ -37,18 +46,16 @@ class Dependent:
         return "<" + self.name + ">"
 
 
-def solve_many(dependents, cache=None):
-    cache = cache or {}
+def solve_many(dependents, context=None, cache=None):
 
     for dependent in dependents:
-        value, cache, history = _solve(dependent, cache)
+        value, cache, history = _solve(dependent, context=context, cache=cache)
         yield value
 
 
-def solve(dependent, cache=None):
-    cache = cache or {}
+def solve(dependent, context=None, cache=None):
 
-    value, cache, history = _solve(dependent, cache)
+    value, cache, history = _solve(dependent, context=context, cache=cache)
     return value
 
 def expand(dependent, cache=None):
@@ -73,13 +80,16 @@ def expand_many(dependents, cache=None):
     return cache
 
 
-def _solve(dependent, cache, history=None):
+def _solve(dependent, context=None, cache=None, history=None):
     """
     Calculates a dependent's value by solving dependencies.
 
     :Parameters:
         dependent : `Dependent` | `function`
             A dependent function to solve for.
+        inject : `dict` | `set`
+            A mapping of injected dependency processers.  Can be specified as a
+            set of new `Dependent` or a map of `Dependent`:func() pairs.
         cache : `dict`
             A memoized cache of previously solved dependencies.
         history : `set`
@@ -88,12 +98,25 @@ def _solve(dependent, cache, history=None):
     :Returns:
         The result of executing the dependent with all dependencies resolved
     """
+    if context is None:
+        context = {}
+    elif not isinstance(context, dict):
+        context = {d:d for d in context}
+    # else leave context alone
+
+    cache = cache or {}
     history = history or set()
 
-    # Check if we've already got this dependency
+    # Check if we've already got a value for this dependency
     if dependent in cache:
         return cache[dependent], cache, history
+
+    # Check if a corresponding dependent was injected into the context
     else:
+
+        # If a dependent is in context here, replace it.
+        if dependent in context:
+            dependent = context[dependent]
 
         # Check if the dependency is callable.  If not, we're SOL
         if not callable(dependent):
@@ -121,7 +144,8 @@ def _solve(dependent, cache, history=None):
             # Generate args for process function from dependencies (if any)
             args = []
             for dependency in dependencies:
-                value, cache, history = _solve(dependency, cache, history)
+                value, cache, history = _solve(dependency, context=context,
+                                               cache=cache, history=history)
 
                 args.append(value)
 

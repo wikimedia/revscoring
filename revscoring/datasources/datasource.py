@@ -16,5 +16,8 @@ class Datasource(Dependent):
             to the *args of `process`
     """
 
-    def __init__(self, name, process, depends_on=None):
-        super().__init__(name, process, depends_on)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __hash__(self):
+        return hash(('datasource', self.name))

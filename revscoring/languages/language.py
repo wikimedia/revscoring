@@ -15,9 +15,8 @@ class Language:
         except AttributeError as e:
             return False
 
-    def cache(self):
-        utility_methods = zip(self.utilities, solve_many(self.utilities))
-        return {utility:method for utility, method in utility_methods}
+    def context(self):
+        return {u:u for u in self.utilities}
 
     @classmethod
     def from_config(self, config, name, section_key="languages"):

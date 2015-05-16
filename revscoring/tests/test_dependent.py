@@ -37,3 +37,15 @@ def test_expand_many():
     cache = expand_many(dependents)
 
     assert foo in cache
+
+def test_inject():
+
+    foo = Dependent("foo", lambda: NotImplemented)
+    bar1 = Dependent("bar1", lambda foo: foo + "bar1", dependencies=[foo])
+    bar2 = Dependent("bar2", lambda foo: foo + "bar2", dependencies=[foo])
+    injected_foo = Dependent("foo", lambda: "foo")
+
+    eq_(list(solve_many([bar1, bar2], context={injected_foo: injected_foo})),
+        ['foobar1', 'foobar2'])
+
+    eq_(injected_foo.calls, 1)

@@ -22,25 +22,6 @@ class RevisionMetadata:
         self.bytes = int(bytes) if bytes is not None else None
         self.minor = bool(minor)
 
-    @classmethod
-    def from_doc(cls, rev_doc):
-        if 'timestamp' in rev_doc and rev_doc['timestamp'] is not None:
-            timestamp = Timestamp(rev_doc.get('timestamp'))
-        else:
-            timestamp = None
-
-        return cls(rev_doc.get('revid'),
-                   rev_doc.get('parentid'),
-                   rev_doc.get('user'),
-                   rev_doc.get('userid'),
-                   timestamp,
-                   rev_doc.get('comment'),
-                   rev_doc.get('page', {}).get('pageid'),
-                   rev_doc.get('page', {}).get('ns'),
-                   rev_doc.get('page', {}).get('title'),
-                   rev_doc.get('size'),
-                   'minor' in rev_doc)
-
 
 class UserInfo:
     __slots__ = ('id', 'name', 'editcount', 'registration',
@@ -73,27 +54,3 @@ class UserInfo:
             if block_reason is not None else None
         self.block_expiry = str(block_expiry) \
             if block_expiry is not None else None
-
-    @classmethod
-    def from_doc(cls, user_doc):
-        try:
-            registration = Timestamp(user_doc.get('registration'))
-        except ValueError:
-            registration = None
-
-        return cls(
-            user_doc.get('userid'),
-            user_doc.get('name'),
-            user_doc.get('editcount'),
-            registration,
-            user_doc.get('groups', []),
-            user_doc.get('implicitgroups', []),
-            "emailable" in user_doc,
-            user_doc.get('gender'),
-            user_doc.get('blockid'),
-            user_doc.get('blockedby'),
-            user_doc.get('blockedbyid'),
-            user_doc.get('blockedtimestamp'),
-            user_doc.get('blockreason'),
-            user_doc.get('blockexpiry')
-        )

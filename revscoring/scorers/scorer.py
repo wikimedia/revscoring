@@ -6,6 +6,7 @@ from sklearn.metrics import auc, roc_curve
 
 import yamlconf
 
+from ..dependent import expand_many
 from ..extractors import Extractor
 from .util import normalize_json
 
@@ -24,15 +25,28 @@ class Scorer:
         self.model_map = model_map
         self.extractor = extractor
 
-    def score(self, rev_id, models=None):
-        # If a set of models isn't specified, score with all of 'em
+    def dependencies(self, models=None):
+        return expand_many(self.features(models))
+
+    def features(self, models=None):
+        """
+        Gathers a single tuple of unique features needed by the models
+        """
+        # If no particular model is requested, generate a for all available
+        # models
         models = models or self.model_map.keys()
 
-        # Gather a single tuple of unique features needed by the models
-        features = tuple({feature for name in models
-                                  for feature in self.model_map[name].features})
+        return tuple({feature for name in models
+                      for feature in self.model_map[name].features})
 
-        feature_values = self.extractor.extract(rev_id, features)
+    def score(self, rev_id, models=None, cache=None):
+        # If no particular model is requested, generate a for all available
+        # models
+        models = models or self.model_map.keys()
+
+        features = self.features(models)
+
+        feature_values = self.extractor.extract(rev_id, features, cache=cache)
         feature_map = {f:v for f,v in zip(features, feature_values)}
 
         scores = {}
@@ -45,7 +59,8 @@ class Scorer:
 
     def _check_compatibility(self, model_map, extractor):
         for _, model in model_map.items():
-            if extractor.language != model.language:
+            if model.language is not None and \
+               extractor.language != model.language:
                 raise ValueError(("Model language {0} does not match " +
                                   "extractor language {1}")\
                                  .format(model.language.name,
