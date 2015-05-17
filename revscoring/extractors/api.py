@@ -106,7 +106,7 @@ class APIExtractor(Extractor):
                 for rev_doc in rev_docs.values():
                     extract_caches[rev_doc['revid']][user_doc] = \
                             user_docs.get(rev_doc.get('user'))
-        
+
         # Now request features one-by-one
         for rev_id in rev_ids:
             try:

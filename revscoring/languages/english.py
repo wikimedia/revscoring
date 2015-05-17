@@ -14,8 +14,7 @@ BAD_REGEXES = set([
     "bitch", "bootlip", "butt+",
     "chlamydia", "cholo", "chug", "cocksuck", "coonass", "cracker", "cunt",
     "dick", "dothead",
-    "(f|ph)ag+(ot)?",
-    "fart", "fat", "fuck",
+    "(f|ph)ag+(ot)?", "fart", "fat", "fuck",
     "gipp", "gippo", "gonorrhea", "gook", "gringo", "gypo", "gyppie", "gyppo",
         "gyppy",
     "herpes", "hillbilly", "hiv", "homosexual", "hori",
@@ -24,12 +23,12 @@ BAD_REGEXES = set([
     "kike", "kwashi", "kyke",
     "lesbian", "lick",
     "motherfuck",
-    "nig", "nig+(a|e)+(r|h)+", "niggress"
-        "niggress", "nigguh", "niggur", "niglet", "nigor", "nigr", "nigra",
-    "pecker(wood)?", "penis", "piss",
+    "nig", "nig+(a|e|u)+(r|h)+", "niggress"
+        "niglet", "nigor", "nigr", "nigra",
+    "pecker(wood)?", "peni(s)?", "piss",
     "quashi",
     "raghead", "redneck", "redskin", "roundeye",
-    "scabies", "shit", "shitty", "slut", "slutty", "spic", "spick", "spig",
+    "scabies", "shi+t+", "slut", "spi(g|c|k)+",
         "spigotty", "spik", "spook", "squarehead", "st(u|oo+)pid", "suck", "syphil+is",
     "turd", "twat",
     "wank", "wetback", "whore", "wog", "wop",
@@ -47,10 +46,9 @@ stem_word = LanguageUtility("stem_word", stem_word_process)
 
 def is_badword_process():
     def is_badword(word):
-        return bool(BAD_REGEX.search(word))
+        return bool(BAD_REGEX.match(word))
     return is_badword
 is_badword = LanguageUtility("is_badword", is_badword_process)
-
 
 def is_misspelled_process():
     def is_misspelled(word):

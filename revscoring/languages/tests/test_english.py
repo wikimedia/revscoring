@@ -5,22 +5,22 @@ from ..english import is_badword, is_misspelled, is_stopword, stem_word
 
 
 def test_language():
-    
+
     eq_(stem_word()("shitting"), "shit")
     eq_(stem_word()("Shitting"), "shit")
     eq_(hash(stem_word), hash(language.stem_word))
-    
-    assert is_badword(stem_word())("shit")
-    assert is_badword(stem_word())("shitty")
-    assert is_badword(stem_word())("Shitty")
-    assert not is_badword(stem_word())("hat")
+
+    assert is_badword()("shit")
+    assert is_badword()("shitty")
+    assert is_badword()("Shitty")
+    assert not is_badword()("hat")
     eq_(hash(is_badword), hash(language.is_badword))
-    
+
     assert is_misspelled()("wjwkjb")
     assert not is_misspelled()("waffles")
     assert not is_misspelled()("Waffles")
     eq_(hash(is_misspelled), hash(language.is_misspelled))
-    
+
     assert is_stopword()("A")
     assert is_stopword()("in")
     assert is_stopword()("about")
