@@ -46,7 +46,7 @@ stem_word = LanguageUtility("stem_word", stem_word_process)
 
 def is_badword_process():
     def is_badword(word):
-        return bool(BAD_REGEX.match(word))
+        return bool(BAD_REGEX.match(word.lower()))
     return is_badword
 is_badword = LanguageUtility("is_badword", is_badword_process)
 

@@ -7,23 +7,9 @@ from .datasource import Datasource
 from .types import RevisionMetadata
 from .util import WORD_RE
 
-
-def process_id():
-    raise NotImplementedError()
-
-id = Datasource("revision.id", process_id, depends_on=[])
-
-
-def process_metadata():
-    raise NotImplementedError()
-
-metadata = Datasource("revision.metadata", process_metadata, depends_on=[])
-
-
-def process_text():
-    raise NotImplementedError()
-
-text = Datasource("revision.text", process_text, depends_on=[])
+id = Datasource("revision.id")
+metadata = Datasource("revision.metadata")
+text = Datasource("revision.text")
 
 ################################# Words ########################################
 

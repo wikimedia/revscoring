@@ -18,6 +18,9 @@ class Language:
     def context(self):
         return {u:u for u in self.utilities}
 
+    def cache(self):
+        return {u:u() for u in self.utilities}
+
     @classmethod
     def from_config(self, config, name, section_key="languages"):
         section = config[section_key][name]

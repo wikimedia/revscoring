@@ -3,17 +3,8 @@ from .datasource import Datasource
 from .types import RevisionMetadata
 from .util import WORD_RE
 
-
-def process_metadata():
-    raise NotImplementedError()
-
-metadata = Datasource("parent_revision.metadata", process_metadata)
-
-
-def process_text():
-    raise NotImplementedError()
-
-text = Datasource("parent_revision.text", process_text)
+metadata = Datasource("parent_revision.metadata")
+text = Datasource("parent_revision.text")
 
 
 def process_words(parent_revision_text):

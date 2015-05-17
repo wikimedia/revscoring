@@ -122,19 +122,7 @@ class APIExtractor(Extractor):
             properties={'general', 'namespaces', 'namespacealiases'}
         )
 
-        aliases = doc.get('namespacealiases', [])
-        alias_map = {}
-        for alias_doc in aliases:
-            prev_list = alias_map.get(alias_doc['id'], [])
-            prev_list.append(alias_doc['*'])
-            alias_map[alias_doc['id']] = prev_list
-
-        namespace_map = {}
-        for ns_doc in doc.get('namespaces', {}).values():
-            namespace = Namespace.from_doc(ns_doc, aliases=alias_map)
-            namespace_map[namespace.id] = namespace
-
-        return namespace_map
+        return self.namespace_map_from_doc(doc)
 
     def get_rev_doc_map(self, rev_ids, props={'ids', 'user', 'timestamp',
                                               'userid', 'comment', 'content',
@@ -295,6 +283,7 @@ class APIExtractor(Extractor):
 
     @classmethod
     def user_info_from_doc(cls, user_doc):
+        if user_doc is None: return None
         try:
             registration = Timestamp(user_doc.get('registration'))
         except ValueError:
@@ -316,6 +305,22 @@ class APIExtractor(Extractor):
             user_doc.get('blockreason'),
             user_doc.get('blockexpiry')
         )
+
+    @classmethod
+    def namespace_map_from_doc(cls, site_doc):
+        aliases = site_doc.get('namespacealiases', [])
+        alias_map = {}
+        for alias_doc in aliases:
+            prev_list = alias_map.get(alias_doc['id'], [])
+            prev_list.append(alias_doc['*'])
+            alias_map[alias_doc['id']] = prev_list
+
+        namespace_map = {}
+        for ns_doc in site_doc.get('namespaces', {}).values():
+            namespace = Namespace.from_doc(ns_doc, aliases=alias_map)
+            namespace_map[namespace.id] = namespace
+
+        return namespace_map
 
     @classmethod
     def from_config(cls, config, name, section_key="extractors"):

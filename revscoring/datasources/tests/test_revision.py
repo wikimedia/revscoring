@@ -5,42 +5,6 @@ from .. import revision
 from ...dependent import solve
 
 
-def test_metadata():
-    cache = {
-        revision.doc: {
-            "revid": 3456789,
-            "parentid": 54678,
-            "comment": "Wat?",
-            "user": "EpochFail",
-            "userid": 34567890,
-            "timestamp": "2015-01-07T12:23:57Z",
-            "page": {
-                "pageid": 347,
-                "title": "Hats",
-                "ns": 0
-            }
-        }
-    }
-
-    metadata = solve(revision.metadata, cache=cache)
-
-    eq_(metadata.rev_id, 3456789)
-    eq_(metadata.parent_id, 54678)
-    eq_(metadata.user_id, 34567890)
-    eq_(metadata.user_text, "EpochFail")
-    eq_(metadata.timestamp, Timestamp("2015-01-07T12:23:57Z"))
-    eq_(metadata.comment,  "Wat?")
-    eq_(metadata.page_id, 347)
-    eq_(metadata.page_namespace, 0)
-    eq_(metadata.page_title, "Hats")
-
-
-def test_text():
-    text = solve(revision.text,
-                 cache={revision.doc: {"*": "Some text"}})
-    eq_(text, "Some text")
-
-
 def test_words():
     words = solve(revision.words,
                   cache={revision.text: "Some text words 55."})
