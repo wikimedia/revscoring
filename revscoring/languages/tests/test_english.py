@@ -10,10 +10,10 @@ def test_language():
     eq_(stem_word()("Shitting"), "shit")
     eq_(hash(stem_word), hash(language.stem_word))
 
-    assert is_badword()("shit")
-    assert is_badword()("shitty")
-    assert is_badword()("Shitty")
-    assert not is_badword()("hat")
+    assert is_badword(stem_word())("shit")
+    assert is_badword(stem_word())("shitty")
+    assert is_badword(stem_word())("Shitty")
+    assert not is_badword(stem_word())("hat")
     eq_(hash(is_badword), hash(language.is_badword))
 
     assert is_misspelled()("wjwkjb")
