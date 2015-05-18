@@ -39,3 +39,28 @@ def test_not_implemented():
 
     l = Language('revscoring.languages.test', [])
     solve(is_stopword, context=l.context())
+
+def test_from_config_module():
+    config = {
+        'languages': {
+            'english': {
+                'module': "revscoring.languages.english"
+            }
+        }
+    }
+
+    english = Language.from_config(config, 'english')
+    english.context()
+
+@raises(RuntimeError)
+def test_from_config_class():
+    config = {
+        'languages': {
+            'english': {
+                'class': "revscoring.languages.Language",
+                'param': "Some param"
+            }
+        }
+    }
+
+    english = Language.from_config(config, 'english')

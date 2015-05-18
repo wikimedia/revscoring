@@ -27,8 +27,8 @@ class Language:
         if 'module' in section:
             return yamlconf.import_module(section['module'])
         elif 'class' in section:
-            Class = yamlconf.import_module(section['class'])
-            return Class.from_config(config, section_key)
+            raise RuntimeError("Loading a language via class construction " + \
+                               "not yet supported")
 
 
 def not_implemented_processor():
