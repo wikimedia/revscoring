@@ -3,16 +3,18 @@ Scores a set of revisions.
 
 Usage:
     score (-h | --help)
-    score <model-file> <rev_id>... --api=<uri>
+    score <model-file> <rev_id>... --api=<uri> [--verbose]
 
 Options:
     -h --help      Print this documentation
     <model-file>   Path to a model file
     --api=<url>    The url pointing to a MediaWiki API to use for extracting
                    features
+    --verbose      Print debugging info
     <rev_id>       A revision identifier
 """
 import json
+import logging
 import sys
 import traceback
 
@@ -20,7 +22,7 @@ import docopt
 from mw import api
 
 from ..extractors import APIExtractor
-from ..scorers import MLScorerModel
+from ..scorers import MLScorerModel, Scorer
 
 
 def main(argv=None):
@@ -31,16 +33,16 @@ def main(argv=None):
     extractor = APIExtractor(api.Session(args['--api']),
                              language=model.language)
 
+    scorer = Scorer({'model': model}, extractor)
+
     rev_ids = [int(rev_id) for rev_id in args['<rev_id>']]
 
-    run(model, extractor, rev_ids)
+    verbose = args['--verbose']
 
-def run(model, extractor, rev_ids):
-    for rev_id in rev_ids:
-        try:
-            features = extractor.extract(rev_id, model.features)
-            score_doc = model.score(features)
-            print("\t".join([str(rev_id), json.dumps(score_doc)]))
-        except Exception as e:
-            print("\t".join([str(rev_id), json.dumps(None)]))
-            sys.stderr.write(traceback.format_exc())
+    run(scorer, rev_ids, verbose)
+
+def run(scorer, rev_ids, verbose):
+
+    if verbose: logging.basicConfig(level=logging.DEBUG)
+    for rev_id, score in zip(rev_ids, scorer.score_many(rev_ids)):
+        print("\t".join([str(rev_id), json.dumps(score)]))

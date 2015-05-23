@@ -1,5 +1,6 @@
 import pickle
 import time
+import traceback
 from statistics import mean, stdev
 
 from sklearn.metrics import auc, roc_curve
@@ -39,23 +40,42 @@ class Scorer:
         return tuple({feature for name in models
                       for feature in self.model_map[name].features})
 
-    def score(self, rev_id, models=None, cache=None):
-        # If no particular model is requested, generate a for all available
-        # models
+    def score(self, rev_id, models=None, context=None, cache=None):
+        return next(self.score_many([rev_id], models=models, context=context,
+                                    cache=cache))
+
+    def score_many(self, rev_ids, models=None, context=None,
+                         extract_caches=None):
+        # If no particular model is requested, generate for all available models
         models = models or self.model_map.keys()
 
         features = self.features(models)
 
-        feature_values = self.extractor.extract(rev_id, features, cache=cache)
-        feature_map = {f:v for f,v in zip(features, feature_values)}
+        error_feature_values = \
+                self.extractor.extract_many(rev_ids, features,
+                                            extract_caches=extract_caches,
+                                            context=context)
+        for rev_id, (err, feature_values) in zip(rev_ids, error_feature_values):
 
-        scores = {}
-        for name in models:
-            model = self.model_map[name]
-            feature_values = [feature_map[f] for f in model.features]
-            scores[name] = model.score(feature_values)
+            if err is not None:
+                yield {"error": {'type': str(type(err)), 'message': str(err),
+                              }}
+            else:
+                feature_map = {f:v for f,v in zip(features, feature_values)}
 
-        return scores
+                score_map = {}
+                for name in models:
+                    model = self.model_map[name]
+                    feature_values = [feature_map[f] for f in model.features]
+                    try:
+                        score_map[name] = model.score(feature_values)
+                    except Exception as e:
+                        score_map[name] = {
+                            "error": {'type': str(type(e)), 'message': str(e),
+                                      'traceback': traceback.format_exc()}
+                        }
+
+                yield score_map
 
     def _check_compatibility(self, model_map, extractor):
         for _, model in model_map.items():

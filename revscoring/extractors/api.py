@@ -68,21 +68,36 @@ class APIExtractor(Extractor):
             self.context.update(self.language.context())
 
 
-    def extract(self, rev_id, features, cache=None):
+    def extract(self, rev_id, features, cache=None, context=None):
         # Prime the cache with pre-configured values
         extract_cache = {revision.id: rev_id} # Set revision.id
         extract_cache.update(self.cache) # Load cache for extractor
-        extract_cache.update(cache or {}) # Load cache specified in call
+        extract_cache.update(cache or {}) # Load call cache
 
-        return solve_many(features, context=self.context, cache=extract_cache)
+        extract_context = {} # Prepare context
+        extract_context.update(self.context) # Load extractor context
+        extract_context.update(context or {}) # Load call context
 
-    def extract_many(self, rev_ids, features, rev_caches=None):
+        return solve_many(features, context=extract_context,
+                          extract_cache=extract_cache)
 
+    def extract_many(self, rev_ids, features, caches=None, context=None):
+        # TODO: Conflates revision.metadata and revision.text
         dependencies = expand_many(features)
 
-        # Build up caches for data that can be queried in batch
+        # Prime caches
         extract_caches = defaultdict(dict)
+        for rev_id in caches or {}:
+            extract_caches[rev_id].update(caches[rev_id])
+
+        # Build up caches for data that can be queried in batch
         if revision.metadata in dependencies or revision.text in dependencies:
+            rev_ids_missing_data = [
+                rid for rid in rev_ids
+                if rev_id not in extract_caches or
+                   revision.text not in extract_caches[rev_id] or
+                   revision.metadata not in extract_caches[rev_id]
+            ]
             rev_docs = self.get_rev_doc_map(rev_ids)
 
             for rev_id in rev_ids:
@@ -93,6 +108,7 @@ class APIExtractor(Extractor):
 
                 parent_ids = [r.get('parentid') for r in rev_docs.values()
                               if r.get('parentid', 0) > 0]
+
                 parent_rev_docs = self.get_rev_doc_map(parent_ids)
 
                 for rev_doc in rev_docs.values():
@@ -110,7 +126,8 @@ class APIExtractor(Extractor):
         # Now request features one-by-one
         for rev_id in rev_ids:
             try:
-                values = self.extract(rev_id, features, extract_caches[rev_id])
+                values = self.extract(rev_id, features, context=context,
+                                      cache=extract_caches[rev_id])
                 yield None, values
             except Exception as e:
                 yield e, None
@@ -127,6 +144,7 @@ class APIExtractor(Extractor):
     def get_rev_doc_map(self, rev_ids, props={'ids', 'user', 'timestamp',
                                               'userid', 'comment', 'content',
                                               'flags', 'size'}):
+        if len(rev_ids) == 0: return {}
         logger.info("Batch requesting {0} revisions from the API" \
                     .format(len(rev_ids)))
         return {rd['revid']:rd
@@ -139,6 +157,7 @@ class APIExtractor(Extractor):
                                                   'groups', 'registration',
                                                   'emailable', 'editcount',
                                                   'gender'}):
+        if len(user_texts) == 0: return {}
         logger.info("Batch requesting {0} users from the API" \
                     .format(len(user_texts)))
         return {ud['name']:ud

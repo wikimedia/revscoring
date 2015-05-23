@@ -6,11 +6,12 @@ from ..scorer import Scorer
 
 
 def test_scorer():
-    FakeExtractor = namedtuple("FakeExtractor", ['extract', 'language'])
-    def fake_extract(rev_id, features, cache=None):
+    FakeExtractor = namedtuple("FakeExtractor", ['extract_many', 'language'])
+    def fake_extract_many(rev_ids, features, context=None, cache=None):
         d = {'foo': 3, 'bar': 5}
-        return (d[f] for f in features)
-    extractor = FakeExtractor(fake_extract, "herpderp")
+        for rev_id in rev_ids:
+            yield None, (d[f] for f in features)
+    extractor = FakeExtractor(fake_extract_many, "herpderp")
 
     FakeModel = namedtuple("FakeModel", ['score', 'features', 'language'])
     multiply = FakeModel(lambda feature_values:feature_values[0] * \
