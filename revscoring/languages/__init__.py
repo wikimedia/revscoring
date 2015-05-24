@@ -4,3 +4,4 @@ from .english import english
 from .portuguese import portuguese
 from .turkish import turkish
 from .french import french
+from .persian import persian

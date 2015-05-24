@@ -322,7 +322,7 @@ Represents number of misspelled words in parent revision's content.
         >>> list(extractor.extract(646076603, [parent_revision.misspellings]))
         [4524]
 """
-proportion_of_misspellings = badwords / modifiers.max(words, 1)
+proportion_of_misspellings = misspellings / modifiers.max(words, 1)
 """
 Represents ratio of misspelled words compared to all words in parent revision.
 

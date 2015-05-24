@@ -32,7 +32,7 @@ class Language:
 
 
 def not_implemented_processor():
-    raise NotImplementedError()
+    raise NotImplementedError("Language utility not implemented.")
 
 class LanguageUtility(Dependent):
 
