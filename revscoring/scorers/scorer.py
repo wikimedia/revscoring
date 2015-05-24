@@ -42,10 +42,10 @@ class Scorer:
 
     def score(self, rev_id, models=None, context=None, cache=None):
         return next(self.score_many([rev_id], models=models, context=context,
-                                    cache=cache))
+                                    caches={rev_id: cache}))
 
     def score_many(self, rev_ids, models=None, context=None,
-                         extract_caches=None):
+                         caches=None):
         # If no particular model is requested, generate for all available models
         models = models or self.model_map.keys()
 
@@ -53,13 +53,11 @@ class Scorer:
 
         error_feature_values = \
                 self.extractor.extract_many(rev_ids, features,
-                                            extract_caches=extract_caches,
-                                            context=context)
+                                            caches=caches, context=context)
         for rev_id, (err, feature_values) in zip(rev_ids, error_feature_values):
 
             if err is not None:
-                yield {"error": {'type': str(type(err)), 'message': str(err),
-                              }}
+                yield {"error": {'type': str(type(err)), 'message': str(err)}}
             else:
                 feature_map = {f:v for f,v in zip(features, feature_values)}
 

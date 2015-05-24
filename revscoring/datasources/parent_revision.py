@@ -1,6 +1,4 @@
-from . import revision
 from .datasource import Datasource
-from .types import RevisionMetadata
 from .util import WORD_RE
 
 metadata = Datasource("parent_revision.metadata")

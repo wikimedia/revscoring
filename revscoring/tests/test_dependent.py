@@ -1,7 +1,7 @@
 from nose.tools import eq_, raises
 
-from ..dependent import (DependencyLoop, Dependent, draw, expand, expand_many,
-                         solve, solve_many)
+from ..dependent import (DependencyError, DependencyLoop, Dependent, draw,
+                         expand, expand_many, solve, solve_many)
 
 
 def test_solve():
@@ -81,3 +81,8 @@ def test_draw():
 
     draw(bar) # Does not throw an error
     draw(bar, cache={foo: "CACHED"}) # Does not throw an error
+
+@raises(DependencyError)
+def test_not_implemented_error():
+    foo = Dependent("foo")
+    solve(foo)

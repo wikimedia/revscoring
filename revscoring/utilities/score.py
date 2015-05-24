@@ -43,6 +43,9 @@ def main(argv=None):
 
 def run(scorer, rev_ids, verbose):
 
-    if verbose: logging.basicConfig(level=logging.DEBUG)
+    if verbose: logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
+    )
     for rev_id, score in zip(rev_ids, scorer.score_many(rev_ids)):
         print("\t".join([str(rev_id), json.dumps(score)]))

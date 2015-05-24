@@ -14,7 +14,7 @@ class DependencyError(RuntimeError):
         self.exception = exception
 
 def not_implemented():
-    raise NotImplementedError()
+    raise NotImplementedError("Not implemented.")
 
 class Dependent:
 
@@ -154,7 +154,7 @@ def _solve(dependent, context=None, cache=None, history=None):
                 value = dependent(*args)
             except Exception as e:
                 raise DependencyError("Failed to process {0}: {1}"
-                                      .format(dependent, e), e)
+                                      .format(dependent, e), str(e))
 
             # Add value to cache
             cache[dependent] = value

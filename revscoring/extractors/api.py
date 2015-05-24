@@ -30,7 +30,7 @@ class APIExtractor(Extractor):
         self.cache = {
             site.namespace_map: self.get_namespace_map()
         }
-        self.context = {
+        self.context = {d:d for d in [
             Datasource("revision.doc", self.process_revision_doc,
                        depends_on=[revision.id]),
             Datasource("revision.metadata", self.process_revision_metadata,
@@ -63,7 +63,7 @@ class APIExtractor(Extractor):
             Datasource("user.info",
                        self.process_user_info,
                        depends_on=[user_doc])
-        }
+        ]}
         if self.language != None:
             self.context.update(self.language.context())
 
@@ -79,24 +79,25 @@ class APIExtractor(Extractor):
         extract_context.update(context or {}) # Load call context
 
         return solve_many(features, context=extract_context,
-                          extract_cache=extract_cache)
+                          cache=extract_cache)
 
     def extract_many(self, rev_ids, features, caches=None, context=None):
         # TODO: Conflates revision.metadata and revision.text
+        context = context or {}
         dependencies = expand_many(features)
 
         # Prime caches
         extract_caches = defaultdict(dict)
-        for rev_id in caches or {}:
+        for rev_id in (caches or {}):
             extract_caches[rev_id].update(caches[rev_id])
 
         # Build up caches for data that can be queried in batch
         if revision.metadata in dependencies or revision.text in dependencies:
             rev_ids_missing_data = [
                 rid for rid in rev_ids
-                if rev_id not in extract_caches or
-                   revision.text not in extract_caches[rev_id] or
-                   revision.metadata not in extract_caches[rev_id]
+                if rid not in extract_caches or
+                   revision.text not in extract_caches[rid] or
+                   revision.metadata not in extract_caches[rid]
             ]
             rev_docs = self.get_rev_doc_map(rev_ids)
 
@@ -128,7 +129,7 @@ class APIExtractor(Extractor):
             try:
                 values = self.extract(rev_id, features, context=context,
                                       cache=extract_caches[rev_id])
-                yield None, values
+                yield None, list(values)
             except Exception as e:
                 yield e, None
 
@@ -170,10 +171,7 @@ class APIExtractor(Extractor):
         logger.info("Requesting a revision ({0}) from the API".format(rev_id))
         props = {'ids', 'user', 'timestamp', 'userid', 'comment',
                  'content', 'flags', 'size'}
-        try:
-            return self.session.revisions.get(rev_id=rev_id, properties=props)
-        except KeyError:
-            raise RevisionDocumentNotFound({'rev_id': rev_id})
+        return self.session.revisions.get(rev_id=rev_id, properties=props)
 
     def process_parent_revision_doc(self, revision_metadata):
         props = {'ids', 'user', 'timestamp', 'userid', 'comment',
@@ -269,6 +267,8 @@ class APIExtractor(Extractor):
 
     @classmethod
     def process_revision_metadata(cls, revision_doc):
+        if revision_doc is None:
+            raise RevisionDocumentNotFound()
         return cls.revision_metadata_from_doc(revision_doc)
 
     @classmethod

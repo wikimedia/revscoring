@@ -7,7 +7,7 @@ from ..scorer import Scorer
 
 def test_scorer():
     FakeExtractor = namedtuple("FakeExtractor", ['extract_many', 'language'])
-    def fake_extract_many(rev_ids, features, context=None, cache=None):
+    def fake_extract_many(rev_ids, features, context=None, caches=None):
         d = {'foo': 3, 'bar': 5}
         for rev_id in rev_ids:
             yield None, (d[f] for f in features)
