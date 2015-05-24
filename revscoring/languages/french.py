@@ -7,22 +7,18 @@ from nltk.stem.snowball import SnowballStemmer
 from .language import Language, LanguageUtility
 
 STEMMER = SnowballStemmer("french")
-STOPWORDS = set(stopwords.words('french'))
+STOPWORDS = set(stopwords.words('french') + ['a'])
 BADWORDS = set([
-'anus', 'fesse', 'cul', 
-'putes', 'prostituee',
-'herpes', 'hiv',
-'homosexuel',
-'idiot',
-'lesbien',
-'penis',
-'merde',
-'stupide',
-'con',
-'gay',
-'Putain',
-'Foutre',
-'Salop'
+    'anus',
+    'con', 'cul',
+    'fesse', 'Foutre',
+    'gay',
+    'herpes', 'hiv', 'homosexuel',
+    'idiot',
+    'lesbien',
+    'merde', 'merdique',
+    'penis', 'prostituee', 'Putain', 'putes',
+    'Salop', 'stupide',
 ])
 
 STEMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
