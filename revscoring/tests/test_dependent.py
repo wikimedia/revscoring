@@ -40,7 +40,7 @@ def test_context():
     # A set of Dependent
     eq_(solve(foobar, context={my_foo}), "foobar")
 
-    # A dist of Dependent
+    # A dict of Dependent
     eq_(solve(foobar, context={foo: my_foo}), "foobar")
     eq_(solve(foobar, context={my_foo: my_foo}), "foobar")
 

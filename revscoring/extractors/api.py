@@ -191,25 +191,6 @@ class APIExtractor(Extractor):
         else:
             return None
 
-    def process_page_creation_doc(self, revision_metadata):
-        logger.info("Requesting a page creation ({0}) from the API" \
-                    .format(rev_id))
-        props = {'ids', 'user', 'timestamp', 'userid', 'comment',
-                 'content', 'flags', 'size'}
-        docs = session.revisions.query(
-            pageids={revision_metadata.page_id},
-            direction="newer",
-            limit=1,
-            properties={'ids', 'user', 'timestamp', 'userid', 'comment',
-                        'flags', 'size'}
-        )
-        docs = list(docs)
-
-        if len(docs) == 1:
-            return docs[0]
-        else:
-            raise RevisionDocumentNotFound({'page_id': revision_metadata.page_id})
-
     def process_previous_user_revision_doc(self, revision_metadata):
         if revision_metadata.user_text is not None:
             logger.info("Requesting previous user revision ({0}) from the API" \
@@ -283,9 +264,9 @@ class APIExtractor(Extractor):
     @classmethod
     def revision_metadata_from_doc(cls, rev_doc):
         if rev_doc is None: return None
-        if 'timestamp' in rev_doc and rev_doc['timestamp'] is not None:
+        try:
             timestamp = Timestamp(rev_doc.get('timestamp'))
-        else:
+        except ValueError:
             timestamp = None
 
         return RevisionMetadata(rev_doc.get('revid'),

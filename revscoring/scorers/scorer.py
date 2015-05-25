@@ -33,8 +33,7 @@ class Scorer:
         """
         Gathers a single tuple of unique features needed by the models
         """
-        # If no particular model is requested, generate a for all available
-        # models
+        # If no particular model is requested, generate for all available models
         models = models or self.model_map.keys()
 
         return tuple({feature for name in models
