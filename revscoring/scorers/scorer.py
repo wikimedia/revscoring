@@ -1,11 +1,13 @@
 import pickle
 import time
+import traceback
 from statistics import mean, stdev
 
 from sklearn.metrics import auc, roc_curve
 
 import yamlconf
 
+from ..dependent import expand_many
 from ..extractors import Extractor
 from .util import normalize_json
 
@@ -24,28 +26,58 @@ class Scorer:
         self.model_map = model_map
         self.extractor = extractor
 
-    def score(self, rev_id, models=None):
-        # If a set of models isn't specified, score with all of 'em
+    def dependencies(self, models=None):
+        return expand_many(self.features(models))
+
+    def features(self, models=None):
+        """
+        Gathers a single tuple of unique features needed by the models
+        """
+        # If no particular model is requested, generate for all available models
         models = models or self.model_map.keys()
 
-        # Gather a single tuple of unique features needed by the models
-        features = tuple({feature for name in models
-                                  for feature in self.model_map[name].features})
+        return tuple({feature for name in models
+                      for feature in self.model_map[name].features})
 
-        feature_values = self.extractor.extract(rev_id, features)
-        feature_map = {f:v for f,v in zip(features, feature_values)}
+    def score(self, rev_id, models=None, context=None, cache=None):
+        return next(self.score_many([rev_id], models=models, context=context,
+                                    caches={rev_id: cache}))
 
-        scores = {}
-        for name in models:
-            model = self.model_map[name]
-            feature_values = [feature_map[f] for f in model.features]
-            scores[name] = model.score(feature_values)
+    def score_many(self, rev_ids, models=None, context=None,
+                         caches=None):
+        # If no particular model is requested, generate for all available models
+        models = models or self.model_map.keys()
 
-        return scores
+        features = self.features(models)
+
+        error_feature_values = \
+                self.extractor.extract_many(rev_ids, features,
+                                            caches=caches, context=context)
+        for rev_id, (err, feature_values) in zip(rev_ids, error_feature_values):
+
+            if err is not None:
+                yield {"error": {'type': str(type(err)), 'message': str(err)}}
+            else:
+                feature_map = {f:v for f,v in zip(features, feature_values)}
+
+                score_map = {}
+                for name in models:
+                    model = self.model_map[name]
+                    feature_values = [feature_map[f] for f in model.features]
+                    try:
+                        score_map[name] = model.score(feature_values)
+                    except Exception as e:
+                        score_map[name] = {
+                            "error": {'type': str(type(e)), 'message': str(e),
+                                      'traceback': traceback.format_exc()}
+                        }
+
+                yield score_map
 
     def _check_compatibility(self, model_map, extractor):
         for _, model in model_map.items():
-            if extractor.language != model.language:
+            if model.language is not None and \
+               extractor.language != model.language:
                 raise ValueError(("Model language {0} does not match " +
                                   "extractor language {1}")\
                                  .format(model.language.name,

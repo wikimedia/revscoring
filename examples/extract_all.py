@@ -1,6 +1,8 @@
 import sys
 
 from mw.api import Session
+
+sys.path.insert(0, ".")
 from revscoring.extractors import APIExtractor
 from revscoring.features import (diff, page, parent_revision,
                                  previous_user_revision, revision, user)

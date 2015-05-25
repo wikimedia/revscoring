@@ -1,6 +1,6 @@
 from nose.tools import eq_
 
-from ..farsi import is_misspelled
+from ..persian import is_misspelled
 
 
 def test_language():

@@ -15,9 +15,11 @@ class Language:
         except AttributeError as e:
             return False
 
+    def context(self):
+        return {u:u for u in self.utilities}
+
     def cache(self):
-        utility_methods = zip(self.utilities, solve_many(self.utilities))
-        return {utility:method for utility, method in utility_methods}
+        return {u:u() for u in self.utilities}
 
     @classmethod
     def from_config(self, config, name, section_key="languages"):
@@ -25,12 +27,12 @@ class Language:
         if 'module' in section:
             return yamlconf.import_module(section['module'])
         elif 'class' in section:
-            Class = yamlconf.import_module(section['class'])
-            return Class.from_config(config, section_key)
+            raise RuntimeError("Loading a language via class construction " + \
+                               "not yet supported")
 
 
 def not_implemented_processor():
-    raise NotImplementedError()
+    raise NotImplementedError("Language utility not implemented.")
 
 class LanguageUtility(Dependent):
 
