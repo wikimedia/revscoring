@@ -1,7 +1,8 @@
 from nose.tools import eq_, raises
 
-from ..dependent import (DependencyError, DependencyLoop, Dependent, draw,
-                         expand, expand_many, solve, solve_many)
+from ..dependent import (DependencyError, DependencyLoop, Dependent, dig,
+                         dig_many, draw, expand, expand_many, solve,
+                         solve_many)
 
 
 def test_solve():
@@ -86,3 +87,18 @@ def test_draw():
 def test_not_implemented_error():
     foo = Dependent("foo")
     solve(foo)
+
+def test_dig():
+    foo = Dependent("foo", lambda: "foo")
+    bar = Dependent("bar", lambda: "bar")
+    foobar = Dependent("foobar", lambda foo, bar: foo + bar,
+                       depends_on=[foo, bar])
+    foobar_foobar = Dependent("foobar_foobar",
+                              lambda foobar1, foobar2: foobar1 + "_" + foobar2,
+                              depends_on=[foobar, foobar])
+
+    eq_(set(dig(foobar)), {foo, bar})
+
+    eq_(set(dig(foobar, cache={foo})), {bar})
+
+    eq_(set(dig_many([foobar, foo, bar])), {foo, bar})

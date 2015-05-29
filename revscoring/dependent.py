@@ -176,3 +176,24 @@ def draw(dependent, cache=None, depth=0):
     else:
         # No dependencies?  OK.  Let's try that.
         dependencies = []
+
+def dig(dependent, cache=None):
+    cache = cache or set()
+
+    if hasattr(dependent, "dependencies"):
+        if len(dependent.dependencies) > 0:
+            for dependency in dependent.dependencies:
+                if dependency not in cache:
+                    cache.add(dependency)
+                    yield from dig(dependency, cache)
+        else:
+
+            yield dependent
+    else:
+        yield dependent
+
+def dig_many(dependents, cache=None):
+    cache = cache or set()
+
+    for dependent in dependents:
+        yield from dig(dependent, cache)
