@@ -178,7 +178,7 @@ def _solve(dependent, context, cache, history=None):
         if dependent in context:
             dependent = context[dependent]
 
-        # Check if the dependency is callable.  If not, we're SOL
+        # Check if the dependency is callable.
         if not callable(dependent):
             raise RuntimeError("Can't solve dependency " + repr(dependent) +
                                ".  " + type(dependent).__name__ +
