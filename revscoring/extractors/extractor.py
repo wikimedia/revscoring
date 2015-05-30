@@ -1,9 +1,11 @@
 import yamlconf
 
+from ..dependencies import Context
 
-class Extractor:
 
-    def extract(self, rev_id, features, cache=None):
+class Extractor(Context):
+
+    def extract(self, rev_id, features, context=None, cache=None):
         raise NotImplementedError()
 
     @classmethod

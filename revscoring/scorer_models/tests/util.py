@@ -6,7 +6,7 @@ from itertools import chain
 from nose.tools import eq_
 
 from ...features import Feature
-from ..scorer import MLScorerModel
+from ..scorer_model import MLScorerModel
 
 
 def process_float(): return float()

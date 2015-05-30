@@ -5,9 +5,9 @@ from mw import Namespace, Timestamp, api
 
 import yamlconf
 
+from .. import dependencies
 from ..datasources import (Datasource, RevisionMetadata, UserInfo,
                            parent_revision, revision, site, user)
-from ..dependent import expand_many, solve_many
 from ..errors import RevisionDocumentNotFound
 from ..languages import Language
 from .extractor import Extractor
@@ -23,14 +23,17 @@ site_doc = Datasource("site.doc")
 
 class APIExtractor(Extractor):
 
-    def __init__(self, session, language=None):
+    def __init__(self, session, language=None, context=None, cache=None):
+        cache = cache or {}
+        context = dependencies.normalize_context(context)
+
         self.session = session
         self.language = language
 
-        self.cache = {
+        local_cache = {
             site.namespace_map: self.get_namespace_map()
         }
-        self.context = {d:d for d in [
+        local_context = {d:d for d in [
             Datasource("revision.doc", self.process_revision_doc,
                        depends_on=[revision.id]),
             Datasource("revision.metadata", self.process_revision_metadata,
@@ -65,47 +68,49 @@ class APIExtractor(Extractor):
                        depends_on=[user_doc])
         ]}
         if self.language != None:
-            self.context.update(self.language.context())
+            local_context.update(self.language.context)
 
+        local_context.update(context)
+        local_cache.update(cache)
 
-    def extract(self, rev_id, features, cache=None, context=None):
-        # Prime the cache with pre-configured values
-        extract_cache = {revision.id: rev_id} # Set revision.id
-        extract_cache.update(self.cache) # Load cache for extractor
-        extract_cache.update(cache or {}) # Load call cache
+        super().__init__(local_context, local_cache)
 
-        extract_context = {} # Prepare context
-        extract_context.update(self.context) # Load extractor context
-        extract_context.update(context or {}) # Load call context
+    def extract(self, rev_ids, dependents, context=None, caches=None):
+        caches = caches or {}
+        context = dependencies.normalize_context(context)
 
-        return solve_many(features, context=extract_context,
-                          cache=extract_cache)
+        if hasattr(rev_ids, "__iter__"):
+            return self._extract_many(rev_ids, dependents, context, caches)
+        else:
+            rev_id = rev_ids
+            cache = caches
+            return self._extract(rev_id, dependents, context, caches)
 
-    def extract_many(self, rev_ids, features, caches=None, context=None):
-        # TODO: Conflates revision.metadata and revision.text
-        context = context or {}
-        dependencies = expand_many(features)
+    def _extract_many(self, rev_ids, dependents, context, caches):
+        all_dependents = set(dependencies.expand(dependents))
 
         # Prime caches
         extract_caches = defaultdict(dict)
-        for rev_id in (caches or {}):
+        for rev_id in caches:
             extract_caches[rev_id].update(caches[rev_id])
 
         # Build up caches for data that can be queried in batch
-        if revision.metadata in dependencies or revision.text in dependencies:
+        if revision.metadata in all_dependents or \
+           revision.text in all_dependents:
             rev_ids_missing_data = [
                 rid for rid in rev_ids
                 if rid not in extract_caches or
                    revision.text not in extract_caches[rid] or
-                   revision.metadata not in extract_caches[rid]
+                   revision.metadata not in extract_caches[rid] or
+                   revision_doc not in extract_caches[rid]
             ]
             rev_docs = self.get_rev_doc_map(rev_ids)
 
             for rev_id in rev_ids:
                 extract_caches[rev_id][revision_doc] = rev_docs.get(rev_id)
 
-            if parent_revision.metadata in dependencies or \
-               parent_revision.text in dependencies:
+            if parent_revision.metadata in all_dependents or \
+               parent_revision.text in all_dependents:
 
                 parent_ids = [r.get('parentid') for r in rev_docs.values()
                               if r.get('parentid', 0) > 0]
@@ -116,7 +121,7 @@ class APIExtractor(Extractor):
                     extract_caches[rev_doc['revid']][parent_revision_doc] = \
                             parent_rev_docs.get(rev_doc['parentid'])
 
-            if user.info in dependencies:
+            if user.info in all_dependents:
                 user_texts = [r.get('user') for r in rev_docs.values()]
                 user_docs = self.get_user_doc_map(user_texts)
 
@@ -124,15 +129,19 @@ class APIExtractor(Extractor):
                     extract_caches[rev_doc['revid']][user_doc] = \
                             user_docs.get(rev_doc.get('user'))
 
-        # Now request features one-by-one
+        # Now extract dependent values one-by-one
         for rev_id in rev_ids:
             try:
-                values = self.extract(rev_id, features, context=context,
-                                      cache=extract_caches[rev_id])
+                values = self._extract(rev_id, dependents, context=context,
+                                       cache=extract_caches[rev_id])
                 yield None, list(values)
             except Exception as e:
                 yield e, None
 
+    def _extract(self, rev_id, dependents, cache, context):
+        extract_cache = {revision.id: rev_id}
+        extract_cache.update(cache)
+        return self.solve(dependents, context=context, cache=extract_cache)
 
     def get_namespace_map(self):
         logger.info("Requesting site info from the API")

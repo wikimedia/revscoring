@@ -4,7 +4,7 @@ from math import log as math_log
 from nose.tools import eq_, raises
 
 from .. import modifiers
-from ...dependent import solve
+from ...dependencies import solve
 from ..feature import Feature
 
 

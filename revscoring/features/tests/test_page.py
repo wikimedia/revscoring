@@ -4,7 +4,7 @@ from mw import Timestamp
 from nose.tools import eq_
 
 from ...datasources import page_creation, revision, site
-from ...dependent import solve
+from ...dependencies import solve
 from ..page import age, is_content_namespace, is_mainspace
 
 
@@ -38,7 +38,7 @@ def test_is_mainspace():
 def test_age():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['timestamp'])
-    
+
     cache = {
         revision.metadata: FakeRevisionMetadata(Timestamp(10)),
         page_creation.metadata: FakeRevisionMetadata(Timestamp(0))

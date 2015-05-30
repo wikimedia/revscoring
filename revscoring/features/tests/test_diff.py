@@ -2,7 +2,7 @@ from nose.tools import eq_
 
 from ... import languages
 from ...datasources import diff as diff_datasource
-from ...dependent import solve
+from ...dependencies import solve
 from ..diff import (badwords_added, badwords_removed, chars_added,
                     chars_removed, longest_repeated_char_added,
                     longest_token_added, markup_chars_added,

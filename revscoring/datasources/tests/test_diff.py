@@ -2,7 +2,7 @@ from deltas import Delete, Equal, Insert
 from nose.tools import eq_
 
 from .. import diff, parent_revision, revision
-from ...dependent import solve
+from ...dependencies import solve
 
 PARENT_REVISION_TEXT = "foo Bar 53 {{herp}} derp!"
 REVISION_TEXT = "Herp Derp 75 {{and}} also?"

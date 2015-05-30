@@ -1,7 +1,7 @@
 from nose.tools import eq_
 
 from .. import parent_revision
-from ...dependent import solve
+from ...dependencies import solve
 
 
 def test_words():
