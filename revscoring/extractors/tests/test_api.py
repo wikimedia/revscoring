@@ -2,7 +2,7 @@ from mw import Timestamp
 from nose.tools import eq_
 
 from .. import api
-from ...dependent import solve
+from ...dependencies import solve
 
 
 def test_user_info_from_doc():

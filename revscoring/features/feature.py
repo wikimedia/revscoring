@@ -1,6 +1,6 @@
 from math import log as math_log
 
-from ..dependent import Dependent
+from ..dependencies import Dependent
 
 # Sets up refences to overloaded function names
 math_max = max

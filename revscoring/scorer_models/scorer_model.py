@@ -7,117 +7,8 @@ from sklearn.metrics import auc, roc_curve
 
 import yamlconf
 
-from ..dependent import expand_many
 from ..extractors import Extractor
 from .util import normalize_json
-
-
-class Scorer:
-
-    def __init__(self, model_map, extractor):
-        """
-        :Parameters:
-            model_map : dict
-                A mapping between model names and `ScorerModel` s.
-            extractor : `revscoring.extractors.Extractor`
-                An extractor to use for gathering feature values
-        """
-        self._check_compatibility(model_map, extractor)
-        self.model_map = model_map
-        self.extractor = extractor
-
-    def dependencies(self, models=None):
-        return expand_many(self.features(models))
-
-    def features(self, models=None):
-        """
-        Gathers a single tuple of unique features needed by the models
-        """
-        # If no particular model is requested, generate for all available models
-        models = models or self.model_map.keys()
-
-        return tuple({feature for name in models
-                      for feature in self.model_map[name].features})
-
-    def score(self, rev_id, models=None, context=None, cache=None):
-        return next(self.score_many([rev_id], models=models, context=context,
-                                    caches={rev_id: cache}))
-
-    def score_many(self, rev_ids, models=None, context=None,
-                         caches=None):
-        # If no particular model is requested, generate for all available models
-        models = models or self.model_map.keys()
-
-        features = self.features(models)
-
-        error_feature_values = \
-                self.extractor.extract_many(rev_ids, features,
-                                            caches=caches, context=context)
-        for rev_id, (err, feature_values) in zip(rev_ids, error_feature_values):
-
-            if err is not None:
-                yield {"error": {'type': str(type(err)), 'message': str(err)}}
-            else:
-                feature_map = {f:v for f,v in zip(features, feature_values)}
-
-                score_map = {}
-                for name in models:
-                    model = self.model_map[name]
-                    feature_values = [feature_map[f] for f in model.features]
-                    try:
-                        score_map[name] = model.score(feature_values)
-                    except Exception as e:
-                        score_map[name] = {
-                            "error": {'type': str(type(e)), 'message': str(e),
-                                      'traceback': traceback.format_exc()}
-                        }
-
-                yield score_map
-
-    def _check_compatibility(self, model_map, extractor):
-        for _, model in model_map.items():
-            if model.language is not None and \
-               extractor.language != model.language:
-                raise ValueError(("Model language {0} does not match " +
-                                  "extractor language {1}")\
-                                 .format(model.language.name,
-                                         extractor.language.name))
-
-    @classmethod
-    def from_config(cls, config, name, section_key="scorers"):
-        """
-        Expects:
-
-            scorers:
-                enwiki:
-                    models:
-                        damaging: enwiki_damaging_2014
-                        good-faith: enwiki_good-faith_2014
-                    extractor: enwiki
-                ptwiki:
-                    models:
-                        damaging: ptwiki_damaging_2014
-                        good-faith: ptwiki_good-faith_2014
-                    extractor: ptwiki
-
-            extractors:
-                enwiki_api: ...
-                ptwiki_api: ...
-
-            scorer_models:
-                enwiki_damaging_2014: ...
-                enwiki_good-faith_2014: ...
-        """
-        section = config[section_key][name]
-
-        model_map = {}
-        for name, key in section['models'].items():
-            model = ScorerModel.from_config(config, key)
-            model_map[name] = model
-
-        extractor = Extractor.from_config(config, section['extractor'])
-
-        return cls(model_map, extractor)
 
 
 class ScorerModel:
@@ -125,7 +16,7 @@ class ScorerModel:
     A model used to score a revision based on a set of features.
     """
 
-    def __init__(self, features, language=None):
+    def __init__(self, features, language=None, version=None):
         """
         :Parameters:
             features : `list`(`Feature`)
@@ -136,7 +27,13 @@ class ScorerModel:
         """
         self.features = tuple(features)
         self.language = language
+        self.version  = version
 
+    def __getattr__(self, attr):
+        if attr is "version":
+            return None
+        else:
+            raise AttributeError(attr)
 
     def score(self, feature_values):
         """
@@ -184,7 +81,8 @@ class ScorerModel:
             class_path = section['class']
             Class = yamlconf.import_module(class_path)
             assert cls != Class
-            return Class.from_config(config, name)
+
+            return Class.from_config(config, name, section_key=section_key)
 
 
 class MLScorerModel(ScorerModel):
@@ -193,6 +91,9 @@ class MLScorerModel(ScorerModel):
 
     Machine learned models are trained and tested against labeled data.
     """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.trained = None
 
     def train(self, values_labels):
         """
@@ -258,8 +159,8 @@ class MLScorerModel(ScorerModel):
 
 class ScikitLearnClassifier(MLScorerModel):
 
-    def __init__(self, features, classifier_model, language=None):
-        super().__init__(features, language=language)
+    def __init__(self, features, classifier_model, language=None, version=None):
+        super().__init__(features, language=language, version=version)
         self.classifier_model = classifier_model
 
     def train(self, values_labels):
@@ -276,6 +177,7 @@ class ScikitLearnClassifier(MLScorerModel):
 
         # Fit SVC model
         self.classifier_model.fit(values, labels)
+        self.trained = time.time()
 
         return {
             'seconds_elapsed': time.time() - start

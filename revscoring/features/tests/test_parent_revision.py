@@ -5,7 +5,7 @@ from nose.tools import eq_
 
 from ... import languages
 from ...datasources import parent_revision, revision
-from ...dependent import solve
+from ...dependencies import solve
 from ..parent_revision import (badwords, bytes, chars, markup_chars,
                                misspellings, numeric_chars, seconds_since,
                                symbolic_chars, uppercase_chars, was_same_user,

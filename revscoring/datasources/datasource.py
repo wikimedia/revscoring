@@ -1,4 +1,4 @@
-from ..dependent import Dependent
+from ..dependencies import Dependent
 
 
 class Datasource(Dependent):

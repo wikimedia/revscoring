@@ -5,7 +5,7 @@ from nose.tools import eq_
 
 from ... import languages
 from ...datasources import revision
-from ...dependent import solve
+from ...dependencies import solve
 from ..revision import (badwords, bytes, category_links, chars, cite_templates,
                         content_chars, day_of_week, has_custom_comment,
                         has_section_comment, hour_of_day, image_links,

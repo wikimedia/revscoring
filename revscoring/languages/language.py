@@ -1,25 +1,19 @@
 import yamlconf
 
-from ..dependent import Dependent, solve_many
+from .. import dependencies
 
 
-class Language:
+class Language(dependencies.Context):
     def __init__(self, name, utilities):
+        super().__init__(context=utilities)
         self.name = str(name)
-        self.utilities = list(utilities)
 
     def __eq__(self, other):
         try:
             return self.name == other.name and \
-                   self.utilities == other.utilities
+                   self.context == other.context
         except AttributeError as e:
             return False
-
-    def context(self):
-        return {u:u for u in self.utilities}
-
-    def cache(self):
-        return {u:u() for u in self.utilities}
 
     @classmethod
     def from_config(self, config, name, section_key="languages"):
@@ -31,29 +25,12 @@ class Language:
                                "not yet supported")
 
 
-def not_implemented_processor():
-    raise NotImplementedError("Language utility not implemented.")
-
-class LanguageUtility(Dependent):
-
-    def __init__(self, name, processor=None, depends_on=None):
-        depends_on = depends_on or []
-        processors = processor or not_implemented_processor
-
-        super().__init__(name, processor, dependencies=depends_on)
-
-    def __hash__(self):
-        return hash((self.__class__.__name__, self.name))
-
-    def __eq__(self, other):
-        return hash(self) == hash(other)
-
-    def __ne__(self, other):
-        return hash(self) != hash(other)
+class LanguageUtility(dependencies.Dependent):
+    pass
 
 # Define placeholder utilities.  These will need to be replaced inside of a
 # language, but they will provide names to match against within the cache.
-stem_word = LanguageUtility("stem_word", not_implemented_processor)
-is_badword = LanguageUtility("is_badword", not_implemented_processor)
-is_misspelled = LanguageUtility("is_misspelled", not_implemented_processor)
-is_stopword = LanguageUtility("is_stopword", not_implemented_processor)
+stem_word = LanguageUtility("stem_word")
+is_badword = LanguageUtility("is_badword")
+is_misspelled = LanguageUtility("is_misspelled")
+is_stopword = LanguageUtility("is_stopword")
