@@ -1,3 +1,8 @@
+"""
+.. autoclass:: revscoring.dependencies.dependent.Dependent
+    :members:
+"""
+
 import logging
 from functools import wraps
 
@@ -7,7 +12,17 @@ def not_implemented(*args, **kwargs):
     raise NotImplementedError("Not implemented.")
 
 class Dependent:
+    """
+    Constructs a dependency-handling processor function.
 
+    :Parameters:
+        name : str
+            A name to identify this dependency
+        process : func
+            A function to run when solving this dependency
+        depends_on : `iterable`
+            A collection of
+    """
     def __init__(self, name, process=not_implemented, depends_on=None,
                              dependencies=None):
         self.name = name

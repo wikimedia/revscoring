@@ -5,13 +5,8 @@
 
 Welcome to Revision Scoring's documentation!
 ============================================
+.. automodule:: revscoring
 
-Contents:
-
-.. toctree::
-   :maxdepth: 4
-
-   revscoring
 
 
 Indices and tables
@@ -20,4 +15,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

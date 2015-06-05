@@ -1,3 +1,8 @@
+"""
+.. autoclass:: revscoring.datasources.datasource.Datasource
+    :member-order:
+    :inherited-members:
+"""
 from ..dependencies import Dependent
 
 
@@ -13,7 +18,7 @@ class Datasource(Dependent):
             A function that will generate a data value
         depends_on : `list`(`hashable`)
             An ordered list of dependencies that correspond
-            to the *args of `process`
+            to the `*args` of `process`
     """
 
     def __init__(self, *args, **kwargs):

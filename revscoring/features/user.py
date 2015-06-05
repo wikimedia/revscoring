@@ -5,10 +5,8 @@ from mw import Timestamp
 from ..datasources import revision, user
 from .feature import Feature
 
+# Date that registrations started being recorded in MediaWiki
 USER_REGISTRATION_EPOCH = Timestamp("20050101000000")
-"""
-Date that registrations started being recorded in MediaWiki
-"""
 
 def process_age(user_info, revision_metadata):
 

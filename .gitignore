@@ -2,9 +2,17 @@
 __pycache__/
 *.py[cod]
 *~
+ipython/.ipynb_checkpoints
 
 # C extensions
 *.so
+
+# Demo files
+demo_*.py
+
+# Datasets & Models
+datasets/
+models/
 
 # Distribution / packaging
 .Python

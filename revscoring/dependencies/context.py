@@ -1,19 +1,22 @@
+"""
+.. autoclass:: Context
+    :members:
+"""
 from .functions import dig, draw, expand, solve
 
 
 class Context:
     """
     Represents a contextual space for solving dependencies
+
+    :Parameters:
+        context : dict | iterable
+            A set of dependents to be used in place of those already
+            provided when solving dependencies.
+        cache : dict
+            A cache of computed values to use for every call to `solve()`
     """
     def __init__(self, context=None, cache=None):
-        """
-        :Parameters:
-            context : dict | iterable
-                A set of dependents to be used in place of those already
-                provided when solving dependencies.
-            cache : dict
-                A cache of computed values to use for every call to `solve()`
-        """
         self.cache = cache or {}
 
         # Make sure context is a dict
@@ -28,7 +31,7 @@ class Context:
         """
         Solves an iterable of dependents within the context.
 
-        See :func:`solve` for call signature.
+        See :func:`~revscoring.dependencies.functions.solve` for call signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
         return solve(dependents, context=context, cache=cache)
@@ -37,7 +40,7 @@ class Context:
         """
         Expands iterable of all dependents within the context.
 
-        See :func:`expand` for call signature.
+        See :func:`~revscoring.dependencies.functions.expand` for call signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
         return expand(dependents, context=context, cache=cache)
@@ -46,7 +49,7 @@ class Context:
         """
         Digs up the root dependents within the context.
 
-        See :func:`dig` for call signature.
+        See :func:`~revscoring.dependencies.functions.dig` for call signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
         return dig(dependents, context=context, cache=cache)
@@ -56,7 +59,7 @@ class Context:
         Returns a string representing the tree structure of a dependent's
         dependencies.
 
-        See :func:`draw` for call signature.
+        See :func:`~revscoring.dependencies.functions.draw` for call signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
         return dig(dependents, context=context, cache=cache)

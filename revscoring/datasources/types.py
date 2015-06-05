@@ -1,7 +1,15 @@
+"""
+.. autoclass:: RevisionMetadata
+
+.. autoclass:: UserInfo
+"""
 from mw import Timestamp
 
 
 class RevisionMetadata:
+    """
+    Represents a revision's metadata.
+    """
     __slots__ = ('rev_id', 'parent_id', 'user_text', 'user_id', 'timestamp',
                  'comment', 'page_id', 'page_namespace', 'page_title', 'bytes',
                  'minor')
@@ -24,6 +32,9 @@ class RevisionMetadata:
 
 
 class UserInfo:
+    """
+    Represents information about a user.
+    """
     __slots__ = ('id', 'name', 'editcount', 'registration',
                  'groups', 'implicitgroups', 'emailable',
                  'gender', 'block_id', 'blocked_by',

@@ -215,3 +215,7 @@ is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
 
 portuguese = Language("revscoring.languages.portuguese",
                       [stem_word, is_badword, is_misspelled, is_stopword])
+"""
+Implements :class:`~revscoring.languages.language.Language` for Portuguese.
+Comes complete with all language utilities.
+"""

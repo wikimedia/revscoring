@@ -67,3 +67,7 @@ is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
 
 english = Language("revscoring.languages.english",
                    [stem_word, is_badword, is_misspelled, is_stopword])
+"""
+Implements :class:`~revscoring.languages.language.Language` for all variants of
+English (e.g. US & British).  Comes complete with all language utilities.
+"""
