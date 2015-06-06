@@ -1,5 +1,5 @@
 """
-Utilities: 
+Utilities:
 
 .. autodata:: revscoring.languages.language.stem_word
 .. autodata:: revscoring.languages.language.is_badword
