@@ -23,10 +23,10 @@ class Dependent:
         depends_on : `iterable`
             A collection of
     """
-    def __init__(self, name, process=not_implemented, depends_on=None,
+    def __init__(self, name, process=None, depends_on=None,
                              dependencies=None):
         self.name = name
-        self.process = process
+        self.process = process or not_implemented
         self.dependencies = dependencies or depends_on or []
         self.calls = 0
 

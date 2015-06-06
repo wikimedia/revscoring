@@ -9,7 +9,7 @@ from .util import WORD_RE
 
 id = Datasource("revision.id")
 """
-Returns the rev_id of the current revision.
+Returns the `rev_id` of the current revision.
 """
 
 metadata = Datasource("revision.metadata")
