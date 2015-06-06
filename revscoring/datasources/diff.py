@@ -22,6 +22,7 @@ Returns a tuple that describes a the difference between the parent revision text
 and the current revision's text.
 
 The tuple contains three fields:
+
 * operations: `list` of :class:`deltas.Operation`
 * A tokens: `list` of `str`
 * B tokens: `list` of `str`
