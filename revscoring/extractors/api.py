@@ -22,7 +22,21 @@ user_doc = Datasource("user.doc")
 site_doc = Datasource("site.doc")
 
 class APIExtractor(Extractor):
+    """
+    Implements a :class:`~revscoring.extractor.extractor.Extractor` using a
+    MediaWiki API.
 
+    :Parameters:
+        session : :class:`mw.api.Session`
+            An API session to use
+        language : :class:`~revscoring.languages.language.Language`
+            A language context to use when extracting
+        context : `dict` | `iterable`
+            A collection of `~revscoring.dependencies.dependent.Dependent` to
+            inject when extracting.
+        cache : `dict`
+            A collection of pre-computed values to inject when extracting
+    """
     def __init__(self, session, language=None, context=None, cache=None):
         cache = cache or {}
         context = dependencies.normalize_context(context)
@@ -76,6 +90,29 @@ class APIExtractor(Extractor):
         super().__init__(local_context, local_cache)
 
     def extract(self, rev_ids, dependents, context=None, caches=None):
+        """
+        Extracts a values for a set of
+        :class:`~revscoring.dependents.dependent.Dependent` (e.g.
+        :class:`~revscoring.features.feature.Feature` or
+        :class:`~revscoring.datasources.datasource.Datasource`) for a revision
+        or a set of revisions
+
+        :Parameters:
+            rev_ids : int | `iterable`
+                Either a single rev_id or an `iterable` of rev_ids
+            dependents : :class:`~revscoring.dependents.dependent.Dependent`
+                A set of dependents to extract values for
+            context : `dict` | `iterable`
+                A set of call-specific
+                :class:`~revscoring.dependents.dependent.Dependent` to inject
+            cache : `dict`
+                A set of call-specific pre-computed values to inject
+
+        :Returns:
+            An generator of extracted values if a single rev_id was provided or
+            a genetator of (error, values) pairs where error is `None` if no
+            error occured during extraction.
+        """
         caches = caches or {}
         context = dependencies.normalize_context(context)
 

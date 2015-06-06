@@ -1,3 +1,13 @@
+"""
+.. autoclass:: revscoring.scorer_models.scorer_model.ScorerModel
+    :members:
+
+.. autoclass:: revscoring.scorer_models.scorer_model.MLScorerModel
+    :members:
+
+.. autoclass:: revscoring.scorer_models.scorer_model.ScikitLearnClassifier
+    :members:
+"""
 import pickle
 import time
 import traceback

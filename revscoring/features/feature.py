@@ -1,3 +1,7 @@
+"""
+.. autoclass:: revscoring.features.Feature
+    :members:
+"""
 from math import log as math_log
 
 from ..dependencies import Dependent
@@ -8,8 +12,7 @@ math_min = min
 
 class Feature(Dependent):
     """
-    Represents a predictive feature.  This class wraps a processor function
-    and some metadata about it.
+    Represents a predictive feature.
 
     :Parameters:
         name : str
@@ -20,7 +23,7 @@ class Feature(Dependent):
             A type to compare the return of this function to.
         dependencies : `list`(`hashable`)
                 An ordered list of dependencies that correspond
-                to the *args of `process`
+                to the `*args` of `process`
     """
     def __init__(self, name, process, returns, depends_on=None):
         super().__init__(name, process, depends_on)
@@ -111,18 +114,30 @@ class BinaryOperator(Modifier):
 
 
 class add(BinaryOperator):
+    """
+    Generates a feature that represents the addition of
+    two :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = "+"
 
     def operate(self, left, right): return left + right
 
 class sub(BinaryOperator):
+    """
+    Generates a feature that represents the subtraction of
+    two :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = "-"
 
     def operate(self, left, right): return left - right
 
 class mul(BinaryOperator):
+    """
+    Generates a feature that represents the multiplacation of
+    two :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = "*"
 
@@ -130,6 +145,10 @@ class mul(BinaryOperator):
         return left * right
 
 class div(BinaryOperator):
+    """
+    Generates a feature that represents the division of
+    two :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = "/"
     def __init__(self, left, right):
@@ -146,43 +165,70 @@ class Comparison(BinaryOperator):
         super().__init__(left, right, returns=bool)
 
 class gt(Comparison):
+    """
+    Generates a feature that represents the greater-than relationship of
+    two :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = ">"
 
     def operate(self, left, right): return left > right
 
 class lt(Comparison):
+    """
+    Generates a feature that represents the less-than relationship of
+    two :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = "<"
 
     def operate(self, left, right): return left < right
 
 class ge(Comparison):
+    """
+    Generates a feature that represents the greater-than-or-equal relationship
+    of two :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = ">="
 
     def operate(self, left, right): return left >= right
 
 class le(Comparison):
+    """
+    Generates a feature that represents the less-than-or-equal relationship of
+    two :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = "<="
 
     def operate(self, left, right): return left <= right
 
 class eq(Comparison):
+    """
+    Generates a feature that represents the equality of two
+    :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = "=="
 
     def operate(self, left, right): return left == right
 
 class ne(Comparison):
+    """
+    Generates a feature that represents the inequality of two
+    :class:`~revscoring.features.feature.Feature` or constant values.
+    """
 
     CHAR = "!="
 
     def operate(self, left, right): return left != right
 
 class max(Modifier):
-
+    """
+    Generates a feature that represents the maximum of a set of
+    :class:`~revscoring.features.feature.Feature` or constant values.
+    """
     def __init__(self, *args):
         dependencies = [Feature.or_constant(arg) for arg in args]
         returns = float # Hardcoded even though max can return strings, it
@@ -195,7 +241,10 @@ class max(Modifier):
     def _process(self, *feature_values): return float(math_max(*feature_values))
 
 class min(Modifier):
-
+    """
+    Generates a feature that represents the minimum of a set of
+    :class:`~revscoring.features.feature.Feature` or constant values.
+    """
     def __init__(self, *args):
         dependencies = [Feature.or_constant(arg) for arg in args]
         returns = float # Hardcoded even though max can return strings, it
@@ -209,7 +258,10 @@ class min(Modifier):
 
 
 class log(Modifier):
-
+    """
+    Generates a feature that represents the log of a
+    :class:`~revscoring.features.feature.Feature`'s value.
+    """
     def __init__(self, feature):
         feature = Feature.or_constant(feature)
         super().__init__("log({0})".format(feature.name), self._process,

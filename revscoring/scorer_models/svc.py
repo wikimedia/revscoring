@@ -1,3 +1,17 @@
+"""
+.. autoclass:: revscoring.scorer_models.svc.LinearSVC
+    :members:
+    :member-order:
+
+.. autoclass:: revscoring.scorer_models.svc.RBFSVC
+    :members:
+    :member-order:
+
+.. autoclass:: revscoring.scorer_models.svc.SVC
+    :members:
+    :member-order:
+
+"""
 import random
 import time
 from collections import defaultdict
@@ -7,8 +21,20 @@ from sklearn import svm
 from .scorer_model import ScikitLearnClassifier
 
 
-class SVCModel(ScikitLearnClassifier):
+class SVC(ScikitLearnClassifier):
+    """
+    Implements a Support Vector Classifier model.
 
+    :Params:
+        features : `collection` of :class:`~revscoring.features.feature.Feature`
+            The features that the model will be trained on
+        language : :class:`~revscoring.languages.language.Language`
+            The language context applied when extracting features.
+        version : str
+            A version string representing the version of the model
+        `**kwargs`
+            Passed to :class:`sklearn.svm.SVC`
+    """
     def __init__(self, features, language=None, version=None, svc=None, **kwargs):
         if svc is None:
             classifier_model = svm.SVC(probability=True, **kwargs)
@@ -109,21 +135,50 @@ class SVCModel(ScikitLearnClassifier):
         # Shuffle the observations again before returning.
         random.shuffle(new_values_labels)
         return new_values_labels
+SVCModel = SVC
+"Alias for backwards compatibility"
 
+class LinearSVC(SVC):
+    """
+    Implements a Support Vector Classifier model with a Linear kernel.
 
-class LinearSVCModel(SVCModel):
-
+    :Params:
+        features : `collection` of :class:`~revscoring.features.feature.Feature`
+            The features that the model will be trained on
+        language : :class:`~revscoring.languages.language.Language`
+            The language context applied when extracting features.
+        version : str
+            A version string representing the version of the model
+        `**kwargs`
+            Passed to :class:`sklearn.svm.SVC`
+    """
     def __init__(self, *args, **kwargs):
         if 'kernel' in kwargs:
             raise TypeError("'kernel' is hard-coded to 'linear'. If you'd " +
                             "like to use a different kernel, use SVCModel.")
         super().__init__(*args, kernel="linear", **kwargs)
+LinearSVCModel = LinearSVC
+"Alias for backwards compatibility"
 
 
-class RBFSVCModel(SVCModel):
+class RBFSVC(SVC):
+    """
+    Implements a Support Vector Classifier model with an RBF kernel.
 
+    :Params:
+        features : `collection` of :class:`~revscoring.features.feature.Feature`
+            The features that the model will be trained on
+        language : :class:`~revscoring.languages.language.Language`
+            The language context applied when extracting features.
+        version : str
+            A version string representing the version of the model
+        `**kwargs`
+            Passed to :class:`sklearn.svm.SVC`
+    """
     def __init__(self, *args, **kwargs):
         if 'kernel' in kwargs:
             raise TypeError("'kernel' is hard-coded to 'rbf'. If you'd " +
                             "like to use a different kernel, try SVCModel.")
         super().__init__(*args, kernel="rbf", **kwargs)
+RBFSVCModel = RBFSVC
+"Alias for backwards compatibility"

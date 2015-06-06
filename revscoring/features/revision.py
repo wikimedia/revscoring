@@ -98,7 +98,7 @@ has_section_comment = \
 """
 Represents whether the edit has section edit summary.
 
-Section edit summaries are like "/* <section title> */" which mediawiki
+Section edit summaries are like ``"/* <section title> */"`` which mediawiki
 automatically creates them when a user edit a section.
 
 :Returns:

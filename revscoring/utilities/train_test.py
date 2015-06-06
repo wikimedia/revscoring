@@ -1,29 +1,33 @@
 """
-Trains and tests a scorer model.  This utility expects to get a file of
-tab-separated feature values and labels from which to construct a model.
+``revscoring train_test -h``
+::
 
-Usage:
-    train_test -h | --help
-    train_test <scorer_model> <features> [<language>] [-p=<kv>]...
-               [--version=<vers>]
-               [--values-labels=<path>]
-               [--model-file=<path>]
-               [--label-type=<type>]
+    Trains and tests a scorer model.  This utility expects to get a file of
+    tab-separated feature values and labels from which to construct a model.
 
-Options:
-    -h --help               Prints this documentation
-    <scorer_model>          Classpath to an the MLScorerModel to construct and
-                            train
-    <features>              Classpath to an list of features to use when
-                            constructing the model
-    -p --parameter=<kv>     A key-value argument pair to use when constructing
-                            the scorer_model.
-    --version=<vers>        A version to associate with the model
-    --values-labels=<path>  Path to a file containing feature values and labels
-                            [default: <stdin>]
-    --model-file=<math>     Path to write a model file to [default: <stdout>]
-    --label-type=<type>     Interprets the labels as the appropriate type
-                            (int, float, str, bool) [default: str]
+    Usage:
+        train_test -h | --help
+        train_test <scorer_model> <features> [<language>] [-p=<kv>]...
+                   [--version=<vers>]
+                   [--values-labels=<path>]
+                   [--model-file=<path>]
+                   [--label-type=<type>]
+
+    Options:
+        -h --help               Prints this documentation
+        <scorer_model>          Classpath to an the MLScorerModel to construct
+                                and train
+        <features>              Classpath to an list of features to use when
+                                constructing the model
+        -p --parameter=<kv>     A key-value argument pair to use when
+                                constructing the scorer_model.
+        --version=<vers>        A version to associate with the model
+        --values-labels=<path>  Path to a file containing feature values and
+                                labels [default: <stdin>]
+        --model-file=<math>     Path to write a model file to
+                                [default: <stdout>]
+        --label-type=<type>     Interprets the labels as the appropriate type
+                                (int, float, str, bool) [default: str]
 """
 import json
 import pprint

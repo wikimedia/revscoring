@@ -1,17 +1,20 @@
 """
-Scores a set of revisions.
+``revscoring score -h``
+::
 
-Usage:
-    score (-h | --help)
-    score <model-file> <rev_id>... --api=<uri> [--verbose]
+    Scores a set of revisions.
 
-Options:
-    -h --help      Print this documentation
-    <model-file>   Path to a model file
-    --api=<url>    The url pointing to a MediaWiki API to use for extracting
-                   features
-    --verbose      Print debugging info
-    <rev_id>       A revision identifier
+    Usage:
+        score (-h | --help)
+        score <model-file> <rev_id>... --api=<uri> [--verbose]
+
+    Options:
+        -h --help      Print this documentation
+        <model-file>   Path to a model file
+        --api=<url>    The url pointing to a MediaWiki API to use for extracting
+                       features
+        --verbose      Print debugging info
+        <rev_id>       A revision identifier
 """
 import json
 import logging
