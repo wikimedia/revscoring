@@ -8,13 +8,13 @@ processors that represent the input data for extracting
 :func:`~revscoring.dependencies.functions.solve`'d as dependencies. The provided
 datasources are split conceptually into a set of modules:
 
-* :mod:`revscoring.features.diff`
-* :mod:`revscoring.features.page_creation`
-* :mod:`revscoring.features.parent_revision`
-* :mod:`revscoring.features.previous_user_revision`
-* :mod:`revscoring.features.revision`
-* :mod:`revscoring.features.site`
-* :mod:`revscoring.features.user`
+* :mod:`revscoring.datasources.diff`
+* :mod:`revscoring.datasources.page_creation`
+* :mod:`revscoring.datasources.parent_revision`
+* :mod:`revscoring.datasources.previous_user_revision`
+* :mod:`revscoring.datasources.revision`
+* :mod:`revscoring.datasources.site`
+* :mod:`revscoring.datasources.user`
 
 diff
 ++++
