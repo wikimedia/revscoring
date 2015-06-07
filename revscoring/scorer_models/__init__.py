@@ -24,7 +24,8 @@ scorer_model
 
 
 """
-from .svc import SVCModel, LinearSVCModel, RBFSVCModel
-from .nb import NBModel, GaussianNBModel, MultinomialNBModel, BernoulliNBModel
+from .svc import SVC, SVCModel, LinearSVC, LinearSVCModel, RBFSVC, RBFSVCModel
+from .nb import (NB, NBModel, GaussianNB, GaussianNBModel, MultinomialNB,
+                 MultinomialNBModel, BernoulliNB, BernoulliNBModel)
 from .scorer_model import ScorerModel, MLScorerModel, ScikitLearnClassifier
-from .rf import RFModel
+from .rf import RF, RFModel
