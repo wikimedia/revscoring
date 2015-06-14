@@ -25,7 +25,7 @@ class Feature(Dependent):
                 An ordered list of dependencies that correspond
                 to the `*args` of `process`
     """
-    def __init__(self, name, process, returns, depends_on=None):
+    def __init__(self, name, process=None, *, returns=None, depends_on=None):
         super().__init__(name, process, depends_on)
         self.returns = returns
 
@@ -88,7 +88,8 @@ class Constant(Feature):
 
     def __init__(self, value):
         self.value = value
-        super().__init__(str(value), self._process, type(value), depends_on=[])
+        super().__init__(str(value), self._process,
+                         returns=type(value), depends_on=[])
 
     def _process(self):
         return self.value
