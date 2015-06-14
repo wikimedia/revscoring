@@ -26,8 +26,12 @@ def check_feature(feature, expected):
     eq_(solve(pickle.loads(pickle.dumps(feature))), expected)
 
 def test_feature():
-
     check_feature(five, 5)
+
+def test_minimal_constructor():
+    myfive = Feature("five")
+
+    eq_(myfive, five)
 
 @raises(ValueError)
 def test_feature_type():
