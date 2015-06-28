@@ -35,6 +35,7 @@ import random
 import sys
 
 import docopt
+from tabulate import tabulate
 
 from .util import encode, import_from_path
 
@@ -114,7 +115,23 @@ def run(feature_labels, model_file, scorer_model):
     scorer_model.train(train_set)
 
     stats = scorer_model.test(test_set)
-    del stats['roc']
-    sys.stderr.write(pprint.pformat(stats) + "\n")
+    sys.stderr.write("Accuracy: {0}\n\n".format(stats['accuracy']))
+    if 'auc' in stats['roc']:
+        sys.stderr.write("ROC-AUC: {0}\n".format(stats['roc']['auc']))
+    else:
+        sys.stderr.write("ROC-AUC:\n")
+
+        table_data = [[comparison_label, stats['roc'][comparison_label]['auc']]
+                      for comparison_label in stats['roc']]
+        sys.stderr.write(tabulate(table_data))
+        sys.stderr.write("\n\n")
+
+    table_data = [[actual, predicted, count]
+                  for (predicted, actual), count in stats['table'].items()]
+    table_data.sort()
+
+    sys.stderr.write(tabulate(table_data,
+                              headers=['actual', 'predicted', 'count']))
+    sys.stderr.write("\n")
 
     scorer_model.dump(model_file)
