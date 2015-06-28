@@ -224,50 +224,73 @@ class ScikitLearnClassifier(MLScorerModel):
         return normalize_json(doc)
 
 
-    def test(self, values_labels, comparison_class=None):
+    def test(self, values_labels):
         """
         :Returns:
             A dictionary of test statistics with the fields:
 
-            * mean.accuracy -- The mean accuracy of classification
-            * auc -- The area under the ROC curve
+            * accuracy -- The mean accuracy of classification
             * table -- A truth table for classification
             * roc
+                * auc -- The area under the ROC curve
                 * fpr -- A list of false-positive rate values
                 * tpr -- A list of true-positive rate values
+                * thresholds -- Thresholds on the decision function used to
+                                compute fpr and tpr.
 
         """
         values, labels = zip(*values_labels)
 
         scores = [self.score(feature_values) for feature_values in values]
 
-        if comparison_class == None:
-            comparison_class = self.classifier_model.classes_[1]
-        elif comparison_class not in self.classifier_model.classes_:
-            raise TypeError("comparison_class {0} is not in {1}" \
-                            .format(comparison_class,
-                                    self.classifier_model.classes_))
+        return {
+            'table': self._label_table(scores, labels),
+            'accuracy': self.classifier_model.score(values, labels),
+            'roc': self._roc_stats(scores, labels,
+                                   self.classifier_model.classes_)
+        }
 
+    @classmethod
+    def _roc_stats(cls, scores, labels, possible_labels):
 
-        probabilities = [s['probability'][comparison_class]
+        if len(possible_labels) <= 2:
+            # Binary classification, class choice doesn't matter.
+            comparison_label = possible_labels[0]
+            return cls._roc_single_class(scores, labels, comparison_label)
+        else:
+            roc_stats = {}
+            for comparison_label in possible_labels:
+                roc_stats[comparison_label] = \
+                        cls._roc_single_class(scores, labels, comparison_label)
+
+            return roc_stats
+
+    @classmethod
+    def _roc_single_class(cls, scores, labels, comparison_label):
+        probabilities = [s['probability'][comparison_label]
                          for s in scores]
-        predicteds = [s['prediction'] for s in scores]
 
-        true_positives = [l == comparison_class for l in labels]
-
+        true_positives = [l == comparison_label for l in labels]
         fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
 
-        table = {}
-        for pair in zip(labels, predicteds):
-            table[pair] = table.get(pair, 0) + 1
-
         return {
-            'table': table,
-            'mean.accuracy': self.classifier_model.score(values, labels),
-            'roc': {
+            'curve': {
                 'fpr': list(fpr),
                 'tpr': list(tpr),
                 'thresholds': list(thresholds)
             },
             'auc': auc(fpr, tpr)
         }
+
+
+
+    @staticmethod
+    def _label_table(scores, labels):
+
+        predicteds = [s['prediction'] for s in scores]
+
+        table = {}
+        for pair in zip(labels, predicteds):
+            table[pair] = table.get(pair, 0) + 1
+
+        return table
