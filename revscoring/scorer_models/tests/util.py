@@ -47,9 +47,7 @@ def train_score(model):
 
     test_stats = model.test(test_set)
 
-    del test_stats['roc']
-    print(test_stats)
-    assert test_stats['auc'] > 0.5
+    assert test_stats['roc']['auc'] > 0.5
 
 def pickle_and_unpickle(model):
     f = BytesIO()
