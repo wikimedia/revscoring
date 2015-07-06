@@ -8,7 +8,7 @@ pytz == 2015.4
 requests == 2.5.3
 setuptools == 15.1
 pyenchant == 1.6.6
-scipy == 0.13.3
+scipy == 0.14.0
 scikit-learn == 0.15.2
 yamlconf == 0.0.1
 tabulate==0.7.5
