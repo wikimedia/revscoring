@@ -35,7 +35,7 @@ class SVC(ScikitLearnClassifier):
         `**kwargs`
             Passed to :class:`sklearn.svm.SVC`
     """
-    def __init__(self, features, language=None, version=None, svc=None, **kwargs):
+    def __init__(self, features, language=None, version=None, svc=None, balance_labels=True, **kwargs):
         if svc is None:
             classifier_model = svm.SVC(probability=True, **kwargs)
         else:
@@ -44,10 +44,11 @@ class SVC(ScikitLearnClassifier):
         super().__init__(features, classifier_model, language=language,
                          version=version)
 
+        self.balance_labels = balance_labels
         self.feature_stats = None
         self.weights = None
 
-    def train(self, values_labels, balance_labels=True):
+    def train(self, values_labels):
         """
 
         :Returns:
@@ -58,7 +59,7 @@ class SVC(ScikitLearnClassifier):
         start = time.time()
 
         # Balance labels
-        if balance_labels: values_labels = self._balance_labels(values_labels)
+        if self.balance_labels: values_labels = self._balance_labels(values_labels)
 
         # Split out feature_values
         feature_values, labels = zip(*values_labels)
