@@ -33,6 +33,14 @@ def test_age():
     # Makes sure that old users with no registration are counted appropriately.
     assert solve(age, cache=cache) > 0
 
+    cache = {
+        revision.metadata: FakeRevisionMetadata(10, Timestamp(0)),
+        user.info: FakeUserInfo(Timestamp(1))
+    }
+    # Makes sure that imports (revisions made before registration) don't return
+    # negative values.
+    eq_(solve(age, cache=cache), 0)
+
 def test_is_anon():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['user_id'])

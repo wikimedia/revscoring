@@ -13,8 +13,9 @@ def process_age(user_info, revision_metadata):
     if process_is_anon(revision_metadata): # Anonymous so age == zero
         return 0
     else:
-        return revision_metadata.timestamp - \
-               (user_info.registration or USER_REGISTRATION_EPOCH)
+        registration_delta = revision_metadata.timestamp - \
+                (user_info.registration or USER_REGISTRATION_EPOCH)
+        return max(registration_delta, 0)
 
 age = Feature("user.age", process_age,
               returns=int, depends_on=[user.info, revision.metadata])
