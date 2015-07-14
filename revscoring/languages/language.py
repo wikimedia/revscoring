@@ -84,6 +84,11 @@ Returns a boolean value that is `True` when a given word is "bad" or generally
 realted to damaging edits
 """
 
+is_informal_word = LanguageUtility("is_informal_word")
+"""
+Returns a boolean value that is `True` when a given word is not encyclopaedic
+"""
+
 is_misspelled = LanguageUtility("is_misspelled")
 """
 Returns a boolean value that is `True` when a given word cannot be found in
