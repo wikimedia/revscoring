@@ -101,11 +101,11 @@ system.  These are for ``scipy`` and ``numpy``.
 
 Linux Mint 17.1:
 
-1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za  myspell-fr aspell-id``
+1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za  myspell-fr aspell-id myspell-es``
 
 Ubuntu 14.04:
 
-1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev myspell-pt myspell-fa myspell-en-au  myspell-en-gb myspell-en-us myspell-en-za myspell-fr aspell-id``
+1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev myspell-pt myspell-fa myspell-en-au  myspell-en-gb myspell-en-us myspell-en-za myspell-fr aspell-id myspell-es``
 
 Authors
 =======

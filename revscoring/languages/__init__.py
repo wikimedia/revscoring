@@ -36,13 +36,18 @@ portuguese
 .. automodule:: revscoring.languages.portuguese
     :members:
 
+spanish
++++++++
+.. automodule:: revscoring.languages.spanish
+    :members:
+
 turkish
 +++++++
 .. automodule:: revscoring.languages.turkish
     :members:
 
 language
-++++++++++++++++++
+++++++++
 .. automodule:: revscoring.languages.language
 """
 
@@ -53,4 +58,5 @@ from .french import french
 from .indonesian import indonesian
 from .persian import persian
 from .portuguese import portuguese
+from .spanish import spanish
 from .turkish import turkish
