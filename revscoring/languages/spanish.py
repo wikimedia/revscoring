@@ -1,15 +1,15 @@
-# import re
-# import warnings
+import re
+import warnings
 
-# import enchant
-# from nltk.corpus import stopwords
-# from nltk.stem.snowball import SnowballStemmer
+import enchant
+from nltk.corpus import stopwords
+from nltk.stem.snowball import SnowballStemmer
 
-# from .language import Language, LanguageUtility
+from .language import Language, LanguageUtility
 
-# STEMMER = SnowballStemmer("english")
-# STOPWORDS = set(stopwords.words('english'))
-BAD_REGEXES = set([
+STEMMER = SnowballStemmer("spanish")
+STOPWORDS = set(stopwords.words("spanish"))
+BAD_REGEXES = [
     'ano',
     'bastardo', 'bollo', 'boludo', 'bugarr[óo]n',
     'ca(gar(ro)?|ca)', 'cabr[óo]n', 'cacas', 'capullo', 'carajo',
@@ -39,34 +39,34 @@ BAD_REGEXES = set([
         'travesti', 'travolo', 'trolo',
     'verga', 'vibrador', 'vulva',
     'zapatona', 'zorra'
-])
-# BAD_REGEX = re.compile("|".join(BAD_REGEXES))
-# DICTIONARY = enchant.Dict("en")
+]
+BAD_REGEX = re.compile("|".join(BAD_REGEXES))
+DICTIONARY = enchant.Dict("es")
 
-# def stem_word_process():
-#     def stem_word(word):
-#         return STEMMER.stem(word).lower()
-#     return stem_word
-# stem_word = LanguageUtility("stem_word", stem_word_process)
+def stem_word_process():
+    def stem_word(word):
+        return STEMMER.stem(word).lower()
+    return stem_word
+stem_word = LanguageUtility("stem_word", stem_word_process)
 
-# def is_badword_process():
-#     def is_badword(word):
-#         return bool(BAD_REGEX.match(word.lower()))
-#     return is_badword
-# is_badword = LanguageUtility("is_badword", is_badword_process)
+def is_badword_process():
+    def is_badword(word):
+        return bool(BAD_REGEX.match(word.lower()))
+    return is_badword
+is_badword = LanguageUtility("is_badword", is_badword_process)
 
-# def is_misspelled_process():
-#     def is_misspelled(word):
-#         return not DICTIONARY.check(word)
-#     return is_misspelled
+def is_misspelled_process():
+    def is_misspelled(word):
+        return not DICTIONARY.check(word)
+    return is_misspelled
 
-# is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process)
+is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process)
 
-# def is_stopword_process():
-#     def is_stopword(word):
-#         return word.lower() in STOPWORDS
-#     return is_stopword
-# is_stopword = LanguageUtility("is_stopword", is_stopword_process)
+def is_stopword_process():
+    def is_stopword(word):
+        return word.lower() in STOPWORDS
+    return is_stopword
+is_stopword = LanguageUtility("is_stopword", is_stopword_process)
 
-# english = Language("revscoring.languages.english",
-#                    [stem_word, is_badword, is_misspelled, is_stopword])
+spanish = Language("revscoring.languages.spanish",
+                   [stem_word, is_badword, is_misspelled, is_stopword])
