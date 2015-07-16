@@ -1,4 +1,4 @@
-deltas == 0.3.0
+deltas == 0.3.1
 docopt == 0.6.2
 mediawiki-utilities==0.4.14
 mwparserfromhell == 0.3.3
