@@ -59,7 +59,7 @@ def stem_word_process():
     def stem_word(word):
         return STEMMER.stem(word).lower()
     return stem_word
-stem_word = LanguageUtility("stem_word", stem_word_process, depends_on=[])
+stem_word = LanguageUtility("stem_word", stem_word_process)
 
 
 def is_badword_process():
@@ -74,21 +74,21 @@ def is_informal_word_process():
         return bool(INFORMAL_REGEX.match(word.lower()))
     return is_informal_word
 is_informal_word = LanguageUtility("is_informal_word",
-    is_informal_word_process, depends_on=[])
+    is_informal_word_process)
+
 
 def is_misspelled_process():
     def is_misspelled(word):
         return not DICTIONARY.check(word)
     return is_misspelled
 
-is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,
-                                depends_on=[])
+is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process)
 
 def is_stopword_process():
     def is_stopword(word):
         return word.lower() in STOPWORDS
     return is_stopword
-is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
+is_stopword = LanguageUtility("is_stopword", is_stopword_process)
 
 english = Language("revscoring.languages.english",
                    [stem_word, is_badword, is_misspelled, is_stopword, is_informal_word])
