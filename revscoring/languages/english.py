@@ -1,3 +1,4 @@
+import re
 import warnings
 
 import enchant
@@ -8,13 +9,12 @@ from .language import Language, LanguageUtility
 
 STEMMER = SnowballStemmer("english")
 STOPWORDS = set(stopwords.words('english'))
-BADWORDS = set([
-    "anus", "ass",
-    "bitch", "bootlip", "butt",
+BAD_REGEXES = [
+    "a+nus+", "ass+",
+    "bitch", "bootlip", "butt+",
     "chlamydia", "cholo", "chug", "cocksuck", "coonass", "cracker", "cunt",
-    "dick", "dickhead", "dothead",
-    "fag", "faggot",
-    "fart", "fat", "fuck", "fucker",
+    "dick", "dothead",
+    "(f|ph)ag+(ot)?", "fart", "fat", "fuck",
     "gipp", "gippo", "gonorrhea", "gook", "gringo", "gypo", "gyppie", "gyppo",
         "gyppy",
     "herpes", "hillbilly", "hiv", "homosexual", "hori",
@@ -23,32 +23,35 @@ BADWORDS = set([
     "kike", "kwashi", "kyke",
     "lesbian", "lick",
     "motherfuck",
-    "nig", "nigar", "nigette", "nigga", "niggah", "niggar", "nigger",
-        "niggress", "nigguh", "niggur", "niglet", "nigor", "nigr", "nigra",
-    "peckerwood", "penis", "piss",
+    "nig", "nig+(a|e|u)+(r|h)+", "niggress"
+        "niglet", "nigor", "nigr", "nigra",
+    "pecker(wood)?", "peni(s)?", "piss",
     "quashi",
     "raghead", "redneck", "redskin", "roundeye",
-    "scabies", "shit", "shitty", "slut", "slutty", "spic", "spick", "spig",
-        "spigotty", "spik", "spook", "squarehead", "stupid", "suck", "syphilis",
+    "scabies", "shi+t+", "slut", "spi(g|c|k)+",
+        "spigotty", "spik", "spook", "squarehead", "st(u|oo+)pid", "suck",
+        "syphil+is",
     "turd", "twat",
     "wank", "wetback", "whore", "wog", "wop",
     "yank", "yankee", "yid",
     "zipperhead"
-])
-INFORMAL_WORDS = set([
-    'awesome', 'awesomest', 'awsome'
-    'bla', 'blah', 'boner', 'boobs', 'bullshit'
-    'cant', 'coolest', 'crap'
-    "dont", "dumb", "dumbass",
+]
+INFORMAL_REGEXES = [
+    'awesome', 'awesomest', 'awsome',
+    'bla', 'blah', 'boner', 'boobs', 'bullshit',
+    'cant', 'coolest', 'crap',
+    "don'?t", "dumb", "dumbass",
     "haha", "hello", "hey",
     "kool",
     "lol", "luv",
     "meow",
-    'shove', 'smelly', 'sooo', 'stinky', 'sucking', 'sux'
+    'shove', 'smelly', 'sooo', 'stinky', 'sucking', 'sux', "shouldn\'t"
     "tits",
-    "wuz",
-    'yall', 'yay', 'yea', 'yolo'])
-STEMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
+    "wasn'?t", "wuz", "won'?t",
+    'yall', 'yay', 'yea', 'yolo'
+]
+BAD_REGEX = re.compile("|".join(BAD_REGEXES))
+INFORMAL_REGEX = re.compile("|".join(INFORMAL_REGEXES))
 DICTIONARY = enchant.Dict("en")
 
 
@@ -59,20 +62,19 @@ def stem_word_process():
 stem_word = LanguageUtility("stem_word", stem_word_process, depends_on=[])
 
 
-def is_badword_process(stem_word):
+def is_badword_process():
     def is_badword(word):
-        return stem_word(word) in STEMMED_BADWORDS
+        return bool(BAD_REGEX.match(word.lower()))
     return is_badword
-is_badword = LanguageUtility("is_badword", is_badword_process, depends_on=[stem_word])
+is_badword = LanguageUtility("is_badword", is_badword_process)
 
 
-def is_informal_word_process(stem_word):
+def is_informal_word_process():
     def is_informal_word(word):
-        return stem_word(word) in INFORMAL_WORDS
+        return bool(INFORMAL_REGEX.match(word.lower()))
     return is_informal_word
 is_informal_word = LanguageUtility("is_informal_word",
-    is_informal_word_process, depends_on=[stem_word])
-
+    is_informal_word_process, depends_on=[])
 
 def is_misspelled_process():
     def is_misspelled(word):
