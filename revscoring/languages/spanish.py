@@ -117,4 +117,5 @@ def is_stopword_process():
 is_stopword = LanguageUtility("is_stopword", is_stopword_process)
 
 spanish = Language("revscoring.languages.spanish",
-                   [stem_word, is_badword, is_misspelled, is_stopword])
+                   [stem_word, is_badword, is_informal_word, is_misspelled,
+                    is_stopword])
