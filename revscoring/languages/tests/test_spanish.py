@@ -1,7 +1,8 @@
 from nose.tools import eq_
 
 from .. import language
-from ..spanish import is_badword, is_misspelled, is_stopword, stem_word
+from ..spanish import (is_badword, is_informal_word, is_misspelled,
+                       is_stopword, stem_word)
 
 
 def test_language():
@@ -15,6 +16,12 @@ def test_language():
     assert is_badword()("Mamón")
     assert not is_badword()("hat")
     eq_(hash(is_badword), hash(language.is_badword))
+
+    assert is_informal_word()("jaja")
+    assert is_informal_word()("jejejejeje")
+    assert is_informal_word()("Chido")
+    assert not is_informal_word()("Mamón")
+    eq_(hash(is_informal_word), hash(language.is_informal_word))
 
     assert is_misspelled()("wjwkjb")
     assert not is_misspelled()("que")
