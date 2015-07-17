@@ -10,10 +10,13 @@ from .language import Language, LanguageUtility
 STEMMER = SnowballStemmer("spanish")
 STOPWORDS = set(stopwords.words("spanish"))
 BAD_REGEXES = [
-    'ano',
+
+    'ano', 'amaona', 'autofellation', 'aweonao',
     'bastardo', 'bollo', 'boludo', 'bugarr[óo]n',
-    'ca(gar(ro)?|ca)', 'cabr[óo]n', 'cacas', 'capullo', 'carajo',
-        'chingar', 'chino', 'choch[oa]', 'cholo', 'chucha', 'chupar',
+    'ca(gar(ro)?|ca)', 'cabr[óo]n(es)?', 'caca', 'caga(d[ao]|r)?', 'capullo',
+        'cagaro?', 'carajo',
+        'chinga(r|da)?', 'chingu?en', 'chino', 'choch[oa]', 'cholo', 'chucha',
+        'chupa(r|me|mel[ao])', 'chup[ea][nr]', 'chupen(la|me)',
         'chupapollas', 'chupamedias', 'cipote', 'clamidia', 'coger',
         'cojones', 'concha', 'conejo', 'consolador', 'coño', 'cuca',
         'culear', 'culo', 'cundango',
@@ -40,6 +43,29 @@ BAD_REGEXES = [
     'verga', 'vibrador', 'vulva',
     'zapatona', 'zorra'
 ]
+#TODO: finish this
+"""
+    chinga chingada chingen chinguen chocha chucha chupa chupaba chupaban
+    chupame chupamela chupan chupar chupen chupenla chupenme chupo cojer cojio
+    cojones comeme comian conchetumare coño culeros culiao culiaos culito
+follaba follar follo
+gays gey gilipollas guevo guey
+hijueputa hijueputas holocuento
+idiota idiotas imbecil
+jilipollas joder joto jotos
+malparido malparidos mamada mamadas mamaguevo mamon marica maricas marico
+    maricon maricones merda metia meto mierda mierdaa mierdas mocos mojon monda
+nacio
+ojete pajas pajero
+pario pattaya pedo
+pedos pelan pelotudo pelotudos pendeja pendejada pendejadas pendejo pendejos peo
+    peos perra perras petardas petes picha pichula pija pijas piko pinche
+    pinches pinga pipi pirobos pito polla pollas poronga poto puta putaa putas
+    puto puton putos sorete
+teta tetas trola trolo
+verga vergas violo
+wea weon weones wey
+zorra"""
 BAD_REGEX = re.compile("|".join(BAD_REGEXES))
 DICTIONARY = enchant.Dict("es")
 
