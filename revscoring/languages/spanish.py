@@ -43,7 +43,7 @@ BAD_REGEXES = [
     'verga', 'vibrador', 'vulva',
     'zapatona', 'zorra'
 ]
-#TODO: finish this
+#TODO: more badwords
 """
     chinga chingada chingen chinguen chocha chucha chupa chupaba chupaban
     chupame chupamela chupan chupar chupen chupenla chupenme chupo cojer cojio
@@ -66,6 +66,122 @@ teta tetas trola trolo
 verga vergas violo
 wea weon weones wey
 zorra"""
+
+#TODO: informal words
+"""
+agan
+agregenme
+aguante
+aki
+amo
+amoo
+amooo
+amoooo
+apesta
+asco
+att
+atte
+bieber
+bla
+bobada
+bobos
+cafemontevideo
+chido
+comia
+comio
+contributions
+copien
+cursiva
+descubrio
+direction
+estupida
+estupides
+estupido
+estupidos
+fea
+feas
+feo
+feos
+grasias
+guapo
+haha
+hahaha
+hola
+holaa
+holaaa
+holaaaa
+holaaaaa
+holi
+holis
+hotmail
+ijos
+inserta
+jaja
+jajaj
+jajaja
+jajajaj
+jajajaja
+jajajajaj
+jajajajaja
+jajajajajaja
+jajajajajajaja
+jajajajajajajaja
+jeje
+jejeje
+jiji
+kien
+kiero
+komo
+lean
+lees
+loko
+lol
+malparida
+mcfinnigan
+mensos
+metio
+metroflog
+minecraft
+muxo
+negrita
+ojala
+osea
+pene
+penes
+pollid
+popo
+porfavor
+porke
+porq
+porqe
+porqueria
+profe
+pupu
+qiero
+redtube
+saludos
+satanists
+sierto
+soi
+sophonpanich
+subnormal
+tambn
+tanga
+tonta
+tonto
+tontos
+umaxnet
+vallanse
+vayanse
+wena
+weno
+xdd
+xddd
+xdddd
+xfarm
+yolo
+zorpia
+"""
 BAD_REGEX = re.compile("|".join(BAD_REGEXES))
 DICTIONARY = enchant.Dict("es")
 
