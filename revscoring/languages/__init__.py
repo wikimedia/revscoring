@@ -52,7 +52,7 @@ language
 """
 
 from .language import Language, LanguageUtility
-from .language import stem_word, is_badword, is_misspelled, is_stopword
+from .language import stem_word, is_badword, is_misspelled, is_stopword, is_informal_word
 from .english import english
 from .french import french
 from .indonesian import indonesian

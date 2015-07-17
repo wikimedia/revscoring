@@ -6,7 +6,7 @@ from revscoring.languages import is_stopword, stem_word
 
 from . import modifiers
 from ..datasources import revision
-from ..languages import is_badword, is_misspelled, is_stopword, stem_word
+from ..languages import is_badword, is_misspelled, is_stopword, stem_word, is_informal_word
 from .feature import Feature
 from .util import (CATEGORY_RE, CITE_RE, IMAGE_RE, INFOBOX_RE, MARKUP_RE,
                    NUMERIC_RE, SECTION_COMMENT_RE, SYMBOLIC_RE)
@@ -337,6 +337,39 @@ Represents ratio of 'badwords' compared to all words in the revision.
 
         >>> from revscoring.features import revision
         >>> list(extractor.extract(655097130, [revision.proportion_of_badwords]))
+        [0.036663124335812966]
+"""
+def process_informal_words(is_informal_word, revision_words):
+    return sum(is_informal_word(word) for word in revision_words)
+
+informal_words = Feature("revision.informal_words", process_informal_words,
+                   returns=int,
+                   depends_on=[is_informal_word, revision.words])
+"""
+Represents number of 'informal words' in the revision.
+
+:Returns:
+    int
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.informal_words]))
+        [138]
+"""
+proportion_of_informal_words = informal_words / modifiers.max(words, 1)
+"""
+Represents ratio of 'informal words' compared to all words in the revision.
+
+:Returns:
+    float
+
+:Example:
+    ..code-block:: python
+
+        >>> from revscoring.features import revision
+        >>> list(extractor.extract(655097130, [revision.proportion_of_informal_words]))
         [0.036663124335812966]
 """
 def process_misspellings(is_misspelled, revision_words):
