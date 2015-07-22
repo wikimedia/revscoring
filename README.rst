@@ -86,6 +86,9 @@ the stock packages,
 
 ``sudo apt-get install python-numpy python-scipy``
 
+Virtualenv users, please note that you'll have to use the --system-site-packages
+option if you install the system packages like this.
+
 Otherwise, you'll have to install the prerequisite packages by hand, as follows:
 
 Linux Mint 17.1:
