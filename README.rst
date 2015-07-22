@@ -81,7 +81,12 @@ Packages
 In order to use this, you need to install a few packages first:
 
 You might need to install some other dependencies depending on your operating
-system.  These are for ``scipy`` and ``numpy``.
+system.  These are for ``scipy`` and ``numpy``.  The fastest way is to install
+the stock packages,
+
+``sudo apt-get install python-numpy python-scipy``
+
+Otherwise, you'll have to install the prerequisite packages by hand, as follows:
 
 Linux Mint 17.1:
 
