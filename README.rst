@@ -75,8 +75,24 @@ Feature extraction:
 
 Installation
 ================
+
+Packages
+---------
 In order to use this, you need to install a few packages first:
 
+You might need to install some other dependencies depending on your operating
+system.  These are for ``scipy`` and ``numpy``.
+
+Linux Mint 17.1:
+
+1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za  myspell-fr aspell-id myspell-es``
+
+Ubuntu 14.04 and Debian 8:
+
+1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev myspell-pt myspell-fa myspell-en-au  myspell-en-gb myspell-en-us myspell-en-za myspell-fr aspell-id myspell-es``
+
+Python modules
+----------------
 ``pip install revscoring``
 
 You'll need to download NLTK data in order to make use of language features.
@@ -95,17 +111,9 @@ You'll need to download NLTK data in order to make use of language features.
     >>> Downloader> q
     >>> exit()
 
+OR, download everything from the command line:
 
-You might need to install some other dependencies depending on your operating
-system.  These are for ``scipy`` and ``numpy``.
-
-Linux Mint 17.1:
-
-1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za  myspell-fr aspell-id myspell-es``
-
-Ubuntu 14.04:
-
-1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev myspell-pt myspell-fa myspell-en-au  myspell-en-gb myspell-en-us myspell-en-za myspell-fr aspell-id myspell-es``
+``sudo python -m nltk.downloader -d /usr/share/nltk_data wordnet omw stopwords``
 
 Authors
 =======
