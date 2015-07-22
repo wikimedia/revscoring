@@ -81,27 +81,21 @@ Packages
 In order to use this, you need to install a few packages first:
 
 You might need to install some other dependencies depending on your operating
-system.  These are for ``scipy`` and ``numpy``.  The fastest way is to install
-the stock packages,
+system.  Try using the packages,
 
-``sudo apt-get install python-numpy python-scipy``
+``sudo apt-get install python3-pip python3-dev python3-numpy python3-scipy g++ gfortran liblapack-dev libopenblas-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za myspell-fr myspell-es``
+
+If you're on Ubuntu, you might also be able to install an Indonesian dictionary:
+
+``sudo apt-get install aspell-id``
 
 Virtualenv users, please note that you'll have to use the --system-site-packages
-option if you install the system packages like this.
-
-Otherwise, you'll have to install the prerequisite packages by hand, as follows:
-
-Linux Mint 17.1:
-
-1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za  myspell-fr aspell-id myspell-es``
-
-Ubuntu 14.04 and Debian 8:
-
-1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev myspell-pt myspell-fa myspell-en-au  myspell-en-gb myspell-en-us myspell-en-za myspell-fr aspell-id myspell-es``
+option if you install scipy and numpy via apt-get.  You can also use pip3 within
+your virtualenv.
 
 Python modules
 ----------------
-``pip install revscoring``
+``sudo pip3 install revscoring``
 
 You'll need to download NLTK data in order to make use of language features.
 
@@ -121,7 +115,7 @@ You'll need to download NLTK data in order to make use of language features.
 
 OR, download everything from the command line:
 
-``sudo python -m nltk.downloader -d /usr/share/nltk_data wordnet omw stopwords``
+``sudo python3 -m nltk.downloader -d /usr/share/nltk_data wordnet omw stopwords``
 
 Authors
 =======
