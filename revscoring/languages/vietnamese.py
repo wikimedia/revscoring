@@ -6,15 +6,17 @@ import enchant
 from .language import Language, LanguageUtility
 
 # https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/Free_Vietnamese_Dictionary_Project_Vietnamese-Vietnamese#Allwiki_.28closed.29
-STOPWORDS = set("ai", "bằng", "bị", "bộ", "cho", "chưa", "chỉ", "cuối", "cuộc",
-                "các", "cách", "cái", "có", "cùng", "cũng", "cạnh", "cả", "cục",
-                "của", "dùng", "dưới", "dừng", "giữa", "gì", "hay", "hoặc",
-                "khi", "khác", "không", "luôn", "là", "làm", "lại", "mà", "mọi",
-                "mỗi", "một", "nhiều", "như", "nhưng", "nào", "này", "nữa",
-                "phải", "qua", "quanh", "quá", "ra", "rất", "sau", "sẽ", "sự",
-                "theo", "thành", "thêm", "thì", "thứ", "trong", "trên", "trước",
-                "trừ", "tuy", "tìm", "từng", "và", "vài", "vào", "vì", "vẫn",
-                "về", "với", "xuống", "đang", "đã", "được", "đấy", "đầu", "đủ")
+STOPWORDS = set([
+    "ai", "bằng", "bị", "bộ", "cho", "chưa", "chỉ", "cuối", "cuộc",
+    "các", "cách", "cái", "có", "cùng", "cũng", "cạnh", "cả", "cục",
+    "của", "dùng", "dưới", "dừng", "giữa", "gì", "hay", "hoặc",
+    "khi", "khác", "không", "luôn", "là", "làm", "lại", "mà", "mọi",
+    "mỗi", "một", "nhiều", "như", "nhưng", "nào", "này", "nữa",
+    "phải", "qua", "quanh", "quá", "ra", "rất", "sau", "sẽ", "sự",
+    "theo", "thành", "thêm", "thì", "thứ", "trong", "trên", "trước",
+    "trừ", "tuy", "tìm", "từng", "và", "vài", "vào", "vì", "vẫn",
+    "về", "với", "xuống", "đang", "đã", "được", "đấy", "đầu", "đủ"
+])
 BAD_REGEXES = [
     "[ck]ặ[tc]", "[ck]u", "cứt", "(dz?|gi)âm", "đái", "đéo", "đ[ụù].", "đĩ",
     "đ[íị]t", "ỉa", "l[ôồ]n",
