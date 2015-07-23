@@ -1,23 +1,25 @@
 from nose.tools import eq_
 
-from .. import language
-from ..indonesian import is_badword, is_misspelled, is_stopword
+from .. import indonesian, language
 
 
 def test_language():
 
-    assert is_badword()("gestapo")
-    assert is_badword()("geftapo")
-    assert is_badword()("Gestapo")
-    assert not is_badword()("hat")
-    eq_(hash(is_badword), hash(language.is_badword))
+    is_badword = indonesian.solve(language.is_badword)
 
-    assert is_misspelled()("mungkinkahSAKJDHAKS")
-    assert not is_misspelled()("mungkinkah")
-    assert not is_misspelled()("Mungkinkah")
-    eq_(hash(is_misspelled), hash(language.is_misspelled))
+    assert is_badword("gestapo")
+    assert is_badword("geftapo")
+    assert is_badword("Gestapo")
+    assert not is_badword("hat")
 
-    assert is_stopword()("mungkinkah")
-    assert is_stopword()("siapa")
-    assert not is_stopword()("belajar")
-    eq_(hash(is_stopword), hash(language.is_stopword))
+    is_misspelled = indonesian.solve(language.is_misspelled)
+
+    assert is_misspelled("mungkinkahSAKJDHAKS")
+    assert not is_misspelled("mungkinkah")
+    assert not is_misspelled("Mungkinkah")
+
+    is_stopword = indonesian.solve(language.is_stopword)
+
+    assert is_stopword("mungkinkah")
+    assert is_stopword("siapa")
+    assert not is_stopword("belajar")
