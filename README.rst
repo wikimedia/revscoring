@@ -105,23 +105,7 @@ Python modules
 
 You'll need to download NLTK data in order to make use of language features.
 
-.. code-block:: python
-
-    >>> python
-    >>> import nltk
-    >>> nltk.download()
-    >>> Downloader> d
-    >>> Identifier> wordnet
-    >>> Downloader> d
-    >>> Identifier> omw
-    >>> Downloader> d
-    >>> Identifier> stopwords
-    >>> Downloader> q
-    >>> exit()
-
-OR, download everything from the command line:
-
-``sudo python -m nltk.downloader -d /usr/share/nltk_data wordnet omw stopwords``
+``sudo python -m nltk.downloader omw stopwords wordnet``
 
 Authors
 =======
@@ -129,3 +113,5 @@ Authors
         * `http://halfaker.info`
     Helder:
         * `https://github.com/he7d3r`
+    Adam Roses Wight:
+	* `https://mediawiki.org/wiki/User:Adamw
