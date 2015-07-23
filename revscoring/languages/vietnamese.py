@@ -65,6 +65,7 @@ def is_stopword_process():
     return is_stopword
 is_stopword = LanguageUtility("is_stopword", is_stopword_process)
 
-vietnamese = Language("revscoring.languages.vietnamese",
-                      [stem_word, is_badword, is_informal_word, is_misspelled,
-                       is_stopword])
+sys.modules[__name__] = Language(
+    __name__,
+    [stem_word, is_badword, is_informal_word, is_misspelled, is_stopword]
+)

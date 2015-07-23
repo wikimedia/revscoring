@@ -41,8 +41,10 @@ def is_stopword_process():
 is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
 
 
-turkish = Language("revscoring.languages.turkish",
-                   [is_badword, is_stopword])
+sys.modules[__name__] = Language(
+    __name__,
+    [is_badword, is_stopword]
+)
 """
 Implements :class:`~revscoring.languages.language.Language` for Turkish.
 :data:`~revscoring.languages.language.is_badword` and

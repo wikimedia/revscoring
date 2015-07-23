@@ -28,7 +28,7 @@ is_badword = LanguageUtility("is_badword", is_badword_process, depends_on=[])
 is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,
                                 depends_on=[])
 
-persian = Language("revscoring.languages.persian", [is_badword, is_misspelled])
+sys.modules[__name__] = Language(__name__, [is_badword, is_misspelled])
 """
 Implements :class:`~revscoring.languages.language.Language` for Persian/Farsi.
 :data:`~revscoring.languages.language.is_badword` and

@@ -1,5 +1,5 @@
 import re
-import warnings
+import sys
 
 import enchant
 from nltk.corpus import stopwords
@@ -90,8 +90,10 @@ def is_stopword_process():
     return is_stopword
 is_stopword = LanguageUtility("is_stopword", is_stopword_process)
 
-english = Language("revscoring.languages.english",
-                   [stem_word, is_badword, is_misspelled, is_stopword, is_informal_word])
+sys.modules[__name__] = Language(
+    __name__,
+    [stem_word, is_badword, is_misspelled, is_stopword, is_informal_word]
+)
 """
 Implements :class:`~revscoring.languages.language.Language` for all variants of
 English (e.g. US & British).  Comes complete with all language utilities.

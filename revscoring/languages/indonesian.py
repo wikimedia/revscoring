@@ -1,5 +1,5 @@
 import re
-import warnings
+import sys
 
 import enchant
 
@@ -108,8 +108,10 @@ is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,
                                 depends_on=[])
 
 
-indonesian = Language("revscoring.languages.indonesian",
-                   [is_badword, is_misspelled, is_stopword])
+sys.modules[__name__] = Language(
+    __name__,
+    [is_badword, is_misspelled, is_stopword]
+)
 """
 Implements :class:`~revscoring.languages.language.Language` for Indonesian.
 :data:`~revscoring.languages.language.is_badword`,
