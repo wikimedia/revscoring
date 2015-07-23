@@ -1,3 +1,5 @@
+import sys
+
 from nltk.corpus import stopwords
 
 from .language import Language, LanguageUtility

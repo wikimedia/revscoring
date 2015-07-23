@@ -1,5 +1,5 @@
 import re
-import warnings
+import sys
 
 import enchant
 from nltk.corpus import stopwords
@@ -82,7 +82,11 @@ INFORMAL_REGEXES = [
 ]
 BAD_REGEX = re.compile("|".join(BAD_REGEXES))
 INFORMAL_REGEX = re.compile("|".join(INFORMAL_REGEXES))
-DICTIONARY = enchant.Dict("es")
+try:
+    DICTIONARY = enchant.Dict("es")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'es'.  " +
+                      "Consider installing 'myspell-es'.")
 
 def stem_word_process():
     def stem_word(word):

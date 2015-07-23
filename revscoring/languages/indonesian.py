@@ -86,7 +86,11 @@ BAD_REGEXES = [
         "toket", "tzcesar", "thailaland", "thaicia"
 ]
 BAD_REGEX = re.compile("|".join(BAD_REGEXES))
-DICTIONARY = enchant.Dict("id")
+try:
+    DICTIONARY = enchant.Dict("id")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'id'.  " +
+                      "Consider installing 'aspell-id'.")
 
 def is_badword_process():
     def is_badword(word):

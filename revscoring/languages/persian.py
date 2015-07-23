@@ -1,16 +1,20 @@
-import warnings
+import sys
 
 import enchant
 
 from .language import Language, LanguageUtility
 
-DICTIONARY = enchant.Dict("fa")
+try:
+    DICTIONARY = enchant.Dict("fa")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'fa'.  " +
+                      "Consider installing 'myspell-fa'.")
+
 BADWORDS = set([
     "کیرم", "ایتالیک", "کونی", "کیر", "فرمود", "آله", "فرموده", "فرمودند",
     "جنده", "برووتو", "لعنت", "کون", "السلام", "جمهورمحترم", "کونی",
     "کاکاسیاه", "آشغال", "گائیدم", "گوزیده", "مشنگ", "ننتو", "بخواب"
 ])
-
 
 def is_misspelled_process():
     def is_misspelled(word):

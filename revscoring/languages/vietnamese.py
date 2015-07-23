@@ -1,5 +1,5 @@
 import re
-import warnings
+import sys
 
 import enchant
 
@@ -31,7 +31,11 @@ INFORMAL_REGEXES = [
 ]
 BAD_REGEX = re.compile("|".join(BAD_REGEXES))
 INFORMAL_REGEX = re.compile("|".join(INFORMAL_REGEXES))
-DICTIONARY = enchant.Dict("vi")
+try:
+    DICTIONARY = enchant.Dict("vi")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'vi'.  " +
+                      "Consider installing 'hunspell-vi'.")
 
 def stem_word_process():
     def stem_word(word):

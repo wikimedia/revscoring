@@ -1,4 +1,4 @@
-import warnings
+import sys
 
 import enchant
 from nltk.corpus import stopwords
@@ -184,7 +184,11 @@ BADWORDS = set([
     "zipi", "zizi", "zoando", "zoar", "zoeira", "zuando", "zuar", "zueira"
 ])
 STEMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
-DICTIONARY = enchant.Dict("pt")
+try:
+    DICTIONARY = enchant.Dict("pt")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'pt'.  " +
+                      "Consider installing 'myspell-pt'.")
 
 def stem_word_process():
     def stem_word(word):
