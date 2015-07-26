@@ -9,7 +9,7 @@ from .feature import Feature
 USER_REGISTRATION_EPOCH = Timestamp("20050101000000")
 
 def process_age(user_info, revision_metadata):
-
+    if user_info is None: return 0
     if process_is_anon(revision_metadata): # Anonymous so age == zero
         return 0
     else:
@@ -34,7 +34,6 @@ Represents age of user when the edit was made in seconds.
 """
 
 def process_is_anon(revision_metadata):
-
     return revision_metadata.user_id == 0 or revision_metadata.user_id is None
 
 is_anon = Feature("user.is_anon", process_is_anon,
@@ -54,7 +53,7 @@ Represents whether the user is anonymous or registered.
 """
 
 def process_is_bot(user_info):
-
+    if user_info is None: return False
     return "bot" in user_info.groups
 
 is_bot = Feature("user.is_bot", process_is_bot,
