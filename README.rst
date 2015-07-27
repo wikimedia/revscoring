@@ -101,11 +101,11 @@ If you need the Python package installer,
 
 Then, install this module,
 
-``sudo pip3 install revscoring``
+``pip3 install --user revscoring``
 
 You'll need to download NLTK data in order to make use of language features.
 
-``sudo python3 -m nltk.downloader omw stopwords wordnet``
+``python3 -m nltk.downloader wordnet omw stopwords``
 
 Authors
 =======
