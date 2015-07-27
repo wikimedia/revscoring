@@ -41,6 +41,13 @@ def test_age():
     # negative values.
     eq_(solve(age, cache=cache), 0)
 
+
+    cache = {
+        revision.metadata: FakeRevisionMetadata(10, Timestamp(0)),
+        user.info: None
+    }
+    eq_(solve(age, cache=cache), 0)
+
 def test_is_anon():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['user_id'])
@@ -69,5 +76,11 @@ def test_is_bot():
 
     cache = {
         user.info: FakeUserInfo(["foo", "bar"])
+    }
+    assert not solve(is_bot, cache=cache)
+
+
+    cache = {
+        user.info: None
     }
     assert not solve(is_bot, cache=cache)

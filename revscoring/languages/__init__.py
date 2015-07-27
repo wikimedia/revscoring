@@ -46,6 +46,11 @@ turkish
 .. automodule:: revscoring.languages.turkish
     :members:
 
+vietnamese
++++++++
+.. automodule:: revscoring.languages.vietnamese
+    :members:
+
 language
 ++++++++
 .. automodule:: revscoring.languages.language
