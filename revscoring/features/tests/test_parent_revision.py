@@ -34,6 +34,13 @@ def test_was_same_user():
     }
     eq_(solve(was_same_user, cache=cache), True)
 
+    # Make sure we don't error when there is no parent revision
+    cache = {
+        revision.metadata: FakeRevisionMetadata(None, "127.4.5.6"),
+        parent_revision.metadata: None
+    }
+    eq_(solve(was_same_user, cache=cache), False)
+
 def test_seconds_since():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['timestamp'])
@@ -43,6 +50,13 @@ def test_seconds_since():
         parent_revision.metadata: FakeRevisionMetadata(Timestamp(1))
     }
     eq_(solve(seconds_since, cache=cache), 9)
+
+    # Make sure we don't error when there is no parent revision
+    cache = {
+        revision.metadata: FakeRevisionMetadata(Timestamp(10)),
+        parent_revision.metadata: None
+    }
+    eq_(solve(seconds_since, cache=cache), 0)
 
 def test_bytes():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
