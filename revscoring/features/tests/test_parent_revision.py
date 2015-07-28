@@ -67,11 +67,23 @@ def test_bytes():
     }
     eq_(solve(bytes, cache=cache), 25)
 
+    # Make sure we don't error when there is no parent revision
+    cache = {
+        parent_revision.metadata: None
+    }
+    eq_(solve(bytes, cache=cache), 0)
+
 def test_chars():
     cache = {
         parent_revision.text: "Twelve chars"
     }
     eq_(solve(chars, cache=cache), 12)
+
+    # Make sure we don't error when there is no parent revision
+    cache = {
+        parent_revision.text: None
+    }
+    eq_(solve(chars, cache=cache), 0)
 
 def test_markup_chars():
     cache = {
@@ -79,6 +91,7 @@ def test_markup_chars():
     }
     eq_(solve(markup_chars, cache=cache), 4)
 
+    # Make sure we don't error when there is no parent revision
     cache = {
         parent_revision.text: None
     }
@@ -90,6 +103,7 @@ def test_numeric_chars():
     }
     eq_(solve(numeric_chars, cache=cache), 2)
 
+    # Make sure we don't error when there is no parent revision
     cache = {
         parent_revision.text: None
     }
@@ -101,6 +115,7 @@ def test_symbolic_chars():
     }
     eq_(solve(symbolic_chars, cache=cache), 4)
 
+    # Make sure we don't error when there is no parent revision
     cache = {
         parent_revision.text: None
     }
@@ -112,6 +127,7 @@ def test_uppercase_chars():
     }
     eq_(solve(uppercase_chars, cache=cache), 2)
 
+    # Make sure we don't error when there is no parent revision
     cache = {
         parent_revision.text: None
     }
