@@ -75,37 +75,37 @@ Feature extraction:
 
 Installation
 ================
+
+Packages
+---------
 In order to use this, you need to install a few packages first:
 
-``pip install revscoring``
+You might need to install some other dependencies depending on your operating
+system.  Try using the packages,
+
+``sudo apt-get install python3-dev python3-numpy python3-scipy g++ gfortran liblapack-dev libopenblas-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za myspell-fr myspell-es hunspell-vi``
+
+If you're on Ubuntu, you might also be able to install an Indonesian dictionary:
+
+``sudo apt-get install aspell-id``
+
+Virtualenv users, please note that you'll have to use the --system-site-packages
+option if you install scipy and numpy via apt-get.  You can also use pip3 within
+your virtualenv.
+
+Python modules
+----------------
+If you need the Python package installer,
+
+``sudo easy_install3 pip``
+
+Then, install this module,
+
+``pip3 install --user revscoring``
 
 You'll need to download NLTK data in order to make use of language features.
 
-.. code-block:: python
-
-    >>> python
-    >>> import nltk
-    >>> nltk.download()
-    >>> Downloader> d
-    >>> Identifier> wordnet
-    >>> Downloader> d
-    >>> Identifier> omw
-    >>> Downloader> d
-    >>> Identifier> stopwords
-    >>> Downloader> q
-    >>> exit()
-
-
-You might need to install some other dependencies depending on your operating
-system.  These are for ``scipy`` and ``numpy``.
-
-Linux Mint 17.1:
-
-1. ``sudo apt-get install g++ gfortran liblapack-dev python3-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za  myspell-fr aspell-id myspell-es hunspell-vi``
-
-Ubuntu 14.04:
-
-1. ``sudo apt-get install g++ gfortran liblapack-dev libopenblas-dev python3-dev myspell-pt myspell-fa myspell-en-au  myspell-en-gb myspell-en-us myspell-en-za myspell-fr aspell-id myspell-es hunspell-vi``
+``python3 -m nltk.downloader wordnet omw stopwords``
 
 Authors
 =======
@@ -113,3 +113,5 @@ Authors
         * `http://halfaker.info`
     Helder:
         * `https://github.com/he7d3r`
+    Adam Roses Wight:
+        * `https://mediawiki.org/wiki/User:Adamw`
