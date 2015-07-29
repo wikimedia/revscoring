@@ -18,7 +18,7 @@ def test_seconds_since():
     }
     eq_(solve(seconds_since, cache=cache), 9)
 
-    # Makes sure we don't crash when there was not previous user revision
+    # Makes sure we don't crash when there was no previous user revision
     cache = {
         revision.metadata: FakeRevisionMetadata(Timestamp(10)),
         previous_user_revision.metadata: None
