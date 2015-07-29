@@ -57,7 +57,7 @@ class APIExtractor(Extractor):
             Datasource("parent_revision.doc", self.process_parent_revision_doc,
                        depends_on=[revision.metadata]),
             Datasource("parent_revision.metadata",
-                       self.process_revision_metadata,
+                       self.process_revision_metadata_if_exists,
                        depends_on=[parent_revision_doc]),
             Datasource("parent_revision.text",
                        self.process_revision_text,
@@ -66,7 +66,7 @@ class APIExtractor(Extractor):
                        self.process_previous_user_revision_doc,
                        depends_on=[revision.metadata]),
             Datasource("previous_user_revision.metadata",
-                       self.process_revision_metadata,
+                       self.process_revision_metadata_if_exists,
                        depends_on=[previous_user_revision_doc]),
             Datasource("page_creation.doc",
                        self.process_page_creation_doc,
@@ -297,6 +297,13 @@ class APIExtractor(Extractor):
         if revision_doc is None:
             raise RevisionDocumentNotFound()
         return cls.revision_metadata_from_doc(revision_doc)
+
+    @classmethod
+    def process_revision_metadata_if_exists(cls, revision_doc):
+        if revision_doc is None:
+            return None
+        else:
+            return cls.revision_metadata_from_doc(revision_doc)
 
     @classmethod
     def process_user_info(cls, user_doc):

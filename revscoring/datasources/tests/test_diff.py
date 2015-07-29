@@ -42,6 +42,13 @@ def test_operations():
 
     eq_(b, REVISION_TOKENS)
 
+    # Make sure we don't error when there is no parent revision
+    cache = {
+        parent_revision.text: None,
+        revision.text: REVISION_TEXT
+    }
+
+    operations, a, b = solve(diff.operations, cache=cache)
 
 def test_added_tokens():
     cache = {
