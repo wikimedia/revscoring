@@ -107,6 +107,16 @@ You'll need to download NLTK data in order to make use of language features.
 
 ``python3 -m nltk.downloader wordnet omw stopwords``
 
+Tests
+=====
+To run the unit tests,
+
+``nosetests``
+
+or, depending on your system,
+
+``nosetests-3.4``
+
 Authors
 =======
     Aaron Halfaker:
