@@ -58,10 +58,3 @@ language
 
 from .language import Language, LanguageUtility
 from .language import stem_word, is_badword, is_misspelled, is_stopword, is_informal_word
-from .english import english
-from .french import french
-from .indonesian import indonesian
-from .persian import persian
-from .portuguese import portuguese
-from .spanish import spanish
-from .turkish import turkish

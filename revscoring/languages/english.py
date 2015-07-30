@@ -1,5 +1,5 @@
 import re
-import warnings
+import sys
 
 import enchant
 from nltk.corpus import stopwords
@@ -37,23 +37,28 @@ BAD_REGEXES = [
     "zipperhead"
 ]
 INFORMAL_REGEXES = [
-    'awesome', 'awesomest', 'awsome',
+    "ain'?t", 'awe?some(r|st)?',
     'bla', 'blah', 'boner', 'boobs', 'bullshit',
-    'cant', 'coolest', 'crap',
+    "can'?t", "[ck](oo|ew)l(er|est)?", 'crap',
     "don'?t", "dumb", "dumbass",
+    "goodbye",
     "haha", "hello", "hey",
-    "kool",
-    "lol", "luv",
+    "i"
+    "lol", "l(oo+|u)ve",
     "meow",
-    'shove', 'smelly', 'sooo', 'stinky', 'sucking', 'sux', "shouldn\'t"
+    'shove', 'smelly', 'soo+', 'stinky', 'suck(ing|er)?', 'sux', "shouldn\'t"
     "tits",
-    "wasn'?t", "wuz", "won'?t",
-    'yall', 'yay', 'yea', 'yolo'
+    "wasn'?t", "wuz", "won'?t", "woof",
+    "ya'?ll", 'yay', 'yea', 'yolo'
 ]
 BAD_REGEX = re.compile("|".join(BAD_REGEXES))
 INFORMAL_REGEX = re.compile("|".join(INFORMAL_REGEXES))
-DICTIONARY = enchant.Dict("en")
-
+try:
+    DICTIONARY = enchant.Dict("en")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'en'.  " +
+                      "Consider installing 'myspell-en-au', 'myspell-en-gb', " +
+                      "'myspell-en-us' and/or 'myspell-en-za'.")
 
 def stem_word_process():
     def stem_word(word):
@@ -90,8 +95,10 @@ def is_stopword_process():
     return is_stopword
 is_stopword = LanguageUtility("is_stopword", is_stopword_process)
 
-english = Language("revscoring.languages.english",
-                   [stem_word, is_badword, is_misspelled, is_stopword, is_informal_word])
+sys.modules[__name__] = Language(
+    __name__,
+    [stem_word, is_badword, is_misspelled, is_stopword, is_informal_word]
+)
 """
 Implements :class:`~revscoring.languages.language.Language` for all variants of
 English (e.g. US & British).  Comes complete with all language utilities.
