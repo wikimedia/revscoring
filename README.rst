@@ -83,7 +83,7 @@ In order to use this, you need to install a few packages first:
 You might need to install some other dependencies depending on your operating
 system.  Try using the packages,
 
-``sudo apt-get install python3-dev python3-numpy python3-scipy g++ gfortran liblapack-dev libopenblas-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za myspell-fr myspell-es hunspell-vi``
+``sudo apt-get install python3-dev python3-numpy python3-scipy g++ gfortran liblapack-dev libopenblas-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za myspell-fr myspell-es hunspell-vi myspell-he``
 
 If you're on Ubuntu, you might also be able to install an Indonesian dictionary:
 
