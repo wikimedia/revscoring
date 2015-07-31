@@ -17,7 +17,5 @@ def test_language():
 
     is_informal_word = hebrew.solve(language.is_informal_word)
 
-    assert is_informal_word("בגללך")
-
-    assert not is_informal_word("בגלל")
-    assert not is_informal_word("בגלל")
+    assert is_informal_word("בגללך")  # Because of you
+    assert not is_informal_word("בגלל")  # Because
