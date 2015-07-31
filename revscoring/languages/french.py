@@ -1,4 +1,4 @@
-import warnings
+import sys
 
 import enchant
 from nltk.corpus import stopwords
@@ -22,7 +22,11 @@ BADWORDS = set([
 ])
 
 STEMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
-DICTIONARY = enchant.Dict("fr")
+try:
+    DICTIONARY = enchant.Dict("fr")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'fr'.  " +
+                      "Consider installing 'myspell-fr'.")
 
 def stem_word_process():
     def stem_word(word):
@@ -51,9 +55,11 @@ def is_stopword_process():
     return is_stopword
 is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
 
-french = Language("revscoring.languages.french",
-                      [stem_word, is_badword, is_misspelled, is_stopword])
+sys.modules[__name__] = Language(
+    __name__,
+    [stem_word, is_badword, is_misspelled, is_stopword]
+)
 """
 Implements :class:`~revscoring.languages.language.Language` for French.  Comes
-complete with all language utilities. 
+complete with all language utilities.
 """

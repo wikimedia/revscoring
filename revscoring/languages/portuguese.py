@@ -1,4 +1,4 @@
-import warnings
+import sys
 
 import enchant
 from nltk.corpus import stopwords
@@ -184,7 +184,11 @@ BADWORDS = set([
     "zipi", "zizi", "zoando", "zoar", "zoeira", "zuando", "zuar", "zueira"
 ])
 STEMMED_BADWORDS = set(STEMMER.stem(w) for w in BADWORDS)
-DICTIONARY = enchant.Dict("pt")
+try:
+    DICTIONARY = enchant.Dict("pt")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'pt'.  " +
+                      "Consider installing 'myspell-pt'.")
 
 def stem_word_process():
     def stem_word(word):
@@ -213,8 +217,10 @@ def is_stopword_process():
     return is_stopword
 is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
 
-portuguese = Language("revscoring.languages.portuguese",
-                      [stem_word, is_badword, is_misspelled, is_stopword])
+sys.modules[__name__] = Language(
+    __name__,
+    [stem_word, is_badword, is_misspelled, is_stopword]
+)
 """
 Implements :class:`~revscoring.languages.language.Language` for Portuguese.
 Comes complete with all language utilities.

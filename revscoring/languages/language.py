@@ -69,7 +69,9 @@ class LanguageUtility(dependencies.Dependent):
     """
     Implements a dependency wrapper for a utility functions.
     """
-    pass
+
+    def __hash__(self):
+        return hash(('language_utility', self.name))
 
 # Define placeholder utilities.  These will need to be replaced inside of a
 # language, but they will provide names to match against within the cache.
