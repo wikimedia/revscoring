@@ -1,4 +1,5 @@
 import re
+import sys
 
 import enchant
 
@@ -123,8 +124,10 @@ is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process)
 
 
 
-hebrew = Language("revscoring.languages.hebrew",
-                  [is_badword, is_misspelled, is_informal_word])
+sys.modules[__name__] = Language(
+    __name__,
+    [is_badword, is_misspelled, is_informal_word]
+)
 """
 Implements :class:`~revscoring.languages.language.Language` for Hebrew.
 """
