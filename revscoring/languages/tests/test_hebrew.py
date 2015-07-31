@@ -14,3 +14,8 @@ def test_language():
 
     assert is_badword("שרמוטה")
     assert not is_badword("שימרותה")
+
+    is_informal_word = hebrew.solve(language.is_informal_word)
+
+    assert is_informal_word("בגללך")
+    assert not is_informal_word("בגלל")
