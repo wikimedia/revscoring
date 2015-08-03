@@ -1,5 +1,5 @@
 import re
-import warnings
+import sys
 
 import enchant
 
@@ -31,7 +31,11 @@ INFORMAL_REGEXES = [
 ]
 BAD_REGEX = re.compile("|".join(BAD_REGEXES))
 INFORMAL_REGEX = re.compile("|".join(INFORMAL_REGEXES))
-DICTIONARY = enchant.Dict("vi")
+try:
+    DICTIONARY = enchant.Dict("vi")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'vi'.  " +
+                      "Consider installing 'hunspell-vi'.")
 
 def stem_word_process():
     def stem_word(word):
@@ -65,6 +69,7 @@ def is_stopword_process():
     return is_stopword
 is_stopword = LanguageUtility("is_stopword", is_stopword_process)
 
-vietnamese = Language("revscoring.languages.vietnamese",
-                      [stem_word, is_badword, is_informal_word, is_misspelled,
-                       is_stopword])
+sys.modules[__name__] = Language(
+    __name__,
+    [stem_word, is_badword, is_informal_word, is_misspelled, is_stopword]
+)

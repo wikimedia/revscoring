@@ -1,5 +1,5 @@
 import re
-import warnings
+import sys
 
 import enchant
 
@@ -86,7 +86,11 @@ BAD_REGEXES = [
         "toket", "tzcesar", "thailaland", "thaicia"
 ]
 BAD_REGEX = re.compile("|".join(BAD_REGEXES))
-DICTIONARY = enchant.Dict("id")
+try:
+    DICTIONARY = enchant.Dict("id")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'id'.  " +
+                      "Consider installing 'aspell-id'.")
 
 def is_badword_process():
     def is_badword(word):
@@ -108,8 +112,10 @@ is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,
                                 depends_on=[])
 
 
-indonesian = Language("revscoring.languages.indonesian",
-                   [is_badword, is_misspelled, is_stopword])
+sys.modules[__name__] = Language(
+    __name__,
+    [is_badword, is_misspelled, is_stopword]
+)
 """
 Implements :class:`~revscoring.languages.language.Language` for Indonesian.
 :data:`~revscoring.languages.language.is_badword`,
