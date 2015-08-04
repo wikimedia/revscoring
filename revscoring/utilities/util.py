@@ -3,15 +3,19 @@ from importlib import import_module
 
 sys.path.insert(0, ".") # Necessary for working in other modules
 def import_from_path(path):
-    parts = path.split(".")
-    module_path = ".".join(parts[:-1])
-    attribute_name = parts[-1]
+    try:
+        module = import_module(path)
+        return module
+    except ImportError:
+        parts = path.split(".")
+        module_path = ".".join(parts[:-1])
+        attribute_name = parts[-1]
 
-    module = import_module(module_path)
+        module = import_module(module_path)
 
-    attribute = getattr(module, attribute_name)
+        attribute = getattr(module, attribute_name)
 
-    return attribute
+        return attribute
 
 
 def encode(val, none_val="NULL"):
