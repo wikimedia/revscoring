@@ -4,6 +4,10 @@ A generic, machine learning-based revision scoring system designed to be used
 to automatically differentiate damage from productive contributory behavior on
 Wikipedia.
 
+Current build status:
+    .. image:: https://travis-ci.org/wiki-ai/revscoring.svg?branch=master
+        :target: https://travis-ci.org/wiki-ai/revscoring
+
 Examples
 ========
 
@@ -106,6 +110,16 @@ Then, install this module,
 You'll need to download NLTK data in order to make use of language features.
 
 ``python3 -m nltk.downloader wordnet omw stopwords``
+
+Tests
+=====
+To run the unit tests,
+
+``nosetests``
+
+or, depending on your system,
+
+``nosetests-3.4``
 
 Authors
 =======
