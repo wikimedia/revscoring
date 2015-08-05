@@ -10,7 +10,7 @@ except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'fa'.  " +
                       "Consider installing 'myspell-fa'.")
 
-INFORMALWORDS = set([
+INFORMAL_REGEXES = set([
     r"آله", r"فرموده?",r"فرمودند",r"السلام",r"حضرت\b",r"\([سعص]\)",r"\(ره\)",r"\(قس\)",
     r"\(عج\)",r"\bامام\b",r"فرمودند",r"روحی?‌? ?ا?ل?فدا",r"شَ?هید\b",r"آزادهٔ? سرا?فراز",
     r"شادروان",r"جهانخوار",r"مستکبر", r"ملحد",r"ملعون", r"عل[يی]ه‌? ?السلام",
@@ -20,7 +20,7 @@ INFORMALWORDS = set([
     r"علیها", r"مد ?ظله"])
 
 
-BADWORDS = set([
+BAD_REGEXES  = set([
     r"(madar|nanae|zan|khahar)\s*?(ghahbeh|ghahveh|ghabe|jendeh?|be khata)",
     r"khar madar",r"khar kos deh",
     r"([qkc]+o+s+|[qkc]+o+n+|[qkc]+i+r+|m+e+g+h+a+d)\s*?((va|o)\s*?[qkc]oon|lis|pareh?|k+h+a+r+|[qkc]esh|nane|nanat|babat|khah?a?r|abjit|mi ?dad|mi ?dah[iy]|[qkc]on|deh|khor|goshad|gondeh|[qkc]oloft|[qkc]esh|mashang|khol|baz|shenas|nag[uo]o?|maghz|sh[ae]r)",
@@ -46,26 +46,30 @@ BADWORDS = set([
     r"\bگوه خورد",r"\bشاش اضافه",r"آب [کك][یي]رو?\b",r"[کك]و?س [کك]ردن?\b",r"[کك][یي]ر [کك]لفت",
     r"کیونده",r"جر دادن?",r"مردک\b")]
 
+BAD_REGEX = re.compile("|".join(BAD_REGEXES))
+INFORMAL_REGEX = re.compile("|".join(INFORMAL_REGEXES))
+
+
+def is_badword_process():
+    def is_badword(word):
+        return bool(BAD_REGEX.match(word.lower()))
+    return is_badword
+is_badword = LanguageUtility("is_badword", is_badword_process, depends_on=[])
+
+
+def is_informal_word_process():
+    def is_informal_word(word):
+        return bool(INFORMAL_REGEX.match(word.lower()))
+    return is_informal_word
+is_informal_word = LanguageUtility("is_informal_word",is_informal_word_process, depends_on=[])
+
 def is_misspelled_process():
     def is_misspelled(word):
         return not DICTIONARY.check(word)
     return is_misspelled
 
+is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process, depends_on=[])
 
-def is_badword_process():
-    def is_badword(word):
-        return word.lower() in BADWORDS
-    return is_badword
-
-def is_informalword_process():
-    def is_informalword(word):
-        return word.lower() in INFORMALWORDS
-    return is_informalword
-
-is_badword = LanguageUtility("is_badword", is_badword_process, depends_on=[])
-is_informalword = LanguageUtility("is_informalword", is_informalword_process, depends_on=[])
-is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,
-                                depends_on=[])
 
 sys.modules[__name__] = Language(__name__, [is_badword, is_misspelled,is_informalword])
 """
