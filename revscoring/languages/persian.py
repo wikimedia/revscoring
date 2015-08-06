@@ -2,15 +2,9 @@ import sys
 
 import enchant
 
-from .language import Language, LanguageUtility
+from .language import RegexLanguage
 
-try:
-    DICTIONARY = enchant.Dict("fa")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'fa'.  " +
-                      "Consider installing 'myspell-fa'.")
-
-INFORMAL_REGEXES = set([
+informals = [
     #Partial words
     r"آله", r"فرموده?",r"فرمودند",r"السلام",r"حضرت\b",r"\([سعص]\)",r"\(ره\)",r"\(قس\)",
     r"\(عج\)",r"\bامام\b",r"فرمودند",r"روحی?‌? ?ا?ل?فدا",r"شَ?هید\b",r"آزادهٔ? سرا?فراز",
@@ -46,11 +40,10 @@ INFORMAL_REGEXES = set([
         r"خوشم|درود|دوستدار|سپاسگزارم|سلام|شرمنده|شماست|فلانی|مبارک|متشکرم|محترمت[وا]ن|"+
         r"مخالفم|مرسی|ممنونم?|منظورت[وا]ن|موافقم|نظر[تم][وا]?ن?|نظرم|یادت[وا]ن)\b",
     #wikipedia words
-    r"\b(بحث\:|بحثم|کاربر\:|میان‌ویکی|ویکی‌? ?فا\b)\b",
-    ])
+    r"\b(بحث\:|بحثم|کاربر\:|میان‌ویکی|ویکی‌? ?فا\b)\b"
+]
 
-
-BAD_REGEXES  = set([
+badwords = [
     #Fingilish bad words 
     r"(madar|nanae|zan|khahar)\s*?(ghahbeh|ghahveh|ghabe|jendeh?|be khata)",
     r"khar madar",r"khar kos deh",
@@ -81,36 +74,24 @@ BAD_REGEXES  = set([
     r"(به پشت|دمر|دمرو) بخواب",r"خایه لیس",r"حسن کلیدساز",r"\bکره خر",
     r"آشغال ع+و+ض+ی+",r"پدسگ",r"سا[کك] زد",r"فاک (‌فنا|یو\b)",r"برو (گ+م+ش+و\b|ب+م+ی+ر+\b)",
     r"\bگوه خورد",r"\bشاش اضافه",r"آب [کك][یي]رو?\b",r"[کك]و?س [کك]ردن?\b",r"[کك][یي]ر [کك]لفت",
-    r"کیونده",r"جر دادن?",r"مردک\b")]
+    r"کیونده",r"جر دادن?",r"مردک\b")
+]
 
-BAD_REGEX = re.compile("|".join(BAD_REGEXES))
-INFORMAL_REGEX = re.compile("|".join(INFORMAL_REGEXES))
+try:
+    dictionary = enchant.Dict("fa")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'fa'.  " +
+                      "Consider installing 'myspell-fa'.")
 
-
-def is_badword_process():
-    def is_badword(word):
-        return bool(BAD_REGEX.match(word.lower()))
-    return is_badword
-is_badword = LanguageUtility("is_badword", is_badword_process, depends_on=[])
-
-
-def is_informal_word_process():
-    def is_informal_word(word):
-        return bool(INFORMAL_REGEX.match(word.lower()))
-    return is_informal_word
-is_informal_word = LanguageUtility("is_informal_word",is_informal_word_process, depends_on=[])
-
-def is_misspelled_process():
-    def is_misspelled(word):
-        return not DICTIONARY.check(word)
-    return is_misspelled
-
-is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process, depends_on=[])
-
-
-sys.modules[__name__] = Language(__name__, [is_badword, is_misspelled,is_informalword])
+sys.modules[__name__] = RegexLanguage(
+    __name__,
+    badwords=badwords,
+    informals=informals,
+    dictionary=dictionary
+)
 """
-Implements :class:`~revscoring.languages.language.Language` for Persian/Farsi.
+Implements :class:`~revscoring.languages.language.RegexLanguage` for
+Persian/Farsi.
 :data:`~revscoring.languages.language.is_badword` and
 :data:`~revscoring.languages.language.is_informalword` and
 :data:`~revscoring.languages.language.is_misspelled` are provided.
