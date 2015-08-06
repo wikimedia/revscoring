@@ -1,3 +1,5 @@
+import pickle
+
 from nose.tools import eq_
 
 from .. import language, spanish
@@ -36,3 +38,6 @@ def test_language():
     assert is_stopword("el")
     assert is_stopword("por")
     assert not is_stopword("waffles")
+
+    pickled_spanish = pickle.loads(pickle.dumps(spanish))
+    eq_(pickled_spanish, spanish)

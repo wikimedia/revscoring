@@ -1,6 +1,8 @@
+import pickle
+
 from nose.tools import eq_
 
-from .. import language, hebrew
+from .. import hebrew, language
 
 
 def test_language():
@@ -19,3 +21,6 @@ def test_language():
 
     assert is_informal_word("בגללך")  # Because of you
     assert not is_informal_word("בגלל")  # Because
+
+    pickled_hebrew = pickle.loads(pickle.dumps(hebrew))
+    eq_(pickled_hebrew, hebrew)

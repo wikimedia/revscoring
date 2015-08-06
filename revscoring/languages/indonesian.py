@@ -3,10 +3,10 @@ import sys
 
 import enchant
 
-from .language import Language, LanguageUtility
+from .language import RegexLanguage
 
 # STOPWORDS from https://code.google.com/p/stop-words/source/browse/trunk/stop-words/stop-words-collection-2014.02.24/stop-words/stop-words_indonesian_1_id.txt
-STOPWORDS = set([
+stopwords = set([
     "ada", "adanya", "adalah", "adapun", "agak", "agaknya", "agar", "akan",
     "akankah", "akhirnya", "aku", "akulah", "amat", "amatlah", "anda",
     "andalah", "antar", "diantaranya", "antara", "antaranya", "diantara", "apa",
@@ -61,7 +61,7 @@ STOPWORDS = set([
     "waduh", "wah", "wahai", "sewaktu", "walau", "walaupun", "wong", "yaitu",
     "yakni", "yang"
 ])
-BAD_REGEXES = [
+badwords = [
     "aboput", "anjing",
     "bajingan", "bangsat", "bispak", "blo[o' ]*o?n", "brengse[kx]",
         "bishopsgarth", "bastards", "bencong", "babi"
@@ -85,39 +85,20 @@ BAD_REGEXES = [
     "terrorising", "terrorised", "terrorists", "taenjamras", "tetek", "titit",
         "toket", "tzcesar", "thailaland", "thaicia"
 ]
-BAD_REGEX = re.compile("|".join(BAD_REGEXES))
 try:
-    DICTIONARY = enchant.Dict("id")
+    dictionary = enchant.Dict("id")
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'id'.  " +
                       "Consider installing 'aspell-id'.")
 
-def is_badword_process():
-    def is_badword(word):
-        return bool(BAD_REGEX.match(word.lower()))
-    return is_badword
-is_badword = LanguageUtility("is_badword", is_badword_process, depends_on=[])
-
-def is_stopword_process():
-    def is_stopword(word):
-        return word.lower() in STOPWORDS
-    return is_stopword
-is_stopword = LanguageUtility("is_stopword", is_stopword_process, depends_on=[])
-
-def is_misspelled_process():
-    def is_misspelled(word):
-        return not DICTIONARY.check(word)
-    return is_misspelled
-is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process,
-                                depends_on=[])
-
-
-sys.modules[__name__] = Language(
+sys.modules[__name__] = RegexLanguage(
     __name__,
-    [is_badword, is_misspelled, is_stopword]
+    badwords=badwords,
+    dictionary=dictionary,
+    stopwords=stopwords
 )
 """
-Implements :class:`~revscoring.languages.language.Language` for Indonesian.
+Implements :class:`~revscoring.languages.language.RegexLanguage` for Indonesian.
 :data:`~revscoring.languages.language.is_badword`,
 :data:`~revscoring.languages.language.is_misspelled`, and
 :data:`~revscoring.languages.language.is_stopword` are provided.
