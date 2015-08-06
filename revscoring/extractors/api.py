@@ -83,6 +83,7 @@ class APIExtractor(Extractor):
         ]}
         if self.language != None:
             local_context.update(self.language.context)
+            local_cache.update(self.language.cache)
 
         local_context.update(context)
         local_cache.update(cache)
