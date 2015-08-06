@@ -1,3 +1,5 @@
+import pickle
+
 from nose.tools import eq_
 
 from .. import indonesian, language
@@ -23,3 +25,6 @@ def test_language():
     assert is_stopword("mungkinkah")
     assert is_stopword("siapa")
     assert not is_stopword("belajar")
+
+    pickled_indonesian = pickle.loads(pickle.dumps(indonesian))
+    eq_(pickled_indonesian, indonesian)

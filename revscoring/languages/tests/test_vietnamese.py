@@ -1,3 +1,5 @@
+import pickle
+
 from nose.tools import eq_
 
 from .. import language, vietnamese
@@ -40,3 +42,6 @@ def test_language():
     assert is_stopword("cái")
     assert is_stopword("mà")
     assert not is_stopword("chó")
+
+    pickled_vietnamese = pickle.loads(pickle.dumps(vietnamese))
+    eq_(pickled_vietnamese, vietnamese)

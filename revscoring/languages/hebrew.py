@@ -3,9 +3,9 @@ import sys
 
 import enchant
 
-from .language import Language, LanguageUtility
+from .language import RegexLanguage
 
-BAD_REGEXES = [
+badwords = [
     'ה?קא?ק(י|ות|ה)',
     'ה?חרא',
     'חארות',
@@ -54,7 +54,7 @@ BAD_REGEXES = [
     'דגכ',
     'זובי'
 ]
-INFORMAL_REGEXES = [
+informals = [
     'חחח+',
     '[בה]ייי',
     'פהה+',
@@ -88,46 +88,23 @@ INFORMAL_REGEXES = [
     'אהה',
     'יימח'
 ]
-BAD_REGEX = re.compile("|".join(BAD_REGEXES))
-INFORMAL_REGEX = re.compile("|".join(INFORMAL_REGEXES))
-DICTIONARY = enchant.Dict("he")
-
-def is_badword_process():
-    def is_badword(word):
-        return bool(BAD_REGEX.match(word.lower()))
-
-    return is_badword
-
-
-is_badword = LanguageUtility("is_badword", is_badword_process)
-
-
-def is_informal_word_process():
-    def is_informal_word(word):
-        return bool(INFORMAL_REGEX.match(word.lower()))
-
-    return is_informal_word
-
-
-is_informal_word = LanguageUtility("is_informal_word",
-                                   is_informal_word_process)
-
-
-def is_misspelled_process():
-    def is_misspelled(word):
-        return not DICTIONARY.check(word)
-
-    return is_misspelled
-
-
-is_misspelled = LanguageUtility("is_misspelled", is_misspelled_process)
+try:
+    dictionary = enchant.Dict("he")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'he'.  " +
+                      "Consider installing 'myspell-he'.")
 
 
 
-sys.modules[__name__] = Language(
+sys.modules[__name__] = RegexLanguage(
     __name__,
-    [is_badword, is_misspelled, is_informal_word]
+    badwords=badwords,
+    informals=informals,
+    dictionary=dictionary
 )
 """
-Implements :class:`~revscoring.languages.language.Language` for Hebrew.
+Implements :class:`~revscoring.languages.language.RegexLanguage` for Hebrew.
+:data:`~revscoring.languages.language.is_badword`,
+:data:`~revscoring.languages.language.is_misspelled`, and
+:data:`~revscoring.languages.language.is_informal_word` are provided.
 """

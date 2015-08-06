@@ -1,3 +1,5 @@
+import pickle
+
 from nose.tools import eq_
 
 from .. import language, persian
@@ -14,3 +16,6 @@ def test_language():
 
     assert is_badword("کیرم")
     assert not is_badword("hat")
+
+    pickled_persian = pickle.loads(pickle.dumps(persian))
+    eq_(pickled_persian, persian)
