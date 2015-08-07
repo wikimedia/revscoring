@@ -11,10 +11,6 @@ functions
 context
 +++++++
 .. automodule:: revscoring.dependencies.context
-
-errors
-++++++
-.. automodule:: revscoring.dependencies.errors
 """
 
 from .functions import solve, expand, dig, draw, normalize_context
