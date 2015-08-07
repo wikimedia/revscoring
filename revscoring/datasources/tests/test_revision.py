@@ -1,8 +1,9 @@
 from mw import Timestamp
-from nose.tools import eq_
+from nose.tools import eq_, raises
 
 from .. import revision
 from ...dependencies import solve
+from ...errors import RevisionNotFound
 
 
 def test_content():
@@ -20,7 +21,6 @@ def test_content():
     cache = {revision.text: "This is a foobar {{foobar}} <td>"}
     eq_(solve(revision.content_tokens, cache=cache),
         ["This", " ", "is", " ", "a", " ", "foobar", "  ", "<td>"])
-
 
 def test_headings():
     text = """
@@ -74,3 +74,11 @@ Testing some text. {{:User:Hats/Template3}}
 
     eq_([str(t.name) for t in templates], ["template0", "template1",
                                            ":User:Hats/Template3"])
+
+@raises(RevisionNotFound)
+def test_not_found_words():
+    solve(revision.words, cache={revision.text: None})
+
+@raises(RevisionNotFound)
+def test_not_found_parse_tree():
+    solve(revision.parse_tree, cache={revision.text: None})
