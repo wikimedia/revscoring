@@ -18,7 +18,7 @@ def process_operations(parent_revision_text, revision_text):
 operations = Datasource("diff.operations", process_operations,
                         depends_on=[parent_revision.text, revision.text])
 """
-Returns a tuple that describes a the difference between the parent revision text
+Returns a tuple that describes the difference between the parent revision text
 and the current revision's text.
 
 The tuple contains three fields:
