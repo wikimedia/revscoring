@@ -105,7 +105,7 @@ Then, install this module,
 
 You'll need to download NLTK data in order to make use of language features.
 
-``python3 -m nltk.downloader wordnet omw stopwords``
+``python3 -m nltk.downloader stopwords``
 
 Authors
 =======
