@@ -10,7 +10,7 @@ from ..datasources import (Datasource, RevisionMetadata, UserInfo,
 from ..errors import RevisionDocumentNotFound
 from .extractor import Extractor
 
-logger = logging.getLogger('revscoring.extractors.api')
+logger = logging.getLogger(__name__)
 
 revision_doc = Datasource("revision.doc")
 parent_revision_doc = Datasource("parent_revision.doc")
@@ -370,6 +370,7 @@ class APIExtractor(Extractor):
 
     @classmethod
     def from_config(cls, config, name, section_key="extractors"):
+        logger.info("Loading APIExtractor '{0}' from config.".format(name))
         section = config[section_key][name]
         session = api.Session(section['url'],
                               user_agent=section['user_agent'])

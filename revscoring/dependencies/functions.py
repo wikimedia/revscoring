@@ -15,8 +15,11 @@ and collections of `Dependent`.
 .. autofunction:: draw
 
 """
+import logging
+
 from .errors import DependencyError, DependencyLoop
 
+logger = logging.getLogger(__name__)
 
 def solve(dependents, context=None, cache=None):
     """

@@ -6,7 +6,7 @@
 import logging
 from functools import wraps
 
-logger = logging.getLogger("revscoring.dependent")
+logger = logging.getLogger(__name__)
 
 def not_implemented(*args, **kwargs):
     raise NotImplementedError("Not implemented.")
@@ -31,7 +31,8 @@ class Dependent:
         self.calls = 0
 
     def __call__(self, *args, **kwargs):
-        logger.debug("Executing {0}.".format(self))
+        logger.debug("Executing {0} ({1} calls so far)."
+                     .format(self, self.calls))
         self.calls += 1
         return self.process(*args, **kwargs)
 

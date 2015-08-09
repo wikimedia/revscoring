@@ -2,10 +2,13 @@
 .. autoclass:: revscoring.extractors.extractor.Extractor
 """
 
+import logging
+
 import yamlconf
 
 from ..dependencies import Context
 
+logger = logging.getLogger(__name__)
 
 class Extractor(Context):
     """
