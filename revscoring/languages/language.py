@@ -72,11 +72,15 @@ class RegexLanguage(Language):
                        stemmer=None, stopwords=None):
         cache = {}
         if badwords is not None:
-            self.badword_re = re.compile("|".join(badwords), re.I)
+            self.badwords = badwords
+            self.badword_re = re.compile(r"^(" + r"|".join(badwords) + r")$",
+                                         re.I)
             cache[is_badword] = self.is_badword
 
         if informals is not None:
-            self.informal_re = re.compile("|".join(informals), re.I)
+            self.informals = informals
+            self.informal_re = re.compile(r"^(" + r"|".join(informals) + r")$",
+                                          re.I)
             cache[is_informal_word] = self.is_informal_word
 
         if dictionary is not None:

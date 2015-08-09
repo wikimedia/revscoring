@@ -10,23 +10,23 @@ from .language import RegexLanguage
 
 stopwords = set(stopwords.words("turkish"))
 badwords = [
-    "ağzına sıçayım", "ahlaksız", "ahmak", "am", "amcık", "amın oğlu",
-        "amına koyayım", "amına koyyim", "amk", "aptal",
-    "beyinsiz", "bok", "boktan",
-    "çük",
-    "dedeler",
-    "embesil",
-    "gerizekalı", "gerzek", "göt", "göt oğlanı", "götlek", "götoğlanı",
-        "götveren",
-    "haysiyetsiz",
-    "ibne", "inci", "it", "it oğlu it",
-    "kıç",
-    "mal", "meme",
-    "nobrain",
-    "oğlan", "oğlancı", "orospu", "orospu çocuğu", "orospunun evladı",
-    "pezevengin evladı", "pezevenk", "piç", "puşt",
-    "salak", "şerefsiz", "sik", "siktir",
-    "yarrak"
+    r"ağzına sıçayım", r"ahlaksız", r"ahmak", r"am", r"amcık", r"amın oğlu",
+        r"amına koyayım", r"amına koyyim", r"amk", r"aptal",
+    r"beyinsiz", r"bok", r"boktan",
+    r"çük",
+    r"dedeler",
+    r"embesil",
+    r"gerizekalı", r"gerzek", r"göt", r"göt oğlanı", r"götlek", r"götoğlanı",
+        r"götveren",
+    r"haysiyetsiz",
+    r"ibne", r"inci", r"it", r"it oğlu it",
+    r"kıç",
+    r"mal", r"meme",
+    r"nobrain",
+    r"oğlan", r"oğlancı", r"orospu", r"orospu çocuğu", r"orospunun evladı",
+    r"pezevengin evladı", r"pezevenk", r"piç", r"puşt",
+    r"salak", r"şerefsiz", r"sik", r"siktir",
+    r"yarrak"
 ]
 
 

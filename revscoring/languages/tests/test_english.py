@@ -3,6 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import english, language
+from .util import all_false, all_true
 
 
 def test_language():
@@ -12,19 +13,20 @@ def test_language():
     eq_(stem_word("shitting"), "shit")
     eq_(stem_word("Shitting"), "shit")
 
+
     is_badword = english.solve(language.is_badword)
 
-    assert is_badword("shit")
-    assert is_badword("shitty")
-    assert is_badword("Shitty")
-    assert not is_badword("hat")
+    all_true(is_badword, ["shit", "shitty", "shitting", "shitfucker",
+                          "pieceofshit", "SHIT", "SHITTING",
+                          "fuuckers", "motherfucker", "FUCKYOU!",
+                          "whoreface", "stupid", "bitchass",
+                          "japinjun"])
+    all_false(is_badword, ["mother", "association", "shihtzu", "horrendous"])
 
     is_informal_word = english.solve(language.is_informal_word)
 
-    assert is_informal_word("kewlest")
-    assert is_informal_word("won't")
-    assert is_informal_word("cant")
-    assert not is_informal_word("hat")
+    all_true(is_informal_word, ["kewlest", "won't", "cant", "I", "awesome"])
+    all_false(is_informal_word, ["hat", "Island", "pants", "cantelope"])
 
     is_misspelled = english.solve(language.is_misspelled)
 

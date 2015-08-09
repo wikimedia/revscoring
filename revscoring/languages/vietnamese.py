@@ -3,6 +3,7 @@ import sys
 
 import enchant
 
+from . import english
 from .language import RegexLanguage
 
 # https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/Free_Vietnamese_Dictionary_Project_Vietnamese-Vietnamese#Allwiki_.28closed.29
@@ -18,17 +19,22 @@ stopwords = set([
     "về", "với", "xuống", "đang", "đã", "được", "đấy", "đầu", "đủ"
 ])
 badwords = [
-    "[ck]ặ[tc]", "[ck]u", "cứt", "(dz?|gi)âm", "đái", "đéo", "đ[ụù].", "đĩ",
-    "đ[íị]t", "ỉa", "l[ôồ]n",
-    "dick", "cunt", "fag", "bitch", "shit", "fuck.*", "ass", "gay", "ghey",
-    "slut",
-]
+    # Vietnamese
+    r"[ck]ặ[tc]", r"[ck]u", r"cứt", r"(dz?|gi)âm", r"đái", r"đéo", r"đ[ụù].",
+    r"đĩ", r"đ[íị]t", r"ỉa", r"l[ôồ]n", r"trứng"
+] + english.badwords
 informals = [
-    "bợn", "bro", "chẳng", "ch[ớứ]", "cú", "đừng", "fải", "(he){2,}", "(hi)+",
-    "khỉ", "mày", "nghịch", "ngu", "ngụy", "nguỵ", "ok", "ơi", "quái", "thằng",
-    "thôi", "tui", "ừ", "vời", "wái?", "zì",
-    "moron", "retard", "stupid",
-]
+    # Vietnamese
+    r"bợn", r"bro",
+    r"chẳng", r"ch[ớứ]", r"cú",
+    r"đừng", r"fải",
+    r"khỉ",
+    r"mày", r"nghịch", r"ngu", r"ngụy", r"nguỵ",
+    r"ok", r"ơi",
+    r"quái",
+    r"thằng", r"thôi", r"tui", r"ừ", r"vời", r"wái?",
+    r"zì"
+] + english.informals
 
 try:
     dictionary = enchant.Dict("vi")

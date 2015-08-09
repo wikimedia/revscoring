@@ -7,18 +7,14 @@ from nltk.stem.snowball import SnowballStemmer
 from .language import RegexLanguage
 
 stemmer = SnowballStemmer("french")
-stopwords = set(stopwords.words('french') + ['a'])
+stopwords = set(stopwords.words("french") + ["a"])
 badwords = [
-    'anu+s+',
-    'con', 'c(u|oo)l',
-    'fesse', 'foutre',
-    'gay',
-    'herpes', 'hiv', 'homosexu(e|a)l',
-    'idio+t',
-    'lesbi(e|a)n',
-    'merde+', 'merdique',
-    'peni(s|5)', 'prostituee?', 'putain', 'putes',
-    'salop', 'stupide',
+    r"con",
+    r"fesse", r"foutre",
+    r"herpes",
+    r"merde+", r"merdique",
+    r"peni(s|5)", r"prostituee?", r"putain", r"putes",
+    r"salop", r"stupide",
 ]
 try:
     dictionary = enchant.Dict("fr")

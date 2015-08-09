@@ -3,18 +3,16 @@ import pickle
 from nose.tools import eq_
 
 from .. import language, vietnamese
+from .util import all_false, all_true
 
 
 def test_language():
 
     is_badword = vietnamese.solve(language.is_badword)
 
-    assert is_badword("đít")
-    assert is_badword("ỉa")
-    assert is_badword("Ỉa")
-    assert is_badword("assface")
-    assert not is_badword("trứng")
-    assert not is_badword("bass")
+    all_true(is_badword, ["đít", "ỉa", "Ỉa", "assface", "trứng"])
+    all_false(is_badword, ["bass", "ai", "bằng", "bị", "bộ", "cho", "chưa",
+                           "chỉ", "cuối", "cuộc"])
 
     is_informal_word = vietnamese.solve(language.is_informal_word)
 
