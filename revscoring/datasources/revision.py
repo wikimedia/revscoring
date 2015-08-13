@@ -1,11 +1,12 @@
 from collections import namedtuple
 
 import mwparserfromhell as mwp
+from deltas.tokenizers import wikitext_split
 from mw import Timestamp
 
+from ..errors import RevisionDocumentNotFound
 from .datasource import Datasource
 from .types import RevisionMetadata
-from .util import WORD_RE
 
 id = Datasource("revision.id")
 """
@@ -23,15 +24,17 @@ text = Datasource("revision.text")
 Returns the text content of the current revision.
 """
 
-################################# Words ########################################
 
+################################ Tokenized #####################################
+def process_tokens(revision_text):
+    if revision_text is None:
+        raise RevisionDocumentNotFound()
+    return [t for t in wikitext_split.tokenize(revision_text)]
 
-def process_words(revision_text):
-    return [m.group(0) for m in WORD_RE.finditer(revision_text)]
-
-words = Datasource("revision.words", process_words, depends_on=[text])
+tokens = Datasource("revision.tokens",
+                    process_tokens, depends_on=[text])
 """
-Returns a list of words from the content of the current revision.
+Returns a list of tokens.
 """
 
 ################################# Parsed text ##################################
@@ -43,7 +46,7 @@ def process_parse_tree(revision_text):
 parse_tree = Datasource("revision.parse_tree",
                         process_parse_tree, depends_on=[text])
 """
-Returns :class:`mwparserfromhell.wikicode.WikiCode` abstract syntax tree
+Returns a :class:`mwparserfromhell.wikicode.WikiCode` abstract syntax tree
 representing the content of the current revision.
 """
 

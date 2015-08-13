@@ -1,9 +1,14 @@
-import re
 import sys
 
-import enchant
+from .space_delimited import SpaceDelimited
 
-from .language import RegexLanguage
+try:
+    import enchant
+    dictionary = enchant.Dict("he")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'he'.  " +
+                      "Consider installing 'myspell-he'.")
+
 
 badwords = [
     r"ה?קא?ק(י|ות|ה)",
@@ -88,23 +93,10 @@ informals = [
     r"אהה",
     r"יימח"
 ]
-try:
-    dictionary = enchant.Dict("he")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'he'.  " +
-                      "Consider installing 'myspell-he'.")
 
-
-
-sys.modules[__name__] = RegexLanguage(
+sys.modules[__name__] = SpaceDelimited(
     __name__,
     badwords=badwords,
-    informals=informals,
-    dictionary=dictionary
+    dictionary=dictionary,
+    informals=informals
 )
-"""
-Implements :class:`~revscoring.languages.language.RegexLanguage` for Hebrew.
-:data:`~revscoring.languages.language.is_badword`,
-:data:`~revscoring.languages.language.is_misspelled`, and
-:data:`~revscoring.languages.language.is_informal_word` are provided.
-"""

@@ -1,9 +1,15 @@
-import re
 import sys
 
 import enchant
 
-from .language import RegexLanguage
+from .space_delimited import SpaceDelimited
+
+try:
+    import enchant
+    dictionary = enchant.Dict("id")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'id'.  " +
+                      "Consider installing 'aspell-id'.")
 
 # STOPWORDS from https://code.google.com/p/stop-words/source/browse/trunk/stop-words/stop-words-collection-2014.02.24/stop-words/stop-words_indonesian_1_id.txt
 stopwords = set([
@@ -79,44 +85,73 @@ stopwords = set([
     r"yaitu", r"yakni", r"yang"
 ])
 badwords = [
-    r"aboput", r"anjing",
-    r"bajingan", r"bangsat", r"bispak", r"blo[o' ]*o?n", r"brengse[kx]",
-        r"bishopsgarth", r"bastards", r"bencong", "babi"
-    r"cibai", r"chalong", r"coley",
-    r"diselama", r"dishonest", r"defraud", r"defamatory",
-    r"escoduro",
-    r"fredrike", r"fogh",
-    r"gauguin", r"goblok", r"ge[fs]tapo",
-    r"heroin", r"husseins",
-    r"indon",
-    r"jambut", r"janc[uo]k", r"jellinek", r"jellygamat",
-    r"keparat", r"kontol",
-    r"lonte", r"loked", r"lvmh",
-    r"malingsia", r"memek", r"monyong", r"munch",
-    r"netnapa", r"ngentot", r"nesbitt",
-    r"overdosed",
-    r"panadta", r"palaji", r"perek", r"pukimak", r"portugeuse", r"paedophiles",
-        r"prostituton", r"paedophile", r"pedofil",
-    r"riyhad",
-    r"satanic", r"satanists", r"sempak", r"sinting", r"steinway", r"sukhano",
-    r"terrorising", r"terrorised", r"terrorists", r"taenjamras", r"tetek", r"titit",
-        r"toket", r"tzcesar", r"thailaland", r"thaicia"
+    r"anjing",  # dog
+    r"bajingan",  # crook
+    r"bangsat",  # asshole / motherfucker
+    r"bispak",  # whore (can be used)
+    r"blo'?on",  # whacky
+    r"brengse[kx]",  # useless
+    r"bencong",  # transexual
+    r"babi",  # swine
+    r"cibai",  # smelly vagina
+    r"coley",  # ???
+    r"diselama",  # ???
+    r"escoduro",  # ???
+    r"fredrike",  # ???
+    r"fogh",  # idiot (repeats mistakes)
+    r"gauguin",  # ???
+    r"goblok",  # fool
+    r"ge[fs]tapo",  # ???
+    r"husseins",  # ???
+    r"indon",  # ???
+    r"jambut",  # public hair
+    r"jellinek",  # ???
+    r"jellygamat",  # ???
+    r"keparat",  # dammit
+    r"kencing",  # pee
+    r"kontol",  # penis
+    r"kotoran",  # shit
+    r"lonte",  # prostitute
+    r"loked",  # crazy
+    r"lvmh",  # ???
+    r"malingsia",  # malaysian (slang)
+    r"memek",  # pussy
+    r"monyong",  # long mouth
+    r"netnapa",  # ???
+    r"ngentot",  # fuck
+    r"nesbitt",  # ???
+    r"panadta",  # ???
+    r"palaji",  # ???
+    r"pencuri",  # theif
+    r"perek",  # slut
+    r"pukimak",  # mother's cunt
+    r"portugeuse",  # ???
+    r"pedofil",  # pedophile
+    r"riyhad",  # ???
+    r"sempak",  # underwear (more like "shit" or "damn")
+    r"sinting",  # crazy
+    r"steinway",  # ???
+    r"sukhano",  # ??? first president of Indonesia?
+    r"taenjamras",  # ???
+    r"tahi",  # bullshit
+    r"tetek",  # breast / boobs
+    r"titit",  # penis
+    r"toket",  # breasts
+    r"tzcesar",  # ???
+    r"thailaland",  # ???
+    r"thaicia" # ???
 ]
-try:
-    dictionary = enchant.Dict("id")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'id'.  " +
-                      "Consider installing 'aspell-id'.")
 
-sys.modules[__name__] = RegexLanguage(
+informals = [
+    r"hai", # hi
+    r"halo", # hello
+    r"janc[uo]k",  # closest friend
+]
+
+sys.modules[__name__] = SpaceDelimited(
     __name__,
     badwords=badwords,
     dictionary=dictionary,
+    informals=informals,
     stopwords=stopwords
 )
-"""
-Implements :class:`~revscoring.languages.language.RegexLanguage` for Indonesian.
-:data:`~revscoring.languages.language.is_badword`,
-:data:`~revscoring.languages.language.is_misspelled`, and
-:data:`~revscoring.languages.language.is_stopword` are provided.
-"""
