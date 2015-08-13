@@ -98,7 +98,15 @@ INFORMAL = [
 ]
 
 OTHER = [
-    "arvere",
+    """
+    A batalha de Hastings foi travada em 14 de outubro de 1066 entre o exército
+    franco-normando do duque Guilherme II da Normandia (r. 1035–1087) e um
+    exército inglês sob o rei anglo-saxão Haroldo II (r. 1066), durante a
+    conquista normanda da Inglaterra. Ocorreu cerca de 11 quilômetros a
+    noroeste de Hastings, perto da atual cidade de Battle, em Sussex Oriental,
+    e teve como resultado uma decisiva vitória normanda.
+    """,
+    "arvere"
 ]
 
 def compare_extraction(extractor, examples, counter_examples):
