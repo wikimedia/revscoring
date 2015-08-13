@@ -216,7 +216,6 @@ informals = [
     r"fe[ao]s?",  # ugly
     r"gra(x|sias)",  # thank you
     r"guapo",  # beautiful
-    r"h+[aiou]+(h+[aeiou]*)*", r"h+[e]+(h+[aeiou]*)+",  # haha hehe hoho
     r"h?o+la+", # hello
     r"ho+lis?",  # ???
     r"ijos",  # ???

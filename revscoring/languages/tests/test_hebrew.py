@@ -3,24 +3,47 @@ import pickle
 from nose.tools import eq_
 
 from .. import hebrew, language
+from ...datasources import diff, parent_revision, revision
+from ...dependencies import solve
 
+BAD = [
+    "שרמוטה"
+]
 
-def test_language():
+INFORMAL = [
+    "בגללך"  # Because of you
+]
 
-    is_misspelled = hebrew.solve(language.is_misspelled)
+OTHER = [
+    "בגלל", "חתול"
+]
 
-    assert is_misspelled("חטול")
-    assert not is_misspelled("חתול")
+def compare_extraction(extractor, examples, counter_examples):
 
-    is_badword = hebrew.solve(language.is_badword)
+    for example in examples:
+        eq_(extractor.process(example), [example])
+        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
+        eq_(extractor.process("Sentence end " + example + "."), [example])
+        eq_(extractor.process(example + " start of sentence."), [example])
 
-    assert is_badword("שרמוטה")
-    assert not is_badword("שימרותה")
+    for example in counter_examples:
+        eq_(extractor.process(example), [])
+        eq_(extractor.process("Sentence " + example + " sandwich."), [])
+        eq_(extractor.process("Sentence end " + example + "."), [])
+        eq_(extractor.process(example + " start of sentence."), [])
 
-    is_informal_word = hebrew.solve(language.is_informal_word)
+def test_badwords():
+    compare_extraction(hebrew.revision.badwords_list, BAD, OTHER)
 
-    assert is_informal_word("בגללך")  # Because of you
-    assert not is_informal_word("בגלל")  # Because
+def test_informals():
+    compare_extraction(hebrew.revision.informals_list, INFORMAL, OTHER)
 
-    pickled_hebrew = pickle.loads(pickle.dumps(hebrew))
-    eq_(pickled_hebrew, hebrew)
+def test_revision():
+    # Words
+    cache = {revision.text: "סוויפט גדלה בוויומיסינג, פנסילבניה, ועברה לנאשוויל"}
+    eq_(solve(hebrew.revision.words_list, cache=cache),
+        ["סוויפט" ,"גדלה" ,"בוויומיסינג" ,"פנסילבניה" ,"ועברה" ,"לנאשוויל"])
+
+    # Misspellings
+    cache = {revision.text: 'בגלל חטול <td>'}
+    eq_(solve(hebrew.revision.misspellings_list, cache=cache), ["חטול"])

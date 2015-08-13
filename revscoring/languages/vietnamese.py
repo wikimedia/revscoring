@@ -1,10 +1,13 @@
-import re
 import sys
 
-import enchant
+from .space_delimited import SpaceDelimited
 
-from . import english
-from .language import RegexLanguage
+try:
+    import enchant
+    dictionary = enchant.Dict("vi")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'vi'.  " +
+                      "Consider installing 'hunspell-vi'.")
 
 # https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/Free_Vietnamese_Dictionary_Project_Vietnamese-Vietnamese#Allwiki_.28closed.29
 stopwords = set([
@@ -20,38 +23,26 @@ stopwords = set([
 ])
 badwords = [
     # Vietnamese
-    r"[ck]ặ[tc]", r"[ck]u", r"cứt", r"(dz?|gi)âm", r"đái", r"đéo", r"đ[ụù].",
+    r"[ck]ặ[tc]", r"[ck]u", r"cứt", r"(dz?|gi)âm", r"đái", r"đéo", r"đ[ụù]",
     r"đĩ", r"đ[íị]t", r"ỉa", r"l[ôồ]n", r"trứng"
-] + english.badwords
+]
 informals = [
     # Vietnamese
     r"bợn", r"bro",
     r"chẳng", r"ch[ớứ]", r"cú",
-    r"đừng", r"fải",
+    r"đụ", r"đừng", r"fải",
     r"khỉ",
     r"mày", r"nghịch", r"ngu", r"ngụy", r"nguỵ",
     r"ok", r"ơi",
     r"quái",
     r"thằng", r"thôi", r"tui", r"ừ", r"vời", r"wái?",
     r"zì"
-] + english.informals
+]
 
-try:
-    dictionary = enchant.Dict("vi")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'vi'.  " +
-                      "Consider installing 'hunspell-vi'.")
-
-sys.modules[__name__] = RegexLanguage(
+sys.modules[__name__] = SpaceDelimited(
     __name__,
     badwords=badwords,
+    dictionary=dictionary,
     informals=informals,
-    stopwords=stopwords,
-    dictionary=dictionary
+    stopwords=stopwords
 )
-"""
-Implements :class:`~revscoring.languages.language.RegexLanguage` for Vietnamese.
-:data:`~revscoring.languages.language.is_badword`,
-:data:`~revscoring.languages.language.is_informal_word` and
-:data:`~revscoring.languages.language.is_stopword` are provided.
-"""

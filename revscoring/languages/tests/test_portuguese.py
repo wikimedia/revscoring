@@ -3,32 +3,134 @@ import pickle
 from nose.tools import eq_
 
 from .. import language, portuguese
+from ...datasources import diff, parent_revision, revision
+from ...dependencies import solve
 
+BAD = [
+    "babaca",
+    "bixa",
+    "boiola", "boiolas",
+    "boquete",
+    "bosta",
+    "buceta", "bucetas", "bucetinha",
+    "bunda", "bundinha",
+    "burra", "burro", "burros",
+    "cacete",
+    "caga", "cagada", "cagado", "cagando", "caganeira", "cagar", "cagou",
+    "carai", "caraio", "caralho",
+    "chata", "chato",
+    "chupa", "chupar", "chupava", "chupo", "chupou", "xupa",
+    "cocô",
+    "comi",
+    "cona",
+    "cuzao", "cuzão", "cuzinho",
+    "doido",
+    "fede", "fedido",
+    "feia",
+    "fendi", # ???
+    "foda", "fodas", "fude", "fuder",
+    "gostosa", "gostosão", "gostosas", "gostoso",
+    "idiota", "idiotas",
+    "loka", "loko",
+    "maconheiro",
+    "mafia",
+    "maldizentes",
+    "mecos",
+    "mentira",
+    "merda",   "merdas",
+    "noob",
+    "otario", "otário", "otarios",
+    "pariu",
+    "pategos",
+    "peida", "peidar", "peidei",  "peido", "peidos",
+    "pênis",
+    "pila", "pilas",
+    "piroca",
+    "poha",
+    "porcaria", "porno",
+    "porra",
+    "pum",
+    "punheta", "punheteiro",
+    "puta", "putaria", "putas", "puteiro", "putinha",
+    "puto", "putos",
+    "safado",
+    "tesão",
+    "transar", "tranzar",
+    "treta", "troxa",
+    "vadia",
+    "viadagem", "viadão",  "viadinho", "viadinhos",
+    "viado", "viados",
+    "xixi",
+]
 
-def test_language():
+INFORMAL = [
+    "adoro",
+    "aki",
+    "amo",
+    "bla", "blablabla", "bbblllaaaahhhhhblah",
+    "coco",
+    "copiei", "copiem",
+    "delicia",
+    "editei",
+    "enfia", "enfiar",
+    "entao",
+    "estraguem",
+    "fixe",
+    "gajo",
+    "haha", "hahaha", "hehe", "hehehe",
+    "kkk", "kkkk", "kkkkk", "kkkkkk", "kkkkkkk",
+    "lindo",
+    "lol",
+    "mae",
+    "mto",
+    "naum",
+    "nois",
+    "odeio",
+    "oi", "oiiiiiiiiii",
+    "ola", "olá",
+    "rata", "ratas",
+    "rs", "rsrsrs",
+    "tava",
+    "tbm",
+    "vao",
+    "vcs", "voce", "voces",
+    "xau"
+]
 
-    stem_word = portuguese.solve(language.stem_word)
+OTHER = [
+    "arvere",
+]
 
-    eq_(stem_word("merda"), "merd")
-    eq_(stem_word("Merda"), "merd")
+def compare_extraction(extractor, examples, counter_examples):
 
-    is_badword = portuguese.solve(language.is_badword)
+    for example in examples:
+        eq_(extractor.process(example), [example])
+        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
+        eq_(extractor.process("Sentence end " + example + "."), [example])
+        eq_(extractor.process(example + " start of sentence."), [example])
 
-    assert is_badword("merda")
-    assert is_badword("merdar")
-    assert is_badword("Merdar")
-    assert not is_badword("arvere")
+    for example in counter_examples:
+        eq_(extractor.process(example), [])
+        eq_(extractor.process("Sentence " + example + " sandwich."), [])
+        eq_(extractor.process("Sentence end " + example + "."), [])
+        eq_(extractor.process(example + " start of sentence."), [])
 
-    is_misspelled = portuguese.solve(language.is_misspelled)
+def test_badwords():
+    compare_extraction(portuguese.revision.badwords_list, BAD, OTHER)
 
-    assert is_misspelled("wjwkjb")
-    assert not is_misspelled("Esta")
+def test_informals():
+    compare_extraction(portuguese.revision.informals_list, INFORMAL, OTHER)
 
-    is_stopword = portuguese.solve(language.is_stopword)
+def test_revision():
+    # Words
+    cache = {revision.text: "A haver, rebeliões: e m80 da Normandia."}
+    eq_(solve(portuguese.revision.words_list, cache=cache),
+        ["A", "haver", "rebeliões", "e", "m80", "da", "Normandia"])
 
-    assert is_stopword("A")
-    assert is_stopword("o")
-    assert not is_stopword("arvere")
+    # Misspellings
+    cache = {revision.text: 'O número de vítimas é difícil worngly. <td>'}
+    eq_(solve(portuguese.revision.misspellings_list, cache=cache), ["worngly"])
 
-    pickled_portuguese = pickle.loads(pickle.dumps(portuguese))
-    eq_(pickled_portuguese, portuguese)
+    # Infonoise
+    cache = {revision.text: "Esta a o corrida!"}
+    eq_(solve(portuguese.revision.infonoise, cache=cache), 4/13)

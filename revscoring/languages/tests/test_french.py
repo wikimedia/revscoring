@@ -2,35 +2,53 @@ import pickle
 
 from nose.tools import eq_
 
-from .. import french, language
+from .. import french
+from ...datasources import diff, parent_revision, revision
+from ...dependencies import solve
 
+BAD = [
+    "con",
+    "fesse",
+    "foutre",
+    "merde", "merdee",
+    "merdique",
+    "prostituee", "prostitue",
+    "putain", "putes",
+    "salop",
+    "stupide"
+]
 
-def test_language():
+OTHER = [
+    "connection", "fitness", "le"
+]
 
-    stem_word = french.solve(language.stem_word)
+def compare_extraction(extractor, examples, counter_examples):
 
-    eq_(stem_word("merdique"), "merdiqu")
-    eq_(stem_word("Merdique"), "merdiqu")
+    for example in examples:
+        eq_(extractor.process(example), [example])
+        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
+        eq_(extractor.process("Sentence end " + example + "."), [example])
+        eq_(extractor.process(example + " start of sentence."), [example])
 
-    is_badword = french.solve(language.is_badword)
+    for example in counter_examples:
+        eq_(extractor.process(example), [])
+        eq_(extractor.process("Sentence " + example + " sandwich."), [])
+        eq_(extractor.process("Sentence end " + example + "."), [])
+        eq_(extractor.process(example + " start of sentence."), [])
 
-    assert is_badword("merde")
-    assert is_badword("merdique")
-    assert is_badword("Merdique")
-    assert not is_badword("Chapeau")
+def test_badwords():
+    compare_extraction(french.revision.badwords_list, BAD, OTHER)
 
-    is_misspelled = french.solve(language.is_misspelled)
+def test_revision():
+    # Words
+    cache = {revision.text: "Wikipédia est un projet d’encyclopédie."}
+    eq_(solve(french.revision.words_list, cache=cache),
+        ["Wikipédia", "est", "un", "projet", "d’encyclopédie"])
 
-    assert is_misspelled("wjwkjb")
-    assert not is_misspelled("gaufres")
-    assert not is_misspelled("Gaufres")
+    # Misspellings
+    cache = {revision.text: 'Est un projet principe du worngly. <td>'}
+    eq_(solve(french.revision.misspellings_list, cache=cache), ["worngly"])
 
-    is_stopword = french.solve(language.is_stopword)
-
-    assert is_stopword("A")
-    assert is_stopword("dans")
-    assert is_stopword("notre")
-    assert not is_stopword("gaufres")
-
-    pickled_french = pickle.loads(pickle.dumps(french))
-    eq_(pickled_french, french)
+    # Infonoise
+    cache = {revision.text: "Est un projet principe."}
+    eq_(solve(french.revision.infonoise, cache=cache), 13/19)
