@@ -5,12 +5,6 @@ from .. import revision
 from ...dependencies import solve
 
 
-def test_words():
-    words = solve(revision.words,
-                  cache={revision.text: "Some text words 55."})
-    eq_(words, ["Some", "text", "words"])
-
-
 def test_content():
     text = "This is some {{markup}} and [[stuff]]."
 
@@ -18,13 +12,14 @@ def test_content():
 
     eq_(content, "This is some  and stuff.")
 
+def test_content():
+    cache = {revision.text: "Some text words 55. {{foo}}"}
+    eq_(solve(revision.content, cache=cache),
+        "Some text words 55. ")
 
-def test_content_words():
-    text = "This is some {{markup}} and [[stuff]]."
-
-    content_words = solve(revision.content_words, cache={revision.text: text})
-
-    eq_(content_words, ["This", "is", "some", "and", "stuff"])
+    cache = {revision.text: "This is a foobar {{foobar}} <td>"}
+    eq_(solve(revision.content_tokens, cache=cache),
+        ["This", " ", "is", " ", "a", " ", "foobar", "  ", "<td>"])
 
 
 def test_headings():

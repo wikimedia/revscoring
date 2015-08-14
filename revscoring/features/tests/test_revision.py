@@ -6,14 +6,14 @@ from nose.tools import eq_
 from ... import languages
 from ...datasources import revision
 from ...dependencies import solve
-from ..revision import (badwords, bytes, category_links, chars, cite_templates,
+from ..revision import (bytes, category_links, chars, cite_templates,
                         content_chars, day_of_week, has_custom_comment,
                         has_section_comment, hour_of_day, image_links,
-                        infobox_templates, infonoise, internal_links,
-                        level_1_headings, level_2_headings, level_3_headings,
-                        level_4_headings, level_5_headings, level_6_headings,
-                        markup_chars, misspellings, numeric_chars, ref_tags,
-                        symbolic_chars, templates, uppercase_chars, words)
+                        infobox_templates, internal_links, level_1_headings,
+                        level_2_headings, level_3_headings, level_4_headings,
+                        level_5_headings, level_6_headings, markup_chars,
+                        numeric_chars, ref_tags, symbolic_chars, templates,
+                        uppercase_chars)
 
 
 def test_day_of_week():
@@ -126,30 +126,6 @@ def test_uppercase_chars():
     }
     eq_(solve(uppercase_chars, cache=cache), 2)
 
-################################## Words #######################################
-
-def test_words():
-    cache = {
-        revision.words: ["I", "am", "four", "words"]
-    }
-    eq_(solve(words, cache=cache), 4)
-
-def test_badwords():
-    def is_badword(w): return w == "badword"
-    cache = {
-        languages.is_badword: is_badword,
-        revision.words: ["I", "am", "badword", "badword"]
-    }
-    eq_(solve(badwords, cache=cache), 2)
-
-def test_misspellings():
-    def is_misspelled(w): return w == "misspelled"
-    cache = {
-        languages.is_misspelled: is_misspelled,
-        revision.words: ["I", "am", "misspelled", "badword"]
-    }
-    eq_(solve(misspellings, cache=cache), 1)
-
 ############################# Parsed text ######################################
 
 def test_level_1_headings():
@@ -205,14 +181,6 @@ def test_content_chars():
         revision.content: "Thisistwelve" # 12 characters of content
     }
     eq_(solve(content_chars, cache=cache), 12)
-
-def test_infonoise():
-    cache = {
-        languages.is_stopword: lambda w: w == "is",
-        languages.stem_word: lambda w: w[0], # Just the first character
-        revision.content_words: ["This", "is", "twelve"] # 12 characters of content words
-    }
-    eq_(solve(infonoise, cache=cache), 2/12)
 
 def test_category_links():
     FakeLink = namedtuple("FakeLink", "title")

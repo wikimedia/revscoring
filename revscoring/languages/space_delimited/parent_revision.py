@@ -1,7 +1,6 @@
 from ...datasources import parent_revision
 from ..meta.regex_extractors import TextRegexExtractor
 from .revision import Revision
-from .util import WORD_RE
 
 
 class ParentRevision(Revision):

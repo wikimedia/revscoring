@@ -2,13 +2,11 @@ import re
 from datetime import datetime
 
 from pytz import utc
-from revscoring.languages import is_stopword, stem_word
 
 from . import modifiers
 from ..datasources import revision
-from ..languages import (is_badword, is_informal_word, is_misspelled,
-                         is_stopword, stem_word)
 from .feature import Feature
+# TODO: Many of these are enwiki specific -- they shouldn't be.
 from .util import (CATEGORY_RE, CITE_RE, IMAGE_RE, INFOBOX_RE, MARKUP_RE,
                    NUMERIC_RE, SECTION_COMMENT_RE, SYMBOLIC_RE)
 
@@ -422,28 +420,7 @@ Represents number of content characters in the revision.
         >>> list(extractor.extract(655097130, [revision.content_chars]))
         [19363]
 """
-def process_infonoise(is_stopword, stem_word, content_words):
-    non_stopwords = (w for w in content_words if not is_stopword(w))
-    non_stopword_stems = (stem_word(w) for w in non_stopwords)
 
-    return sum(len(w) for w in non_stopword_stems) / \
-           max(sum(len(w) for w in content_words), 1)
-
-infonoise = Feature("revision.infonoise", process_infonoise, returns=float,
-                    depends_on=[is_stopword, stem_word, revision.content_words])
-"""
-Represents ratio of non stop words compared to all content words in revision.
-
-:Returns:
-    float
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.infonoise]))
-        [0.6406679764243615]
-"""
 
 def process_internal_links(revision_internal_links):
     return len(revision_internal_links)
@@ -596,6 +573,6 @@ all = [day_of_week, hour_of_day,
        proportion_of_markup_chars, proportion_of_numeric_chars,
        proportion_of_symbolic_chars, proportion_of_uppercase_chars,
        level_1_headings, level_2_headings, level_3_headings, level_4_headings,
-       level_5_headings, level_6_headings, infonoise, internal_links,
+       level_5_headings, level_6_headings, internal_links,
        image_links, category_links, ref_tags, templates, cite_templates,
        infobox_templates]

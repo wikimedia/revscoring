@@ -100,3 +100,6 @@ sys.modules[__name__] = SpaceDelimited(
     dictionary=dictionary,
     informals=informals
 )
+"""
+hebrew
+"""

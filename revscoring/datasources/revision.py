@@ -41,7 +41,9 @@ Returns a list of tokens.
 
 
 def process_parse_tree(revision_text):
-    return mwp.parse(revision_text or "")
+    if revision_text is None:
+        raise RevisionDocumentNotFound()
+    return mwp.parse(revision_text)
 
 parse_tree = Datasource("revision.parse_tree",
                         process_parse_tree, depends_on=[text])
@@ -59,16 +61,15 @@ content = Datasource("revision.content", process_content,
 Returns the raw content (no markup or templates) of the current revision.
 """
 
-def process_content_words(content):
-    return [m.group(0) for m in WORD_RE.finditer(content)]
+def process_content_tokens(revision_content):
+    return wikitext_split.tokenize(revision_content)
 
-content_words = Datasource("revision.content_words", process_content_words,
-                           depends_on=[content])
+content_tokens = Datasource("revision.content_tokens", process_content_tokens,
+                            depends_on=[content])
 """
-Returns a list of words in the raw content (no markup or templates) of the
-current revision.
+Returns tokens from the raw content (no markup or templates) of the current
+revision
 """
-
 
 def process_headings(revision_parse_tree):
     return revision_parse_tree.filter_headings()

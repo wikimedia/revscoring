@@ -11,6 +11,15 @@ from ..space_delimited import SpaceDelimited
 def test_no_params():
     SpaceDelimited("fake") # Should not error
 
+def test_words():
+    sd = SpaceDelimited("fake")
+
+    cache = {revision.text: "Foobar bad badwords hat 75 m80, <td> {{foo}}"}
+    eq_(solve(sd.revision.words_list, cache=cache),
+        ["Foobar", "bad", "badwords", "hat", "m80", "foo"])
+    eq_(solve(sd.revision.content_words_list, cache=cache),
+        ["Foobar", "bad", "badwords", "hat", "m80"])
+
 def test_badwords():
     sd = SpaceDelimited("fake", badwords=[r"bad(words)?"])
 
@@ -63,17 +72,24 @@ def test_misspellings():
     assert hasattr(sd.diff, "misspellings_added")
     assert hasattr(sd.diff, "misspellings_removed")
 
+BADWORDS = [r"bad(words)?"]
+Dictionary = namedtuple("Dictionary", ["check"])
+def check(word):
+    return word != "misspelled"
+DICTIONARY = Dictionary(check)
+INFORMALS = [r"inform(als)?"]
+Stemmer = namedtuple("Stemmer", ["stem"])
+def stem(word):
+    return word[0] # First char
+STEMMER = Stemmer(stem)
+STOPWORDS = set(["stop", "word"])
+
 def test_pickle():
-    badwords = [r"bad(words)?"]
-    Dictionary = namedtuple("Dictionary", ["check"])
-    dictionary = Dictionary(lambda w: w != "misspelled") # First char
-    informals = [r"inform(als)?"]
-    Stemmer = namedtuple("Stemmer", ["stem"])
-    stemmer = Stemmer(lambda w:w[0]) # First char
-    stopwords = set(["stop", "word"])
+    sd = SpaceDelimited("fake", badwords=BADWORDS, dictionary=DICTIONARY,
+                        informals=INFORMALS, stemmer=STEMMER,
+                        stopwords=STOPWORDS)
 
-    sd = SpaceDelimited("fake", badwords=badwords, dictionary=dictionary,
-                        informals=informals, stemmer=stemmer,
-                        stopwords=stopwords)
-
-    eq_(pickle.loads(pickle.dumps(sd)), sd)
+    pickled_sd = pickle.dumps(sd)
+    print(pickled_sd)
+    unpickled_sd = pickle.loads(pickled_sd)
+    eq_(unpickled_sd, sd)

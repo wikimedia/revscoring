@@ -6,10 +6,9 @@ from nose.tools import eq_
 from ... import languages
 from ...datasources import parent_revision, revision
 from ...dependencies import solve
-from ..parent_revision import (badwords, bytes, chars, markup_chars,
-                               misspellings, numeric_chars, seconds_since,
-                               symbolic_chars, uppercase_chars, was_same_user,
-                               words)
+from ..parent_revision import (bytes, chars, markup_chars, numeric_chars,
+                               seconds_since, symbolic_chars, uppercase_chars,
+                               was_same_user)
 
 
 def test_was_same_user():
@@ -132,25 +131,3 @@ def test_uppercase_chars():
         parent_revision.text: None
     }
     eq_(solve(uppercase_chars, cache=cache), 0)
-
-def test_words():
-    cache = {
-        parent_revision.words: ["I", "am", "four", "words"]
-    }
-    eq_(solve(words, cache=cache), 4)
-
-def test_badwords():
-    def is_badword(w): return w == "badword"
-    cache = {
-        languages.is_badword: is_badword,
-        parent_revision.words: ["I", "am", "badword", "badword"]
-    }
-    eq_(solve(badwords, cache=cache), 2)
-
-def test_misspellings():
-    def is_misspelled(w): return w == "misspelled"
-    cache = {
-        languages.is_misspelled: is_misspelled,
-        parent_revision.words: ["I", "am", "misspelled", "badword"]
-    }
-    eq_(solve(misspellings, cache=cache), 1)

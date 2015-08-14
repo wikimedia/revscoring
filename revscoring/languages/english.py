@@ -149,6 +149,7 @@ informals = [
     r"y+o+l+o+"
 ]
 
+
 sys.modules[__name__] = SpaceDelimited(
     __name__,
     badwords=badwords,
@@ -157,3 +158,6 @@ sys.modules[__name__] = SpaceDelimited(
     stemmer=stemmer,
     stopwords=stopwords
 )
+"""
+english
+"""

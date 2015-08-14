@@ -1,3 +1,2 @@
-import re
-
-WORD_RE = re.compile('^\w*[^\W\d]\w$', re.I | re.U)
+def token_is_word(t):
+    return t.type == "word"

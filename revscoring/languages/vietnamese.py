@@ -46,3 +46,7 @@ sys.modules[__name__] = SpaceDelimited(
     informals=informals,
     stopwords=stopwords
 )
+"""
+vietnamese
+----------
+"""

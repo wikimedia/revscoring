@@ -123,3 +123,6 @@ sys.modules[__name__] = SpaceDelimited(
     stemmer=stemmer,
     stopwords=stopwords
 )
+"""
+portuguese
+"""
