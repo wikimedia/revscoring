@@ -14,8 +14,7 @@
 
     Usage:
         extract_features -h | --help
-        extract_features <features> --api=<url> [--language=<classpath>]
-                                                [--rev-labels=<path>]
+        extract_features <features> --api=<url> [--rev-labels=<path>]
                                                 [--value-labels=<path>]
                                                 [--verbose]
 
@@ -24,7 +23,6 @@
         <features>               Classpath to a list/tuple of features
         --api=<url>              The url pointing to a MediaWiki API to use
                                  for extracting features
-        --language=<classpath>   Classpath to a Language
         --rev-labels=<path>      Path to a file containing rev_id-label pairs
                                  [default: <stdin>]
         --value-labels=<path>    Path to a file to write feature-labels to
@@ -47,14 +45,9 @@ def main(argv=None):
 
     features = import_from_path(args['<features>'])
 
-    if args['--language'] is None:
-        language = None
-    else:
-        language = import_from_path(args['--language'])
-
     session = api.Session(args['--api'],
                           user_agent="Revscoring feature extractor utility")
-    extractor = APIExtractor(session, language=language)
+    extractor = APIExtractor(session)
 
     if args['--rev-labels'] == "<stdin>":
         rev_labels = read_rev_labels(sys.stdin)
