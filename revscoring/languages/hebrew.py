@@ -96,10 +96,38 @@ informals = [
 
 sys.modules[__name__] = SpaceDelimited(
     __name__,
+    doc="""
+hebrew
+======
+
+revision
+--------
+.. autoattribute:: revision.words
+.. autoattribute:: revision.content_words
+.. autoattribute:: revision.badwords
+.. autoattribute:: revision.misspellings
+.. autoattribute:: revision.informals
+
+parent_revision
+---------------
+.. autoattribute:: parent_revision.words
+.. autoattribute:: parent_revision.content_words
+.. autoattribute:: parent_revision.badwords
+.. autoattribute:: parent_revision.misspellings
+.. autoattribute:: parent_revision.informals
+
+diff
+----
+.. autoattribute:: diff.words_added
+.. autoattribute:: diff.words_removed
+.. autoattribute:: diff.badwords_added
+.. autoattribute:: diff.badwords_removed
+.. autoattribute:: diff.misspellings_added
+.. autoattribute:: diff.misspellings_removed
+.. autoattribute:: diff.informals_added
+.. autoattribute:: diff.informals_removed
+    """,
     badwords=badwords,
     dictionary=dictionary,
     informals=informals
 )
-"""
-hebrew
-"""

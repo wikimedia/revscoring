@@ -37,9 +37,9 @@ class SpaceDelimited(Language):
             A set of common words to use when processing the informational
             content of text.  See `stopwords` in `nltk.corpus`.
     """
-    def __init__(self, name, badwords=None, dictionary=None, informals=None,
-                 stemmer=None, stopwords=None):
-        super().__init__(name)
+    def __init__(self, name, doc=None, badwords=None, dictionary=None,
+                 informals=None, stemmer=None, stopwords=None):
+        super().__init__(name, doc=doc)
         self.prefix = name
         stopwords = set(stopwords) if stopwords is not None else None
         self.resources = Resources(badwords, dictionary, informals, stemmer,

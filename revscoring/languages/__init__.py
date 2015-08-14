@@ -5,22 +5,16 @@ This module implements a set of :class:`~revscoring.languages.language.Language`
 languages
 +++++++++
 .. automodule:: revscoring.languages.english
-    :members:
 
 .. automodule:: revscoring.languages.french
-    :members:
 
 .. automodule:: revscoring.languages.hebrew
-    :members:
 
 .. automodule:: revscoring.languages.indonesian
-    :members:
 
 .. automodule:: revscoring.languages.persian
-    :members:
 
 .. automodule:: revscoring.languages.portuguese
-    :members:
 
 .. automodule:: revscoring.languages.spanish
     :members:

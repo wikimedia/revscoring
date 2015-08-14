@@ -38,7 +38,7 @@ class Diff:
         Returns a list of all word tokens removed in this revision.
         """
 
-        self.removed_words = Feature(
+        self.words_removed = Feature(
             self.prefix + "removed_words", len,
             returns=int,
             depends_on=[self.removed_words_list]

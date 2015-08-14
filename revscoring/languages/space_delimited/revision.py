@@ -52,8 +52,6 @@ class Revision:
         revision.
         """
 
-
-
         self.content_words = Feature(
             self.prefix + "content_words", len,
             returns=int,
