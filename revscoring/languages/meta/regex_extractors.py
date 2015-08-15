@@ -30,8 +30,8 @@ class SegmentRegexExtractor(RegexExtractor):
 
     def _process(self, segments):
         return [match.group(0)
-                for match in self.group_re.finditer(segment)
-                for segment in segments]
+                for segment in segments
+                for match in self.group_re.finditer(segment)]
 
 
 class TextRegexExtractor(RegexExtractor):
