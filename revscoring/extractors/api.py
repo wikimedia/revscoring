@@ -9,7 +9,6 @@ from .. import dependencies
 from ..datasources import (Datasource, RevisionMetadata, UserInfo,
                            parent_revision, revision, site, user)
 from ..errors import RevisionDocumentNotFound
-from ..languages import Language
 from .extractor import Extractor
 
 logger = logging.getLogger('revscoring.extractors.api')
@@ -29,20 +28,17 @@ class APIExtractor(Extractor):
     :Parameters:
         session : :class:`mw.api.Session`
             An API session to use
-        language : :class:`~revscoring.languages.language.Language`
-            A language context to use when extracting
         context : `dict` | `iterable`
             A collection of `~revscoring.dependencies.dependent.Dependent` to
             inject when extracting.
         cache : `dict`
             A collection of pre-computed values to inject when extracting
     """
-    def __init__(self, session, language=None, context=None, cache=None):
+    def __init__(self, session, context=None, cache=None):
         cache = cache or {}
         context = dependencies.normalize_context(context)
 
         self.session = session
-        self.language = language
 
         local_cache = {
             site.namespace_map: self.get_namespace_map()
@@ -81,9 +77,6 @@ class APIExtractor(Extractor):
                        self.process_user_info,
                        depends_on=[user_doc])
         ]}
-        if self.language != None:
-            local_context.update(self.language.context)
-            local_cache.update(self.language.cache)
 
         local_context.update(context)
         local_cache.update(cache)

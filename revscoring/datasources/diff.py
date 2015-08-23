@@ -3,20 +3,13 @@ from deltas.tokenizers import wikitext_split
 
 from . import parent_revision, revision
 from .datasource import Datasource
-from .util import WORD_RE
 
 
-def process_operations(parent_revision_text, revision_text):
-    parent_revision_text = parent_revision_text or ''
-    revision_text = revision_text or ''
-
-    a = wikitext_split.tokenize(parent_revision_text)
-    b = wikitext_split.tokenize(revision_text)
-
+def process_operations(a, b):
     return [op for op in segment_matcher.diff(a, b)], a, b
 
 operations = Datasource("diff.operations", process_operations,
-                        depends_on=[parent_revision.text, revision.text])
+                        depends_on=[parent_revision.tokens, revision.tokens])
 """
 Returns a tuple that describes the difference between the parent revision text
 and the current revision's text.
@@ -82,25 +75,4 @@ removed_segments = Datasource("diff.removed_segments",
                               depends_on=[operations])
 """
 Returns a list of all contiguous segments of tokens removed in this revision.
-"""
-
-
-def process_added_words(diff_added_segments):
-    return [match.group(0) for segment in diff_added_segments
-            for match in WORD_RE.finditer(segment)]
-
-added_words = Datasource("diff.added_words", process_added_words,
-                         depends_on=[added_segments])
-"""
-Returns a list of all word tokens added in this revision.
-"""
-
-def process_removed_words(diff_removed_segments):
-    return [match.group(0) for segment in diff_removed_segments
-            for match in WORD_RE.finditer(segment)]
-
-removed_words = Datasource("diff.removed_words", process_removed_words,
-                           depends_on=[removed_segments])
-"""
-Returns a list of all word tokens removed in this revision.
 """

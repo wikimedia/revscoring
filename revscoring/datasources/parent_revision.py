@@ -1,5 +1,8 @@
+import mwparserfromhell as mwp
+from deltas.tokenizers import wikitext_split
+
+from . import revision
 from .datasource import Datasource
-from .util import WORD_RE
 
 metadata = Datasource("parent_revision.metadata")
 """
@@ -12,12 +15,37 @@ text = Datasource("parent_revision.text")
 Returns the text content of the parent revision.
 """
 
-def process_words(parent_revision_text):
-    parent_revision_text = parent_revision_text or ''
-    return [match.group(0) for match in WORD_RE.finditer(parent_revision_text)]
+################################ Tokenized #####################################
+def process_tokens(revision_text):
+    return [t for t in wikitext_split.tokenize(revision_text or '')]
 
-words = Datasource("parent_revision.words", process_words,
-                   depends_on=[text])
+tokens = Datasource("parent_revision.tokens",
+                    process_tokens, depends_on=[text])
 """
-Returns a list of word-like tokens in the content of the parent revision.
+Returns a list of tokens.
+"""
+
+############################### Parse tree #####################################
+def process_parse_tree(revision_text):
+    return mwp.parse(revision_text or "")
+
+parse_tree = Datasource("parent_revision.parse_tree",
+                        process_parse_tree, depends_on=[text])
+"""
+Returns a :class:`mwparserfromhell.wikicode.WikiCode` abstract syntax tree
+representing the content of the revision.
+"""
+
+content = Datasource("parent_revision.content", revision.process_content,
+                     depends_on=[parse_tree])
+"""
+Returns the raw content (no markup or templates) of the revision.
+"""
+
+content_tokens = Datasource("parent_revision.content_tokens",
+                            revision.process_content_tokens,
+                            depends_on=[content])
+"""
+Returns tokens from the raw content (no markup or templates) of the current
+revision
 """

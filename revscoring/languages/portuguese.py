@@ -1,200 +1,161 @@
 import sys
 
-import enchant
-from nltk.corpus import stopwords
-from nltk.stem.snowball import SnowballStemmer
-
-from .language import RegexLanguage
-
-stemmer = SnowballStemmer("portuguese")
-stopwords = set(stopwords.words("portuguese"))
-badwords = [
-    "abracao", "abraco", "acho", "achu", "agradeço", "ahu", "ahuahua",
-        "ahuauha", "ahuhu", "ahuuha", "aki", "anal", "analfabeto", "anus",
-        "ânus", "anuus", "apagou", "aproveitador", "arombado", "arregada",
-        "arreganhar", "arrombadu", "arrombar", "arrotaam", "arroto", "asho",
-        "ashu", "asneira", "asno", "ass", "assassino", "asshole", "assinado",
-        "auh", "auhahua", "auhauha", "auhuaha", "axo", "axu",
-    "babaca", "babadora", "babaka", "bacana", "badalhoca", "baitola",
-        "baitolinha", "bakana", "bambi", "banbi", "bastardo", "batata",
-        "batota", "batoteiro", "beijao", "beijinho", "beijo", "beijoca",
-        "beijoo", "beiju", "beijuu", "bejo", "bejoo", "beju", "belo", "best",
-        "besteira", "besteirol", "bicha", "bisexual", "bissexual", "bitch",
-        "bixa", "bla", "blabla", "blablaa", "blala", "bobao", "bobo", "boboo",
-        "boceta", "bocetaa", "bocetinha", "bodega", "boh", "boilao", "boiola",
-        "boiolitico", "boketao", "bokete", "bonitao", "bonitinho", "bonito",
-        "bonitona", "boqete", "boquetao", "boquete", "boquetoes", "boquette",
-        "bordalhoca", "bordeis", "bordéis", "bordel", "boreis", "borel",
-        "borra", "borrice", "borroi", "boset", "bosetinha", "bosset", "bosta",
-        "bostaesse", "bostalhao", "boto", "boxta", "brasucas", "brasukas",
-        "bravo", "brazuca", "brazukas", "broche", "brochista", "broxa",
-        "broxista", "bua", "buceta", "bucetinha", "budega", "buh", "bullshit",
-        "bum", "bumbum", "bumbun", "bumdao", "bumdinha", "bumm", "bummm",
-        "bunbum", "bunbun", "bunda", "bundao", "bundinha", "burrai", "burrice",
-        "burro", "burroi", "buseta", "busetinha", "busset", "bussetinha",
-        "bxurupita", "bye",
-    "cabrao", "cabrita", "cabritinha", "cabro", "cabroes", "cabrona", "cachla",
-        "cachopo", "cachora", "cachorao", "cachorra", "cachorrao", "caco",
-        "cagada", "cagadela", "cagadoo", "cagalhao", "cagalho", "cagalhoto",
-        "caganei", "caganeira", "caganita", "cagao", "cagda", "cageiro",
-        "caglhao", "caipira", "caka", "cambada", "camisinha", "camizinha",
-        "canbada", "cansada", "canzana", "cao", "cara", "cara", "carago",
-        "carah", "carahlo", "carahu", "caraio", "caraiu", "caralhao",
-        "caralhinho", "caralho", "caralhu", "caralhus", "caramba", "cau",
-        "caxda", "caxora", "caxorra", "ccao", "ccau", "cchao",
-        "centricsandraemeirelles", "chana", "chaneta", "chanuda", "chao",
-        "chapado", "charmoso", "chat", "chatao", "chau", "chavasca", "chereca",
-        "chiao", "chiau", "chichi", "chingao", "chingar", "chixi", "chocho",
-        "chochota", "chucho", "chuchu", "chuck", "chula", "chuleco", "chupa",
-        "chupador", "chupatante", "chupau", "chupeta", "chupinha", "chupor",
-        "chupu", "churanha", "chuxu", "ciao", "ciau", "cigano", "clamídia",
-        "clites", "clitoris", "coca", "cock", "cocô", "cocsar", "coisa",
-        "coiso", "coiza", "coka", "colha", "colhao", "colhoes", "come", "comi",
-        "comigo", "cona", "coninha", "contigo", "corinthiano", "corinthians",
-        "corinthias", "corintiana", "corintians", "corintias", "corno",
-        "cornudo", "cornuto", "cosou", "cossou", "cousa", "couza", "covarde",
-        "crapula", "creo", "cretino", "creu", "cromo", "croquete", "cu", "cucu",
-        "cueca", "cuecao", "cuecinha", "cueko", "cuequinha", "culhao", "culho",
-        "culhoes", "curte", "cusao", "cusinho", "cuzao", "cuzinho",
-    "daki", "dakii", "debi", "debil", "decho", "dedicatoria", "defecar",
-        "defekei", "defeque", "deicho", "deixe", "deixe", "descarada",
-        "descordo", "dexe", "dfdf", "digo", "discarado", "discaradoo",
-        "discordo", "dla", "dle", "doidao", "doidinho", "doido", "doidoo",
-        "donload", "dorminhoco", "dotado", "download", "downloads", "droga",
-        "duvido", "duvidosa", "duvidozo",
-    "eamaral", "emo", "emos", "encornados", "enfiar", "enrabar", "escroto",
-        "estúpido",
-    "faggot", "fajuto", "fdp", "fede", "fedorento", "fee", "feiao", "feida",
-        "feio", "feioo", "feorenta", "ferrar", "feses", "fezes", "fiofo",
-        "fnord", "foda", "fodao", "fodau", "fodax", "fodedor", "foderlhe",
-        "fodete", "fodex", "fodidor", "fodilhao", "fodilhoes", "fodite",
-        "fodoes", "fodote", "fofinho", "fofo", "fofoqueira", "fofusco",
-        "french", "frenchie", "frenchs", "frutinha", "fudador", "fudao",
-        "fudedor", "fuder", "fuderte", "fudete", "fudidor", "fudilhao",
-        "fudilhe",
-    "gai", "gaijo", "gais", "gaita", "gajo", "gaju", "gajus", "galera",
-        "galinha", "gatinha", "gay", "gays", "gemer", "gey", "geys", "gigalo",
-        "gigolo", "gonorréia", "gordinho", "gordo", "gordona", "gorducho",
-        "gordurento", "gorduxo", "gosa", "gostaria", "gostaria", "gostosao",
-        "gostoso", "gostosoo", "gostoza", "gozar", "gratis", "gratiz",
-        "gratuito", "grelinho", "grelo", "gringo", "grr", "grrr", "guei",
-        "guey", "gueys",
-    "hein", "herpes", "hey", "hipocrisia", "hipocrita", "hiv", "hmm", "hmmm",
-        "homo", "homo", "homosexual", "horiveis", "horivel", "hororosa",
-        "horriveis", "horrivel", "horroroso", "horrorozo", "hua", "huaahu",
-        "huaauh", "huahua", "huauha", "humm", "hummm",
-    "idiota", "ignorancia", "ignorantona", "ignore", "imbecil", "imbecils",
-        "imbecis", "imundo", "incompetente", "inconpetente", "incopetente",
-        "ipocritas", "iritante", "irritante", "irritavel",
-    "japa", "jeca", "jumento",
-    "kabrao", "kabrita", "kabroes", "kaca", "kachorra", "kachorrao", "kaga",
-        "kaganeira", "kaganitas", "kaka", "kambada", "kanbada", "kara",
-        "karago", "karah", "karahlo", "karaio", "karaiu", "karalh", "karalhao",
-        "karalhinho", "karalhu", "karalhus", "karamba", "kick", "klitoris",
-        "koca", "koiso", "koizo", "koko", "kolhao", "kolho", "kolhoos",
-        "komigo", "kona", "koninha", "kontigo", "korno", "kornudo", "kosar",
-        "kossar", "krapula", "kromo", "kuekinha", "kulho", "kulhoes", "kurtia",
-        "kuzinho",
-    "laalou", "laalu", "ladra", "ladrao", "ladroes", "lala", "lambe",
-        "lambeme", "lambeoo", "lambero", "lambeua", "lambeume", "lambusar",
-        "lambuzar", "lamento", "lanbe", "leali", "lealii", "lealui", "legal",
-        "leiam", "leiao", "lela", "lerdo", "lesbia", "lesbica", "lésbica",
-        "lialis", "lila", "linda", "lindaa", "l+o+l+", "loala", "lolilar",
-        "louco", "loucura", "louko", "loukura",
-        "luala", "lualoa", "lualua",
-    "maconha", "maconheiro", "magnifico", "maluco", "malucu", "maluk",
-        "malukeiros", "maluku", "maluqueira", "maluquer", "maminha",
-        "maravilhosa", "maravilhoza", "maricá", "mariconi", "mariko", "mariqo",
-        "mariquinha", "masturbar", "maxturbador", "me+i?rd(a|inha)",
-        "mentecapto", "mentekapto",
-        "mentira", "mentiroso", "merda", "merdda", "merdicas", "merdinha",
-        "merdoso", "merrda", "meter", "meu", "meus", "mieeerrdinha", "mierda",
-        "mierdda", "miierda", "mija", "mijador", "mijao", "mijinhas", "mim",
-        "minha", "mirdi", "mmerda", "mmierda", "morcao", "morcoes", "morcos",
-        "motherfucker", "motherfucking", "muthafucker", "muthafucking",
-     "nadegas", "naum", "negam", "negao", "negram", "negrao", "neguin",
-         "neguinho", "nerd", "nigg+(az?|er)", "nocu", "nocuu", "nogento",
-         "nogo", "nojento", "nojo", "noku", "noo+bs?", "nucu",
-         "nugo", "nujento", "nujo", "nuku", "nukuu",
-     "obrigado", "odeio", "ofercida", "oferecida", "oie", "oii", "ola", "olaaa",
-        "olea", "oleae", "oleee", "omg", "ooo", "orgasmo", "orivei", "orivel",
-        "ororosa", "orrivel", "orroroso", "orroroza", "otaria", "otario",
-        "ouie",
-    "palerma", "panaca", "panao", "panasca", "pandula", "paneleirices",
-        "paneleirinho", "paneleiro", "paneleros", "panilas", "papa", "papai",
-        "parasita", "pario", "pariu", "pariu", "parvo", "pau", "pde", "pede",
-        "pederasta", "pedofilia", "peido", "peituda", "pelada", "peladinho",
-        "pelado", "peludinho", "peludo", "penetrar", "penheta", "penheteiro",
-        "penis", "pênis", "peniss", "penisss", "peofilia", "perfidiosamente",
-        "perverso", "pervertido", "pessimo", "pevertido", "pila", "pilantra",
-        "pilinha", "pilita", "piloca", "pilona", "pimp", "pintinho", "pinto",
-        "pipi", "piranhada", "pirilao", "pirilau", "piroca", "pirocinha",
-        "pirocudo", "piroka", "pirokinha", "pirola", "piroqinha", "piroqu",
-        "piroquinha", "pirralhada", "pirroca", "pirrocudo", "pirrolo", "piru",
-        "pissa", "pizi", "pobre", "podre", "podridao", "poha", "ponheta",
-        "ponheteiro", "poo+p", "poo+ta", "porco", "porcoria",
-        "porno", "porno?ch?anch?ada",
-        "pornochan?xada", "porra", "porreiro", "porrinho",
-        "potao", "poteiro", "potinha", "potista", "poto", "potoo", "potoria",
-        "potto", "preto", "prevertido", "procheneta",
-        "prostitui", "prostituta", "proxeneta", "prustituta", "pts", "ptz",
-        "pum", "pumm", "pummm", "punheta", "punheteiro", "puota", "purcaria",
-        "po?u+t+(a+r?|inha)", "putainha", "putana", "putao", "putare", "putariaa",
-        "putariaaa", "putax", "putedo", "puteiro", "putinha+",
-        "putista", "putoa+", "putois", "putomacho", "putona",
-        "puto+na+", "putoria", "putox", "putridos",
-        "puts", "put+a+", "put+eiro", "put+o", "putz", "pu+t(a+|ona)",
-        "puuteiros",
-    "queca", "quecu", "quek", "queq", "queque",
-    "rabo", "rameira", "ranha", "rebentadas", "recomendamos", "recomendo",
-        "rego", "retardado", "ridiculo", "rola", "ronaldo", "ronaldon", "rosca",
-        "rsrs", "ruim",
-    "sacana", "sacanagem", "sacanajem", "sacanice", "saco", "safadao", "safado",
-        "safadona", "safadoo", "salebot", "sandraemeirelles", "sarna", "secsso",
-         "sei", "semvergonha", "sexo", "shit", "sigano", "siiim", "siim",
-         "simpatica", "slt", "soco", "somos", "sovaco", "star", "stou",
-         "stupid", "suck", "suja", "supimpa", "supinpa", "surra", "suruba",
-         "suvaco", "suvacu",
-    "tao", "taradao", "tarado", "taradoo", "tau", "tcao", "tcau", "tchao",
-        "tchau", "teama", "teamoo", "tesao", "teste", "testiculos", "tesuda",
-        "teta", "tetuda", "teu", "teus", "tezao", "tezudo", "thao", "thau",
-        "thiao", "thiau", "tiao", "tiau", "tomano", "tomarno", "transa",
-        "transadinha", "tranza", "traseiro", "traveco", "trepar", "treta",
-        "trocha", "troha", "troucha", "trouxa", "trouxao", "troxa", "troxao",
-        "trupe", "tua", "tuas",
-    "uah", "uahauh", "ugly", "uha", "uhahua", "uhauah", "uhauha",
-        "uie",
-    "vadia", "vadiagem", "vadio", "vagabundagem", "vagabundo", "vagal",
-        "vagina", "vaginal", "vaitomano", "vaitomarno", "veadagem", "veadao",
-        "veadinho", "veado", "veadu", "veadus", "vergonha", "vergonhozo",
-        "viadagem", "viadagems", "viadagen", "viadagens", "viadajem",
-        "viadajems", "viadajen", "viadao", "viadinho", "viadinhu", "viado",
-        "viadonho", "viadu", "viadunho", "viadus", "vibrador", "vibrator",
-        "violador", "violou", "virgem", "virgen", "virgindade", "virjem",
-        "viva", "viva", "voce", "vomito", "vos", "vtnc",
-    "woo+", "wtf",
-    "xaboita", "xana", "xaneta", "xapado", "xata", "xatao", "xavasca",
-        "xereca", "xeroca", "xichi", "xingar", "xingoes", "xixi", "xoroca",
-        "xoxo", "xoxota", "xoxotinha", "xoxu", "xuchu", "xulo", "xupador",
-        "xuper", "xupeta", "xupu", "xuranha", "xuxo", "xuxu", "xuxuta", "xxx",
-    "zipi", "zizi", "zoando", "zoar", "zoeira", "zuando", "zuar", "zueira"
-]
+from .space_delimited import SpaceDelimited
 
 try:
+    import enchant
     dictionary = enchant.Dict("pt")
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'pt'.  " +
                       "Consider installing 'myspell-pt'.")
 
+try:
+    from nltk.stem.snowball import SnowballStemmer
+    stemmer = SnowballStemmer("portuguese")
+except ValueError:
+    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
 
-sys.modules[__name__] = RegexLanguage(
+try:
+    from nltk.corpus import stopwords as nltk_stopwords
+    stopwords = set(nltk_stopwords.words('portuguese'))
+except LookupError:
+    raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
+                      "You may need to install the nltk 'stopwords' corpora. " +
+                      "See http://www.nltk.org/data.html")
+
+
+badwords = [
+    r"babaca",  # douchebag
+    r"bixa",  # ???
+    r"boiola", r"boiolas",  # gay man
+    r"boquete",  # blowjob
+    r"bosta",  # shit
+    r"bucet(a|inha)s?",  # pussy (vagina)
+    r"bund(a|inha)s?",  # ass
+    r"burr[ao]s?",  # donkey/jackass
+    r"cacete",  # bludgeon
+    r"cag([ao]|ad[ao]|and[ao]|aneir[ao]|ar|ou)s?",  # shit
+    r"cara(i|io|lho)s?",  # fuck
+    r"chat[ao]",  # boring
+    r"(ch|x)up[ao](r|va|u)?s?",  # blow me
+    r"cocô",  # poo
+    r"comi",  # eat ???
+    r"cona(ssa)?s?",  # cunt
+    r"cuz([aã]o|inho)",  # asshole
+    r"doido",  # crazy
+    r"fed(e|ido)",  # stinks/stinky
+    r"feia",  # ugly
+    r"fendi",  # ???
+    r"foda[sr]?", r"fude[sr]?",  # fuck
+    r"gostos[aã][os]?", r"gostoso",  # yummy ???
+    r"idiotas?",  # idiot
+    r"loka", r"loko",  # crazy
+    r"maconheiro",  # bothead
+    r"mafia",  # mafia
+    r"maldizentes",  # slanderers
+    r"mecos",  # cum ???
+    r"mentira",  # lie
+    r"merdas?", # shit
+    r"noob",  # noob
+    r"ot[áa]rios?",  # sucker
+    r"pariu",  # to give birth ???
+    r"pategos",  # hick / yokel
+    r"peid(a|ar|o|ei)s?",  # fart
+    r"pênis",  # penis
+    r"pilas?",  # dick
+    r"piroca",  # dick
+    r"poha",  # ???
+    r"porcaria", r"porno",  # filth/porn
+    r"porra",  # cum
+    r"pum",  # fart
+    r"punhet(a|eiro)",  # jack off / masturbate
+    r"put(o|a|aria|eiro|inha)s?",  # hooker
+    r"safado",  # shameless
+    r"tesão",  # turn-on / horny
+    r"tran[sz]ar",  # sex
+    r"tr(eta|oxa)",  # bullshit
+    r"vadia",  # bitch
+    r"viad(agem|ão|inho|o)s?",  # gay person ("fucker")
+    r"xixi"  # pee
+]
+
+informals = [
+    r"adoro",  # love
+    r"aki",  # ???
+    r"amo",  # master
+    r"(b+l+a+h*)+", # bla, blah, bbblllaaaahhhhhblah
+    r"carambas?",  # OMG
+    r"coco",  # coconut
+    r"copie[im]",  # I copied
+    r"delicia",  # delicious
+    r"editei",  # edited
+    r"enfiar?", # to stick (up one's ass)
+    r"entao",  # then
+    r"estrag(ar|uem)",  # spoiled / ruined
+    r"fixe",  # cool
+    r"gajo",  # dude
+    r"h[aiou](h[aeiou])*", r"h[e](h[aeiou])+",  # hi, ha, hehe, hohoho
+    r"k+",  # k, kkkkkkkkkkkkkkk
+    r"lindo",  # pretty
+    r"l+([uo]+l+)+",  # lol, LOLOLOL, LLLLoOOoLLL
+    r"mae",  # mom
+    r"mto",  # very
+    r"naum",  # no (slang)
+    r"n[óo]is",  # it's us (slang)
+    r"odeio",  # hate
+    r"oi+", # hi
+    r"ol[aá]",  # hello
+    r"ratas?",  # "rat" -- a snitch
+    r"(rs)+",  # lol
+    r"tava",  # was / were (slang)
+    r"tbm",  # also (slang)
+    r"vao",  # vain
+    r"vcs", r"voce", r"voces",  # you
+    r"xau"  # bye
+]
+
+
+sys.modules[__name__] = SpaceDelimited(
     __name__,
+    doc="""
+portuguese
+==========
+
+revision
+--------
+.. autoattribute:: revision.words
+.. autoattribute:: revision.content_words
+.. autoattribute:: revision.badwords
+.. autoattribute:: revision.misspellings
+.. autoattribute:: revision.informals
+.. autoattribute:: revision.infonoise
+
+parent_revision
+---------------
+.. autoattribute:: parent_revision.words
+.. autoattribute:: parent_revision.content_words
+.. autoattribute:: parent_revision.badwords
+.. autoattribute:: parent_revision.misspellings
+.. autoattribute:: parent_revision.informals
+.. autoattribute:: parent_revision.infonoise
+
+diff
+----
+.. autoattribute:: diff.words_added
+.. autoattribute:: diff.words_removed
+.. autoattribute:: diff.badwords_added
+.. autoattribute:: diff.badwords_removed
+.. autoattribute:: diff.misspellings_added
+.. autoattribute:: diff.misspellings_removed
+.. autoattribute:: diff.informals_added
+.. autoattribute:: diff.informals_removed
+    """,
     badwords=badwords,
+    informals=informals,
     dictionary=dictionary,
     stemmer=stemmer,
     stopwords=stopwords
 )
 """
-Implements :class:`~revscoring.languages.language.Language` for Portuguese.
-Comes complete with all language utilities.
+portuguese
 """

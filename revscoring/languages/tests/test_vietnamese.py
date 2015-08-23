@@ -2,46 +2,88 @@ import pickle
 
 from nose.tools import eq_
 
-from .. import language, vietnamese
+from .. import vietnamese
+from ...datasources import diff, parent_revision, revision
+from ...dependencies import solve
 
+BAD = [
+    "đít", "địt",
+    "dâm", "dzâm", "giâm",
+    "cu", "ku",
+    "cứt",
+    "lôn", "lồn",
+    "đụ", "đù",
+    "đái",
+    "đéo",
+    "đĩ",
+    "ỉa",
+    "cặt", "cặc", "kặt", "kặc"
+]
 
-def test_language():
+INFORMAL = [
+    "bợn",
+    "chớ", "chứ",
+    "chẳng",
+    "cú",
+    "fải",
+    "khỉ",
+    "mày",
+    "nghịch",
+    "ngu",
+    "nguỵ",
+    "ngụy",
+    "quái",
+    "thôi",
+    "thằng",
+    "tui",
+    "vời",
+    "wái",
+    "zì",
+    "đừng",
+    "ơi",
+    "ừ",
+]
 
-    is_badword = vietnamese.solve(language.is_badword)
+OTHER = [
+    """
+    Acrocanthosaurus là một chi khủng long chân thú từng tồn tại ở khu vực
+    ngày nay là Bắc Mỹ vào tầng Apt và giai đoạn đầu của tầng Alba thuộc kỷ
+    Phấn trắng. Giống như hầu hết các chi khủng long khác, Acrocanthosaurus
+    chỉ có một loài duy nhất: A. atokensis. Hóa thạch của loài này được tìm
+    thấy chủ yếu ở các tiểu bang Hoa Kỳ Oklahoma, Texas và Wyoming, mặc dù
+    răng nó đã được tìm thấy xa về phía đông tận Maryland. Acrocanthosaurus
+    là động vật ăn thịt hai chân. Nó được biết đến với những gai thần kinh
+    cao trên các đốt sống, mà rất có thể được dùng để nâng đỡ một dãy bướu
+    thịt trên lưng, cổ và hông.
+    """
+]
 
-    assert is_badword("đít")
-    assert is_badword("ỉa")
-    assert is_badword("Ỉa")
-    assert is_badword("assface")
-    assert not is_badword("trứng")
-    assert not is_badword("bass")
+def compare_extraction(extractor, examples, counter_examples):
 
-    is_informal_word = vietnamese.solve(language.is_informal_word)
+    for example in examples:
+        eq_(extractor.process(example), [example])
+        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
+        eq_(extractor.process("Sentence end " + example + "."), [example])
+        eq_(extractor.process(example + " start of sentence."), [example])
 
-    assert is_informal_word("hehe")
-    assert is_informal_word("hihihihihihihihihi")
-    assert is_informal_word("Wá")
-    assert not is_informal_word("he")
+    for example in counter_examples:
+        eq_(extractor.process(example), [])
+        eq_(extractor.process("Sentence " + example + " sandwich."), [])
+        eq_(extractor.process("Sentence end " + example + "."), [])
+        eq_(extractor.process(example + " start of sentence."), [])
 
-    is_misspelled = vietnamese.solve(language.is_misspelled)
+def test_badwords():
+    compare_extraction(vietnamese.revision.badwords_list, BAD, OTHER)
 
-    assert is_misspelled("wjwkjb")
-    assert is_misspelled("đuờng")
-    assert is_misspelled("cug")
-    assert not is_misspelled("ấy")
-    assert not is_misspelled("giặt")
+def test_informals():
+    compare_extraction(vietnamese.revision.informals_list, INFORMAL, OTHER)
 
-    # TODO: this fails with the most recent hunspell-vi package
-    #assert not is_misspelled("lũy")
+def test_revision():
+    # Words
+    cache = {revision.text: "Hóa thạch của: loài này được."}
+    eq_(solve(vietnamese.revision.words_list, cache=cache),
+        ["Hóa", "thạch", "của", "loài", "này", "được"])
 
-    assert not is_misspelled("luỹ")
-
-    is_stopword = vietnamese.solve(language.is_stopword)
-
-    assert is_stopword("như")
-    assert is_stopword("cái")
-    assert is_stopword("mà")
-    assert not is_stopword("chó")
-
-    pickled_vietnamese = pickle.loads(pickle.dumps(vietnamese))
-    eq_(pickled_vietnamese, vietnamese)
+    # Misspellings
+    cache = {revision.text: 'mà rất có thể được worngly. <td>'}
+    eq_(solve(vietnamese.revision.misspellings_list, cache=cache), ["worngly"])

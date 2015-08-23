@@ -1,17 +1,13 @@
 from nose.tools import eq_
 
-from ... import languages
 from ...datasources import diff as diff_datasource
 from ...dependencies import solve
-from ..diff import (badwords_added, badwords_removed, chars_added,
-                    chars_removed, longest_repeated_char_added,
+from ..diff import (chars_added, chars_removed, longest_repeated_char_added,
                     longest_token_added, markup_chars_added,
-                    markup_chars_removed, misspellings_added,
-                    misspellings_removed, numeric_chars_added,
+                    markup_chars_removed, numeric_chars_added,
                     numeric_chars_removed, segments_added, segments_removed,
                     symbolic_chars_added, symbolic_chars_removed,
-                    uppercase_chars_added, uppercase_chars_removed,
-                    words_added, words_removed)
+                    uppercase_chars_added, uppercase_chars_removed)
 
 
 ################################## Segments ####################################
@@ -102,51 +98,6 @@ def test_longest_repeated_char_added():
         diff_datasource.added_segments: []
     }
     eq_(solve(longest_repeated_char_added, cache=cache), 1)
-
-################################ Words #########################################
-def test_words_added():
-    cache = {
-        diff_datasource.added_words: ["Four", "word", "are", "here"]
-    }
-    eq_(solve(words_added, cache=cache), 4)
-
-def test_words_removed():
-    cache = {
-        diff_datasource.removed_words: ["Three", "words", "now"]
-    }
-    eq_(solve(words_removed, cache=cache), 3)
-
-def test_badwords_added():
-    def is_badword(w): return w == "badword"
-    cache = {
-        languages.is_badword: is_badword,
-        diff_datasource.added_words: ["Some", "words", "and", "badword"]
-    }
-    eq_(solve(badwords_added, cache=cache), 1)
-
-def test_badwords_removed():
-    def is_badword(w): return w == "badword"
-    cache = {
-        languages.is_badword: is_badword,
-        diff_datasource.removed_words: ["Some", "badword", "and", "badword"]
-    }
-    eq_(solve(badwords_removed, cache=cache), 2)
-
-def test_misspellings_added():
-    def is_misspelled(w): return w == "misspelled"
-    cache = {
-        languages.is_misspelled: is_misspelled,
-        diff_datasource.added_words: ["Some", "misspelled", "and", "misspelled"]
-    }
-    eq_(solve(misspellings_added, cache=cache), 2)
-
-def test_misspellings_removed():
-    def is_misspelled(w): return w == "misspelled"
-    cache = {
-        languages.is_misspelled: is_misspelled,
-        diff_datasource.removed_words: ["Some", "badword", "and", "misspelled"]
-    }
-    eq_(solve(misspellings_removed, cache=cache), 1)
 
 ################################ Tokens ########################################
 def test_longest_token_added():

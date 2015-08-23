@@ -1,9 +1,13 @@
-import re
 import sys
 
-import enchant
+from .space_delimited import SpaceDelimited
 
-from .language import RegexLanguage
+try:
+    import enchant
+    dictionary = enchant.Dict("vi")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'vi'.  " +
+                      "Consider installing 'hunspell-vi'.")
 
 # https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/Free_Vietnamese_Dictionary_Project_Vietnamese-Vietnamese#Allwiki_.28closed.29
 stopwords = set([
@@ -18,34 +22,62 @@ stopwords = set([
     "về", "với", "xuống", "đang", "đã", "được", "đấy", "đầu", "đủ"
 ])
 badwords = [
-    "[ck]ặ[tc]", "[ck]u", "cứt", "(dz?|gi)âm", "đái", "đéo", "đ[ụù].", "đĩ",
-    "đ[íị]t", "ỉa", "l[ôồ]n",
-    "dick", "cunt", "fag", "bitch", "shit", "fuck.*", "ass", "gay", "ghey",
-    "slut",
+    # Vietnamese
+    r"[ck]ặ[tc]", r"[ck]u", r"cứt", r"(dz?|gi)âm", r"đái", r"đéo", r"đ[ụù]",
+    r"đĩ", r"đ[íị]t", r"ỉa", r"l[ôồ]n", r"trứng"
 ]
 informals = [
-    "bợn", "bro", "chẳng", "ch[ớứ]", "cú", "đừng", "fải", "(he){2,}", "(hi)+",
-    "khỉ", "mày", "nghịch", "ngu", "ngụy", "nguỵ", "ok", "ơi", "quái", "thằng",
-    "thôi", "tui", "ừ", "vời", "wái?", "zì",
-    "moron", "retard", "stupid",
+    # Vietnamese
+    r"bợn", r"bro",
+    r"chẳng", r"ch[ớứ]", r"cú",
+    r"đụ", r"đừng", r"fải",
+    r"khỉ",
+    r"mày", r"nghịch", r"ngu", r"ngụy", r"nguỵ",
+    r"ok", r"ơi",
+    r"quái",
+    r"thằng", r"thôi", r"tui", r"ừ", r"vời", r"wái?",
+    r"zì"
 ]
 
-try:
-    dictionary = enchant.Dict("vi")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'vi'.  " +
-                      "Consider installing 'hunspell-vi'.")
-
-sys.modules[__name__] = RegexLanguage(
+sys.modules[__name__] = SpaceDelimited(
     __name__,
+    doc="""
+vietnamese
+==========
+
+revision
+--------
+.. autoattribute:: revision.words
+.. autoattribute:: revision.content_words
+.. autoattribute:: revision.badwords
+.. autoattribute:: revision.misspellings
+.. autoattribute:: revision.informals
+
+parent_revision
+---------------
+.. autoattribute:: parent_revision.words
+.. autoattribute:: parent_revision.content_words
+.. autoattribute:: parent_revision.badwords
+.. autoattribute:: parent_revision.misspellings
+.. autoattribute:: parent_revision.informals
+
+diff
+----
+.. autoattribute:: diff.words_added
+.. autoattribute:: diff.words_removed
+.. autoattribute:: diff.badwords_added
+.. autoattribute:: diff.badwords_removed
+.. autoattribute:: diff.informals_added
+.. autoattribute:: diff.informals_removed
+.. autoattribute:: diff.misspellings_added
+.. autoattribute:: diff.misspellings_removed
+    """,
     badwords=badwords,
+    dictionary=dictionary,
     informals=informals,
-    stopwords=stopwords,
-    dictionary=dictionary
+    stopwords=stopwords
 )
 """
-Implements :class:`~revscoring.languages.language.RegexLanguage` for Vietnamese.
-:data:`~revscoring.languages.language.is_badword`,
-:data:`~revscoring.languages.language.is_informal_word` and
-:data:`~revscoring.languages.language.is_stopword` are provided.
+vietnamese
+----------
 """

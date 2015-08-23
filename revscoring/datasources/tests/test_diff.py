@@ -88,23 +88,3 @@ def test_removed_segments():
     removed_segments = solve(diff.removed_segments, cache=cache)
 
     eq_(removed_segments, ['foo', 'Bar', '53', 'herp', 'derp!'])
-
-
-def test_added_words():
-    cache = {
-        diff.operations: (OPERATIONS, PARENT_REVISIONS_TOKENS, REVISION_TOKENS)
-    }
-
-    added_words = solve(diff.added_words, cache=cache)
-
-    eq_(added_words, ['Herp', 'Derp', 'and', 'also'])
-
-
-def test_removed_words():
-    cache = {
-        diff.operations: (OPERATIONS, PARENT_REVISIONS_TOKENS, REVISION_TOKENS)
-    }
-
-    removed_words = solve(diff.removed_words, cache=cache)
-
-    eq_(removed_words, ['foo', 'Bar', 'herp', 'derp'])

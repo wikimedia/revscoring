@@ -1,105 +1,188 @@
-import re
 import sys
 
 import enchant
 
-from .language import RegexLanguage
+from .space_delimited import SpaceDelimited
 
-# STOPWORDS from https://code.google.com/p/stop-words/source/browse/trunk/stop-words/stop-words-collection-2014.02.24/stop-words/stop-words_indonesian_1_id.txt
-stopwords = set([
-    "ada", "adanya", "adalah", "adapun", "agak", "agaknya", "agar", "akan",
-    "akankah", "akhirnya", "aku", "akulah", "amat", "amatlah", "anda",
-    "andalah", "antar", "diantaranya", "antara", "antaranya", "diantara", "apa",
-    "apaan", "mengapa", "apabila", "apakah", "apalagi", "apatah", "atau",
-    "ataukah", "ataupun", "bagai", "bagaikan", "sebagai", "sebagainya",
-    "bagaimana", "bagaimanapun", "sebagaimana", "bagaimanakah", "bagi",
-    "bahkan", "bahwa", "bahwasanya", "sebaliknya", "banyak", "sebanyak",
-    "beberapa", "seberapa", "begini", "beginian", "beginikah", "beginilah",
-    "sebegini", "begitu", "begitukah", "begitulah", "begitupun", "sebegitu",
-    "belum", "belumlah", "sebelum", "sebelumnya", "sebenarnya", "berapa",
-    "berapakah", "berapalah", "berapapun", "betulkah", "sebetulnya", "biasa",
-    "biasanya", "bila", "bilakah", "bisa", "bisakah", "sebisanya", "boleh",
-    "bolehkah", "bolehlah", "buat", "bukan", "bukankah", "bukanlah", "bukannya",
-    "cuma", "percuma", "dahulu", "dalam", "dan", "dapat", "dari", "daripada",
-    "dekat", "demi", "demikian", "demikianlah", "sedemikian", "dengan", "depan",
-    "di", "dia", "dialah", "dini", "diri", "dirinya", "terdiri", "dong", "dulu",
-    "enggak", "enggaknya", "entah", "entahlah", "terhadap", "terhadapnya",
-    "hal", "hampir", "hanya", "hanyalah", "harus", "haruslah", "harusnya",
-    "seharusnya", "hendak", "hendaklah", "hendaknya", "hingga", "sehingga",
-    "ia", "ialah", "ibarat", "ingin", "inginkah", "inginkan", "ini", "inikah",
-    "inilah", "itu", "itukah", "itulah", "jangan", "jangankan", "janganlah",
-    "jika", "jikalau", "juga", "justru", "kala", "kalau", "kalaulah",
-    "kalaupun", "kalian", "kami", "kamilah", "kamu", "kamulah", "kan", "kapan",
-    "kapankah", "kapanpun", "dikarenakan", "karena", "karenanya", "ke", "kecil",
-    "kemudian", "kenapa", "kepada", "kepadanya", "ketika", "seketika",
-    "khususnya", "kini", "kinilah", "kiranya", "sekiranya", "kita", "kitalah",
-    "kok", "lagi", "lagian", "selagi", "lah", "lain", "lainnya", "melainkan",
-    "selaku", "lalu", "melalui", "terlalu", "lama", "lamanya", "selama",
-    "selama", "selamanya", "lebih", "terlebih", "bermacam", "macam", "semacam",
-    "maka", "makanya", "makin", "malah", "malahan", "mampu", "mampukah", "mana",
-    "manakala", "manalagi", "masih", "masihkah", "semasih", "masing", "mau",
-    "maupun", "semaunya", "memang", "mereka", "merekalah", "meski", "meskipun",
-    "semula", "mungkin", "mungkinkah", "nah", "namun", "nanti", "nantinya",
-    "nyaris", "oleh", "olehnya", "seorang", "seseorang", "pada", "padanya",
-    "padahal", "paling", "sepanjang", "pantas", "sepantasnya", "sepantasnyalah",
-    "para", "pasti", "pastilah", "per", "pernah", "pula", "pun", "merupakan",
-    "rupanya", "serupa", "saat", "saatnya", "sesaat", "saja", "sajalah",
-    "saling", "bersama", "sama", "sesama", "sambil", "sampai", "sana", "sangat",
-    "sangatlah", "saya", "sayalah", "se", "sebab", "sebabnya", "sebuah",
-    "tersebut", "tersebutlah", "sedang", "sedangkan", "sedikit", "sedikitnya",
-    "segala", "segalanya", "segera", "sesegera", "sejak", "sejenak", "sekali",
-    "sekalian", "sekalipun", "sesekali", "sekaligus", "sekarang", "sekarang",
-    "sekitar", "sekitarnya", "sela", "selain", "selalu", "seluruh",
-    "seluruhnya", "semakin", "sementara", "sempat", "semua", "semuanya",
-    "sendiri", "sendirinya", "seolah", "seperti", "sepertinya", "sering",
-    "seringnya", "serta", "siapa", "siapakah", "siapapun", "disini",
-    "disinilah", "sini", "sinilah", "sesuatu", "sesuatunya", "suatu",
-    "sesudah", "sesudahnya", "sudah", "sudahkah", "sudahlah", "supaya",
-    "tadi", "tadinya", "tak", "tanpa", "setelah", "telah", "tentang", "tentu",
-    "tentulah", "tentunya", "tertentu", "seterusnya", "tapi", "tetapi",
-    "setiap", "tiap", "setidaknya", "tidak", "tidakkah", "tidaklah", "toh",
-    "waduh", "wah", "wahai", "sewaktu", "walau", "walaupun", "wong", "yaitu",
-    "yakni", "yang"
-])
-badwords = [
-    "aboput", "anjing",
-    "bajingan", "bangsat", "bispak", "blo[o' ]*o?n", "brengse[kx]",
-        "bishopsgarth", "bastards", "bencong", "babi"
-    "cibai", "chalong", "coley",
-    "diselama", "dishonest", "defraud", "defamatory",
-    "escoduro",
-    "fredrike", "fogh",
-    "gauguin", "goblok", "ge[fs]tapo",
-    "heroin", "husseins",
-    "indon",
-    "jambut", "janc[uo]k", "jellinek", "jellygamat",
-    "keparat", "kontol",
-    "lonte", "loked", "lvmh",
-    "malingsia", "memek", "monyong", "munch",
-    "netnapa", "ngentot", "nesbitt",
-    "overdosed",
-    "panadta", "palaji", "perek", "pukimak", "portugeuse", "paedophiles",
-        "prostituton", "paedophile", "pedofil",
-    "riyhad",
-    "satanic", "satanists", "sempak", "sinting", "steinway", "sukhano",
-    "terrorising", "terrorised", "terrorists", "taenjamras", "tetek", "titit",
-        "toket", "tzcesar", "thailaland", "thaicia"
-]
 try:
+    import enchant
     dictionary = enchant.Dict("id")
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'id'.  " +
                       "Consider installing 'aspell-id'.")
 
-sys.modules[__name__] = RegexLanguage(
+# STOPWORDS from https://code.google.com/p/stop-words/source/browse/trunk/stop-words/stop-words-collection-2014.02.24/stop-words/stop-words_indonesian_1_id.txt
+stopwords = set([
+    r"ada", r"adanya", r"adalah", r"adapun", r"agak", r"agaknya", r"agar",
+        r"akan", r"akankah", r"akhirnya", r"aku", r"akulah", r"amat",
+        r"amatlah", r"anda", r"andalah", r"antar", r"diantaranya", r"antara",
+        r"antaranya", r"diantara", r"apa", r"apaan", r"mengapa", r"apabila",
+        r"apakah", r"apalagi", r"apatah", r"atau", r"ataukah", r"ataupun",
+    r"bagai", r"bagaikan", r"sebagai", r"sebagainya", r"bagaimana",
+        r"bagaimanapun", r"sebagaimana", r"bagaimanakah", r"bagi",
+        r"bahkan", r"bahwa", r"bahwasanya", r"sebaliknya", r"banyak",
+        r"sebanyak", r"beberapa", r"seberapa", r"begini", r"beginian",
+        r"beginikah", r"beginilah", r"sebegini", r"begitu", r"begitukah",
+        r"begitulah", r"begitupun", r"sebegitu", r"belum", r"belumlah",
+        r"sebelum", r"sebelumnya", r"sebenarnya", r"berapa", r"berapakah",
+        r"berapalah", r"berapapun", r"betulkah", r"sebetulnya", r"biasa",
+        r"biasanya", r"bila", r"bilakah", r"bisa", r"bisakah", r"sebisanya",
+        r"boleh", r"bolehkah", r"bolehlah", r"buat", r"bukan", r"bukankah",
+        r"bukanlah", r"bukannya",
+    r"cuma", r"percuma",
+    r"dahulu", r"dalam", r"dan", r"dapat", r"dari", r"daripada",  r"dekat",
+        r"demi", r"demikian", r"demikianlah", r"sedemikian", r"dengan",
+        r"depan", r"di", r"dia", r"dialah", r"dini", r"diri", r"dirinya",
+        r"terdiri", r"dong", r"dulu",
+    r"enggak", r"enggaknya", r"entah", r"entahlah",
+    r"terhadap", r"terhadapnya", r"hal", r"hampir", r"hanya", r"hanyalah",
+        r"harus", r"haruslah", r"harusnya", r"seharusnya", r"hendak",
+        r"hendaklah", r"hendaknya", r"hingga", r"sehingga",
+    r"ia", r"ialah", r"ibarat", r"ingin", r"inginkah", r"inginkan", r"ini",
+        r"inikah", r"inilah", r"itu", r"itukah", r"itulah",
+    r"jangan", r"jangankan", r"janganlah", r"jika", r"jikalau", r"juga",
+        r"justru",
+    r"kala", r"kalau", r"kalaulah", r"kalaupun", r"kalian", r"kami",
+        r"kamilah", r"kamu", r"kamulah", r"kan", r"kapan", r"kapankah",
+        r"kapanpun", r"dikarenakan", r"karena", r"karenanya", r"ke", r"kecil",
+        r"kemudian", r"kenapa", r"kepada", r"kepadanya", r"ketika", r"seketika",
+        r"khususnya", r"kini", r"kinilah", r"kiranya", r"sekiranya", r"kita",
+        r"kitalah", r"kok",
+    r"lagi", r"lagian", r"selagi", r"lah", r"lain", r"lainnya", r"melainkan",
+        r"selaku", r"lalu", r"melalui", r"terlalu", r"lama", r"lamanya",
+        r"selama", r"selama", r"selamanya", r"lebih", r"terlebih",
+    r"bermacam", r"macam", r"semacam", r"maka", r"makanya", r"makin",
+        r"malah", r"malahan", r"mampu", r"mampukah", r"mana", r"manakala",
+        r"manalagi", r"masih", r"masihkah", r"semasih", r"masing", r"mau",
+        r"maupun", r"semaunya", r"memang", r"mereka", r"merekalah", r"meski",
+        r"meskipun", r"semula", r"mungkin", r"mungkinkah",
+    r"nah", r"namun", r"nanti", r"nantinya", r"nyaris",
+    r"oleh", r"olehnya", r"seorang", r"seseorang",
+    r"pada", r"padanya", r"padahal", r"paling", r"sepanjang", r"pantas",
+        r"sepantasnya", r"sepantasnyalah", r"para", r"pasti", r"pastilah",
+        r"per", r"pernah", r"pula", r"pun",
+    r"merupakan", r"rupanya", r"serupa",
+    r"saat", r"saatnya", r"sesaat", r"saja", r"sajalah",
+        r"saling", r"bersama", r"sama", r"sesama", r"sambil", r"sampai",
+        r"sana", r"sangat", r"sangatlah", r"saya", r"sayalah", r"se", r"sebab",
+        r"sebabnya", r"sebuah", r"tersebut", r"tersebutlah", r"sedang",
+        r"sedangkan", r"sedikit", r"sedikitnya", r"segala", r"segalanya",
+        r"segera", r"sesegera", r"sejak", r"sejenak", r"sekali",
+        r"sekalian", r"sekalipun", r"sesekali", r"sekaligus",
+        r"sekarang", r"sekarang", r"sekitar", r"sekitarnya", r"sela",
+        r"selain", r"selalu", r"seluruh", r"seluruhnya", r"semakin",
+        r"sementara", r"sempat", r"semua", r"semuanya", r"sendiri",
+        r"sendirinya", r"seolah", r"seperti", r"sepertinya", r"sering",
+        r"seringnya", r"serta", r"siapa", r"siapakah", r"siapapun", r"disini",
+        r"disinilah", r"sini", r"sinilah", r"sesuatu", r"sesuatunya", r"suatu",
+        r"sesudah", r"sesudahnya", r"sudah", r"sudahkah", r"sudahlah",
+        r"supaya",
+    r"tadi", r"tadinya", r"tak", r"tanpa", r"setelah", r"telah", r"tentang",
+        r"tentu", r"tentulah", r"tentunya", r"tertentu", r"seterusnya",
+        r"tapi", r"tetapi", r"setiap", r"tiap", r"setidaknya", r"tidak",
+        r"tidakkah", r"tidaklah", r"toh",
+    r"waduh", r"wah", r"wahai", r"sewaktu", r"walau", r"walaupun", r"wong",
+    r"yaitu", r"yakni", r"yang"
+])
+badwords = [
+    r"anjing",  # dog
+    r"bajingan",  # crook
+    r"bangsat",  # asshole / motherfucker
+    r"bispak",  # whore (can be used)
+    r"blo'?on",  # whacky
+    r"brengse[kx]",  # useless
+    r"bencong",  # transexual
+    r"babi",  # swine
+    r"cibai",  # smelly vagina
+    r"coley",  # ???
+    r"diselama",  # ???
+    r"escoduro",  # ???
+    r"fredrike",  # ???
+    r"fogh",  # idiot (repeats mistakes)
+    r"gauguin",  # ???
+    r"goblok",  # fool
+    r"ge[fs]tapo",  # ???
+    r"husseins",  # ???
+    r"indon",  # ???
+    r"jambut",  # public hair
+    r"jellinek",  # ???
+    r"jellygamat",  # ???
+    r"keparat",  # dammit
+    r"kencing",  # pee
+    r"kontol",  # penis
+    r"kotoran",  # shit
+    r"lonte",  # prostitute
+    r"loked",  # crazy
+    r"lvmh",  # ???
+    r"malingsia",  # malaysian (slang)
+    r"memek",  # pussy
+    r"monyong",  # long mouth
+    r"netnapa",  # ???
+    r"ngentot",  # fuck
+    r"nesbitt",  # ???
+    r"panadta",  # ???
+    r"palaji",  # ???
+    r"pencuri",  # theif
+    r"perek",  # slut
+    r"pukimak",  # mother's cunt
+    r"portugeuse",  # ???
+    r"pedofil",  # pedophile
+    r"riyhad",  # ???
+    r"sempak",  # underwear (more like "shit" or "damn")
+    r"sinting",  # crazy
+    r"steinway",  # ???
+    r"sukhano",  # ??? first president of Indonesia?
+    r"taenjamras",  # ???
+    r"tahi",  # bullshit
+    r"tetek",  # breast / boobs
+    r"titit",  # penis
+    r"toket",  # breasts
+    r"tzcesar",  # ???
+    r"thailaland",  # ???
+    r"thaicia" # ???
+]
+
+informals = [
+    r"hai", # hi
+    r"halo", # hello
+    r"janc[uo]k",  # closest friend
+]
+
+sys.modules[__name__] = SpaceDelimited(
     __name__,
+    doc="""
+indonesian
+======
+
+revision
+--------
+.. autoattribute:: revision.words
+.. autoattribute:: revision.content_words
+.. autoattribute:: revision.badwords
+.. autoattribute:: revision.misspellings
+.. autoattribute:: revision.informals
+
+parent_revision
+---------------
+.. autoattribute:: parent_revision.words
+.. autoattribute:: parent_revision.content_words
+.. autoattribute:: parent_revision.badwords
+.. autoattribute:: parent_revision.misspellings
+.. autoattribute:: parent_revision.informals
+
+diff
+----
+.. autoattribute:: diff.words_added
+.. autoattribute:: diff.words_removed
+.. autoattribute:: diff.badwords_added
+.. autoattribute:: diff.badwords_removed
+.. autoattribute:: diff.misspellings_added
+.. autoattribute:: diff.misspellings_removed
+.. autoattribute:: diff.informals_added
+.. autoattribute:: diff.informals_removed
+    """,
     badwords=badwords,
     dictionary=dictionary,
+    informals=informals,
     stopwords=stopwords
 )
-"""
-Implements :class:`~revscoring.languages.language.RegexLanguage` for Indonesian.
-:data:`~revscoring.languages.language.is_badword`,
-:data:`~revscoring.languages.language.is_misspelled`, and
-:data:`~revscoring.languages.language.is_stopword` are provided.
-"""

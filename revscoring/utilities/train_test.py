@@ -7,7 +7,7 @@
 
     Usage:
         train_test -h | --help
-        train_test <scorer_model> <features> [<language>] [-p=<kv>]...
+        train_test <scorer_model> <features> [-p=<kv>]...
                    [--version=<vers>]
                    [--values-labels=<path>]
                    [--model-file=<path>]
@@ -45,10 +45,6 @@ def main(argv=None):
 
     ScorerModel = import_from_path(args['<scorer_model>'])
     features = import_from_path(args['<features>'])
-    if args['<language>'] is not None:
-        language = import_from_path(args['<language>'])
-    else:
-        language = None
 
     version = args['--version']
 
@@ -57,8 +53,7 @@ def main(argv=None):
         key, value = parameter.split("=")
         model_kwargs[key] = json.loads(value)
 
-    scorer_model = ScorerModel(features, language=language, version=version,
-                               **model_kwargs)
+    scorer_model = ScorerModel(features, version=version, **model_kwargs)
 
     if args['--values-labels'] == "<stdin>":
         values_labels_file = sys.stdin

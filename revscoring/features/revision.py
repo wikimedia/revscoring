@@ -2,12 +2,11 @@ import re
 from datetime import datetime
 
 from pytz import utc
-from revscoring.languages import is_stopword, stem_word
 
 from . import modifiers
 from ..datasources import revision
-from ..languages import is_badword, is_misspelled, is_stopword, stem_word, is_informal_word
 from .feature import Feature
+# TODO: Many of these are enwiki specific -- they shouldn't be.
 from .util import (CATEGORY_RE, CITE_RE, IMAGE_RE, INFOBOX_RE, MARKUP_RE,
                    NUMERIC_RE, SECTION_COMMENT_RE, SYMBOLIC_RE)
 
@@ -285,126 +284,6 @@ Represents ratio of uppercase characters compared to all characters in revision.
         >>> list(extractor.extract(655097130, [revision.proportion_of_uppercase_chars]))
         [0.030896069287141906]
 """
-################################## Words #######################################
-
-def process_words(revision_words):
-    return len(revision_words)
-
-words = Feature("revision.words", process_words,
-                returns=int, depends_on=[revision.words])
-"""
-Represents number of words in the revision.
-
-:Returns:
-    int
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.words]))
-        [3764]
-"""
-
-def process_badwords(is_badword, revision_words):
-    return sum(is_badword(word) for word in revision_words)
-
-badwords = Feature("revision.badwords", process_badwords,
-                   returns=int,
-                   depends_on=[is_badword, revision.words])
-"""
-Represents number of 'badwords' in the revision.
-
-:Returns:
-    int
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.badwords]))
-        [138]
-"""
-proportion_of_badwords = badwords / modifiers.max(words, 1)
-"""
-Represents ratio of 'badwords' compared to all words in the revision.
-
-:Returns:
-    float
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.proportion_of_badwords]))
-        [0.036663124335812966]
-"""
-def process_informal_words(is_informal_word, revision_words):
-    return sum(is_informal_word(word) for word in revision_words)
-
-informal_words = Feature("revision.informal_words", process_informal_words,
-                   returns=int,
-                   depends_on=[is_informal_word, revision.words])
-"""
-Represents number of 'informal words' in the revision.
-
-:Returns:
-    int
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.informal_words]))
-        [138]
-"""
-proportion_of_informal_words = informal_words / modifiers.max(words, 1)
-"""
-Represents ratio of 'informal words' compared to all words in the revision.
-
-:Returns:
-    float
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.proportion_of_informal_words]))
-        [0.036663124335812966]
-"""
-def process_misspellings(is_misspelled, revision_words):
-    return sum(is_misspelled(word) for word in revision_words)
-
-misspellings = Feature("revision.misspellings", process_misspellings,
-                       returns=int,
-                       depends_on=[is_misspelled, revision.words])
-"""
-Represents number of misspelled words in the revision.
-
-:Returns:
-    int
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.misspellings]))
-        [866]
-"""
-proportion_of_misspellings = badwords / modifiers.max(words, 1)
-"""
-Represents ratio of misspelled words compared to all words in the revision.
-
-:Returns:
-    float
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.proportion_of_misspellings]))
-        [0.036663124335812966]
-"""
 
 ################################ Parse tree ####################################
 
@@ -541,28 +420,7 @@ Represents number of content characters in the revision.
         >>> list(extractor.extract(655097130, [revision.content_chars]))
         [19363]
 """
-def process_infonoise(is_stopword, stem_word, content_words):
-    non_stopwords = (w for w in content_words if not is_stopword(w))
-    non_stopword_stems = (stem_word(w) for w in non_stopwords)
 
-    return sum(len(w) for w in non_stopword_stems) / \
-           max(sum(len(w) for w in content_words), 1)
-
-infonoise = Feature("revision.infonoise", process_infonoise, returns=float,
-                    depends_on=[is_stopword, stem_word, revision.content_words])
-"""
-Represents ratio of non stop words compared to all content words in revision.
-
-:Returns:
-    float
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [revision.infonoise]))
-        [0.6406679764243615]
-"""
 
 def process_internal_links(revision_internal_links):
     return len(revision_internal_links)
@@ -714,8 +572,7 @@ all = [day_of_week, hour_of_day,
        chars, markup_chars, numeric_chars, symbolic_chars, uppercase_chars,
        proportion_of_markup_chars, proportion_of_numeric_chars,
        proportion_of_symbolic_chars, proportion_of_uppercase_chars,
-       words, badwords, misspellings,
        level_1_headings, level_2_headings, level_3_headings, level_4_headings,
-       level_5_headings, level_6_headings, infonoise, internal_links,
+       level_5_headings, level_6_headings, internal_links,
        image_links, category_links, ref_tags, templates, cite_templates,
        infobox_templates]
