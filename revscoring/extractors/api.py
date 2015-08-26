@@ -1,3 +1,6 @@
+"""
+.. autoclass:: revscoring.extractors.api.APIExtractor
+"""
 import logging
 from collections import defaultdict
 
