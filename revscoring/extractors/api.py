@@ -1,9 +1,8 @@
 import logging
 from collections import defaultdict
 
-from mw import Namespace, Timestamp, api
-
 import yamlconf
+from mw import Namespace, Timestamp, api
 
 from .. import dependencies
 from ..datasources import (Datasource, RevisionMetadata, UserInfo,
@@ -375,6 +374,4 @@ class APIExtractor(Extractor):
         session = api.Session(section['url'],
                               user_agent=section['user_agent'])
 
-        language = Language.from_config(config, section['language'])
-
-        return cls(session, language)
+        return cls(session)

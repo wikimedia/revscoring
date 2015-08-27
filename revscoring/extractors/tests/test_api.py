@@ -132,3 +132,17 @@ def test_namespace_map_from_doc():
 
     eq_(len(namespace_map), 3)
     eq_(sum(ns.content for ns in namespace_map.values()), 1)
+
+
+def test_from_config():
+    config = {
+        'extractors': {
+            'enwiki': {
+                'url': 'https://en.wikipedia.org/w/api.php',
+                'user_agent': 'revscoring tests'
+            }
+        }
+    }
+
+    extractor = api.APIExtractor.from_config(config, 'enwiki')
+    # Doesn't error
