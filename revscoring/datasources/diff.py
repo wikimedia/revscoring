@@ -1,12 +1,21 @@
+import logging
+import time
+
 from deltas import segment_matcher
 from deltas.tokenizers import wikitext_split
 
 from . import parent_revision, revision
 from .datasource import Datasource
 
+logger = logging.getLogger(__name__)
 
 def process_operations(a, b):
-    return [op for op in segment_matcher.diff(a, b)], a, b
+    start = time.time()
+    operations = [op for op in segment_matcher.diff(a, b)]
+    logger.debug("diff() of {0} and {1} tokens took {2} seconds."
+                 .format(len(a), len(b), time.time() - start))
+
+    return operations, a, b
 
 operations = Datasource("diff.operations", process_operations,
                         depends_on=[parent_revision.tokens, revision.tokens])
