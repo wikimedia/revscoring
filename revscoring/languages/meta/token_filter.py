@@ -14,6 +14,6 @@ class TokenFilter(Datasource):
             if self.if_none is not None:
                 self.if_none()
             else:
-                return None
+                return []
         else:
             return [token for token in tokens if self.filter(token)]

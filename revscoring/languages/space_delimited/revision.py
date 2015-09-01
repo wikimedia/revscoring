@@ -26,7 +26,7 @@ class Revision:
             self.prefix + "words",
             self.DATASOURCE_MODULE.tokens,
             token_is_word,
-            if_none=raise_rnf if error_if_missing else []
+            if_none=raise_rnf if error_if_missing else None
         )
         """
         Returns a list of word tokens.
@@ -45,7 +45,7 @@ class Revision:
             self.prefix + "content_words",
             self.DATASOURCE_MODULE.content_tokens,
             token_is_word,
-            if_none=raise_rnf if error_if_missing else []
+            if_none=raise_rnf if error_if_missing else None
         )
         """
         Returns a list of words that appear in the (non-markup) content of the

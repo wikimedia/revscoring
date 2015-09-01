@@ -16,7 +16,7 @@ class RegexExtractor(Datasource):
             if self.if_none is not None:
                 self.if_none()
             else:
-                return None
+                return []
         else:
             return self._process(input)
 
