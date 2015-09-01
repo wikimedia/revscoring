@@ -76,8 +76,8 @@ Testing some text. {{:User:Hats/Template3}}
                                            ":User:Hats/Template3"])
 
 @raises(RevisionNotFound)
-def test_not_found_words():
-    solve(revision.words, cache={revision.text: None})
+def test_not_found_tokens():
+    solve(revision.tokens, cache={revision.text: None})
 
 @raises(RevisionNotFound)
 def test_not_found_parse_tree():
