@@ -50,6 +50,7 @@ def test_operations():
 
     operations, a, b = solve(diff.operations, cache=cache)
 
+
 def test_added_tokens():
     cache = {
         diff.operations: (OPERATIONS, PARENT_REVISIONS_TOKENS, REVISION_TOKENS)

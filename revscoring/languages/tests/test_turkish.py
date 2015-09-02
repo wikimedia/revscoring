@@ -3,11 +3,10 @@ import pickle
 from nose.tools import eq_
 
 from .. import turkish
-from ...datasources import diff, parent_revision, revision
+from ...datasources import revision
 from ...dependencies import solve
 
 BAD = [
-    #"[ss][ııii][ççcc][aa][rryy][iiıı][mm]",
     "adamın dib", "adamın dip",
     "ahlaksız",
     "ahmak",
@@ -39,7 +38,7 @@ BAD = [
     "godoş",
     "gotten",
     "göt", "göt deliği", "göt oğlanı", "götlek", "götoğlanı", "götveren",
-        "götü", "götün",
+    "götü", "götün",
     "haysiyetsiz",
     "heval", "hewal",
     "huur",
@@ -58,10 +57,10 @@ BAD = [
     "nobrain",
     "o. çocuğ",
     "orospu", "orospu cocugu", "orospu çoc", "orospu çocuğu",
-        "orospu çocuğudur", "orospudur", "orospunun", "orospunun evladı",
-        "orospuçocuğu",
+    "orospu çocuğudur", "orospudur", "orospunun", "orospunun evladı",
+    "orospuçocuğu",
     "oğlan", "oğlancı",
-    "pezeven","pezeveng", "pezevengin evladı", "pezevenk",
+    "pezeven", "pezeveng", "pezevengin evladı", "pezevenk",
     "pisliktir",
     "piç",
     "puşt", "puşttur",
@@ -71,8 +70,8 @@ BAD = [
     "serkan",
     "salak",
     "sik", "sikem", "siken", "siker", "sikerim", "sikey", "sikici", "sikik",
-        "sikil", "sikiş", "sikişme", "sikm", "sikseydin", "sikseyidin",
-        "sikt", "siktim", "siktir", "siktir lan",
+    "sikil", "sikiş", "sikişme", "sikm", "sikseydin", "sikseyidin",
+    "sikt", "siktim", "siktir", "siktir lan",
     "sokarım", "sokayım",
     "swicht şamandra",
     "tipini s.k", "tipinizi s.keyim",
@@ -109,7 +108,7 @@ INFORMAL = [
     "beshinci",
     "beshtane",
     "chalıshmıshlar", "chalıshıldıgında", "chalıshılınırsa", "chalıshıyorlar",
-        "chalıshıyorsun", "chalıshıyorum",
+    "chalıshıyorsun", "chalıshıyorum",
     "chamashırlar",
     "charpmadan",
     "charptı", "charpınca",
@@ -171,6 +170,7 @@ OTHER = [
     """
 ]
 
+
 def compare_extraction(extractor, examples, counter_examples):
 
     for example in examples:
@@ -185,14 +185,41 @@ def compare_extraction(extractor, examples, counter_examples):
         eq_(extractor.process("Sentence end " + example + "."), [])
         eq_(extractor.process(example + " start of sentence."), [])
 
+
 def test_badwords():
     compare_extraction(turkish.revision.badwords_list, BAD, OTHER)
 
+
 def test_informals():
     compare_extraction(turkish.revision.informals_list, INFORMAL, OTHER)
+
 
 def test_revision():
     # Words
     cache = {revision.text: "Bir sezonda m18, takımın mücadele."}
     eq_(solve(turkish.revision.words_list, cache=cache),
         ["Bir", "sezonda", "m18", "takımın", "mücadele"])
+
+
+def test_presence():
+    assert hasattr(turkish.revision, "words")
+    assert hasattr(turkish.revision, "content_words")
+    assert hasattr(turkish.revision, "badwords")
+    assert hasattr(turkish.revision, "informals")
+
+    assert hasattr(turkish.parent_revision, "words")
+    assert hasattr(turkish.parent_revision, "content_words")
+    assert hasattr(turkish.parent_revision, "badwords")
+    assert hasattr(turkish.parent_revision, "informals")
+
+    assert hasattr(turkish.diff, "words_added")
+    assert hasattr(turkish.diff, "badwords_added")
+    assert hasattr(turkish.diff, "informals_added")
+    assert hasattr(turkish.diff, "words_removed")
+    assert hasattr(turkish.diff, "badwords_removed")
+    assert hasattr(turkish.diff, "informals_removed")
+
+
+def test_pickling():
+
+    eq_(turkish, pickle.loads(pickle.dumps(turkish)))

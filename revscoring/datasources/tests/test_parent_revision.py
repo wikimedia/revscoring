@@ -5,7 +5,6 @@ from ...dependencies import solve
 
 
 def test_tokens():
-
     cache = {parent_revision.text: "Some text words 55."}
     eq_(solve(parent_revision.tokens, cache=cache),
         ["Some", " ", "text", " ", "words", " ", "55", "."])
@@ -28,4 +27,3 @@ def test_content():
     cache = {parent_revision.text: "This is a foobar {{foobar}} <td>"}
     eq_(solve(parent_revision.content_tokens, cache=cache),
         ["This", " ", "is", " ", "a", " ", "foobar", "  ", "<td>"])
-

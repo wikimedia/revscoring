@@ -1,5 +1,5 @@
 """
-This module implements a set of 
+This module implements a set of
 :class:`~revscoring.datasources.datasource.Datasource`
 processors that represent the input data for extracting
 :class:`~revscoring.features.Feature` values.  Just like
@@ -64,3 +64,5 @@ types
 """
 from .datasource import Datasource
 from .types import RevisionMetadata, UserInfo
+
+__all__ = [Datasource, RevisionMetadata, UserInfo]

@@ -9,14 +9,18 @@ from ...features import Feature
 from ..scorer_model import MLScorerModel
 
 
-def process_float(): return float()
+def process_float():
+    return float()
 some_float = Feature("some_float", process_float(),
-                      depends_on=[], returns=float)
+                     depends_on=[], returns=float)
 
-def process_other_float(): return float()
+
+def process_other_float():
+    return float()
 other_float = Feature("other_float", process_other_float(),
                       depends_on=[], returns=float)
 FEATURES = [some_float, other_float]
+
 
 def train_score(model):
     deterministic = random.Random(0)
@@ -37,22 +41,23 @@ def train_score(model):
     test_set = observations[mid:]
 
     model.train(train_set)
-    score_doc = model.score((-1,-2))
+    score_doc = model.score((-1, -2))
 
     eq_(score_doc['prediction'], True)
     assert score_doc['probability'][True] > 0.5, \
-           "Probability of True {0} is not > 0.5" \
-           .format(score_doc['probability'][True])
-    json.dumps(score_doc) # Checks if the doc is JSONable
+        "Probability of True {0} is not > 0.5" \
+        .format(score_doc['probability'][True])
+    json.dumps(score_doc)  # Checks if the doc is JSONable
 
     test_stats = model.test(test_set)
 
     assert test_stats['roc']['auc'] > 0.5
 
+
 def pickle_and_unpickle(model):
     f = BytesIO()
     model.dump(f)
-    f.seek(0) # Rewind the file
+    f.seek(0)  # Rewind the file
     reconstructed_model = MLScorerModel.load(f)
     eq_([f.name for f in reconstructed_model.features],
         [f.name for f in model.features])

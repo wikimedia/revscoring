@@ -4,14 +4,12 @@
 import logging
 from collections import defaultdict
 
-import yamlconf
 from mw import Namespace, Timestamp, api
 
 from .. import dependencies
 from ..datasources import (Datasource, RevisionMetadata, UserInfo,
                            parent_revision, revision, site, user)
 from ..errors import RevisionNotFound
-from ..languages import Language
 from .extractor import Extractor
 
 logger = logging.getLogger(__name__)
@@ -22,6 +20,7 @@ previous_user_revision_doc = Datasource("previous_user_revision.doc")
 page_creation_doc = Datasource("page_creation.doc")
 user_doc = Datasource("user.doc")
 site_doc = Datasource("site.doc")
+
 
 class APIExtractor(Extractor):
     """
@@ -46,7 +45,7 @@ class APIExtractor(Extractor):
         local_cache = {
             site.namespace_map: self.get_namespace_map()
         }
-        local_context = {d:d for d in [
+        local_context = {d: d for d in [
             Datasource("revision.doc", self.process_revision_doc,
                        depends_on=[revision.id]),
             Datasource("revision.metadata", self.process_revision_metadata,
@@ -118,7 +117,7 @@ class APIExtractor(Extractor):
         else:
             rev_id = rev_ids
             cache = caches
-            return self._extract(rev_id, dependents, context, caches)
+            return self._extract(rev_id, dependents, context, cache)
 
     def _extract_many(self, rev_ids, dependents, context, caches):
         all_dependents = set(dependencies.expand(dependents))
@@ -134,11 +133,11 @@ class APIExtractor(Extractor):
             rev_ids_missing_data = [
                 rid for rid in rev_ids
                 if rid not in extract_caches or
-                   revision.text not in extract_caches[rid] or
-                   revision.metadata not in extract_caches[rid] or
-                   revision_doc not in extract_caches[rid]
+                revision.text not in extract_caches[rid] or
+                revision.metadata not in extract_caches[rid] or
+                revision_doc not in extract_caches[rid]
             ]
-            rev_docs = self.get_rev_doc_map(rev_ids)
+            rev_docs = self.get_rev_doc_map(rev_ids_missing_data)
 
             for rev_id in rev_ids:
                 extract_caches[rev_id][revision_doc] = rev_docs.get(rev_id)
@@ -153,7 +152,7 @@ class APIExtractor(Extractor):
 
                 for rev_doc in rev_docs.values():
                     extract_caches[rev_doc['revid']][parent_revision_doc] = \
-                            parent_rev_docs.get(rev_doc['parentid'])
+                        parent_rev_docs.get(rev_doc['parentid'])
 
             if user.info in all_dependents:
                 user_texts = [r.get('user') for r in rev_docs.values()]
@@ -161,7 +160,7 @@ class APIExtractor(Extractor):
 
                 for rev_doc in rev_docs.values():
                     extract_caches[rev_doc['revid']][user_doc] = \
-                            user_docs.get(rev_doc.get('user'))
+                        user_docs.get(rev_doc.get('user'))
 
         # Now extract dependent values one-by-one
         for rev_id in rev_ids:
@@ -188,27 +187,28 @@ class APIExtractor(Extractor):
     def get_rev_doc_map(self, rev_ids, props={'ids', 'user', 'timestamp',
                                               'userid', 'comment', 'content',
                                               'flags', 'size'}):
-        if len(rev_ids) == 0: return {}
-        logger.info("Batch requesting {0} revisions from the API" \
+        if len(rev_ids) == 0:
+            return {}
+        logger.info("Batch requesting {0} revisions from the API"
                     .format(len(rev_ids)))
-        return {rd['revid']:rd
+        return {rd['revid']: rd
                 for rd in self.session.revisions.query(
                     revids=rev_ids,
-                    properties=props
-                )}
+                    properties=props)}
 
-    def get_user_doc_map(self, user_texts, props={'blockinfo', 'implicitgroups',
+    def get_user_doc_map(self, user_texts, props={'blockinfo',
+                                                  'implicitgroups',
                                                   'groups', 'registration',
                                                   'emailable', 'editcount',
                                                   'gender'}):
-        if len(user_texts) == 0: return {}
-        logger.info("Batch requesting {0} users from the API" \
+        if len(user_texts) == 0:
+            return {}
+        logger.info("Batch requesting {0} users from the API"
                     .format(len(user_texts)))
-        return {ud['name']:ud
+        return {ud['name']: ud
                 for ud in self.session.users.query(
                     users=user_texts,
-                    properties=props
-                )}
+                    properties=props)}
 
     def process_revision_doc(self, rev_id):
         logger.info("Requesting a revision ({0}) from the API".format(rev_id))
@@ -220,10 +220,10 @@ class APIExtractor(Extractor):
         props = {'ids', 'user', 'timestamp', 'userid', 'comment',
                  'content', 'flags', 'size'}
         if revision_metadata.parent_id is not None and \
-            revision_metadata.parent_id > 0:
+                revision_metadata.parent_id > 0:
             rev_id = revision_metadata.parent_id
             try:
-                logger.info("Requesting a parent revision ({0}) from the API" \
+                logger.info("Requesting a parent revision ({0}) from the API"
                             .format(rev_id))
                 return self.session.revisions.get(
                     rev_id=rev_id,
@@ -236,7 +236,7 @@ class APIExtractor(Extractor):
 
     def process_previous_user_revision_doc(self, revision_metadata):
         if revision_metadata.user_text is not None:
-            logger.info("Requesting previous user revision ({0}) from the API" \
+            logger.info("Requesting previous user revision ({0}) from the API"
                         .format(revision_metadata.user_text))
             docs = self.session.user_contribs.query(
                 user={revision_metadata.user_text},
@@ -255,7 +255,7 @@ class APIExtractor(Extractor):
             return None
 
     def process_page_creation_doc(self, revision_metadata):
-        logger.info("Requesting page creation ({0}) from the API" \
+        logger.info("Requesting page creation ({0}) from the API"
                     .format(revision_metadata.page_id))
         docs = self.session.revisions.query(
             pageids={revision_metadata.page_id},
@@ -269,17 +269,17 @@ class APIExtractor(Extractor):
         if len(docs) == 1:
             return docs[0]
         else:
-            raise RevisionDocumentNotFound(
+            raise RevisionNotFound(
                 {'page_id': revision_metadata.page_id}
             )
 
     def process_user_doc(self, revision_metadata):
-        logger.info("Requesting user info ({0}) from the API" \
+        logger.info("Requesting user info ({0}) from the API"
                     .format(revision_metadata.user_text))
         user_docs = self.session.users.query(
             users={revision_metadata.user_text},
-            properties={'blockinfo', 'implicitgroups', 'groups', 'registration',
-                        'emailable', 'editcount', 'gender'}
+            properties={'blockinfo', 'implicitgroups', 'groups',
+                        'registration', 'emailable', 'editcount', 'gender'}
         )
 
         user_docs = list(user_docs)
@@ -292,7 +292,7 @@ class APIExtractor(Extractor):
     @classmethod
     def process_revision_metadata(cls, revision_doc):
         if revision_doc is None:
-            raise RevisionDocumentNotFound()
+            raise RevisionNotFound()
         return cls.revision_metadata_from_doc(revision_doc)
 
     @classmethod
@@ -308,12 +308,14 @@ class APIExtractor(Extractor):
 
     @classmethod
     def process_revision_text(cls, revision_doc):
-        if revision_doc is None: return None
+        if revision_doc is None:
+            return None
         return revision_doc.get('*', "")
 
     @classmethod
     def revision_metadata_from_doc(cls, rev_doc):
-        if rev_doc is None: return None
+        if rev_doc is None:
+            return None
         try:
             timestamp = Timestamp(rev_doc.get('timestamp'))
         except ValueError:
@@ -333,7 +335,8 @@ class APIExtractor(Extractor):
 
     @classmethod
     def user_info_from_doc(cls, user_doc):
-        if user_doc is None: return None
+        if user_doc is None:
+            return None
         try:
             registration = Timestamp(user_doc.get('registration'))
         except ValueError:

@@ -1,7 +1,5 @@
 import sys
 
-import enchant
-
 from .space_delimited import SpaceDelimited
 
 try:
@@ -9,12 +7,12 @@ try:
     stopwords = set(nltk_stopwords.words('turkish'))
 except LookupError:
     raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
-                      "You may need to install the nltk 'stopwords' corpora. " +
-                      "See http://www.nltk.org/data.html")
+                      "You may need to install the nltk 'stopwords' " +
+                      "corpora.  See http://www.nltk.org/data.html")
 
 badwords = [
     r"ağzına sıçayım", r"ahlaksız", r"ahmak", r"am", r"amcık", r"amın oğlu",
-        r"amına koyayım", r"amına koyyim", r"amk", r"aptal",
+    r"amına koyayım", r"amına koyyim", r"amk", r"aptal",
     r"beyinsiz", r"bok", r"boktan",
     r"çük",
     r"dedeler",
@@ -80,9 +78,9 @@ badwords = [
     r"nobrain",
     r"o. çocuğ",
     r"orospu([ -]?(cocugu|çoc|çocuğu|çocuğudur))?", r"orospudur",
-        r"orospunun([ -]?(evladı))?", r"orospuçocuğu",
+    r"orospunun([ -]?(evladı))?", r"orospuçocuğu",
     r"oğlan", r"oğlancı",
-    r"pezeven",r"pezeveng", r"pezevengin evladı", r"pezevenk",
+    r"pezeven", r"pezeveng", r"pezevengin evladı", r"pezevenk",
     r"pisliktir",
     r"piç",
     r"puşt", r"puşttur",
@@ -91,9 +89,9 @@ badwords = [
     r"sahip",
     r"serkan",
     r"salak",
-    r"sik", r"sikem", r"siken", r"siker", r"sikerim", r"sikey", r"sikici", r"sikik",
-        r"sikil", r"sikiş", r"sikişme", r"sikm", r"sikseydin", r"sikseyidin",
-        r"sikt", r"siktim", r"siktir([- ]?(lan))?",
+    r"sik", r"sikem", r"siken", r"siker", r"sikerim", r"sikey", r"sikici",
+    r"sikik", r"sikil", r"sikiş", r"sikişme", r"sikm", r"sikseydin",
+    r"sikseyidin", r"sikt", r"siktim", r"siktir([- ]?(lan))?",
     r"sokarım", r"sokayım",
     r"swicht şamandra",
     r"tipini s.k", r"tipinizi s.keyim",
@@ -129,8 +127,8 @@ informals = [
     r"bashının",
     r"beshinci",
     r"beshtane",
-    r"chalıshmıshlar", r"chalıshıldıgında", r"chalıshılınırsa", r"chalıshıyorlar",
-        r"chalıshıyorsun", r"chalıshıyorum",
+    r"chalıshmıshlar", r"chalıshıldıgında", r"chalıshılınırsa",
+    r"chalıshıyorlar", r"chalıshıyorsun", r"chalıshıyorum",
     r"chamashırlar",
     r"charpmadan",
     r"charptı", r"charpınca",
@@ -138,7 +136,8 @@ informals = [
     r"chimdirecem",
     r"choluk",
     r"chorusdan", r"choruslar",
-    r"chıka", r"chıkacak", r"chıkmadı", r"chıksa", r"chıktı", r"chıkıp", r"chıkısh",
+    r"chıka", r"chıkacak", r"chıkmadı", r"chıksa", r"chıktı", r"chıkıp",
+    r"chıkısh",
     r"chıplak",
     r"degishen", r"degishiklik", r"degishiyor",
     r"dönüshü",

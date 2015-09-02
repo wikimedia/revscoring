@@ -23,6 +23,7 @@ def test_is_content_namespace():
     }
     eq_(solve(is_content_namespace, cache=cache), True)
 
+
 def test_is_mainspace():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['page_namespace'])
@@ -34,6 +35,7 @@ def test_is_mainspace():
         revision.metadata: FakeRevisionMetadata(0)
     }
     eq_(solve(is_mainspace, cache=cache), True)
+
 
 def test_age():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",

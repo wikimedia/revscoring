@@ -20,8 +20,8 @@ try:
     stopwords = set(nltk_stopwords.words('spanish'))
 except LookupError:
     raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
-                      "You may need to install the nltk 'stopwords' corpora. " +
-                      "See http://www.nltk.org/data.html")
+                      "You may need to install the nltk 'stopwords' " +
+                      "corpora.  See http://www.nltk.org/data.html")
 
 badwords = [
     r"awe(onao|vo)",  # idiot
@@ -33,24 +33,24 @@ badwords = [
     r"buseta",  # ???
     r"caca", r"\w*cag(a|o|ar(ro)?)(n(es)?)?\w*",  # shit / shits / dirty
     r"caquita",  # shit
-    r"cabr[óo]n(es)?", # bastards
+    r"cabr[óo]n(es)?",  # bastards
     r"cagad[ao]",  # funny / absurd
     r"capullo",  # end of a penis
-    r"carajo", r"chinga(r|da)?", r"chingu?en", # fuck
+    r"carajo", r"chinga(r|da)?", r"chingu?en",  # fuck
     r"chichornia",  # ???
     r"chiguero",  # ???
     r"chima(r|da|s)?",  # fuck
-    r"chingad(o|azo|erita)s?",
-        r"chingo(n[cs]i[cs]imo|ner[íi]a|nes|rrón)s?",  # fuck
+    r"chingad(o|azo|erita)s?",  # fuck
+    r"chingo(n[cs]i[cs]imo|ner[íi]a|nes|rrón)s?",  # fuck
     r"chino(n[cs]i[cs]imo)?",  # chinese
     r"chosto",  # ???
     r"choch[oa]",  # cunt
     r"cholo",  # mixed race person
     r"chucha",  # fuck
-    r"\w*chupa(n|r|mea?|mel[ao]|medias|pollas|ban?)?s?\w*", r"chupen(la|me|mela)",
-        r"chupo", # variants of suck / blow me
+    r"\w*chupa(n|r|mea?|mel[ao]|medias|pollas|ban?)?s?\w*",
+    r"chupen(la|me|mela)", r"chupo",  # variants of suck / blow me
     r"cipote",  # child (slang)
-    r"cochetumadre", # car of your mother ???
+    r"cochetumadre",  # car of your mother ???
     r"co[gj]er",  # have sex / fuck
     r"cojio",  # wedgie
     r"cojones?",  # balls
@@ -138,7 +138,7 @@ badwords = [
     r"pario",  # ???
     r"pattaya",  # ???
     r"pedos?",  # pedofile
-    r"pel(ado|an)", # boy (derogatory)
+    r"pel(ado|an)",  # boy (derogatory)
     r"pelot(a|udo)s?",  # balls
     r"pendej(o|a|ada)s?",  # stupid people
     r"penes?",  # penis
@@ -158,7 +158,7 @@ badwords = [
     r"polvo",  # nut (testical)
     r"poto",  # ass
     r"prostituta",  # prostitute
-    r"\w*put([ao]+|isim[oa]|iza)(s|n)?\w*",  # fuck
+    r"\w*put([ao]+|isim[oa]|iza)(s|n)?\w*",  # bitch/whore
     r"puñal",  # fag ???
     r"rabo",  # ass
     r"ramera",  # easy woman
@@ -175,8 +175,8 @@ badwords = [
     r"travesti",  # transvestite
     r"travolo",  # ???
     r"trol(o|a)",  # faggot
-    r"uta", r"utama", r"utamadre", # short for 'puta'
-    r"\w*verg(a|uero|ud[ao])s?\w*", r"versh", # cock
+    r"uta", r"utama", r"utamadre",  # short for 'puta'
+    r"\w*verg(a|uero|ud[ao])s?\w*", r"versh",  # cock
     r"vibrador",  # vibrator
     r"viol(o|a|e|ar)",  # violate
     r"vulva",  # vulva
@@ -210,17 +210,17 @@ informals = [
     r"comi[ao]",  # ???
     r"copien",  # copy
     r"cursiva",  # italics
-    r"esq",  #  abbrev. of 'esquina' meaning "corner" -- used in addresses
+    r"esq",  # abbrev. of 'esquina' meaning "corner" -- used in addresses
     r"est[uú]pid[aeo]+[rs]?",  # stupid
     r"fulan[ao]",  # pronoun for person
     r"fe[ao]s?",  # ugly
     r"gra(x|sias)",  # thank you
     r"guapo",  # beautiful
-    r"h?o+la+", # hello
+    r"h?o+la+",  # hello
     r"ho+lis?",  # ???
     r"ijos",  # ???
     r"inserta",  # inserts
-    r"j+[eaiou]+(j+[aeiou]*)*", # jaja jeje jojojo
+    r"j+[eaiou]+(j+[aeiou]*)*",  # jaja jeje jojojo
     r"ke",  # short for 'que'
     r"kie(n|ro)",  # I want
     r"komo",  # ???
@@ -230,7 +230,7 @@ informals = [
     r"(l+[uo]+l+)([uo]+l+)*",  # lol lollloololol lulllololul
     r"madrazo",  # a crash (slang)
     r"malparida",  # miscaried
-    r"mcfinnigan", # ???
+    r"mcfinnigan",  # ???
     r"mensos?",  # stupid / annoying person
     r"meti[oa]",  # ???
     r"metroflog",  # ???
@@ -238,8 +238,8 @@ informals = [
     r"muxo",  # ???
     r"negrit[ao]",  # black person (non-offensive)
     r"nocheto",  # ???
-    r"noo+", # noooo
-    r"nop", # nope
+    r"noo+",  # noooo
+    r"nop",  # nope
     r"ojala",  # hopefully
     r"o+l[ia]",
     r"osea",  # "that is"

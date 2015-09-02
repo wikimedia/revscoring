@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import vietnamese
-from ...datasources import diff, parent_revision, revision
+from ...datasources import revision
 from ...dependencies import solve
 
 BAD = [
@@ -58,6 +58,7 @@ OTHER = [
     """
 ]
 
+
 def compare_extraction(extractor, examples, counter_examples):
 
     for example in examples:
@@ -72,11 +73,14 @@ def compare_extraction(extractor, examples, counter_examples):
         eq_(extractor.process("Sentence end " + example + "."), [])
         eq_(extractor.process(example + " start of sentence."), [])
 
+
 def test_badwords():
     compare_extraction(vietnamese.revision.badwords_list, BAD, OTHER)
 
+
 def test_informals():
     compare_extraction(vietnamese.revision.informals_list, INFORMAL, OTHER)
+
 
 def test_revision():
     # Words
@@ -87,3 +91,31 @@ def test_revision():
     # Misspellings
     cache = {revision.text: 'mà rất có thể được worngly. <td>'}
     eq_(solve(vietnamese.revision.misspellings_list, cache=cache), ["worngly"])
+
+
+def test_presence():
+    assert hasattr(vietnamese.revision, "words")
+    assert hasattr(vietnamese.revision, "content_words")
+    assert hasattr(vietnamese.revision, "badwords")
+    assert hasattr(vietnamese.revision, "informals")
+    assert hasattr(vietnamese.revision, "misspellings")
+
+    assert hasattr(vietnamese.parent_revision, "words")
+    assert hasattr(vietnamese.parent_revision, "content_words")
+    assert hasattr(vietnamese.parent_revision, "badwords")
+    assert hasattr(vietnamese.parent_revision, "informals")
+    assert hasattr(vietnamese.parent_revision, "misspellings")
+
+    assert hasattr(vietnamese.diff, "words_added")
+    assert hasattr(vietnamese.diff, "badwords_added")
+    assert hasattr(vietnamese.diff, "informals_added")
+    assert hasattr(vietnamese.diff, "misspellings_added")
+    assert hasattr(vietnamese.diff, "words_removed")
+    assert hasattr(vietnamese.diff, "badwords_removed")
+    assert hasattr(vietnamese.diff, "informals_removed")
+    assert hasattr(vietnamese.diff, "misspellings_removed")
+
+
+def test_pickling():
+
+    eq_(vietnamese, pickle.loads(pickle.dumps(vietnamese)))

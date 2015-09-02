@@ -9,7 +9,8 @@ except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'vi'.  " +
                       "Consider installing 'hunspell-vi'.")
 
-# https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/Free_Vietnamese_Dictionary_Project_Vietnamese-Vietnamese#Allwiki_.28closed.29
+# https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/
+# Free_Vietnamese_Dictionary_Project_Vietnamese-Vietnamese#Allwiki_.28closed.29
 stopwords = set([
     "ai", "bằng", "bị", "bộ", "cho", "chưa", "chỉ", "cuối", "cuộc",
     "các", "cách", "cái", "có", "cùng", "cũng", "cạnh", "cả", "cục",

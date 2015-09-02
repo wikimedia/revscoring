@@ -1,7 +1,5 @@
 import sys
 
-import enchant
-
 from .space_delimited import SpaceDelimited
 
 try:
@@ -15,8 +13,8 @@ try:
     stopwords = set(nltk_stopwords.words('french') + ["a"])
 except LookupError:
     raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
-                      "You may need to install the nltk 'stopwords' corpora. " +
-                      "See http://www.nltk.org/data.html")
+                      "You may need to install the nltk 'stopwords' " +
+                      "corpora.  See http://www.nltk.org/data.html")
 
 try:
     import enchant

@@ -1,5 +1,4 @@
 from ...datasources import parent_revision
-from ..meta.regex_extractors import TextRegexExtractor
 from .revision import Revision
 
 

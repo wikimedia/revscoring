@@ -2,12 +2,12 @@ import logging
 import time
 
 from deltas import segment_matcher
-from deltas.tokenizers import wikitext_split
 
 from . import parent_revision, revision
 from .datasource import Datasource
 
 logger = logging.getLogger(__name__)
+
 
 def process_operations(a, b):
     start = time.time()
@@ -45,6 +45,7 @@ added_tokens = Datasource("diff.added_tokens", process_added_tokens,
 Returns a list of all tokens added in this revision.
 """
 
+
 def process_removed_tokens(diff_operations):
 
     operations, a, b = diff_operations
@@ -59,6 +60,7 @@ removed_tokens = Datasource("removed_tokens", process_removed_tokens,
 Returns a list of all tokens removed in this revision.
 """
 
+
 def process_added_segments(diff_operations):
     operations, a, b = diff_operations
 
@@ -71,6 +73,7 @@ added_segments = Datasource("diff.added_segments", process_added_segments,
 """
 Returns a list of all contiguous segments of tokens added in this revision.
 """
+
 
 def process_removed_segments(revision_diff):
     operations, a, b = revision_diff

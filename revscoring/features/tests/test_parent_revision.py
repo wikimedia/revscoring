@@ -3,7 +3,6 @@ from collections import namedtuple
 from mw import Timestamp
 from nose.tools import eq_
 
-from ... import languages
 from ...datasources import parent_revision, revision
 from ...dependencies import solve
 from ..parent_revision import (bytes, chars, markup_chars, numeric_chars,
@@ -40,6 +39,7 @@ def test_was_same_user():
     }
     eq_(solve(was_same_user, cache=cache), False)
 
+
 def test_seconds_since():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['timestamp'])
@@ -57,6 +57,7 @@ def test_seconds_since():
     }
     eq_(solve(seconds_since, cache=cache), 0)
 
+
 def test_bytes():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
                                       ['bytes'])
@@ -72,6 +73,7 @@ def test_bytes():
     }
     eq_(solve(bytes, cache=cache), 0)
 
+
 def test_chars():
     cache = {
         parent_revision.text: "Twelve chars"
@@ -83,6 +85,7 @@ def test_chars():
         parent_revision.text: None
     }
     eq_(solve(chars, cache=cache), 0)
+
 
 def test_markup_chars():
     cache = {
@@ -96,6 +99,7 @@ def test_markup_chars():
     }
     eq_(solve(markup_chars, cache=cache), 0)
 
+
 def test_numeric_chars():
     cache = {
         parent_revision.text: "Twelve hats pants 95 bananas!"
@@ -108,6 +112,7 @@ def test_numeric_chars():
     }
     eq_(solve(numeric_chars, cache=cache), 0)
 
+
 def test_symbolic_chars():
     cache = {
         parent_revision.text: "Twelve hats?  Pants, #95 bananas!"
@@ -119,6 +124,7 @@ def test_symbolic_chars():
         parent_revision.text: None
     }
     eq_(solve(symbolic_chars, cache=cache), 0)
+
 
 def test_uppercase_chars():
     cache = {

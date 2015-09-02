@@ -30,14 +30,13 @@
                                 (int, float, str, bool) [default: str]
 """
 import json
-import pprint
 import random
 import sys
 
 import docopt
 from tabulate import tabulate
 
-from .util import encode, import_from_path
+from .util import import_from_path
 
 
 def main(argv=None):
@@ -80,6 +79,7 @@ DECODERS = {
     'bool': lambda v: v in ("True", "true", "1", "T", "y", "Y")
 }
 
+
 def read_value_labels(f, features, decode_label):
     for line in f:
         parts = line.strip().split("\t")
@@ -97,6 +97,7 @@ def read_value_labels(f, features, decode_label):
                 feature_values.append(feature.returns(value))
 
         yield feature_values, label
+
 
 def run(feature_labels, model_file, scorer_model):
 
@@ -120,12 +121,10 @@ def run(feature_labels, model_file, scorer_model):
     else:
         sys.stderr.write("ROC-AUC:\n")
 
-
         table_data = [[comparison_label, stats['roc'][comparison_label]['auc']]
                       for comparison_label in possible]
         sys.stderr.write(tabulate(table_data))
         sys.stderr.write("\n\n")
-
 
     table_data = []
 

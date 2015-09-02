@@ -16,12 +16,12 @@ and collections of `Dependent`.
 
 """
 import logging
-
 import traceback
 
 from ..errors import CaughtDependencyError, DependencyError, DependencyLoop
 
 logger = logging.getLogger(__name__)
+
 
 def solve(dependents, context=None, cache=None):
     """
@@ -58,6 +58,7 @@ def solve(dependents, context=None, cache=None):
         value, cache, history = _solve(dependent, context=context, cache=cache)
         return value
 
+
 def expand(dependents, context=None, cache=None):
     """
     Calculates a dependent's value by solving dependencies.
@@ -90,7 +91,6 @@ def expand(dependents, context=None, cache=None):
         return _expand(dependent, context, cache)
 
 
-
 def draw(dependent, context=None, cache=None, depth=0):
     """
     Returns a string representation of the the dependency tree for a single
@@ -115,10 +115,10 @@ def draw(dependent, context=None, cache=None, depth=0):
     return "\n".join(draw_lines(dependent, context, cache, depth)) \
            + "\n"
 
+
 def draw_lines(dependent, context, cache, depth):
     cache = cache or {}
     context = normalize_context(context)
-
 
     if dependent in cache:
         yield "\t" * depth + " - " + str(dependent) + " CACHED"
@@ -132,6 +132,7 @@ def draw_lines(dependent, context, cache, depth):
         if hasattr(dependent, "dependencies"):
             for dependency in dependent.dependencies:
                 yield from draw_lines(dependency, context, cache, depth+1)
+
 
 def dig(dependents, context=None, cache=None):
     """
@@ -178,10 +179,11 @@ def normalize_context(context):
     elif isinstance(context, dict):
         return context
     elif hasattr(context, "__iter__"):
-        return {d:d for d in context}
+        return {d: d for d in context}
     else:
-        raise TypeError("'context' is not a dict or iterable: {0}" \
+        raise TypeError("'context' is not a dict or iterable: {0}"
                         .format(str(context)))
+
 
 def _solve(dependent, context, cache, history=None):
     history = history or set()
@@ -242,11 +244,13 @@ def _solve(dependent, context, cache, history=None):
             cache[dependent] = value
             return cache[dependent], cache, history
 
+
 def _solve_many(dependents, context, cache):
 
     for dependent in dependents:
         value, cache, history = _solve(dependent, context, cache)
         yield value
+
 
 def _expand(dependent, context, cache):
     if dependent not in cache:
@@ -261,6 +265,7 @@ def _expand_many(dependents, context, cache):
     for dependent in dependents:
         yield from _expand(dependent, context, cache)
 
+
 def _dig(dependent, context, cache):
     if hasattr(dependent, "dependencies"):
         if len(dependent.dependencies) > 0:
@@ -269,6 +274,7 @@ def _dig(dependent, context, cache):
             yield dependent
     else:
         yield dependent
+
 
 def _dig_many(dependents, context, cache):
     for dependent in dependents:

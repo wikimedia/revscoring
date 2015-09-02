@@ -11,15 +11,13 @@
     Options:
         -h --help      Print this documentation
         <model-file>   Path to a model file
-        --api=<url>    The url pointing to a MediaWiki API to use for extracting
-                       features
+        --api=<url>    The url pointing to a MediaWiki API to use for
+                       extracting features
         --verbose      Print debugging info
         <rev_id>       A revision identifier
 """
 import json
 import logging
-import sys
-import traceback
 
 import docopt
 from mw import api
@@ -42,12 +40,15 @@ def main(argv=None):
 
     run(model, extractor, rev_ids, verbose)
 
+
 def run(model, extractor, rev_ids, verbose):
 
-    if verbose: logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
-    )
+    if verbose:
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
+        )
+
     error_features = extractor.extract(rev_ids, model.features)
     for rev_id, (error, values) in zip(rev_ids, error_features):
         if error is not None:

@@ -26,23 +26,21 @@ class SVC(ScikitLearnClassifier):
     Implements a Support Vector Classifier model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.feature.Feature`
+        features : `collection` of :class:`~revscoring.features.Feature`
             The features that the model will be trained on
-        language : :class:`~revscoring.languages.language.Language`
-            The language context applied when extracting features.
         version : str
             A version string representing the version of the model
         `**kwargs`
             Passed to :class:`sklearn.svm.SVC`
     """
-    def __init__(self, features, language=None, version=None, svc=None, balance_labels=True, **kwargs):
+    def __init__(self, features, version=None, svc=None,
+                 balance_labels=True, **kwargs):
         if svc is None:
             classifier_model = svm.SVC(probability=True, **kwargs)
         else:
             classifier_model = svc
 
-        super().__init__(features, classifier_model, language=language,
-                         version=version)
+        super().__init__(features, classifier_model, version=version)
 
         self.balance_labels = balance_labels
         self.feature_stats = None
@@ -59,7 +57,8 @@ class SVC(ScikitLearnClassifier):
         start = time.time()
 
         # Balance labels
-        if self.balance_labels: values_labels = self._balance_labels(values_labels)
+        if self.balance_labels:
+            values_labels = self._balance_labels(values_labels)
 
         # Split out feature_values
         feature_values, labels = zip(*values_labels)
@@ -83,7 +82,6 @@ class SVC(ScikitLearnClassifier):
                                                     self.feature_stats))
 
         return super().score(scaled_values)
-
 
     def _balance_labels(self, values_labels):
         """
@@ -116,10 +114,11 @@ class SVC(ScikitLearnClassifier):
 
         1. See https://www.ma.utexas.edu/users/parker/sampling/repl.htm for a
            discussion of "sampling with replacement".
-        2. http://nbviewer.ipython.org/github/halfak/Objective-Revision-Evaluation-Service/blob/ipython/ipython/Wat%20predict_proba.ipynb
-
+        2. http://nbviewer.ipython.org/github/halfak/
+            Objective-Revision-Evaluation-Service/blob/ipython/ipython/
+            Wat%20predict_proba.ipynb
         """
-        #Group observations by label
+        # Group observations by label
         groups = defaultdict(list)
         for feature_values, label in values_labels:
             groups[label].append(feature_values)
@@ -131,7 +130,7 @@ class SVC(ScikitLearnClassifier):
         new_values_labels = []
         for label in groups:
             new_values_labels.extend((random.choice(groups[label]), label)
-                                      for i in range(max_label_n))
+                                     for i in range(max_label_n))
 
         # Shuffle the observations again before returning.
         random.shuffle(new_values_labels)
@@ -139,15 +138,14 @@ class SVC(ScikitLearnClassifier):
 SVCModel = SVC
 "Alias for backwards compatibility"
 
+
 class LinearSVC(SVC):
     """
     Implements a Support Vector Classifier model with a Linear kernel.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.feature.Feature`
+        features : `collection` of :class:`~revscoring.features.Feature`
             The features that the model will be trained on
-        language : :class:`~revscoring.languages.language.Language`
-            The language context applied when extracting features.
         version : str
             A version string representing the version of the model
         `**kwargs`
@@ -167,10 +165,8 @@ class RBFSVC(SVC):
     Implements a Support Vector Classifier model with an RBF kernel.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.feature.Feature`
+        features : `collection` of :class:`~revscoring.features.Feature`
             The features that the model will be trained on
-        language : :class:`~revscoring.languages.language.Language`
-            The language context applied when extracting features.
         version : str
             A version string representing the version of the model
         `**kwargs`

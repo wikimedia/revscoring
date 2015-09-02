@@ -23,6 +23,7 @@ class RegexExtractor(Datasource):
     def _process(self, input):
         raise NotImplementedError()
 
+
 class SegmentRegexExtractor(RegexExtractor):
 
     def __init__(self, name, segment_source, regexes, if_none=None):
@@ -40,6 +41,6 @@ class TextRegexExtractor(RegexExtractor):
         super().__init__(name, regexes, depends_on=[text_source])
 
     def _process(self, text):
-        matches =  [match.group(0)
-                    for match in self.group_re.finditer(text)]
+        matches = [match.group(0)
+                   for match in self.group_re.finditer(text)]
         return matches

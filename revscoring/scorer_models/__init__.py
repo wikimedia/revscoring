@@ -29,3 +29,11 @@ from .nb import (NB, NBModel, GaussianNB, GaussianNBModel, MultinomialNB,
                  MultinomialNBModel, BernoulliNB, BernoulliNBModel)
 from .scorer_model import ScorerModel, MLScorerModel, ScikitLearnClassifier
 from .rf import RF, RFModel
+
+__all__ = [
+    SVC, SVCModel, LinearSVC, LinearSVCModel, RBFSVC, RBFSVCModel,
+    NB, NBModel, GaussianNB, GaussianNBModel, MultinomialNB,
+    MultinomialNBModel, BernoulliNB, BernoulliNBModel,
+    ScorerModel, MLScorerModel, ScikitLearnClassifier,
+    RF, RFModel
+]

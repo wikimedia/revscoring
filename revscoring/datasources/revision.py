@@ -1,12 +1,8 @@
-from collections import namedtuple
-
 import mwparserfromhell as mwp
 from deltas.tokenizers import wikitext_split
-from mw import Timestamp
 
 from ..errors import RevisionNotFound
 from .datasource import Datasource
-from .types import RevisionMetadata
 
 id = Datasource("revision.id")
 """
@@ -25,7 +21,7 @@ Returns the text content of the current revision.
 """
 
 
-################################ Tokenized #####################################
+# ############################### Tokenized ###################################
 def process_tokens(revision_text):
     if revision_text is None:
         raise RevisionNotFound()
@@ -37,9 +33,8 @@ tokens = Datasource("revision.tokens",
 Returns a list of tokens.
 """
 
-################################# Parsed text ##################################
 
-
+# ################################ Parsed text ################################
 def process_parse_tree(revision_text):
     if revision_text is None:
         raise RevisionNotFound()
@@ -52,6 +47,7 @@ Returns a :class:`mwparserfromhell.wikicode.WikiCode` abstract syntax tree
 representing the content of the current revision.
 """
 
+
 def process_content(revision_parse_tree):
     return revision_parse_tree.strip_code()
 
@@ -60,6 +56,7 @@ content = Datasource("revision.content", process_content,
 """
 Returns the raw content (no markup or templates) of the current revision.
 """
+
 
 def process_content_tokens(revision_content):
     return wikitext_split.tokenize(revision_content)
@@ -71,6 +68,7 @@ Returns tokens from the raw content (no markup or templates) of the current
 revision
 """
 
+
 def process_headings(revision_parse_tree):
     return revision_parse_tree.filter_headings()
 
@@ -80,6 +78,7 @@ headings = Datasource("revision.headings", process_headings,
 Returns a list of :class:`mwparserfromhell.nodes.heading.Heading`'s present in
 the content of the current revision.
 """
+
 
 def process_internal_links(revision_parse_tree):
     return revision_parse_tree.filter_wikilinks()
@@ -91,6 +90,7 @@ Returns a list of :class:`mwparserfromhell.nodes.wikilink.Wikilink`'s present
 in the content of the current revision.
 """
 
+
 def process_tags(revision_parse_tree):
     return revision_parse_tree.filter_tags()
 
@@ -99,6 +99,7 @@ tags = Datasource("revision.tags", process_tags, depends_on=[parse_tree])
 Returns a list of html :class:`mwparserfromhell.nodes.tag.Tag`'s present in the
 content of the current revision.
 """
+
 
 def process_templates(revision_parse_tree):
     return revision_parse_tree.filter_templates()

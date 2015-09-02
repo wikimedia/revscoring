@@ -2,14 +2,14 @@
 .. autoclass:: revscoring.dependencies.dependent.Dependent
     :members:
 """
-
 import logging
-from functools import wraps
 
 logger = logging.getLogger(__name__)
 
+
 def not_implemented(*args, **kwargs):
     raise NotImplementedError("Not implemented.")
+
 
 class Dependent:
     """
@@ -24,7 +24,7 @@ class Dependent:
             A collection of
     """
     def __init__(self, name, process=None, depends_on=None,
-                             dependencies=None):
+                 dependencies=None):
         self.name = name
         self.process = process or not_implemented
         self.dependencies = dependencies or depends_on or []

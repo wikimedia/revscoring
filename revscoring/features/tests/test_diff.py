@@ -10,12 +10,13 @@ from ..diff import (chars_added, chars_removed, longest_repeated_char_added,
                     uppercase_chars_added, uppercase_chars_removed)
 
 
-################################## Segments ####################################
+# ################################# Segments ##################################
 def test_segments_added():
     cache = {
         diff_datasource.added_segments: ["one", "two", "three"]
     }
     eq_(solve(segments_added, cache=cache), 3)
+
 
 def test_segments_removed():
     cache = {
@@ -23,12 +24,14 @@ def test_segments_removed():
     }
     eq_(solve(segments_removed, cache=cache), 2)
 
-################################## Characters ##################################
+
+# ################################# Characters ################################
 def test_chars_added():
     cache = {
         diff_datasource.added_segments: ["twelve", "letter"]
     }
     eq_(solve(chars_added, cache=cache), 12)
+
 
 def test_chars_removed():
     cache = {
@@ -36,11 +39,13 @@ def test_chars_removed():
     }
     eq_(solve(chars_removed, cache=cache), 14)
 
+
 def test_markup_chars_added():
     cache = {
         diff_datasource.added_segments: ["fo{{ur}}teen", "l[[etter]]"]
     }
     eq_(solve(markup_chars_added, cache=cache), 8)
+
 
 def test_markup_chars_removed():
     cache = {
@@ -55,6 +60,7 @@ def test_numeric_chars_added():
     }
     eq_(solve(numeric_chars_added, cache=cache), 3)
 
+
 def test_numeric_chars_removed():
     cache = {
         diff_datasource.removed_segments: ["foo, '\"?.5!#105$%", "Wut"]
@@ -68,18 +74,21 @@ def test_symbolic_chars_added():
     }
     eq_(solve(symbolic_chars_added, cache=cache), 6)
 
+
 def test_symbolic_chars_removed():
     cache = {
         diff_datasource.removed_segments: ["foo, '\"?.!#$%", "Wut"]
     }
     eq_(solve(symbolic_chars_removed, cache=cache), 9)
 
+
 def test_uppercase_chars_added():
     cache = {
         diff_datasource.added_segments: ["THIS has 14 UPPER CASE",
-                                           "characterS"]
+                                         "characterS"]
     }
     eq_(solve(uppercase_chars_added, cache=cache), 14)
+
 
 def test_uppercase_chars_removed():
     cache = {
@@ -88,10 +97,11 @@ def test_uppercase_chars_removed():
     }
     eq_(solve(uppercase_chars_removed, cache=cache), 5)
 
+
 def test_longest_repeated_char_added():
     cache = {
         diff_datasource.added_segments: ["THIS has is an aaAa",
-                                           "aaa bah"]
+                                         "aaa bah"]
     }
     eq_(solve(longest_repeated_char_added, cache=cache), 4)
     cache = {
@@ -99,7 +109,8 @@ def test_longest_repeated_char_added():
     }
     eq_(solve(longest_repeated_char_added, cache=cache), 1)
 
-################################ Tokens ########################################
+
+# ############################### Tokens ######################################
 def test_longest_token_added():
     cache = {
         diff_datasource.added_tokens: ["Some", "badword", "refridgerator"]

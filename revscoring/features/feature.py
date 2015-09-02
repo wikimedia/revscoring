@@ -10,6 +10,7 @@ from ..dependencies import Dependent
 math_max = max
 math_min = min
 
+
 class Feature(Dependent):
     """
     Represents a predictive feature.
@@ -29,12 +30,13 @@ class Feature(Dependent):
         super().__init__(name, process, depends_on)
         self.returns = returns
 
-
     def __call__(self, *args, **kwargs):
         value = super().__call__(*args, **kwargs)
 
-        if __debug__: return self.validate(value)
-        else: return value
+        if __debug__:
+            return self.validate(value)
+        else:
+            return value
 
     def __hash__(self):
         return hash(('feature', self.name))
@@ -75,14 +77,16 @@ class Feature(Dependent):
         if isinstance(value, self.returns):
             return value
         else:
-            raise ValueError("Expected {0}, but got {1} instead." \
+            raise ValueError("Expected {0}, but got {1} instead."
                              .format(self.returns, type(value)))
+
     @classmethod
     def or_constant(self, val):
         if isinstance(val, Feature):
             return val
         else:
             return Constant(val)
+
 
 class Constant(Feature):
 
@@ -94,7 +98,10 @@ class Constant(Feature):
     def _process(self):
         return self.value
 
-class Modifier(Feature): pass
+
+class Modifier(Feature):
+    pass
+
 
 class BinaryOperator(Modifier):
 
@@ -111,7 +118,8 @@ class BinaryOperator(Modifier):
         super().__init__(name, self.operate, returns=returns,
                          depends_on=[left, right])
 
-    def operate(self, left, right): raise NotImplementedError()
+    def operate(self, left, right):
+        raise NotImplementedError()
 
 
 class add(BinaryOperator):
@@ -122,7 +130,9 @@ class add(BinaryOperator):
 
     CHAR = "+"
 
-    def operate(self, left, right): return left + right
+    def operate(self, left, right):
+        return left + right
+
 
 class sub(BinaryOperator):
     """
@@ -132,7 +142,9 @@ class sub(BinaryOperator):
 
     CHAR = "-"
 
-    def operate(self, left, right): return left - right
+    def operate(self, left, right):
+        return left - right
+
 
 class mul(BinaryOperator):
     """
@@ -145,6 +157,7 @@ class mul(BinaryOperator):
     def operate(self, left, right):
         return left * right
 
+
 class div(BinaryOperator):
     """
     Generates a feature that represents the division of
@@ -152,11 +165,13 @@ class div(BinaryOperator):
     """
 
     CHAR = "/"
+
     def __init__(self, left, right):
         # Explicitly setting return type to float.
         super().__init__(left, right, returns=float)
 
-    def operate(self, left, right): return left / right
+    def operate(self, left, right):
+        return left / right
 
 
 class Comparison(BinaryOperator):
@@ -164,6 +179,7 @@ class Comparison(BinaryOperator):
     def __init__(self, left, right):
         # Explicitly setting return type to boolean.
         super().__init__(left, right, returns=bool)
+
 
 class gt(Comparison):
     """
@@ -173,7 +189,9 @@ class gt(Comparison):
 
     CHAR = ">"
 
-    def operate(self, left, right): return left > right
+    def operate(self, left, right):
+        return left > right
+
 
 class lt(Comparison):
     """
@@ -183,7 +201,9 @@ class lt(Comparison):
 
     CHAR = "<"
 
-    def operate(self, left, right): return left < right
+    def operate(self, left, right):
+        return left < right
+
 
 class ge(Comparison):
     """
@@ -193,7 +213,9 @@ class ge(Comparison):
 
     CHAR = ">="
 
-    def operate(self, left, right): return left >= right
+    def operate(self, left, right):
+        return left >= right
+
 
 class le(Comparison):
     """
@@ -203,7 +225,9 @@ class le(Comparison):
 
     CHAR = "<="
 
-    def operate(self, left, right): return left <= right
+    def operate(self, left, right):
+        return left <= right
+
 
 class eq(Comparison):
     """
@@ -213,7 +237,9 @@ class eq(Comparison):
 
     CHAR = "=="
 
-    def operate(self, left, right): return left == right
+    def operate(self, left, right):
+        return left == right
+
 
 class ne(Comparison):
     """
@@ -223,7 +249,9 @@ class ne(Comparison):
 
     CHAR = "!="
 
-    def operate(self, left, right): return left != right
+    def operate(self, left, right):
+        return left != right
+
 
 class max(Modifier):
     """
@@ -232,14 +260,17 @@ class max(Modifier):
     """
     def __init__(self, *args):
         dependencies = [Feature.or_constant(arg) for arg in args]
-        returns = float # Hardcoded even though max can return strings, it
-                        # shouldn't ever do that
+        returns = float
+        # Hardcoded even though max can return strings, it
+        # shouldn't ever do that
 
         name = "max({0})".format(", ".join(f.name for f in dependencies))
         super().__init__(name, self._process, returns=returns,
                          depends_on=dependencies)
 
-    def _process(self, *feature_values): return float(math_max(*feature_values))
+    def _process(self, *feature_values):
+        return float(math_max(*feature_values))
+
 
 class min(Modifier):
     """
@@ -248,14 +279,16 @@ class min(Modifier):
     """
     def __init__(self, *args):
         dependencies = [Feature.or_constant(arg) for arg in args]
-        returns = float # Hardcoded even though max can return strings, it
-                        # shouldn't ever do that
+        returns = float
+        # Hardcoded even though max can return strings, it
+        # shouldn't ever do that
 
         name = "min({0})".format(", ".join(f.name for f in dependencies))
         super().__init__(name, self._process, returns=returns,
                          depends_on=dependencies)
 
-    def _process(self, *feature_values): return float(math_min(*feature_values))
+    def _process(self, *feature_values):
+        return float(math_min(*feature_values))
 
 
 class log(Modifier):
@@ -268,4 +301,5 @@ class log(Modifier):
         super().__init__("log({0})".format(feature.name), self._process,
                          returns=float, depends_on=[feature])
 
-    def _process(self, feature_value): return math_log(feature_value)
+    def _process(self, feature_value):
+        return math_log(feature_value)

@@ -1,7 +1,9 @@
 import sys
 from importlib import import_module
 
-sys.path.insert(0, ".") # Necessary for working in other modules
+sys.path.insert(0, ".")  # Necessary for working in other modules
+
+
 def import_from_path(path):
     try:
         module = import_module(path)
@@ -19,7 +21,7 @@ def import_from_path(path):
 
 
 def encode(val, none_val="NULL"):
-    if val == None:
+    if val is None:
         return none_val
     elif isinstance(val, bytes):
         val = str(val, 'utf-8', "replace")

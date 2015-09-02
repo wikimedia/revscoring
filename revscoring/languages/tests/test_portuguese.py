@@ -2,8 +2,8 @@ import pickle
 
 from nose.tools import eq_
 
-from .. import language, portuguese
-from ...datasources import diff, parent_revision, revision
+from .. import portuguese
+from ...datasources import revision
 from ...dependencies import solve
 
 BAD = [
@@ -27,7 +27,7 @@ BAD = [
     "doido",
     "fede", "fedido",
     "feia",
-    "fendi", # ???
+    "fendi",
     "foda", "fodas", "fude", "fuder",
     "gostosa", "gostosão", "gostosas", "gostoso",
     "idiota", "idiotas",
@@ -109,6 +109,7 @@ OTHER = [
     "arvere"
 ]
 
+
 def compare_extraction(extractor, examples, counter_examples):
 
     for example in examples:
@@ -123,11 +124,14 @@ def compare_extraction(extractor, examples, counter_examples):
         eq_(extractor.process("Sentence end " + example + "."), [])
         eq_(extractor.process(example + " start of sentence."), [])
 
+
 def test_badwords():
     compare_extraction(portuguese.revision.badwords_list, BAD, OTHER)
 
+
 def test_informals():
     compare_extraction(portuguese.revision.informals_list, INFORMAL, OTHER)
+
 
 def test_revision():
     # Words
@@ -142,3 +146,31 @@ def test_revision():
     # Infonoise
     cache = {revision.text: "Esta a o corrida!"}
     eq_(solve(portuguese.revision.infonoise, cache=cache), 4/13)
+
+
+def test_presence():
+    assert hasattr(portuguese.revision, "words")
+    assert hasattr(portuguese.revision, "content_words")
+    assert hasattr(portuguese.revision, "badwords")
+    assert hasattr(portuguese.revision, "informals")
+    assert hasattr(portuguese.revision, "misspellings")
+
+    assert hasattr(portuguese.parent_revision, "words")
+    assert hasattr(portuguese.parent_revision, "content_words")
+    assert hasattr(portuguese.parent_revision, "badwords")
+    assert hasattr(portuguese.parent_revision, "informals")
+    assert hasattr(portuguese.parent_revision, "misspellings")
+
+    assert hasattr(portuguese.diff, "words_added")
+    assert hasattr(portuguese.diff, "badwords_added")
+    assert hasattr(portuguese.diff, "informals_added")
+    assert hasattr(portuguese.diff, "misspellings_added")
+    assert hasattr(portuguese.diff, "words_removed")
+    assert hasattr(portuguese.diff, "badwords_removed")
+    assert hasattr(portuguese.diff, "informals_removed")
+    assert hasattr(portuguese.diff, "misspellings_removed")
+
+
+def test_pickling():
+
+    eq_(portuguese, pickle.loads(pickle.dumps(portuguese)))

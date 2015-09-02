@@ -1,4 +1,4 @@
-from nose.tools import eq_, raises
+from nose.tools import eq_
 
 from ..dependent import Dependent
 

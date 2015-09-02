@@ -16,8 +16,6 @@ import sys
 import traceback
 from importlib import import_module
 
-import docopt
-
 
 USAGE = """Usage:
     revscoring (-h | --help)

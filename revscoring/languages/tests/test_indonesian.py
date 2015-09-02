@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import indonesian
-from ...datasources import diff, parent_revision, revision
+from ...datasources import revision
 from ...dependencies import solve
 
 BAD = [
@@ -75,6 +75,7 @@ OTHER = [
     """
 ]
 
+
 def compare_extraction(extractor, examples, counter_examples):
 
     for example in examples:
@@ -89,11 +90,14 @@ def compare_extraction(extractor, examples, counter_examples):
         eq_(extractor.process("Sentence end " + example + "."), [])
         eq_(extractor.process(example + " start of sentence."), [])
 
+
 def test_badwords():
     compare_extraction(indonesian.revision.badwords_list, BAD, OTHER)
 
+
 def test_informals():
     compare_extraction(indonesian.revision.informals_list, INFORMAL, OTHER)
+
 
 def test_revision():
     # Words
@@ -104,3 +108,31 @@ def test_revision():
     # Misspellings
     cache = {revision.text: 'Setelah merilis album duet worngly. <td>'}
     eq_(solve(indonesian.revision.misspellings_list, cache=cache), ["worngly"])
+
+
+def test_presence():
+    assert hasattr(indonesian.revision, "words")
+    assert hasattr(indonesian.revision, "content_words")
+    assert hasattr(indonesian.revision, "badwords")
+    assert hasattr(indonesian.revision, "informals")
+    assert hasattr(indonesian.revision, "misspellings")
+
+    assert hasattr(indonesian.parent_revision, "words")
+    assert hasattr(indonesian.parent_revision, "content_words")
+    assert hasattr(indonesian.parent_revision, "badwords")
+    assert hasattr(indonesian.parent_revision, "informals")
+    assert hasattr(indonesian.parent_revision, "misspellings")
+
+    assert hasattr(indonesian.diff, "words_added")
+    assert hasattr(indonesian.diff, "badwords_added")
+    assert hasattr(indonesian.diff, "informals_added")
+    assert hasattr(indonesian.diff, "misspellings_added")
+    assert hasattr(indonesian.diff, "words_removed")
+    assert hasattr(indonesian.diff, "badwords_removed")
+    assert hasattr(indonesian.diff, "informals_removed")
+    assert hasattr(indonesian.diff, "misspellings_removed")
+
+
+def test_pickling():
+
+    eq_(indonesian, pickle.loads(pickle.dumps(indonesian)))
