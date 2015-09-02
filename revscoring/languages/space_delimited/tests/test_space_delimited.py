@@ -25,6 +25,7 @@ def test_words():
     eq_(solve(sd.parent_revision.words_list, cache=cache), [])
     eq_(solve(sd.parent_revision.content_words_list, cache=cache), [])
 
+
 def test_badwords():
     sd = SpaceDelimited("fake", badwords=[r"bad(words)?"])
 
@@ -38,6 +39,7 @@ def test_badwords():
 
     cache = {parent_revision.text: None}
     eq_(solve(sd.parent_revision.badwords_list, cache=cache), [])
+
 
 def test_informals():
     sd = SpaceDelimited("fake", informals=[r"inform(als)?"])
@@ -53,6 +55,7 @@ def test_informals():
 
     cache = {parent_revision.text: None}
     eq_(solve(sd.parent_revision.informals_list, cache=cache), [])
+
 
 def test_infonoise():
     Stemmer = namedtuple("Stemmer", ["stem"])
