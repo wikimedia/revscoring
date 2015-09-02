@@ -20,6 +20,10 @@ def test_words():
     eq_(solve(sd.revision.content_words_list, cache=cache),
         ["Foobar", "bad", "badwords", "hat", "m80"])
 
+    cache = {parent_revision.text: None}
+    eq_(solve(sd.parent_revision.words_list, cache=cache), [])
+    eq_(solve(sd.parent_revision.content_words_list, cache=cache), [])
+
 def test_badwords():
     sd = SpaceDelimited("fake", badwords=[r"bad(words)?"])
 
@@ -31,6 +35,9 @@ def test_badwords():
     assert hasattr(sd.diff, "badwords_added")
     assert hasattr(sd.diff, "badwords_removed")
 
+    cache = {parent_revision.text: None}
+    eq_(solve(sd.parent_revision.badwords_list, cache=cache), [])
+
 def test_informals():
     sd = SpaceDelimited("fake", informals=[r"inform(als)?"])
 
@@ -41,6 +48,9 @@ def test_informals():
     assert hasattr(sd.parent_revision, "informals")
     assert hasattr(sd.diff, "informals_added")
     assert hasattr(sd.diff, "informals_removed")
+
+    cache = {parent_revision.text: None}
+    eq_(solve(sd.parent_revision.informals_list, cache=cache), [])
 
 def test_infonoise():
     Stemmer = namedtuple("Stemmer", ["stem"])
@@ -71,6 +81,9 @@ def test_misspellings():
     assert hasattr(sd.parent_revision, "misspellings")
     assert hasattr(sd.diff, "misspellings_added")
     assert hasattr(sd.diff, "misspellings_removed")
+
+    cache = {parent_revision.text: None}
+    eq_(solve(sd.parent_revision.misspellings_list, cache=cache), [])
 
 BADWORDS = [r"bad(words)?"]
 Dictionary = namedtuple("Dictionary", ["check"])
