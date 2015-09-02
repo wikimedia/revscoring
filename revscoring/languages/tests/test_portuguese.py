@@ -36,7 +36,7 @@ BAD = [
     "mafia",
     "maldizentes",
     "mecos",
-    "mentira",
+    "mentira", "mentiroso", "mentirosa", "mentirosos", "mentirosas",
     "merda",   "merdas",
     "noob",
     "otario", "otário", "otarios",
