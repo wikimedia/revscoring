@@ -17,7 +17,9 @@ and collections of `Dependent`.
 """
 import logging
 
-from .errors import DependencyError, DependencyLoop
+import traceback
+
+from ..errors import CaughtDependencyError, DependencyError, DependencyLoop
 
 logger = logging.getLogger(__name__)
 
@@ -229,9 +231,12 @@ def _solve(dependent, context, cache, history=None):
             # Generate value
             try:
                 value = dependent(*args)
+            except DependencyError as e:
+                raise
             except Exception as e:
-                raise DependencyError("Failed to process {0}: {1}"
-                                      .format(dependent, e), str(e))
+                message = "Failed to process {0}: {1}".format(dependent, e)
+                tb = traceback.extract_stack()
+                raise CaughtDependencyError(message, e, tb)
 
             # Add value to cache
             cache[dependent] = value

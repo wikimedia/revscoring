@@ -1,7 +1,7 @@
 from nose.tools import eq_, raises
 
+from ...errors import DependencyError, DependencyLoop
 from ..dependent import Dependent
-from ..errors import DependencyError, DependencyLoop
 from ..functions import dig, draw, expand, solve
 
 

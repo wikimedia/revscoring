@@ -7,7 +7,8 @@ from mw import Namespace, Timestamp, api
 from .. import dependencies
 from ..datasources import (Datasource, RevisionMetadata, UserInfo,
                            parent_revision, revision, site, user)
-from ..errors import RevisionDocumentNotFound
+from ..errors import RevisionNotFound
+from ..languages import Language
 from .extractor import Extractor
 
 logger = logging.getLogger(__name__)

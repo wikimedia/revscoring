@@ -4,7 +4,7 @@ import mwparserfromhell as mwp
 from deltas.tokenizers import wikitext_split
 from mw import Timestamp
 
-from ..errors import RevisionDocumentNotFound
+from ..errors import RevisionNotFound
 from .datasource import Datasource
 from .types import RevisionMetadata
 
@@ -28,7 +28,7 @@ Returns the text content of the current revision.
 ################################ Tokenized #####################################
 def process_tokens(revision_text):
     if revision_text is None:
-        raise RevisionDocumentNotFound()
+        raise RevisionNotFound()
     return [t for t in wikitext_split.tokenize(revision_text)]
 
 tokens = Datasource("revision.tokens",
@@ -42,8 +42,8 @@ Returns a list of tokens.
 
 def process_parse_tree(revision_text):
     if revision_text is None:
-        raise RevisionDocumentNotFound()
-    return mwp.parse(revision_text)
+        raise RevisionNotFound()
+    return mwp.parse(revision_text or "")
 
 parse_tree = Datasource("revision.parse_tree",
                         process_parse_tree, depends_on=[text])

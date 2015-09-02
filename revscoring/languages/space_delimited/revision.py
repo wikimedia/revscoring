@@ -1,5 +1,5 @@
 from ...datasources import revision
-from ...errors import RevisionDocumentNotFound
+from ...errors import RevisionNotFound
 from ...features import Feature
 from ..meta.infonoise import Infonoise
 from ..meta.regex_extractors import TextRegexExtractor
@@ -8,7 +8,7 @@ from .util import token_is_word
 
 
 def raise_rnf():
-    raise RevisionDocumentNotFound()
+    raise RevisionNotFound()
 
 class Revision:
     """
