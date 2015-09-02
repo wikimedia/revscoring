@@ -1,4 +1,3 @@
-from mw import Timestamp
 from nose.tools import eq_, raises
 
 from .. import revision
@@ -7,20 +6,14 @@ from ...errors import RevisionNotFound
 
 
 def test_content():
-    text = "This is some {{markup}} and [[stuff]]."
-
-    content = solve(revision.content, cache={revision.text: text})
-
+    cache = {revision.text: "This is some {{markup}} and [[stuff]]."}
+    content = solve(revision.content, cache=cache)
     eq_(content, "This is some  and stuff.")
-
-def test_content():
-    cache = {revision.text: "Some text words 55. {{foo}}"}
-    eq_(solve(revision.content, cache=cache),
-        "Some text words 55. ")
 
     cache = {revision.text: "This is a foobar {{foobar}} <td>"}
     eq_(solve(revision.content_tokens, cache=cache),
         ["This", " ", "is", " ", "a", " ", "foobar", "  ", "<td>"])
+
 
 def test_headings():
     text = """
@@ -75,9 +68,11 @@ Testing some text. {{:User:Hats/Template3}}
     eq_([str(t.name) for t in templates], ["template0", "template1",
                                            ":User:Hats/Template3"])
 
+
 @raises(RevisionNotFound)
 def test_not_found_tokens():
     solve(revision.tokens, cache={revision.text: None})
+
 
 @raises(RevisionNotFound)
 def test_not_found_parse_tree():

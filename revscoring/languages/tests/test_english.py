@@ -3,15 +3,15 @@ import pickle
 from nose.tools import eq_
 
 from .. import english
-from ...datasources import diff, parent_revision, revision
+from ...datasources import revision
 from ...dependencies import solve
 
 BAD = [
     "ass", "arse", "ASS", "assface", "asses", "stupidass", "fatass", "lazyass",
-        "assclown", "asshat", "stupidasshat", "stupidarsehat",
+    "assclown", "asshat", "stupidasshat", "stupidarsehat",
     "autofellate", "autofellation", "autofellatio",
     "bitch", "biotch", "BITCH", "bitchface", "bitches", "supidbitch",
-        "asdasdbitchasdlnasla",
+    "asdasdbitchasdlnasla",
     "blowjob", "blowme",
     "bollocks",
     "booger", "boogers", "boogereater", "boooooger"
@@ -157,6 +157,7 @@ OTHER = [
     "pecker", 'suction', 'vaginal', 'titillatingly', 'test', 'edit'
 ]
 
+
 def compare_extraction(extractor, examples, counter_examples):
 
     for example in examples:
@@ -171,11 +172,37 @@ def compare_extraction(extractor, examples, counter_examples):
         eq_(extractor.process("Sentence end " + example + "."), [])
         eq_(extractor.process(example + " start of sentence."), [])
 
+
 def test_badwords():
     compare_extraction(english.revision.badwords_list, BAD, OTHER)
 
+
 def test_informals():
     compare_extraction(english.revision.informals_list, INFORMAL, OTHER)
+
+
+def test_presence():
+    assert hasattr(english.revision, "words")
+    assert hasattr(english.revision, "content_words")
+    assert hasattr(english.revision, "badwords")
+    assert hasattr(english.revision, "informals")
+    assert hasattr(english.revision, "misspellings")
+
+    assert hasattr(english.parent_revision, "words")
+    assert hasattr(english.parent_revision, "content_words")
+    assert hasattr(english.parent_revision, "badwords")
+    assert hasattr(english.parent_revision, "informals")
+    assert hasattr(english.parent_revision, "misspellings")
+
+    assert hasattr(english.diff, "words_added")
+    assert hasattr(english.diff, "badwords_added")
+    assert hasattr(english.diff, "informals_added")
+    assert hasattr(english.diff, "misspellings_added")
+    assert hasattr(english.diff, "words_removed")
+    assert hasattr(english.diff, "badwords_removed")
+    assert hasattr(english.diff, "informals_removed")
+    assert hasattr(english.diff, "misspellings_removed")
+
 
 def test_revision():
     # Words
@@ -190,3 +217,8 @@ def test_revision():
     # Infonoise
     cache = {revision.text: "This is running!"}
     eq_(solve(english.revision.infonoise, cache=cache), 3/13)
+
+
+def test_pickling():
+
+    eq_(english, pickle.loads(pickle.dumps(english)))

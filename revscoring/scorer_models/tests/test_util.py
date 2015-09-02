@@ -1,6 +1,8 @@
-from nose.tools import eq_
 import numpy
+from nose.tools import eq_
+
 from ..util import normalize_json
+
 
 def test_normalize_json():
     doc = {"foo": {numpy.bool_(True): "value"}, "what": numpy.bool_(False)}

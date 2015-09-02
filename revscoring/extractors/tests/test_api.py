@@ -2,7 +2,6 @@ from mw import Timestamp
 from nose.tools import eq_
 
 from .. import api
-from ...dependencies import solve
 
 
 def test_user_info_from_doc():
@@ -96,8 +95,9 @@ def test_revision_metadata_from_doc():
     eq_(metadata.page_namespace, 0)
     eq_(metadata.page_title, "Hats")
 
+
 def test_namespace_map_from_doc():
-    doc= {
+    doc = {
         "namespaces": {
             "0": {
                 "id": 0,
@@ -144,5 +144,4 @@ def test_from_config():
         }
     }
 
-    extractor = api.APIExtractor.from_config(config, 'enwiki')
-    # Doesn't error
+    api.APIExtractor.from_config(config, 'enwiki')  # Doesn't error

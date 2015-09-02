@@ -1,4 +1,5 @@
-from mw import Timestamp
-from nose.tools import eq_
-
 from .. import previous_user_revision
+
+
+def test_previous_user_revision():
+    assert hasattr(previous_user_revision, "metadata")

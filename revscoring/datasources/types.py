@@ -14,8 +14,9 @@ class RevisionMetadata:
                  'comment', 'page_id', 'page_namespace', 'page_title', 'bytes',
                  'minor')
 
-    def __init__(self, rev_id, parent_id, user_text, user_id, timestamp,
-                 comment, page_id, page_namespace, page_title, bytes, minor):
+    def __init__(self, rev_id=None, parent_id=None, user_text=None,
+                 user_id=None, timestamp=None, comment=None, page_id=None,
+                 page_namespace=None, page_title=None, bytes=None, minor=None):
         self.rev_id = int(rev_id) if rev_id is not None else None
         self.parent_id = int(parent_id) if parent_id is not None else None
         self.user_text = str(user_text) if user_text is not None else None
@@ -41,11 +42,11 @@ class UserInfo:
                  'blocked_by_id', 'blocked_timestamp', 'block_reason',
                  'block_expiry')
 
-    def __init__(self, id, name, editcount, registration,
-                 groups, implicitgroups, emailable,
-                 gender, block_id, blocked_by,
-                 blocked_by_id, blocked_timestamp, block_reason,
-                 block_expiry):
+    def __init__(self, id=None, name=None, editcount=None, registration=None,
+                 groups=None, implicitgroups=None, emailable=None,
+                 gender=None, block_id=None, blocked_by=None,
+                 blocked_by_id=None, blocked_timestamp=None, block_reason=None,
+                 block_expiry=None):
         self.id = int(id) if id is not None else None
         self.name = str(name) if name is not None else None
         self.editcount = int(editcount) if editcount is not None else None

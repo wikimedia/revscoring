@@ -6,8 +6,8 @@ from .datasource import Datasource
 
 metadata = Datasource("parent_revision.metadata")
 """
-Returns a :class:`~revscoring.datasources.types.RevisionMetadata` for the parent
-revision.
+Returns a :class:`~revscoring.datasources.types.RevisionMetadata` for the
+parent revision.
 """
 
 text = Datasource("parent_revision.text")
@@ -15,7 +15,8 @@ text = Datasource("parent_revision.text")
 Returns the text content of the parent revision.
 """
 
-################################ Tokenized #####################################
+
+# ############################### Tokenized ###################################
 def process_tokens(revision_text):
     return [t for t in wikitext_split.tokenize(revision_text or '')]
 
@@ -25,7 +26,8 @@ tokens = Datasource("parent_revision.tokens",
 Returns a list of tokens.
 """
 
-############################### Parse tree #####################################
+
+# ############################## Parse tree ###################################
 def process_parse_tree(revision_text):
     return mwp.parse(revision_text or "")
 

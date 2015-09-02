@@ -19,24 +19,24 @@ from .scorer_model import ScikitLearnClassifier
 
 logger = logging.getLogger("revscoring.scorers.nb")
 
+
 class NB(ScikitLearnClassifier):
-    def __init__(self, features, *, language=None, version=None, nb=None,
-                       sklearn_class=None, **kwargs):
-        if nb is None: nb = sklearn_class(**kwargs)
-        super().__init__(features, classifier_model=nb, language=language,
-                         version=version)
+    def __init__(self, features, *, version=None, nb=None,
+                 sklearn_class=None, **kwargs):
+        if nb is None:
+            nb = sklearn_class(**kwargs)
+        super().__init__(features, classifier_model=nb, version=version)
 NBModel = NB
 "Alias for backwards compatibility"
+
 
 class GaussianNB(NBModel):
     """
     Implements a Gaussian Naive Bayes model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.feature.Feature`
+        features : `collection` of :class:`~revscoring.features.Feature`
             The features that the model will be trained on
-        language : :class:`~revscoring.languages.language.Language`
-            The language context applied when extracting features.
         version : str
             A version string representing the version of the model
         `**kwargs`
@@ -47,40 +47,40 @@ class GaussianNB(NBModel):
 GaussianNBModel = GaussianNB
 "Alias for backwards compatibility"
 
+
 class MultinomialNB(NBModel):
     """
     Implements a Multinomial Naive Bayes model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.feature.Feature`
+        features : `collection` of :class:`~revscoring.features.Feature`
             The features that the model will be trained on
-        language : :class:`~revscoring.languages.language.Language`
-            The language context applied when extracting features.
         version : str
             A version string representing the version of the model
         `**kwargs`
             Passed to :class:`sklearn.naive_bayes.MultinomialNB`
     """
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, sklearn_class=naive_bayes.MultinomialNB, **kwargs)
+        super().__init__(*args, sklearn_class=naive_bayes.MultinomialNB,
+                         **kwargs)
 MultinomialNBModel = MultinomialNB
 "Alias for backwards compatibility"
+
 
 class BernoulliNB(NBModel):
     """
     Implements a Bernoulli Naive Bayes model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.feature.Feature`
+        features : `collection` of :class:`~revscoring.features.Feature`
             The features that the model will be trained on
-        language : :class:`~revscoring.languages.language.Language`
-            The language context applied when extracting features.
         version : str
             A version string representing the version of the model
         `**kwargs`
             Passed to :class:`sklearn.naive_bayes.BernoulliNB`
     """
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, sklearn_class=naive_bayes.BernoulliNB, **kwargs)
+        super().__init__(*args, sklearn_class=naive_bayes.BernoulliNB,
+                         **kwargs)
 BernoulliNBModel = BernoulliNB
 "Alias for backwards compatibility"

@@ -29,7 +29,6 @@
                                  [default: <stdout>]
         --verbose                Print logging information
 """
-import logging
 import sys
 import traceback
 
@@ -63,6 +62,7 @@ def main(argv=None):
 
     run(rev_labels, value_labels, features, extractor, verbose)
 
+
 def read_rev_labels(f):
     # Check if first line is a header
     rev_id, label = f.readline().strip().split("\t")
@@ -73,23 +73,25 @@ def read_rev_labels(f):
         rev_id, label = line.strip().split('\t')
         yield int(rev_id), label
 
+
 def run(rev_labels, value_labels, features, extractor, verbose=False):
-    #if verbose: logging.basicConfig(level=logging.DEBUG)
+    # if verbose: logging.basicConfig(level=logging.DEBUG)
     # This is far too verbose.
 
     for rev_id, label in rev_labels:
 
         try:
             values = extractor.extract(rev_id, features)
-            sys.stderr.write(".");sys.stderr.flush()
+            sys.stderr.write(".")
+            sys.stderr.flush()
 
             value_labels.write("\t".join(encode(v)
                                          for v in list(values) + [label]))
             value_labels.write("\n")
-        except KeyboardInterrupt as e:
+        except KeyboardInterrupt:
             sys.stderr.write("^C detected.  Shutting down.\n")
             break
-        except Exception as e:
+        except Exception:
             sys.stderr.write(traceback.format_exc() + "\n")
 
     sys.stderr.write("\n")

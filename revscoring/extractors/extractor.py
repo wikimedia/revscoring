@@ -10,6 +10,7 @@ from ..dependencies import Context
 
 logger = logging.getLogger(__name__)
 
+
 class Extractor(Context):
     """
     Implements a context for extracting features for a revision or a set of

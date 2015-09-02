@@ -7,14 +7,12 @@ def normalize(v):
     else:
         return v
 
+
 def normalize_json(doc):
-    
+
     if isinstance(doc, dict):
-        return {normalize_json(k):normalize_json(v) for k,v  in doc.items()}
-        
+        return {normalize_json(k): normalize_json(v) for k, v in doc.items()}
     elif isinstance(doc, list):
         return [normalize_json(v) for v in doc]
-    
     else:
-        
         return normalize(doc)

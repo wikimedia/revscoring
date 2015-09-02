@@ -3,13 +3,14 @@ from collections import namedtuple
 
 from nose.tools import eq_
 
-from ....datasources import diff, parent_revision, revision
+from ....datasources import parent_revision, revision
 from ....dependencies import solve
 from ..space_delimited import SpaceDelimited
 
 
 def test_no_params():
-    SpaceDelimited("fake") # Should not error
+    SpaceDelimited("fake")  # Should not error
+
 
 def test_words():
     sd = SpaceDelimited("fake")
@@ -42,7 +43,8 @@ def test_informals():
     sd = SpaceDelimited("fake", informals=[r"inform(als)?"])
 
     cache = {revision.text: "Foobar inform informals als hat."}
-    eq_(solve(sd.revision.informals_list, cache=cache), ["inform", "informals"])
+    eq_(solve(sd.revision.informals_list, cache=cache),
+        ["inform", "informals"])
 
     assert hasattr(sd.revision, "informals")
     assert hasattr(sd.parent_revision, "informals")
@@ -54,7 +56,7 @@ def test_informals():
 
 def test_infonoise():
     Stemmer = namedtuple("Stemmer", ["stem"])
-    stemmer = Stemmer(lambda w:w[0]) # First char
+    stemmer = Stemmer(lambda w: w[0])  # First char
     stopwords = set(["stop", "word"])
     sd = SpaceDelimited("fake", stemmer=stemmer, stopwords=stopwords)
 
@@ -68,9 +70,10 @@ def test_infonoise():
     assert hasattr(sd.revision, "infonoise")
     assert hasattr(sd.parent_revision, "infonoise")
 
+
 def test_misspellings():
     Dictionary = namedtuple("Dictionary", ["check"])
-    dictionary = Dictionary(lambda w: w != "misspelled") # First char
+    dictionary = Dictionary(lambda w: w != "misspelled")  # First char
 
     sd = SpaceDelimited("fake", dictionary=dictionary)
 
@@ -87,15 +90,22 @@ def test_misspellings():
 
 BADWORDS = [r"bad(words)?"]
 Dictionary = namedtuple("Dictionary", ["check"])
+
+
 def check(word):
     return word != "misspelled"
+
 DICTIONARY = Dictionary(check)
 INFORMALS = [r"inform(als)?"]
 Stemmer = namedtuple("Stemmer", ["stem"])
+
+
 def stem(word):
-    return word[0] # First char
+    return word[0]  # First char
+
 STEMMER = Stemmer(stem)
 STOPWORDS = set(["stop", "word"])
+
 
 def test_pickle():
     sd = SpaceDelimited("fake", badwords=BADWORDS, dictionary=DICTIONARY,

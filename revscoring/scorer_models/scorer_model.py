@@ -10,14 +10,11 @@
 """
 import pickle
 import time
-import traceback
 from statistics import mean, stdev
 
+import yamlconf
 from sklearn.metrics import auc, roc_curve
 
-import yamlconf
-
-from ..extractors import Extractor
 from .util import normalize_json
 
 
@@ -26,18 +23,17 @@ class ScorerModel:
     A model used to score a revision based on a set of features.
     """
 
-    def __init__(self, features, language=None, version=None):
+    def __init__(self, features, version=None):
         """
         :Parameters:
             features : `list`(`Feature`)
                 A list of `Feature` s that will be used to train the model and
                 score new observations.
-            language : `Language`
-                A language to use when applying a feature set.
+            version : `str`
+                A string describing the version of the model.
         """
         self.features = tuple(features)
-        self.language = language
-        self.version  = version
+        self.version = version
 
     def __getattr__(self, attr):
         if attr is "version":
@@ -58,7 +54,6 @@ class ScorerModel:
             A `dict` of statistics
         """
         raise NotImplementedError()
-
 
     def _validate_features(self, feature_values):
         """
@@ -97,7 +92,8 @@ class ScorerModel:
 
 class MLScorerModel(ScorerModel):
     """
-    A machine learned model used to score a revision based on a set of features.
+    A machine learned model used to score a revision based on a set of
+    features.
 
     Machine learned models are trained and tested against labeled data.
     """
@@ -120,7 +116,6 @@ class MLScorerModel(ScorerModel):
         """
         raise NotImplementedError()
 
-
     def test(self, values_labels):
         """
         Tests the model against a labeled data.  Note that test data should be
@@ -136,8 +131,6 @@ class MLScorerModel(ScorerModel):
             A dictionary of test results.
         """
         raise NotImplementedError()
-
-
 
     @classmethod
     def load(cls, f):
@@ -163,14 +156,13 @@ class MLScorerModel(ScorerModel):
         if 'model_file' in section:
             return cls.load(open(section['model_file'], 'rb'))
         else:
-            return cls(**{k:v for k,v in section.items() if k != "class"})
-
+            return cls(**{k: v for k, v in section.items() if k != "class"})
 
 
 class ScikitLearnClassifier(MLScorerModel):
 
-    def __init__(self, features, classifier_model, language=None, version=None):
-        super().__init__(features, language=language, version=version)
+    def __init__(self, features, classifier_model, version=None):
+        super().__init__(features, version=version)
         self.classifier_model = classifier_model
 
     def train(self, values_labels):
@@ -215,14 +207,13 @@ class ScikitLearnClassifier(MLScorerModel):
         prediction = self.classifier_model.predict([feature_values])[0]
         labels = self.classifier_model.classes_
         probas = self.classifier_model.predict_proba([feature_values])[0]
-        probability = {label:proba for label, proba in zip(labels, probas)}
+        probability = {label: proba for label, proba in zip(labels, probas)}
 
         doc = {
             'prediction': prediction,
             'probability': probability
         }
         return normalize_json(doc)
-
 
     def test(self, values_labels):
         """
@@ -261,7 +252,7 @@ class ScikitLearnClassifier(MLScorerModel):
             roc_stats = {}
             for comparison_label in possible_labels:
                 roc_stats[comparison_label] = \
-                        cls._roc_single_class(scores, labels, comparison_label)
+                    cls._roc_single_class(scores, labels, comparison_label)
 
             return roc_stats
 
@@ -281,8 +272,6 @@ class ScikitLearnClassifier(MLScorerModel):
             },
             'auc': auc(fpr, tpr)
         }
-
-
 
     @staticmethod
     def _label_table(scores, labels):

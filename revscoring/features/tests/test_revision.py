@@ -3,7 +3,6 @@ from collections import namedtuple
 from mw import Timestamp
 from nose.tools import eq_
 
-from ... import languages
 from ...datasources import revision
 from ...dependencies import solve
 from ..revision import (bytes, category_links, chars, cite_templates,
@@ -24,6 +23,7 @@ def test_day_of_week():
     }
     eq_(solve(day_of_week, cache=cache), 6)
 
+
 def test_hour_of_day():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata", ['timestamp'])
     timestamp = Timestamp('2014-09-07T19:55:00Z')
@@ -32,8 +32,8 @@ def test_hour_of_day():
     }
     eq_(solve(hour_of_day, cache=cache), 19)
 
-################################# Comment ######################################
 
+# ############################## Comment ######################################
 def test_has_custom_comment():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata", ['comment'])
 
@@ -62,6 +62,7 @@ def test_has_custom_comment():
     }
     assert not solve(has_custom_comment, cache=cache)
 
+
 def test_has_section_comment():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata", ['comment'])
 
@@ -85,8 +86,8 @@ def test_has_section_comment():
     }
     assert solve(has_section_comment, cache=cache)
 
-################################# Bytes ########################################
 
+# ################################ Bytes ######################################
 def test_bytes():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata", ["bytes"])
     cache = {
@@ -94,13 +95,14 @@ def test_bytes():
     }
     eq_(solve(bytes, cache=cache), 45678)
 
-############################### Characters #####################################
 
+# ############################## Characters ###################################
 def test_chars():
     cache = {
         revision.text: "Twelve chars"
     }
     eq_(solve(chars, cache=cache), 12)
+
 
 def test_markup_chars():
     cache = {
@@ -108,11 +110,13 @@ def test_markup_chars():
     }
     eq_(solve(markup_chars, cache=cache), 4)
 
+
 def test_numeric_chars():
     cache = {
         revision.text: "Twelve hats pants 95 bananas!"
     }
     eq_(solve(numeric_chars, cache=cache), 2)
+
 
 def test_symbolic_chars():
     cache = {
@@ -120,67 +124,75 @@ def test_symbolic_chars():
     }
     eq_(solve(symbolic_chars, cache=cache), 4)
 
+
 def test_uppercase_chars():
     cache = {
         revision.text: "Twelve hats?  Pants, #95 bananas!"
     }
     eq_(solve(uppercase_chars, cache=cache), 2)
 
-############################# Parsed text ######################################
 
+# ############################ Parsed text ####################################
 def test_level_1_headings():
     FakeHeading = namedtuple("FakeHeading", ['level'])
     cache = {
         revision.headings: [FakeHeading(2), FakeHeading(3), FakeHeading(4),
-                             FakeHeading(2)]
+                            FakeHeading(2)]
     }
     eq_(solve(level_1_headings, cache=cache), 0)
+
 
 def test_level_2_headings():
     FakeHeading = namedtuple("FakeHeading", ['level'])
     cache = {
         revision.headings: [FakeHeading(2), FakeHeading(3), FakeHeading(4),
-                             FakeHeading(2)]
+                            FakeHeading(2)]
     }
     eq_(solve(level_2_headings, cache=cache), 2)
+
 
 def test_level_3_headings():
     FakeHeading = namedtuple("FakeHeading", ['level'])
     cache = {
         revision.headings: [FakeHeading(2), FakeHeading(3), FakeHeading(4),
-                             FakeHeading(2)]
+                            FakeHeading(2)]
     }
     eq_(solve(level_3_headings, cache=cache), 1)
+
 
 def test_level_4_headings():
     FakeHeading = namedtuple("FakeHeading", ['level'])
     cache = {
         revision.headings: [FakeHeading(2), FakeHeading(3), FakeHeading(4),
-                             FakeHeading(2)]
+                            FakeHeading(2)]
     }
     eq_(solve(level_4_headings, cache=cache), 1)
+
 
 def test_level_5_headings():
     FakeHeading = namedtuple("FakeHeading", ['level'])
     cache = {
         revision.headings: [FakeHeading(2), FakeHeading(3), FakeHeading(4),
-                             FakeHeading(2)]
+                            FakeHeading(2)]
     }
     eq_(solve(level_5_headings, cache=cache), 0)
+
 
 def test_level_6_headings():
     FakeHeading = namedtuple("FakeHeading", ['level'])
     cache = {
         revision.headings: [FakeHeading(2), FakeHeading(3), FakeHeading(4),
-                             FakeHeading(2)]
+                            FakeHeading(2)]
     }
     eq_(solve(level_6_headings, cache=cache), 0)
 
+
 def test_content_chars():
     cache = {
-        revision.content: "Thisistwelve" # 12 characters of content
+        revision.content: "Thisistwelve"  # 12 characters of content
     }
     eq_(solve(content_chars, cache=cache), 12)
+
 
 def test_category_links():
     FakeLink = namedtuple("FakeLink", "title")
@@ -192,6 +204,7 @@ def test_category_links():
     }
     eq_(solve(category_links, cache=cache), 1)
 
+
 def test_image_links():
     FakeLink = namedtuple("FakeLink", "title")
     cache = {
@@ -201,6 +214,7 @@ def test_image_links():
                                   FakeLink("Category:Hats")]
     }
     eq_(solve(image_links, cache=cache), 2)
+
 
 def test_internal_links():
     FakeLink = namedtuple("FakeLink", "title")
@@ -212,6 +226,7 @@ def test_internal_links():
     }
     eq_(solve(internal_links, cache=cache), 4)
 
+
 def test_ref_tags():
     FakeTag = namedtuple("FakeTag", ['tag'])
     cache = {
@@ -221,7 +236,6 @@ def test_ref_tags():
                         FakeTag('herp')]
     }
     eq_(solve(ref_tags, cache=cache), 2)
-
 
 
 def test_templates():
@@ -238,7 +252,6 @@ def test_templates():
     eq_(solve(templates, cache=cache), 7)
 
 
-
 def test_cite_templates():
     FakeTemplate = namedtuple("FakeTemplate", ['name'])
     cache = {
@@ -251,6 +264,7 @@ def test_cite_templates():
                              FakeTemplate("Anarchism/Sidebar")]
     }
     eq_(solve(cite_templates, cache=cache), 2)
+
 
 def test_infobox_templates():
     FakeTemplate = namedtuple("FakeTemplate", ['name'])

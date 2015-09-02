@@ -1,5 +1,5 @@
 """
-This module implements a set of :class:`~revscoring.languages.language.Language`
+This module implements a set of :class:`~revscoring.language.Language`
 -- collections of features that are language specific.
 
 languages
@@ -33,3 +33,5 @@ Base classes
 
 """
 from .language import Language
+
+__all__ = [Language]

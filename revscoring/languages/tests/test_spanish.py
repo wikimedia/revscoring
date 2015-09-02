@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import spanish
-from ...datasources import diff, parent_revision, revision
+from ...datasources import revision
 from ...dependencies import solve
 
 BAD = [
@@ -22,8 +22,8 @@ BAD = [
     "chiguero",
     "chimar",
     "chinga", "chingada", "chingadazo", "chingaderita", "chingaderitas",
-        "chingado", "chingados", "chingoncisimo", "chingonería",
-        "chingones", "chingonsicimo", "chingonsisimo", "chingorrón", "chinguen",
+    "chingado", "chingados", "chingoncisimo", "chingonería",
+    "chingones", "chingonsicimo", "chingonsisimo", "chingorrón", "chinguen",
     "chinoncicimo",
     "chosto",
     "chupame", "chupamea", "chupamela", "chupan", "chupar", "chupenmela",
@@ -37,7 +37,7 @@ BAD = [
     "dlaversh",
     "emputado",
     "enc", "encabronadas", "encabronado", "encabronar", "encabronarse",
-        "encronada",
+    "encronada",
     "enputado",
     "follaban", "follar",
     "fregon", "fregón",
@@ -133,10 +133,10 @@ INFORMAL = [
     "chilear", "chiliar",
     "esq",
     "estupida", "estúpida", "estupidas", "estupides", "estupido", "estupido",
-        "estupidos", "estúpidos",
+    "estupidos", "estúpidos",
     "grasias",
     "grax",
-    "holaaaaa", "holi", "holis", "holis", "hoooola","hooooli",
+    "holaaaaa", "holi", "holis", "holis", "hoooola", "hooooli",
     "ijos",
     "inserta",
     "jaja", "jajaja", "jajajaja", "jeje", "jejejeje",
@@ -188,6 +188,7 @@ OTHER = [
     """,
 ]
 
+
 def compare_extraction(extractor, examples, counter_examples):
 
     for example in examples:
@@ -202,11 +203,14 @@ def compare_extraction(extractor, examples, counter_examples):
         eq_(extractor.process("Sentence end " + example + "."), [])
         eq_(extractor.process(example + " start of sentence."), [])
 
+
 def test_badwords():
     compare_extraction(spanish.revision.badwords_list, BAD, OTHER)
 
+
 def test_informals():
     compare_extraction(spanish.revision.informals_list, INFORMAL, OTHER)
+
 
 def test_revision():
     # Words
@@ -221,3 +225,31 @@ def test_revision():
     # Infonoise
     cache = {revision.text: "Su cuerpo es largo!"}
     eq_(solve(spanish.revision.infonoise, cache=cache), 9/15)
+
+
+def test_presence():
+    assert hasattr(spanish.revision, "words")
+    assert hasattr(spanish.revision, "content_words")
+    assert hasattr(spanish.revision, "badwords")
+    assert hasattr(spanish.revision, "informals")
+    assert hasattr(spanish.revision, "misspellings")
+
+    assert hasattr(spanish.parent_revision, "words")
+    assert hasattr(spanish.parent_revision, "content_words")
+    assert hasattr(spanish.parent_revision, "badwords")
+    assert hasattr(spanish.parent_revision, "informals")
+    assert hasattr(spanish.parent_revision, "misspellings")
+
+    assert hasattr(spanish.diff, "words_added")
+    assert hasattr(spanish.diff, "badwords_added")
+    assert hasattr(spanish.diff, "informals_added")
+    assert hasattr(spanish.diff, "misspellings_added")
+    assert hasattr(spanish.diff, "words_removed")
+    assert hasattr(spanish.diff, "badwords_removed")
+    assert hasattr(spanish.diff, "informals_removed")
+    assert hasattr(spanish.diff, "misspellings_removed")
+
+
+def test_pickling():
+
+    eq_(spanish, pickle.loads(pickle.dumps(spanish)))

@@ -13,16 +13,17 @@ try:
     stopwords = set(nltk_stopwords.words('english'))
 except LookupError:
     raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
-                      "You may need to install the nltk 'stopwords' corpora. " +
-                      "See http://www.nltk.org/data.html")
+                      "You may need to install the nltk 'stopwords' " +
+                      "corpora.  See http://www.nltk.org/data.html")
 
 try:
     import enchant
     dictionary = enchant.Dict("en")
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'en'.  " +
-                      "Consider installing 'myspell-en-au', 'myspell-en-gb', " +
-                      "'myspell-en-us' and/or 'myspell-en-za'.")
+                      "Consider installing 'myspell-en-au', " +
+                      "'myspell-en-gb', 'myspell-en-us' and/or " +
+                      "'myspell-en-za'.")
 
 badwords = [
     r"(fat|stupid|lazy)?a+[sr]+s+e*([-_ ]?butt|clown|face|hole|hat|e?s)?",
@@ -137,8 +138,13 @@ informals = [
     r"\w*o+m+g+\w*",
     r"poo+p\w*",
     r"\w*retard\w*", r"tard",
-    r"shove", r"smelly", r"soo+", r"stinky", r"\w*s+t+[uo]+p+i+d+\w*",
-        r"suck(ing|er)?", r"sux", r"shouldn'?t",
+    r"shove",
+    r"smelly",
+    r"soo+",
+    r"stinky",
+    r"\w*s+t+[uo]+p+i+d+\w*",
+    r"suck(s|ing|er)?", r"sux",
+    r"shouldn'?t",
     r"test +edit", r"t+u+r+d+s?\w*",
     r"wasn'?t",
     r"w+[oua]+t+", r"\w*wtf\w*", r"wh?[ua]+t?[sz]+[ua]+p",

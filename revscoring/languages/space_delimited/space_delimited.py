@@ -10,9 +10,11 @@ Resources = namedtuple(
     ['badwords', 'dictionary', 'informals', 'stemmer', 'stopwords']
 )
 
+
 class SpaceDelimited(Language):
     """
-    Implements a set of useful features for a space-delimited class of language.
+    Implements a set of useful features for a space-delimited class of
+    language.
 
     Features are made available depending on the arguments provided to the
     constructor.  Reference the language implementation for available features.
@@ -29,7 +31,8 @@ class SpaceDelimited(Language):
             An enchant dictionary for use in looking up words
         informals : `list` of `str`
             A list of regexes to be used to match informal words.  Like
-            badwords, these regexes will be wrapped in word boundary characters.
+            badwords, these regexes will be wrapped in word boundary
+            characters.
         stemmer : :class:`nltk.stem.StemmerI`
             An nltk-based stemmer to be used to remove morphological affixes
             from words.

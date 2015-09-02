@@ -5,7 +5,6 @@ from nose.tools import eq_
 
 from .. import modifiers
 from ...dependencies import solve
-from ..feature import Feature
 
 
 def test_log():
@@ -16,6 +15,7 @@ def test_log():
     eq_(solve(pickle.loads(pickle.dumps(log_five))), math_log(5))
 
     eq_(str(log_five), "<log(5)>")
+
 
 def test_max():
 

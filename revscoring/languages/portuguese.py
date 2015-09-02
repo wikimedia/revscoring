@@ -20,8 +20,8 @@ try:
     stopwords = set(nltk_stopwords.words('portuguese'))
 except LookupError:
     raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
-                      "You may need to install the nltk 'stopwords' corpora. " +
-                      "See http://www.nltk.org/data.html")
+                      "You may need to install the nltk 'stopwords' " +
+                      "corpora.  See http://www.nltk.org/data.html")
 
 
 badwords = [
@@ -55,7 +55,7 @@ badwords = [
     r"maldizentes",  # slanderers
     r"mecos",  # cum ???
     r"mentira",  # lie
-    r"merdas?", # shit
+    r"merdas?",  # shit
     r"noob",  # noob
     r"ot[áa]rios?",  # sucker
     r"pariu",  # to give birth ???
@@ -83,13 +83,13 @@ informals = [
     r"adoro",  # love
     r"aki",  # ???
     r"amo",  # master
-    r"(b+l+a+h*)+", # bla, blah, bbblllaaaahhhhhblah
+    r"(b+l+a+h*)+",  # bla, blah, bbblllaaaahhhhhblah
     r"carambas?",  # OMG
     r"coco",  # coconut
     r"copie[im]",  # I copied
     r"delicia",  # delicious
     r"editei",  # edited
-    r"enfiar?", # to stick (up one's ass)
+    r"enfiar?",  # to stick (up one's ass)
     r"entao",  # then
     r"estrag(ar|uem)",  # spoiled / ruined
     r"fixe",  # cool
@@ -103,7 +103,7 @@ informals = [
     r"naum",  # no (slang)
     r"n[óo]is",  # it's us (slang)
     r"odeio",  # hate
-    r"oi+", # hi
+    r"oi+",  # hi
     r"ol[aá]",  # hello
     r"ratas?",  # "rat" -- a snitch
     r"(rs)+",  # lol

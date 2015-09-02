@@ -10,6 +10,7 @@ from .util import token_is_word
 def raise_rnf():
     raise RevisionNotFound()
 
+
 class Revision:
     """
     Implements a set of features based on the revision of interest.

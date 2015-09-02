@@ -28,9 +28,11 @@ def test_solve():
     eq_(solve(foobar, context={bar: mybar}), "foobaz")
     eq_(solve(foobar, context={bar: lambda: "baz"}), "foobaz")
 
+
 @raises(RuntimeError)
 def test_unsolveable():
     solve(5)
+
 
 @raises(DependencyLoop)
 def test_dependency_loop():
@@ -39,6 +41,7 @@ def test_dependency_loop():
     my_foo = Dependent("foo", depends_on=[bar])
 
     solve(bar, context={my_foo})
+
 
 def test_expand():
     foo = Dependent("foo", lambda: "foo")
@@ -57,6 +60,7 @@ def test_expand():
     dependents = list(expand([fooderp, foobar]))
     eq_(len(dependents), 5)
     eq_(set(dependents), {derp, fooderp, foo, bar, foobar})
+
 
 def test_dig():
     foo = Dependent("foo", lambda: "foo")
@@ -85,12 +89,14 @@ def test_dig():
     eq_(len(roots), 1)
     eq_(set(roots), {foo})
 
+
 def test_draw():
     foo = Dependent("foo", lambda: "foo")
     bar = Dependent("bar", lambda foo: foo + "bar", dependencies=[foo])
 
-    draw(bar) # Does not throw an error
-    draw(bar, cache={foo: "CACHED"}) # Does not throw an error
+    draw(bar)  # Does not throw an error
+    draw(bar, cache={foo: "CACHED"})  # Does not throw an error
+
 
 @raises(DependencyError)
 def test_not_implemented_error():

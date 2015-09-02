@@ -3,7 +3,6 @@ from collections import namedtuple
 from mw import Timestamp
 from nose.tools import eq_
 
-from ... import languages
 from ...datasources import revision, user
 from ...dependencies import solve
 from ..user import age, is_anon, is_bot
@@ -27,7 +26,8 @@ def test_age():
     eq_(solve(age, cache=cache), 0)
 
     cache = {
-        revision.metadata: FakeRevisionMetadata(10, Timestamp("20140101010101")),
+        revision.metadata: FakeRevisionMetadata(10,
+                                                Timestamp("20140101010101")),
         user.info: FakeUserInfo(None)
     }
     # Makes sure that old users with no registration are counted appropriately.
@@ -41,12 +41,12 @@ def test_age():
     # negative values.
     eq_(solve(age, cache=cache), 0)
 
-
     cache = {
         revision.metadata: FakeRevisionMetadata(10, Timestamp(0)),
         user.info: None
     }
     eq_(solve(age, cache=cache), 0)
+
 
 def test_is_anon():
     FakeRevisionMetadata = namedtuple("FakeRevisionMetadata",
@@ -66,6 +66,7 @@ def test_is_anon():
     }
     assert solve(is_anon, cache=cache)
 
+
 def test_is_bot():
     FakeUserInfo = namedtuple("UserInfo", ['groups'])
 
@@ -78,7 +79,6 @@ def test_is_bot():
         user.info: FakeUserInfo(["foo", "bar"])
     }
     assert not solve(is_bot, cache=cache)
-
 
     cache = {
         user.info: None

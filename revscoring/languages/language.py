@@ -1,6 +1,8 @@
 """
 .. autoclass:: revscoring.languages.language.Language
 """
+
+
 class Language:
     """
     Implements a set of language-specific features.
