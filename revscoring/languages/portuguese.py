@@ -54,7 +54,7 @@ badwords = [
     r"mafia",  # mafia
     r"maldizentes",  # slanderers
     r"mecos",  # cum ???
-    r"mentira",  # lie
+    r"mentir(a|os[oa])s?",  # lie/liar
     r"merdas?",  # shit
     r"noob",  # noob
     r"ot[áa]rios?",  # sucker
@@ -69,7 +69,7 @@ badwords = [
     r"porra",  # cum
     r"pum",  # fart
     r"punhet(a|eiro)",  # jack off / masturbate
-    r"put(o|a|aria|eiro|inha)s?",  # hooker
+    r"put(o|a|aria|eiro|inha)s?",  # bitch/hooker
     r"safado",  # shameless
     r"tesão",  # turn-on / horny
     r"tran[sz]ar",  # sex
