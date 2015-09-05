@@ -51,4 +51,4 @@ Language support:
 
     Example: *TODO*
 """
-__version__ = "0.4.10"
+__version__ = "0.5.0"
