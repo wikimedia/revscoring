@@ -269,9 +269,7 @@ class APIExtractor(Extractor):
         if len(docs) == 1:
             return docs[0]
         else:
-            raise RevisionNotFound(
-                {'page_id': revision_metadata.page_id}
-            )
+            return None
 
     def process_user_doc(self, revision_metadata):
         logger.info("Requesting user info ({0}) from the API"
