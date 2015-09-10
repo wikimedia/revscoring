@@ -246,7 +246,7 @@ class APIExtractor(Extractor):
         logger.info("Requesting a revision ({0}) from the API".format(rev_id))
         props = {'ids', 'user', 'timestamp', 'userid', 'comment',
                  'content', 'flags', 'size'}
-        return self.get_rev_doc_map([rev_id])[rev_id]
+        return self.get_rev_doc_map([rev_id], props=props).get(rev_id)
 
     def process_parent_revision_doc(self, revision_metadata):
         props = {'ids', 'user', 'timestamp', 'userid', 'comment',
@@ -254,12 +254,9 @@ class APIExtractor(Extractor):
         if revision_metadata.parent_id is not None and \
                 revision_metadata.parent_id > 0:
             rev_id = revision_metadata.parent_id
-            try:
-                logger.info("Requesting a parent revision ({0}) from the API"
-                            .format(rev_id))
-                return self.get_rev_doc_map([rev_id], props=props)[rev_id]
-            except KeyError:
-                return None
+            logger.info("Requesting a parent revision ({0}) from the API"
+                        .format(rev_id))
+            return self.get_rev_doc_map([rev_id], props=props).get(rev_id)
         else:
             return None
 
@@ -309,18 +306,10 @@ class APIExtractor(Extractor):
     def process_user_doc(self, revision_metadata):
         logger.info("Requesting user info ({0}) from the API"
                     .format(revision_metadata.user_text))
-        user_docs = self.session.users.query(
-            users={revision_metadata.user_text},
-            properties={'blockinfo', 'implicitgroups', 'groups',
-                        'registration', 'emailable', 'editcount', 'gender'}
-        )
 
-        user_docs = list(user_docs)
+        user_name = revision_metadata.user_text
+        return self.get_user_doc_map([user_name]).get(user_name)
 
-        if len(user_docs) >= 1:
-            return user_docs[0]
-        else:
-            return None
 
     @classmethod
     def process_revision_metadata(cls, revision_doc):
