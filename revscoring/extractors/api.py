@@ -227,9 +227,7 @@ class APIExtractor(Extractor):
         logger.info("Batch requesting {0} users from the API"
                     .format(len(user_texts)))
         return {ud['name']: ud
-                for ud in self.query_users_by_text(
-                    users=user_texts,
-                    usprop=props)}
+                for ud in self.query_users_by_text(user_texts, usprop=props)}
 
     def query_users_by_text(self, user_texts, batch=50, **params):
         user_texts_iter = iter(user_texts)

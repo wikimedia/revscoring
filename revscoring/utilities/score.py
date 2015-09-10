@@ -32,8 +32,7 @@ def main(argv=None):
 
     model = MLScorerModel.load(open(args['<model-file>'], 'rb'))
 
-    extractor = APIExtractor(mwapi.Session(args['--host']),
-                             language=model.language)
+    extractor = APIExtractor(mwapi.Session(args['--host']))
 
     rev_ids = [int(rev_id) for rev_id in args['<rev_id>']]
 
