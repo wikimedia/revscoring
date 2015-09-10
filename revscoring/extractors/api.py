@@ -27,14 +27,14 @@ site_doc = Datasource("site.doc")
 
 class APIExtractor(Extractor):
     """
-    Implements a :class:`~revscoring.extractor.extractor.Extractor` using a
+    Implements a :class:`~revscoring.Extractor` using a
     MediaWiki API.
 
     :Parameters:
-        session : :class:`mw.api.Session`
+        session : :class:`mwapi.Session`
             An API session to use
         context : `dict` | `iterable`
-            A collection of :class:`~revscoring.dependencies.dependent.Dependent` to
+            A collection of :class:`~revscoring.Dependent` to
             inject when extracting.
         cache : `dict`
             A collection of pre-computed values to inject when extracting
@@ -309,7 +309,6 @@ class APIExtractor(Extractor):
 
         user_name = revision_metadata.user_text
         return self.get_user_doc_map([user_name]).get(user_name)
-
 
     @classmethod
     def process_revision_metadata(cls, revision_doc):

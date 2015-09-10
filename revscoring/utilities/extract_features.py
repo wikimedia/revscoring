@@ -36,6 +36,7 @@ import docopt
 
 import mwapi
 
+from ..errors import RevisionNotFound
 from ..extractors import APIExtractor
 from .util import encode, import_from_path
 
@@ -46,7 +47,7 @@ def main(argv=None):
     features = import_from_path(args['<features>'])
 
     session = mwapi.Session(args['--host'],
-                          user_agent="Revscoring feature extractor utility")
+                            user_agent="Revscoring feature extractor utility")
     extractor = APIExtractor(session)
 
     if args['--rev-labels'] == "<stdin>":
@@ -83,15 +84,19 @@ def run(rev_labels, value_labels, features, extractor, verbose=False):
 
         try:
             values = extractor.extract(rev_id, features)
-            sys.stderr.write(".")
-            sys.stderr.flush()
 
             value_labels.write("\t".join(encode(v)
                                          for v in list(values) + [label]))
             value_labels.write("\n")
+
+            sys.stderr.write(".")
+            sys.stderr.flush()
         except KeyboardInterrupt:
             sys.stderr.write("^C detected.  Shutting down.\n")
             break
+        except RevisionNotFound:
+            sys.stderr.write("?")
+            sys.stderr.flush()
         except Exception:
             sys.stderr.write(traceback.format_exc() + "\n")
 
