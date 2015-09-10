@@ -1,4 +1,4 @@
-from mw import Timestamp
+from mwtypes import Timestamp
 
 from . import modifiers
 from ..datasources import parent_revision, revision

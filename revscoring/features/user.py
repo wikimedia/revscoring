@@ -1,4 +1,4 @@
-from mw import Timestamp
+from mwtypes import Timestamp
 
 from ..datasources import revision, user
 from .feature import Feature

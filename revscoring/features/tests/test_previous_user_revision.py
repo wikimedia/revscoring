@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from mw import Timestamp
+from mwtypes import Timestamp
 from nose.tools import eq_
 
 from ...datasources import previous_user_revision, revision

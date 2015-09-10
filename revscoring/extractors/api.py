@@ -3,8 +3,11 @@
 """
 import logging
 from collections import defaultdict
+from itertools import islice
 
-from mw import Namespace, Timestamp, api
+from mwtypes import Namespace, Timestamp
+
+import mwapi
 
 from .. import dependencies
 from ..datasources import (Datasource, RevisionMetadata, UserInfo,
@@ -31,7 +34,7 @@ class APIExtractor(Extractor):
         session : :class:`mw.api.Session`
             An API session to use
         context : `dict` | `iterable`
-            A collection of `~revscoring.dependencies.dependent.Dependent` to
+            A collection of :class:`~revscoring.dependencies.dependent.Dependent` to
             inject when extracting.
         cache : `dict`
             A collection of pre-computed values to inject when extracting
@@ -178,11 +181,11 @@ class APIExtractor(Extractor):
 
     def get_namespace_map(self):
         logger.info("Requesting site info from the API")
-        doc = self.session.site_info.query(
-            properties={'general', 'namespaces', 'namespacealiases'}
-        )
+        doc = self.session.get(
+            action="query", meta="siteinfo",
+            siprop={'general', 'namespaces', 'namespacealiases'})
 
-        return self.namespace_map_from_doc(doc)
+        return self.namespace_map_from_doc(doc['query'])
 
     def get_rev_doc_map(self, rev_ids, props={'ids', 'user', 'timestamp',
                                               'userid', 'comment', 'content',
@@ -192,9 +195,27 @@ class APIExtractor(Extractor):
         logger.info("Batch requesting {0} revisions from the API"
                     .format(len(rev_ids)))
         return {rd['revid']: rd
-                for rd in self.session.revisions.query(
+                for rd in self.query_revisions_by_revids(
                     revids=rev_ids,
-                    properties=props)}
+                    rvprop=props)}
+
+    def query_revisions_by_revids(self, revids, batch=50, **params):
+        revids_iter = iter(revids)
+        while True:
+            batch_ids = list(islice(revids_iter, 0, batch))
+            if len(batch_ids) == 0:
+                break
+            else:
+                doc = self.session.get(action='query', prop='revisions',
+                                       revids=batch_ids, **params)
+
+                for page_doc in doc['query'].get('pages', {}).values():
+                    page_meta = {k: v for k, v in page_doc.items()
+                                 if k != 'revisions'}
+                    if 'revisions' in page_doc:
+                        for revision_doc in page_doc['revisions']:
+                            revision_doc['page'] = page_meta
+                            yield revision_doc
 
     def get_user_doc_map(self, user_texts, props={'blockinfo',
                                                   'implicitgroups',
@@ -206,15 +227,28 @@ class APIExtractor(Extractor):
         logger.info("Batch requesting {0} users from the API"
                     .format(len(user_texts)))
         return {ud['name']: ud
-                for ud in self.session.users.query(
+                for ud in self.query_users_by_text(
                     users=user_texts,
-                    properties=props)}
+                    usprop=props)}
+
+    def query_users_by_text(self, user_texts, batch=50, **params):
+        user_texts_iter = iter(user_texts)
+        while True:
+            batch_texts = list(islice(user_texts_iter, 0, batch))
+            if len(batch_texts) == 0:
+                break
+            else:
+                doc = self.session.get(action='query', list='users',
+                                       ucusers=batch_texts, **params)
+
+                for user_doc in doc['query'].get('users', []):
+                    yield revision_doc
 
     def process_revision_doc(self, rev_id):
         logger.info("Requesting a revision ({0}) from the API".format(rev_id))
         props = {'ids', 'user', 'timestamp', 'userid', 'comment',
                  'content', 'flags', 'size'}
-        return self.session.revisions.get(rev_id=rev_id, properties=props)
+        return self.get_rev_doc_map([rev_id])[rev_id]
 
     def process_parent_revision_doc(self, revision_metadata):
         props = {'ids', 'user', 'timestamp', 'userid', 'comment',
@@ -225,10 +259,7 @@ class APIExtractor(Extractor):
             try:
                 logger.info("Requesting a parent revision ({0}) from the API"
                             .format(rev_id))
-                return self.session.revisions.get(
-                    rev_id=rev_id,
-                    properties=props
-                )
+                return self.get_rev_doc_map([rev_id], props=props)[rev_id]
             except KeyError:
                 return None
         else:
@@ -238,17 +269,20 @@ class APIExtractor(Extractor):
         if revision_metadata.user_text is not None:
             logger.info("Requesting previous user revision ({0}) from the API"
                         .format(revision_metadata.user_text))
-            docs = self.session.user_contribs.query(
-                user={revision_metadata.user_text},
-                properties={'ids', 'timestamp'},
-                limit=1,
-                direction="older",
-                start=revision_metadata.timestamp-1
+            doc = self.session.get(
+                action="query",
+                list="usercontribs",
+                ucuser=revision_metadata.user_text,
+                upprop={'ids', 'timestamp'},
+                uclimit=1,
+                ucdir="older",
+                ucstart=str(revision_metadata.timestamp-1)
             )
-            docs = list(docs)
 
-            if len(docs) > 0:
-                return docs[0]
+            rev_docs = doc['query']['usercontribs']
+
+            if len(rev_docs) > 0:
+                return rev_docs[0]
             else:
                 return None
         else:
@@ -257,17 +291,20 @@ class APIExtractor(Extractor):
     def process_page_creation_doc(self, revision_metadata):
         logger.info("Requesting page creation ({0}) from the API"
                     .format(revision_metadata.page_id))
-        docs = self.session.revisions.query(
-            pageids={revision_metadata.page_id},
-            direction="newer",
-            limit=1,
-            properties={'ids', 'user', 'timestamp', 'userid', 'comment',
-                        'flags', 'size'}
+        doc = self.session.get(
+            action="query",
+            prop="revisions",
+            pageids=revision_metadata.page_id,
+            rvdir="newer",
+            rvlimit=1,
+            rvprop={'ids', 'user', 'timestamp', 'userid', 'comment',
+                    'flags', 'size'}
         )
-        docs = list(docs)
+        page_doc = doc['query'].get('pages', {'revisions': []}).values()
+        rev_docs = page_doc['revisions']
 
-        if len(docs) == 1:
-            return docs[0]
+        if len(rev_docs) == 1:
+            return rev_docs[0]
         else:
             return None
 
@@ -368,7 +405,7 @@ class APIExtractor(Extractor):
 
         namespace_map = {}
         for ns_doc in site_doc.get('namespaces', {}).values():
-            namespace = Namespace.from_doc(ns_doc, aliases=alias_map)
+            namespace = namespace_from_doc(ns_doc, aliases=alias_map)
             namespace_map[namespace.id] = namespace
 
         return namespace_map
@@ -377,7 +414,14 @@ class APIExtractor(Extractor):
     def from_config(cls, config, name, section_key="extractors"):
         logger.info("Loading APIExtractor '{0}' from config.".format(name))
         section = config[section_key][name]
-        session = api.Session(section['url'],
-                              user_agent=section['user_agent'])
+        return cls(mwapi.Session(**section))
 
-        return cls(session)
+
+def namespace_from_doc(doc, aliases=None):
+    aliases = {}
+    return Namespace(doc['id'],
+                     doc['*'],
+                     canonical=doc.get('canonical'),
+                     aliases=set(aliases.get(doc['id'], [])),
+                     case=doc['case'],
+                     content='content' in doc)

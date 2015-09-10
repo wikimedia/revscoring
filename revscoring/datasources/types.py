@@ -3,7 +3,7 @@
 
 .. autoclass:: UserInfo
 """
-from mw import Timestamp
+from mwtypes import Timestamp
 
 
 class RevisionMetadata:

@@ -14,14 +14,14 @@
 
     Usage:
         extract_features -h | --help
-        extract_features <features> --api=<url> [--rev-labels=<path>]
-                                                [--value-labels=<path>]
-                                                [--verbose]
+        extract_features <features> --host=<url> [--rev-labels=<path>]
+                                                 [--value-labels=<path>]
+                                                 [--verbose]
 
     Options:
         -h --help                Print this documentation
         <features>               Classpath to a list/tuple of features
-        --api=<url>              The url pointing to a MediaWiki API to use
+        --host=<url>             The url pointing to a MediaWiki API to use
                                  for extracting features
         --rev-labels=<path>      Path to a file containing rev_id-label pairs
                                  [default: <stdin>]
@@ -33,7 +33,8 @@ import sys
 import traceback
 
 import docopt
-from mw import api
+
+import mwapi
 
 from ..extractors import APIExtractor
 from .util import encode, import_from_path
@@ -44,7 +45,7 @@ def main(argv=None):
 
     features = import_from_path(args['<features>'])
 
-    session = api.Session(args['--api'],
+    session = mwapi.Session(args['--host'],
                           user_agent="Revscoring feature extractor utility")
     extractor = APIExtractor(session)
 
