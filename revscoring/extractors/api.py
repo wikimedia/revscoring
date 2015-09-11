@@ -400,7 +400,8 @@ class APIExtractor(Extractor):
     def from_config(cls, config, name, section_key="extractors"):
         logger.info("Loading APIExtractor '{0}' from config.".format(name))
         section = config[section_key][name]
-        return cls(mwapi.Session(**section))
+        kwargs = {k: v for k, v in section.items() if k != "class"}
+        return cls(mwapi.Session(**kwargs))
 
 
 def namespace_from_doc(doc, aliases=None):
