@@ -239,7 +239,7 @@ class APIExtractor(Extractor):
                                        ususers=batch_texts, **params)
 
                 for user_doc in doc['query'].get('users', []):
-                    yield revision_doc
+                    yield user_doc
 
     def process_revision_doc(self, rev_id):
         logger.info("Requesting a revision ({0}) from the API".format(rev_id))
