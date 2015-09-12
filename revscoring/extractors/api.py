@@ -5,9 +5,8 @@ import logging
 from collections import defaultdict
 from itertools import islice
 
-from mwtypes import Namespace, Timestamp
-
 import mwapi
+from mwtypes import Namespace, Timestamp
 
 from .. import dependencies
 from ..datasources import (Datasource, RevisionMetadata, UserInfo,
@@ -237,7 +236,7 @@ class APIExtractor(Extractor):
                 break
             else:
                 doc = self.session.get(action='query', list='users',
-                                       ucusers=batch_texts, **params)
+                                       ususers=batch_texts, **params)
 
                 for user_doc in doc['query'].get('users', []):
                     yield revision_doc
