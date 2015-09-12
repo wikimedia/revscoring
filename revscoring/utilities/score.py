@@ -6,12 +6,12 @@
 
     Usage:
         score (-h | --help)
-        score <model-file> <rev_id>... --api=<uri> [--verbose]
+        score <model-file> <rev_id>... --host=<uri> [--verbose]
 
     Options:
         -h --help      Print this documentation
         <model-file>   Path to a model file
-        --api=<url>    The url pointing to a MediaWiki API to use for
+        --host=<url>   The url pointing to a MediaWiki API to use for
                        extracting features
         --verbose      Print debugging info
         <rev_id>       A revision identifier
@@ -20,7 +20,8 @@ import json
 import logging
 
 import docopt
-from mw import api
+
+import mwapi
 
 from ..extractors import APIExtractor
 from ..scorer_models import MLScorerModel
@@ -31,8 +32,7 @@ def main(argv=None):
 
     model = MLScorerModel.load(open(args['<model-file>'], 'rb'))
 
-    extractor = APIExtractor(api.Session(args['--api']),
-                             language=model.language)
+    extractor = APIExtractor(mwapi.Session(args['--host']))
 
     rev_ids = [int(rev_id) for rev_id in args['<rev_id>']]
 

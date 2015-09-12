@@ -1,4 +1,4 @@
-from mw import Timestamp
+from mwtypes import Timestamp
 from nose.tools import eq_
 
 from .. import api
@@ -138,8 +138,10 @@ def test_from_config():
     config = {
         'extractors': {
             'enwiki': {
-                'url': 'https://en.wikipedia.org/w/api.php',
-                'user_agent': 'revscoring tests'
+                'host': "https://en.wikipedia.org",
+                'api_path': "/w/api.php",
+                'timeout': 20,
+                'user_agent': "revscoring tests"
             }
         }
     }
