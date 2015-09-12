@@ -12,7 +12,7 @@ def test_content():
 
     cache = {revision.text: "This is a foobar {{foobar}} <td>"}
     eq_(solve(revision.content_tokens, cache=cache),
-        ["This", " ", "is", " ", "a", " ", "foobar", "  ", "<td>"])
+        ["This", " ", "is", " ", "a", " ", "foobar", "  "])
 
 
 def test_headings():
