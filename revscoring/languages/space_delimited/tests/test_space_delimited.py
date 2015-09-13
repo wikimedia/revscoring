@@ -1,6 +1,7 @@
 import pickle
 from collections import namedtuple
 
+import enchant
 from nose.tools import eq_
 
 from ....datasources import parent_revision, revision
@@ -76,7 +77,7 @@ def test_infonoise():
 
 def test_misspellings():
     Dictionary = namedtuple("Dictionary", ["check"])
-    dictionary = Dictionary(lambda w: w != "misspelled")  # First char
+    dictionary = Dictionary(lambda w: w != "misspelled")
 
     sd = SpaceDelimited("fake", dictionary=dictionary)
 
@@ -90,6 +91,17 @@ def test_misspellings():
 
     cache = {parent_revision.text: None}
     eq_(solve(sd.parent_revision.misspellings_list, cache=cache), [])
+
+
+def test_utf16_issue():
+    dictionary = enchant.Dict('en')
+
+    sd = SpaceDelimited("fake", dictionary=dictionary)
+
+    cache = {revision.text: "𐎤𐎢𐎽𐎢𐏁"}
+    eq_(solve(sd.revision.misspellings_list, cache=cache), ["𐎤𐎢𐎽𐎢𐏁"])
+
+
 
 BADWORDS = [r"bad(words)?"]
 Dictionary = namedtuple("Dictionary", ["check"])

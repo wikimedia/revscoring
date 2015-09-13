@@ -4,7 +4,7 @@ from ...features import Feature
 from ..meta.infonoise import Infonoise
 from ..meta.regex_extractors import TextRegexExtractor
 from ..meta.token_filter import TokenFilter
-from .util import token_is_word
+from .util import token_is_word, utf16_cleanup
 
 
 def raise_rnf():
@@ -137,7 +137,7 @@ class Revision:
             """
 
     def in_dictionary(self, word):
-        return self.language.resources.dictionary.check(str(word))
+        return self.language.resources.dictionary.check(utf16_cleanup(word))
 
     def not_in_dictionary(self, word):
-        return not self.language.resources.dictionary.check(str(word))
+        return not self.in_dictionary(word)
