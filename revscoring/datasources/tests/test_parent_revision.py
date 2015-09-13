@@ -26,4 +26,4 @@ def test_content():
 
     cache = {parent_revision.text: "This is a foobar {{foobar}} <td>"}
     eq_(solve(parent_revision.content_tokens, cache=cache),
-        ["This", " ", "is", " ", "a", " ", "foobar", "  ", "<td>"])
+        ["This", " ", "is", " ", "a", " ", "foobar", "  "])
