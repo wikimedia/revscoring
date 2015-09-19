@@ -16,7 +16,7 @@
         extract_features -h | --help
         extract_features <features> --host=<url> [--rev-labels=<path>]
                                                  [--value-labels=<path>]
-                                                 [--verbose]
+                                                 [--verbose] [--debug]
 
     Options:
         -h --help                Print this documentation
@@ -27,7 +27,8 @@
                                  [default: <stdin>]
         --value-labels=<path>    Path to a file to write feature-labels to
                                  [default: <stdout>]
-        --verbose                Print logging information
+        --verbose                Print dots and stuff
+        --debug                  Print debug logging
 """
 import logging
 import sys
@@ -65,8 +66,9 @@ def main(argv=None):
         value_labels = open(args['--value-labels'], 'w')
 
     verbose = args['--verbose']
+    debug = args['--debug']
 
-    run(rev_labels, value_labels, features, extractor, verbose)
+    run(rev_labels, value_labels, features, extractor, verbose, debug)
 
 
 def read_rev_labels(f):
@@ -80,9 +82,9 @@ def read_rev_labels(f):
         yield int(rev_id), label
 
 
-def run(rev_labels, value_labels, features, extractor, verbose=False):
+def run(rev_labels, value_labels, features, extractor, verbose, debug):
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.WARNING if not debug else logging.DEBUG,
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
 
@@ -98,8 +100,9 @@ def run(rev_labels, value_labels, features, extractor, verbose=False):
             for (error, values), (rev_id, label) in error_values_label:
                 try:
                     if isinstance(error, RevisionNotFound):
-                        sys.stderr.write("?")
-                        sys.stderr.flush()
+                        if verbose:
+                            sys.stderr.write("?")
+                            sys.stderr.flush()
                     elif error is not None:
                         logger.error("An error occured while processing {0}:"
                                      .format(rev_id))
@@ -112,9 +115,13 @@ def run(rev_labels, value_labels, features, extractor, verbose=False):
                                                      for v in fields))
                         value_labels.write("\n")
 
-                        sys.stderr.write(".")
-                        sys.stderr.flush()
+                        if verbose:
+                            sys.stderr.write(".")
+                            sys.stderr.flush()
 
                 except KeyboardInterrupt:
                     sys.stderr.write("^C detected.  Shutting down.\n")
                     break
+
+    if verbose:
+        sys.stderr.write("\n")
