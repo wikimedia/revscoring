@@ -29,16 +29,20 @@
                                  [default: <stdout>]
         --verbose                Print logging information
 """
+import logging
 import sys
-import traceback
+from itertools import islice
 
 import docopt
-
 import mwapi
 
 from ..errors import RevisionNotFound
 from ..extractors import APIExtractor
 from .util import encode, import_from_path
+
+logger = logging.getLogger(__name__)
+
+BATCH_SIZE = 50
 
 
 def main(argv=None):
@@ -77,27 +81,40 @@ def read_rev_labels(f):
 
 
 def run(rev_labels, value_labels, features, extractor, verbose=False):
-    # if verbose: logging.basicConfig(level=logging.DEBUG)
-    # This is far too verbose.
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
+    )
 
-    for rev_id, label in rev_labels:
-
-        try:
-            values = extractor.extract(rev_id, features)
-
-            value_labels.write("\t".join(encode(v)
-                                         for v in list(values) + [label]))
-            value_labels.write("\n")
-
-            sys.stderr.write(".")
-            sys.stderr.flush()
-        except KeyboardInterrupt:
-            sys.stderr.write("^C detected.  Shutting down.\n")
+    while True:
+        batch_rev_labels = list(islice(rev_labels, BATCH_SIZE))
+        if len(batch_rev_labels) == 0:
             break
-        except RevisionNotFound:
-            sys.stderr.write("?")
-            sys.stderr.flush()
-        except Exception:
-            sys.stderr.write(traceback.format_exc() + "\n")
+        else:
+            rev_ids, labels = zip(*batch_rev_labels)
 
-    sys.stderr.write("\n")
+            error_values_label = zip(extractor.extract(rev_ids, features),
+                                     batch_rev_labels)
+            for (error, values), (rev_id, label) in error_values_label:
+                try:
+                    if isinstance(error, RevisionNotFound):
+                        sys.stderr.write("?")
+                        sys.stderr.flush()
+                    elif error is not None:
+                        logger.error("An error occured while processing {0}:"
+                                     .format(rev_id))
+                        logger.error("\t{0}: {1}"
+                                     .format(error.__class__.__name__,
+                                             str(error)))
+                    else:
+                        fields = list(values) + [label]
+                        value_labels.write("\t".join(encode(v)
+                                                     for v in fields))
+                        value_labels.write("\n")
+
+                        sys.stderr.write(".")
+                        sys.stderr.flush()
+
+                except KeyboardInterrupt:
+                    sys.stderr.write("^C detected.  Shutting down.\n")
+                    break
