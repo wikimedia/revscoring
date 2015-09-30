@@ -92,36 +92,36 @@ def run(rev_labels, value_labels, features, extractor, verbose, debug):
         batch_rev_labels = list(islice(rev_labels, BATCH_SIZE))
         if len(batch_rev_labels) == 0:
             break
-        else:
-            rev_ids, labels = zip(*batch_rev_labels)
 
-            error_values_label = zip(extractor.extract(rev_ids, features),
-                                     batch_rev_labels)
-            for (error, values), (rev_id, label) in error_values_label:
-                try:
-                    if isinstance(error, RevisionNotFound):
-                        if verbose:
-                            sys.stderr.write("?")
-                            sys.stderr.flush()
-                    elif error is not None:
-                        logger.error("An error occured while processing {0}:"
-                                     .format(rev_id))
-                        logger.error("\t{0}: {1}"
-                                     .format(error.__class__.__name__,
-                                             str(error)))
-                    else:
-                        fields = list(values) + [label]
-                        value_labels.write("\t".join(encode(v)
-                                                     for v in fields))
-                        value_labels.write("\n")
+        rev_ids, labels = zip(*batch_rev_labels)
 
-                        if verbose:
-                            sys.stderr.write(".")
-                            sys.stderr.flush()
+        error_values_label = zip(extractor.extract(rev_ids, features),
+                                 batch_rev_labels)
+        for (error, values), (rev_id, label) in error_values_label:
+            try:
+                if isinstance(error, RevisionNotFound):
+                    if verbose:
+                        sys.stderr.write("?")
+                        sys.stderr.flush()
+                elif error is not None:
+                    logger.error("An error occured while processing {0}:"
+                                 .format(rev_id))
+                    logger.error("\t{0}: {1}"
+                                 .format(error.__class__.__name__,
+                                         str(error)))
+                else:
+                    fields = list(values) + [label]
+                    value_labels.write("\t".join(encode(v)
+                                                 for v in fields))
+                    value_labels.write("\n")
 
-                except KeyboardInterrupt:
-                    sys.stderr.write("^C detected.  Shutting down.\n")
-                    break
+                    if verbose:
+                        sys.stderr.write(".")
+                        sys.stderr.flush()
+
+            except KeyboardInterrupt:
+                sys.stderr.write("^C detected.  Shutting down.\n")
+                break
 
     if verbose:
         sys.stderr.write("\n")
