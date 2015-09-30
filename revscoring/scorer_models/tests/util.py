@@ -59,7 +59,7 @@ def pickle_and_unpickle(model):
     model.dump(f)
     f.seek(0)  # Rewind the file
     reconstructed_model = MLScorerModel.load(f)
-    eq_([f.name for f in reconstructed_model.features],
-        [f.name for f in model.features])
+    eq_([feature.name for feature in reconstructed_model.features],
+        [feature.name for feature in model.features])
     eq_(type(reconstructed_model), type(model))
     train_score(reconstructed_model)
