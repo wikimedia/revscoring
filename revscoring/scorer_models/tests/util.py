@@ -63,3 +63,9 @@ def pickle_and_unpickle(model):
         [feature.name for feature in model.features])
     eq_(type(reconstructed_model), type(model))
     train_score(reconstructed_model)
+
+
+def get_and_format_info(model):
+
+    assert model.info() is not None
+    print(model.format_info())
