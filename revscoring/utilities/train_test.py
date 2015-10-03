@@ -110,29 +110,10 @@ def run(feature_labels, model_file, scorer_model):
 
     scorer_model.train(train_set)
 
-    stats = scorer_model.test(test_set)
+    scorer_model.test(test_set)
 
-    possible = list(set(actual for _, actual in stats['table'].keys()))
-    possible.sort()
+    sys.stderr.write(scorer_model.format_info())
 
-    sys.stderr.write("Accuracy: {0}\n\n".format(stats['accuracy']))
-    if 'auc' in stats['roc']:
-        sys.stderr.write("ROC-AUC: {0}\n\n".format(stats['roc']['auc']))
-    else:
-        sys.stderr.write("ROC-AUC:\n")
-
-        table_data = [[comparison_label, stats['roc'][comparison_label]['auc']]
-                      for comparison_label in possible]
-        sys.stderr.write(tabulate(table_data))
-        sys.stderr.write("\n\n")
-
-    table_data = []
-
-    for actual in possible:
-        table_data.append([actual] +
-                          [stats['table'].get((predicted, actual), 0)
-                           for predicted in possible])
-    sys.stderr.write(tabulate(table_data, headers=possible))
     sys.stderr.write("\n\n")
 
     scorer_model.dump(model_file)

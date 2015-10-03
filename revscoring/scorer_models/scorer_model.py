@@ -8,12 +8,15 @@
 .. autoclass:: revscoring.scorer_models.scorer_model.ScikitLearnClassifier
     :members:
 """
+import io
 import pickle
 import time
+from datetime import datetime
 from statistics import mean, stdev
 
 import yamlconf
 from sklearn.metrics import auc, roc_curve
+from tabulate import tabulate
 
 from .util import normalize_json
 
@@ -23,7 +26,7 @@ class ScorerModel:
     A model used to score a revision based on a set of features.
     """
 
-    def __init__(self, features, version=None):
+    def __init__(self, features, version=None, stats=None):
         """
         :Parameters:
             features : `list`(`Feature`)
@@ -55,6 +58,18 @@ class ScorerModel:
         """
         raise NotImplementedError()
 
+    def info(self):
+        """
+        Returns a `dict` containing information about the model.
+        """
+        raise NotImplementedError()
+
+    def format_info(self):
+        """
+        Returns a `str` containing information about the model.
+        """
+        raise NotImplementedError()
+
     def _validate_features(self, feature_values):
         """
         Checks the features against provided values to confirm types,
@@ -75,6 +90,21 @@ class ScorerModel:
         for feature_values in values:
             yield (tuple((val-mean)/max(sd, 0.01)
                    for (mean, sd), val in zip(stats, feature_values)))
+
+    @classmethod
+    def load(cls, f):
+        """
+        Reads serialized model information from a file.  Make sure to open
+        the file as a binary stream.
+        """
+        return pickle.load(f)
+
+    def dump(self, f):
+        """
+        Writes serialized model information to a file.  Make sure to open the
+        file as a binary stream.
+        """
+        pickle.dump(self, f)
 
     @classmethod
     def from_config(cls, config, name, section_key='scorer_models'):
@@ -100,13 +130,20 @@ class MLScorerModel(ScorerModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.trained = None
+        self.stats = None
+
+    def __getattr__(self, attr):
+        if attr is "trained":
+            return None
+        else:
+            raise AttributeError(attr)
 
     def train(self, values_labels):
         """
         Trains the model on labeled data.
 
         :Parameters:
-            values_scores : `iterable`((`<values_labels>`, `<label>`))
+            values_scores : `iterable` (( `<feature_values>`, `<label>` ))
                 an iterable of labeled data Where <values_labels> is an ordered
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
@@ -122,7 +159,7 @@ class MLScorerModel(ScorerModel):
         withheld from from train data.
 
         :Parameters:
-            values_labels : `iterable`((`<feature_values>`, `<label>`))
+            values_labels : `iterable` (( `<feature_values>`, `<label>` ))
                 an iterable of labeled data Where <values_labels> is an ordered
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
@@ -131,21 +168,6 @@ class MLScorerModel(ScorerModel):
             A dictionary of test results.
         """
         raise NotImplementedError()
-
-    @classmethod
-    def load(cls, f):
-        """
-        Reads serialized model information from a file.  Make sure to open
-        the file as a binary stream.
-        """
-        return pickle.load(f)
-
-    def dump(self, f):
-        """
-        Writes serialized model information to a file.  Make sure to open the
-        file as a binary stream.
-        """
-        pickle.dump(self, f)
 
     @classmethod
     def from_config(cls, config, name, section_key="scorer_models"):
@@ -164,6 +186,13 @@ class ScikitLearnClassifier(MLScorerModel):
     def __init__(self, features, classifier_model, version=None):
         super().__init__(features, version=version)
         self.classifier_model = classifier_model
+        self.stats = None
+
+    def __getattr__(self, attr):
+        if attr is "stats":
+            return None
+        else:
+            raise AttributeError(attr)
 
     def train(self, values_labels):
         """
@@ -224,22 +253,76 @@ class ScikitLearnClassifier(MLScorerModel):
             * table -- A truth table for classification
             * roc
                 * auc -- The area under the ROC curve
-                * fpr -- A list of false-positive rate values
-                * tpr -- A list of true-positive rate values
-                * thresholds -- Thresholds on the decision function used to
-                                compute fpr and tpr.
-
         """
         values, labels = zip(*values_labels)
 
         scores = [self.score(feature_values) for feature_values in values]
 
-        return {
+        self.stats = {
             'table': self._label_table(scores, labels),
             'accuracy': self.classifier_model.score(values, labels),
             'roc': self._roc_stats(scores, labels,
                                    self.classifier_model.classes_)
         }
+        return self.stats
+
+    def info(self):
+        return normalize_json({
+            'type': self.__class__.__name__,
+            'version': self.version,
+            'trained': self.trained,
+            'stats': self.stats
+        })
+
+    def format_info(self):
+        info = self.info()
+        formatted = io.StringIO()
+        formatted.write("ScikitLearnClassifier\n")
+        formatted.write(" - type: {0}\n".format(info.get('type')))
+        formatted.write(" - version: {0}\n".format(info.get('version')))
+        if isinstance(info['trained'], float):
+            date_string = datetime.fromtimestamp(info['trained']).isoformat()
+            formatted.write(" - trained: {0}\n".format(date_string))
+        else:
+            formatted.write(" - trained: {0}\n".format(info.get('trained')))
+
+        formatted.write("\n")
+        formatted.write(self.format_stats())
+        return formatted.getvalue()
+
+    def format_stats(self):
+        if self.stats is None:
+            return "No stats available"
+        else:
+            formatted = io.StringIO()
+            predicted_actuals = self.stats['table'].keys()
+            possible = list(set(actual for _, actual in predicted_actuals))
+            possible.sort()
+
+            formatted.write("Accuracy: {0}\n\n".format(self.stats['accuracy']))
+            if 'auc' in self.stats['roc']:
+                formatted.write("ROC-AUC: {0}\n\n"
+                                .format(self.stats['roc']['auc']))
+            else:
+                formatted.write("ROC-AUC:\n")
+
+                table_data = [[comparison_label,
+                               self.stats['roc'][comparison_label]['auc']]
+                              for comparison_label in possible]
+                formatted.write(tabulate(table_data))
+                formatted.write("\n\n")
+
+            table_data = []
+
+            for actual in possible:
+                table_data.append(
+                    [actual] +
+                    [self.stats['table'].get((predicted, actual), 0)
+                     for predicted in possible]
+                )
+            formatted.write(tabulate(table_data, headers=possible))
+
+            return formatted.getvalue()
 
     @classmethod
     def _roc_stats(cls, scores, labels, possible_labels):
@@ -265,11 +348,6 @@ class ScikitLearnClassifier(MLScorerModel):
         fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
 
         return {
-            'curve': {
-                'fpr': list(fpr),
-                'tpr': list(tpr),
-                'thresholds': list(thresholds)
-            },
             'auc': auc(fpr, tpr)
         }
 
