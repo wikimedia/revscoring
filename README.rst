@@ -7,105 +7,57 @@ Wikipedia.
 Examples
 ========
 
-Scoring models:
+Using a scorer_model to score a revision:
 
-    .. code-block:: python
-
-        >>> from mw.api import Session
-        >>>
-        >>> from revscoring.extractors import APIExtractor
-        >>> from revscoring.languages import english
-        >>> from revscoring.scorers import MLScorerModel
-        >>>
-        >>> api_session = Session("https://en.wikipedia.org/w/api.php")
-        Sending requests with default User-Agent.  Set 'user_agent' on api.Session to quiet this message.
-        >>> extractor = APIExtractor(api_session, english)
-        >>>
-        >>> filename = "models/reverts.halfak_mix.trained.model"
-        >>> model = MLScorerModel.load(open(filename, 'rb'))
-        >>>
-        >>> rev_ids = [105, 642215410, 638307884]
-        >>> feature_values = [extractor.extract(id, model.features) for id in rev_ids]
-
-        >>> scores = model.score(feature_values, probabilities=True)
-        >>> for rev_id, score in zip(rev_ids, scores):
-        ...     print("{0}: {1}".format(rev_id, score))
-        ...
-        105: {'probabilities': array([ 0.96441465,  0.03558535]), 'prediction': False}
-        642215410: {'probabilities': array([ 0.75884553,  0.24115447]), 'prediction': True}
-        638307884: {'probabilities': array([ 0.98441738,  0.01558262]), 'prediction': False}
-
-Feature extraction:
-
-    .. code-block:: python
-
-        >>> from mw.api import Session
-        >>>
-        >>> from revscoring.extractors import APIExtractor
-        >>> from revscoring.features import diff, parent_revision, revision, user
-        >>>
-        >>> api_extractor = APIExtractor(Session("https://en.wikipedia.org/w/api.php"))
-        Sending requests with default User-Agent.  Set 'user_agent' on api.Session to quiet this message.
-        >>>
-        >>> features = [revision.day_of_week,
-        ...             revision.hour_of_day,
-        ...             revision.has_custom_comment,
-        ...             parent_revision.bytes_changed,
-        ...             diff.chars_added,
-        ...             user.age,
-        ...             user.is_anon,
-        ...             user.is_bot]
-        >>>
-        >>> values = api_extractor.extract(
-        ...     624577024,
-        ...     features
-        ... )
-        >>> for feature, value in zip(features, values):
-        ...     print("{0}: {1}".format(feature, value))
-        ...
-        <revision.day_of_week>: 6
-        <revision.hour_of_day>: 19
-        <revision.has_custom_comment>: True
-        <(revision.bytes - parent_revision.bytes_changed)>: 3
-        <diff.chars_added>: 8
-        <user.age>: 71821407
-        <user.is_anon>: False
-        <user.is_bot>: False
+    >>> import mwapi
+    >>> from revscoring import ScorerModel
+    >>> from revscoring.extractors import APIExtractor
+    >>>
+    >>> with open("models/enwiki.damaging.linear_svc.model") as f:
+    ...     scorer_model = ScorerModel.load(f)
+    ...
+    >>> extractor = APIExtractor(mwapi.Session(host="https://en.wikipedia.org",
+    ...                                        user_agent="revscoring demo"))
+    >>>
+    >>> feature_values = extractor.extract(123456789, scorer_model.features)
+    >>>
+    >>> print(scorer_model.score(feature_values))
+    {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}}
 
 
 Installation
-================
+============
+The easiest way to install `revscoring` is via the Python package installer
+(pip).
 
-Packages
----------
-In order to use this, you need to install a few packages first:
+``pip install revscoring``
 
-You might need to install some other dependencies depending on your operating
-system.  Try using the packages,
+You may find that some of `revscorings` dependencies fail to compile (namely
+`scipy`, `numpy` and `sklearn`).  In that case, you'll need to install some
+dependencies in your operating system.
 
-``sudo apt-get install python3-dev python3-numpy python3-scipy g++ gfortran liblapack-dev libopenblas-dev myspell-pt myspell-fa myspell-en-au myspell-en-gb myspell-en-us myspell-en-za myspell-fr myspell-es hunspell-vi myspell-he``
+Ubuntu & Debian:
+  Run ``sudo apt-get install python3-dev g++ gfortran liblapack-dev libopenblas-dev``
+Windows:
+  'TODO'
+MacOS:
+  'TODO'
 
-If you're on Ubuntu, you might also be able to install an Indonesian dictionary:
+Finally, in order to make use of language features, you'll need to download
+some NLTK data.  The following command will get the necessary corpus.
 
-``sudo apt-get install aspell-id``
+``python -m nltk.downloader stopwords``
 
-Virtualenv users, please note that you'll have to use the --system-site-packages
-option if you install scipy and numpy via apt-get.  You can also use pip3 within
-your virtualenv.
+You'll also need to install [enchant](https://enchant.org) compatible
+dictionaries of the languages you'd like to use.  We recommend the following:
 
-Python modules
-----------------
-If you need the Python package installer,
-
-``sudo easy_install3 pip``
-
-Then, install this module,
-
-``pip3 install --user revscoring``
-
-You'll need to download NLTK data in order to make use of language features.
-
-``python3 -m nltk.downloader stopwords``
+* ``languages.english``:  myspell-en-us myspell-en-gb myspell-en-au
+* ``languages.french``: myspell-fr
+* ``languages.spanish``: myspell-es
+* ``languages.vietnamese``: hunspell-vi
+* ``languages.hebrew``: myspell-he
+* ``languages.portugueses``: myspell-pt
+* ``languages.persian``: myspell-fa
 
 Authors
 =======

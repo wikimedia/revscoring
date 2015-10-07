@@ -1,5 +1,5 @@
 """
-.. autoclass:: revscoring.datasources.datasource.Datasource
+.. autoclass:: revscoring.Datasource
     :member-order:
     :inherited-members:
 """

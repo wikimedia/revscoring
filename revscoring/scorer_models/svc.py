@@ -1,13 +1,15 @@
 """
-.. autoclass:: revscoring.scorer_models.svc.LinearSVC
+A collection of Support Vector Machine type classifier models.
+
+.. autoclass:: revscoring.scorer_models.LinearSVC
     :members:
     :member-order:
 
-.. autoclass:: revscoring.scorer_models.svc.RBFSVC
+.. autoclass:: revscoring.scorer_models.RBFSVC
     :members:
     :member-order:
 
-.. autoclass:: revscoring.scorer_models.svc.SVC
+.. autoclass:: revscoring.scorer_models.SVC
     :members:
     :member-order:
 
@@ -26,7 +28,7 @@ class SVC(ScikitLearnClassifier):
     Implements a Support Vector Classifier model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.Feature`
+        features : `list` ( :class:`revscoring.Feature` )
             The features that the model will be trained on
         version : str
             A version string representing the version of the model
@@ -135,6 +137,7 @@ class SVC(ScikitLearnClassifier):
         # Shuffle the observations again before returning.
         random.shuffle(new_values_labels)
         return new_values_labels
+
 SVCModel = SVC
 "Alias for backwards compatibility"
 
@@ -144,7 +147,7 @@ class LinearSVC(SVC):
     Implements a Support Vector Classifier model with a Linear kernel.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.Feature`
+        features : `list` ( :class:`revscoring.Feature` )
             The features that the model will be trained on
         version : str
             A version string representing the version of the model
@@ -156,6 +159,7 @@ class LinearSVC(SVC):
             raise TypeError("'kernel' is hard-coded to 'linear'. If you'd " +
                             "like to use a different kernel, use SVCModel.")
         super().__init__(*args, kernel="linear", **kwargs)
+
 LinearSVCModel = LinearSVC
 "Alias for backwards compatibility"
 
@@ -165,7 +169,7 @@ class RBFSVC(SVC):
     Implements a Support Vector Classifier model with an RBF kernel.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.Feature`
+        features : `list` ( :class:`revscoring.Feature` )
             The features that the model will be trained on
         version : str
             A version string representing the version of the model
@@ -177,5 +181,6 @@ class RBFSVC(SVC):
             raise TypeError("'kernel' is hard-coded to 'rbf'. If you'd " +
                             "like to use a different kernel, try SVCModel.")
         super().__init__(*args, kernel="rbf", **kwargs)
+
 RBFSVCModel = RBFSVC
 "Alias for backwards compatibility"

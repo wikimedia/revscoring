@@ -2,17 +2,18 @@
 The following functions provide a set of utilities for working with `Dependent`
 and collections of `Dependent`.
 
-* :func:`solve` provides basic dependency solving
-* :func:`expand` provides minimal expansion of dependency trees
-* :func:`dig` provides expansion of "root" dependents -- dependents with no
-  dependencies of their own
-* :func:`draw` provides a means to print a dependency tree to the terminal
-  (useful when debugging)
+* :func:`~revscoring.dependencies.solve` provides basic dependency solving
+* :func:`~revscoring.dependencies.expand` provides minimal expansion of
+  dependency trees
+* :func:`~revscoring.dependencies.dig` provides expansion of "root" dependents
+  -- dependents with no dependencies of their own
+* :func:`~revscoring.dependencies.draw` provides a means to print a dependency
+  tree to the terminal (useful when debugging)
 
-.. autofunction:: solve
-.. autofunction:: expand
-.. autofunction:: dig
-.. autofunction:: draw
+.. autofunction:: revscoring.dependencies.solve
+.. autofunction:: revscoring.dependencies.expand
+.. autofunction:: revscoring.dependencies.dig
+.. autofunction:: revscoring.dependencies.draw
 
 """
 import logging

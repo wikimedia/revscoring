@@ -1,5 +1,5 @@
 """
-.. autoclass:: revscoring.features.Feature
+.. autoclass:: revscoring.Feature
     :members:
 """
 from math import log as math_log

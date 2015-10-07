@@ -1,7 +1,7 @@
 """
 This module contains a collection of utilities for extracting
-:class:`~revscoring.features.feature.Feature` and
-:class:`~revscoring.datasources.datasource.Datasource` for a revision.
+:class:`~revscoring.Feature` and
+:class:`~revscoring.Datasource` for a revision.
 
 api
 +++

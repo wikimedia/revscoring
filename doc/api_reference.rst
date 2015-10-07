@@ -7,7 +7,6 @@ Subpackages
 -----------
 
 .. toctree::
-
     revscoring.dependencies
     revscoring.datasources
     revscoring.extractors

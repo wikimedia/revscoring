@@ -1,10 +1,10 @@
 """
 This module contains a collection of models that implement a simple function:
-:func:`~revscoring.scorer_models.ScorerModel.score`.  Currently, all models are
-a subclass of :class:`~revscoring.scorer_models.scorer_model.MLScorerModel`
+:func:`~revscoring.ScorerModel.score`.  Currently, all models are
+a subclass of :class:`revscoring.scorer_models.MLScorerModel`
 which means that they also implement
-:meth:`~revscoring.scorer_models.scorer_model.MLScorerModel.train` and
-:meth:`~revscoring.scorer_models.scorer_model.MLScorerModel.test` methods.
+:meth:`~revscoring.scorer_models.MLScorerModel.train` and
+:meth:`~revscoring.scorer_models.MLScorerModel.test` methods.
 
 svc
 +++
