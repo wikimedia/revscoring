@@ -30,7 +30,7 @@
         --label-type=<type>     Interprets the labels as the appropriate type
                                 (int, float, str, bool) [default: str]
         --test-prop=<prop>      The proportion of data that should be withheld
-                                for testing the model. [default: 0.40]
+                                for testing the model. [default: 0.20]
 """
 import json
 import random
