@@ -12,6 +12,7 @@
                    [--values-labels=<path>]
                    [--model-file=<path>]
                    [--label-type=<type>]
+                   [--test-prop=<prop>]
 
     Options:
         -h --help               Prints this documentation
@@ -28,6 +29,8 @@
                                 [default: <stdout>]
         --label-type=<type>     Interprets the labels as the appropriate type
                                 (int, float, str, bool) [default: str]
+        --test-prop=<prop>      The proportion of data that should be withheld
+                                for testing the model. [default: 0.40]
 """
 import json
 import random
@@ -70,7 +73,9 @@ def main(argv=None):
                                        scorer_model.features,
                                        decode_label)
 
-    run(feature_labels, model_file, scorer_model)
+    test_prop = float(args['--test-prop'])
+
+    run(feature_labels, model_file, scorer_model, test_prop)
 
 DECODERS = {
     'int': lambda v: int(v),
@@ -99,12 +104,12 @@ def read_value_labels(f, features, decode_label):
         yield feature_values, label
 
 
-def run(feature_labels, model_file, scorer_model):
+def run(feature_labels, model_file, scorer_model, test_prop):
 
     feature_labels = list(feature_labels)
     random.shuffle(feature_labels)
 
-    test_set_size = int(0.6*len(feature_labels))
+    test_set_size = int(len(feature_labels) * test_prop)
     test_set = feature_labels[:test_set_size]
     train_set = feature_labels[test_set_size:]
 
