@@ -34,7 +34,7 @@ def process_parse_tree(revision_text):
 parse_tree = Datasource("parent_revision.parse_tree",
                         process_parse_tree, depends_on=[text])
 """
-Returns a :class:`mwparserfromhell.wikicode.WikiCode` abstract syntax tree
+Returns a :class:`mwparserfromhell.wikicode.Wikicode` abstract syntax tree
 representing the content of the revision.
 """
 

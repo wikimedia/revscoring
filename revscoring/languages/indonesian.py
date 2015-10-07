@@ -152,7 +152,7 @@ sys.modules[__name__] = SpaceDelimited(
     __name__,
     doc="""
 indonesian
-======
+==========
 
 revision
 --------

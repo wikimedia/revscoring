@@ -1,7 +1,7 @@
 """
 Modifiers provide convenient mechanisms for modifying and combining
-:class:`~revscoring.features.Feature` and constant values into new
-:class:`~revscoring.features.Feature`.
+:class:`revscoring.Feature` and constant values into new
+:class:`revscoring.Feature`.
 
 .. autofunction:: revscoring.features.modifiers.log
 

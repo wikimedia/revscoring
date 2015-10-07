@@ -125,7 +125,7 @@ class BinaryOperator(Modifier):
 class add(BinaryOperator):
     """
     Generates a feature that represents the addition of
-    two :class:`~revscoring.features.feature.Feature` or constant values.
+    two :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = "+"
@@ -137,7 +137,7 @@ class add(BinaryOperator):
 class sub(BinaryOperator):
     """
     Generates a feature that represents the subtraction of
-    two :class:`~revscoring.features.feature.Feature` or constant values.
+    two :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = "-"
@@ -149,7 +149,7 @@ class sub(BinaryOperator):
 class mul(BinaryOperator):
     """
     Generates a feature that represents the multiplacation of
-    two :class:`~revscoring.features.feature.Feature` or constant values.
+    two :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = "*"
@@ -161,7 +161,7 @@ class mul(BinaryOperator):
 class div(BinaryOperator):
     """
     Generates a feature that represents the division of
-    two :class:`~revscoring.features.feature.Feature` or constant values.
+    two :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = "/"
@@ -184,7 +184,7 @@ class Comparison(BinaryOperator):
 class gt(Comparison):
     """
     Generates a feature that represents the greater-than relationship of
-    two :class:`~revscoring.features.feature.Feature` or constant values.
+    two :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = ">"
@@ -196,7 +196,7 @@ class gt(Comparison):
 class lt(Comparison):
     """
     Generates a feature that represents the less-than relationship of
-    two :class:`~revscoring.features.feature.Feature` or constant values.
+    two :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = "<"
@@ -208,7 +208,7 @@ class lt(Comparison):
 class ge(Comparison):
     """
     Generates a feature that represents the greater-than-or-equal relationship
-    of two :class:`~revscoring.features.feature.Feature` or constant values.
+    of two :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = ">="
@@ -220,7 +220,7 @@ class ge(Comparison):
 class le(Comparison):
     """
     Generates a feature that represents the less-than-or-equal relationship of
-    two :class:`~revscoring.features.feature.Feature` or constant values.
+    two :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = "<="
@@ -232,7 +232,7 @@ class le(Comparison):
 class eq(Comparison):
     """
     Generates a feature that represents the equality of two
-    :class:`~revscoring.features.feature.Feature` or constant values.
+    :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = "=="
@@ -244,7 +244,7 @@ class eq(Comparison):
 class ne(Comparison):
     """
     Generates a feature that represents the inequality of two
-    :class:`~revscoring.features.feature.Feature` or constant values.
+    :class:`revscoring.Feature` or constant values.
     """
 
     CHAR = "!="
@@ -256,7 +256,7 @@ class ne(Comparison):
 class max(Modifier):
     """
     Generates a feature that represents the maximum of a set of
-    :class:`~revscoring.features.feature.Feature` or constant values.
+    :class:`revscoring.Feature` or constant values.
     """
     def __init__(self, *args):
         dependencies = [Feature.or_constant(arg) for arg in args]
@@ -275,7 +275,7 @@ class max(Modifier):
 class min(Modifier):
     """
     Generates a feature that represents the minimum of a set of
-    :class:`~revscoring.features.feature.Feature` or constant values.
+    :class:`revscoring.Feature` or constant values.
     """
     def __init__(self, *args):
         dependencies = [Feature.or_constant(arg) for arg in args]
@@ -294,7 +294,7 @@ class min(Modifier):
 class log(Modifier):
     """
     Generates a feature that represents the log of a
-    :class:`~revscoring.features.feature.Feature`'s value.
+    :class:`revscoring.Feature`'s value.
     """
     def __init__(self, feature):
         feature = Feature.or_constant(feature)

@@ -98,6 +98,7 @@ Example:
      (<revscoring.languages.spanish.revision.informals>, 0)]
 """
 from .datasources import Datasource
+from .dependencies import Dependent
 from .extractors import Extractor
 from .features import Feature
 from .languages import Language

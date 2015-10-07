@@ -6,20 +6,20 @@ which means that they also implement
 :meth:`~revscoring.scorer_models.MLScorerModel.train` and
 :meth:`~revscoring.scorer_models.MLScorerModel.test` methods.
 
-svc
-+++
+Support Vector Classifiers
+++++++++++++++++++++++++++
 .. automodule:: revscoring.scorer_models.svc
 
-nb
-++
+Naive Bayes Classifiers
++++++++++++++++++++++++
 .. automodule:: revscoring.scorer_models.nb
 
-rf
-++
+Random Forest
++++++++++++++
 .. automodule:: revscoring.scorer_models.rf
 
-scorer_model
-++++++++++++
+Abstract classes
+++++++++++++++++
 .. automodule:: revscoring.scorer_models.scorer_model
 
 

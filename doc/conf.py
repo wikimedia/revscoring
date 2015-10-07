@@ -297,5 +297,9 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None,
                        'https://pythonhosted.org/mwtypes': None,
+                       'https://pythonhosted.org/mwapi': None,
                        'https://pythonhosted.org/deltas': None,
+                       'http://pythonhosted.org/mwparserfromhell/': None,
+                       'http://pythonhosted.org/pyenchant/': None,
+                       'http://www.nltk.org/': None,
                        'http://scikit-learn.org/0.15/': None}

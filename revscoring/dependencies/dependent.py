@@ -1,5 +1,5 @@
 """
-.. autoclass:: revscoring.dependencies.Dependent
+.. autoclass:: revscoring.Dependent
     :members:
 """
 import logging

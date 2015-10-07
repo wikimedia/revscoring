@@ -33,7 +33,7 @@ class SpaceDelimited(Language):
             A list of regexes to be used to match informal words.  Like
             badwords, these regexes will be wrapped in word boundary
             characters.
-        stemmer : :class:`nltk.stem.StemmerI`
+        stemmer : :class:`nltk.stem.api.StemmerI`
             An nltk-based stemmer to be used to remove morphological affixes
             from words.
         stopwords : `set` of `str`

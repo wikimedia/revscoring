@@ -24,4 +24,3 @@ revscoring.errors module
 .. automodule:: revscoring.errors
     :members:
     :undoc-members:
-    :show-inheritance:
