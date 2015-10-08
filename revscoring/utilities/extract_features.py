@@ -52,6 +52,11 @@ BATCH_SIZE = 50
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
 
+    logging.basicConfig(
+        level=logging.WARNING if not args['--debug'] else logging.DEBUG,
+        format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
+    )
+
     features = import_from_path(args['<features>'])
 
     session = mwapi.Session(args['--host'],
