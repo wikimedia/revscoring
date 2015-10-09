@@ -52,6 +52,7 @@ feature
 .. automodule:: revscoring.features.feature
 """
 
-from .feature import Feature
+from .feature import Feature, Modifier, Constant
+from .functions import trim
 
-__all__ = [Feature]
+__all__ = [Feature, Modifier, Constant, trim]
