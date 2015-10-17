@@ -16,6 +16,7 @@
         extract_features -h | --help
         extract_features <features> --host=<url> [--rev-labels=<path>]
                                                  [--value-labels=<path>]
+                                                 [--include-revid]
                                                  [--verbose] [--debug]
 
     Options:
@@ -27,6 +28,8 @@
                                  [default: <stdin>]
         --value-labels=<path>    Path to a file to write feature-labels to
                                  [default: <stdout>]
+        --include-revid          If set, include the revision ID as the first
+                                 column in the output TSV
         --verbose                Print dots and stuff
         --debug                  Print debug logging
 """
@@ -65,10 +68,13 @@ def main(argv=None):
     else:
         value_labels = open(args['--value-labels'], 'w')
 
+    include_revid = bool(args['--include-revid'])
+
     verbose = args['--verbose']
     debug = args['--debug']
 
-    run(rev_labels, value_labels, features, extractor, verbose, debug)
+    run(rev_labels, value_labels, features, extractor, include_revid,
+        verbose, debug)
 
 
 def read_rev_labels(f):
@@ -82,7 +88,8 @@ def read_rev_labels(f):
         yield int(rev_id), label
 
 
-def run(rev_labels, value_labels, features, extractor, verbose, debug):
+def run(rev_labels, value_labels, features, extractor, include_revid,
+        verbose, debug):
     logging.basicConfig(
         level=logging.WARNING if not debug else logging.DEBUG,
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
@@ -111,6 +118,10 @@ def run(rev_labels, value_labels, features, extractor, verbose, debug):
                                          str(error)))
                 else:
                     fields = list(values) + [label]
+
+                    if include_revid:
+                        fields = [rev_id] + fields
+
                     value_labels.write("\t".join(encode(v)
                                                  for v in fields))
                     value_labels.write("\n")
