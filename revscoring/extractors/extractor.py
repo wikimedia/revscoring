@@ -1,5 +1,5 @@
 """
-.. autoclass:: revscoring.extractors.extractor.Extractor
+.. autoclass:: revscoring.Extractor
 """
 
 import logging

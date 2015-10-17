@@ -1,5 +1,7 @@
 """
-.. autoclass:: revscoring.scorer_models.rf.RF
+A collection of Random Forest type classifier models.
+
+.. autoclass:: revscoring.scorer_models.RF
     :members:
     :member-order:
 """
@@ -17,7 +19,7 @@ class RF(ScikitLearnClassifier):
     Implements a Random Forest model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.Feature`
+        features : `list` ( :class:`revscoring.Feature` )
             The features that the model will be trained on
         version : str
             A version string representing the version of the model

@@ -1,12 +1,12 @@
 """
 This module implements a set of
-:class:`~revscoring.datasources.datasource.Datasource`
+:class:`~revscoring.Datasource`
 processors that represent the input data for extracting
-:class:`~revscoring.features.Feature` values.  Just like
-:class:`~revscoring.features.Feature` and other
-:class:'~revscoring.dependencies.dependent.Dependent' processors,
-:class:`~revscoring.datasources.datasource.Datasource` processors are tended to
-be :func:`~revscoring.dependencies.functions.solve`'d as dependencies. The
+:class:`~revscoring.Feature` values.  Just like
+:class:`~revscoring.Feature` and other
+:class:'~revscoring.dependencies.Dependent' processors,
+:class:`~revscoring.Datasource` processors are tended to
+be :func:`~revscoring.dependencies.solve` as dependencies. The
 provided datasources are split conceptually into a set of modules:
 
 * :mod:`revscoring.datasources.diff`

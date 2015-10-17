@@ -1,5 +1,5 @@
 """
-.. autoclass:: revscoring.languages.language.Language
+.. autoclass:: revscoring.Language
 """
 
 

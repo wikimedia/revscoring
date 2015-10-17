@@ -2,17 +2,18 @@
 The following functions provide a set of utilities for working with `Dependent`
 and collections of `Dependent`.
 
-* :func:`solve` provides basic dependency solving
-* :func:`expand` provides minimal expansion of dependency trees
-* :func:`dig` provides expansion of "root" dependents -- dependents with no
-  dependencies of their own
-* :func:`draw` provides a means to print a dependency tree to the terminal
-  (useful when debugging)
+* :func:`~revscoring.dependencies.solve` provides basic dependency solving
+* :func:`~revscoring.dependencies.expand` provides minimal expansion of
+  dependency trees
+* :func:`~revscoring.dependencies.dig` provides expansion of "root" dependents
+  -- dependents with no dependencies of their own
+* :func:`~revscoring.dependencies.draw` provides a means to print a dependency
+  tree to the terminal (useful when debugging)
 
-.. autofunction:: solve
-.. autofunction:: expand
-.. autofunction:: dig
-.. autofunction:: draw
+.. autofunction:: revscoring.dependencies.solve
+.. autofunction:: revscoring.dependencies.expand
+.. autofunction:: revscoring.dependencies.dig
+.. autofunction:: revscoring.dependencies.draw
 
 """
 import logging
@@ -28,17 +29,17 @@ def solve(dependents, context=None, cache=None):
     Calculates a dependent's value by solving dependencies.
 
     :Parameters:
-        dependents : :class:`~revscoring.dependencies.Dependent` | `iterable`
+        dependents : :class:`revscoring.Dependent` | `iterable`
             A dependent or collection of dependents to solve
         context : `dict` | `iterable`
             A mapping of injected dependency processers to use as context.
             Can be specified as a set of new
-            :class:`~revscoring.dependencies.Dependent` or a map of
-            :class:`~revscoring.dependencies.Dependent`
+            :class:`revscoring.Dependent` or a map of
+            :class:`revscoring.Dependent`
             pairs.
         cache : `dict`
             A cache of previously solved dependencies as
-            :class:`~revscoring.dependencies.Dependent`:`<value>` pairs
+            :class:`revscoring.Dependent`:`<value>` pairs
 
     :Returns:
         The result of executing the dependents with all dependencies resolved.
@@ -64,13 +65,13 @@ def expand(dependents, context=None, cache=None):
     Calculates a dependent's value by solving dependencies.
 
     :Parameters:
-        dependents : :class:`~revscoring.dependencies.Dependent` | `iterable`
+        dependents : :class:`revscoring.Dependent` | `iterable`
             A dependent or collection of dependents to solve
         context : `dict` | `iterable`
             A mapping of injected dependency processers to use as context.
             Can be specified as a set of new
-            :class:`~revscoring.dependencies.Dependent` or a map of
-            :class:`~revscoring.dependencies.Dependent` pairs.
+            :class:`revscoring.Dependent` or a map of
+            :class:`revscoring.Dependent` pairs.
         cache : `dict`
             A cache of previously solved dependencies as `Dependent`:`<value>`
             pairs
@@ -94,16 +95,16 @@ def expand(dependents, context=None, cache=None):
 def draw(dependent, context=None, cache=None, depth=0):
     """
     Returns a string representation of the the dependency tree for a single
-    :class:`~revscoring.dependencies.Dependent`.
+    :class:`revscoring.Dependent`.
 
     :Parameters:
-        dependent : :class:`~revscoring.dependencies.Dependent`
+        dependent : :class:`revscoring.Dependent`
             The dependent to draw the dependencies for.
         context : `dict` | `iterable`
             A mapping of injected dependency processers to use as context.
             Can be specified as a set of
-            :class:`~revscoring.dependencies.Dependent` or a map of
-            :class:`~revscoring.dependencies.Dependent` pairs.
+            :class:`revscoring.Dependent` or a map of
+            :class:`revscoring.Dependent` pairs.
         cache : `dict` | `set`
             A cache of previously solved dependencies as `Dependent`:`<value>`
             pairs.  When these items are reached while scanning the tree,
@@ -137,17 +138,17 @@ def draw_lines(dependent, context, cache, depth):
 def dig(dependents, context=None, cache=None):
     """
     Expands root dependencies.  These are dependents at the bottom of the tree
-    -- :class:`~revscoring.dependencies.Dependent` with no dependencies of
+    -- :class:`revscoring.Dependent` with no dependencies of
     their own.
 
     :Parameters:
-        dependents : :class:`~revscoring.dependencies.Dependent` | `iterable`
+        dependents : :class:`revscoring.Dependent` | `iterable`
             A dependent or collection of dependents to scan
         context : `dict` | `iterable`
             A mapping of injected dependency processers to use as context.
             Can be specified as a set of new
-            :class:`~revscoring.dependencies.Dependent` or a map of
-            :class:`~revscoring.dependencies.Dependent`
+            :class:`revscoring.Dependent` or a map of
+            :class:`revscoring.Dependent`
             pairs.
         cache : `dict` | `set`
             A cache of previously solved dependencies to not scan beneath
@@ -171,8 +172,8 @@ def normalize_context(context):
     """
     Normalizes a context argument.  This allows for context to be specified
     either as a collection of contextual
-    :class:`~revscoring.dependencies.Dependent` or a `dict` of
-    :class:`~revscoring.dependencies.Dependent` pairs.
+    :class:`revscoring.Dependent` or a `dict` of
+    :class:`revscoring.Dependent` pairs.
     """
     if context is None:
         return {}

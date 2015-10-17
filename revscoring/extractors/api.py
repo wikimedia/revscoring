@@ -26,14 +26,14 @@ site_doc = Datasource("site.doc")
 
 class APIExtractor(Extractor):
     """
-    Implements a :class:`~revscoring.Extractor` using a
+    Implements a :class:`revscoring.Extractor` using a
     MediaWiki API.
 
     :Parameters:
         session : :class:`mwapi.Session`
             An API session to use
         context : `dict` | `iterable`
-            A collection of :class:`~revscoring.Dependent` to
+            A collection of :class:`revscoring.Dependent` to
             inject when extracting.
         cache : `dict`
             A collection of pre-computed values to inject when extracting

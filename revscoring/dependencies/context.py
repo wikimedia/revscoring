@@ -14,7 +14,8 @@ class Context:
             A set of dependents to be used in place of those already
             provided when solving dependencies.
         cache : dict
-            A cache of computed values to use for every call to `solve()`
+            A cache of computed values to use for every call to
+            :func:`revscoring.dependencies.solve`
     """
     def __init__(self, context=None, cache=None):
         self.cache = cache or {}
@@ -31,7 +32,7 @@ class Context:
         """
         Solves an iterable of dependents within the context.
 
-        See :func:`~revscoring.dependencies.functions.solve` for call
+        See :func:`~revscoring.dependencies.solve` for call
         signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
@@ -41,7 +42,7 @@ class Context:
         """
         Expands iterable of all dependents within the context.
 
-        See :func:`~revscoring.dependencies.functions.expand` for call
+        See :func:`~revscoring.dependencies.expand` for call
         signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
@@ -51,7 +52,7 @@ class Context:
         """
         Digs up the root dependents within the context.
 
-        See :func:`~revscoring.dependencies.functions.dig` for call signature.
+        See :func:`~revscoring.dependencies.dig` for call signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
         return dig(dependents, context=context, cache=cache)
@@ -61,7 +62,7 @@ class Context:
         Returns a string representing the tree structure of a dependent's
         dependencies.
 
-        See :func:`~revscoring.dependencies.functions.draw` for call signature.
+        See :func:`~revscoring.dependencies.draw` for call signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
         return draw(dependent, context=context, cache=cache)

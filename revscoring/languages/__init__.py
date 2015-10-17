@@ -1,5 +1,5 @@
 """
-This module implements a set of :class:`~revscoring.language.Language`
+This module implements a set of :class:`revscoring.Language`
 -- collections of features that are language specific.
 
 languages

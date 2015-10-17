@@ -1,11 +1,11 @@
 """
-.. autoclass:: revscoring.scorer_models.scorer_model.ScorerModel
+.. autoclass:: revscoring.ScorerModel
     :members:
 
-.. autoclass:: revscoring.scorer_models.scorer_model.MLScorerModel
+.. autoclass:: revscoring.scorer_models.MLScorerModel
     :members:
 
-.. autoclass:: revscoring.scorer_models.scorer_model.ScikitLearnClassifier
+.. autoclass:: revscoring.scorer_models.ScikitLearnClassifier
     :members:
 """
 import io
@@ -94,17 +94,22 @@ class ScorerModel:
     @classmethod
     def load(cls, f):
         """
-        Reads serialized model information from a file.  Make sure to open
-        the file as a binary stream.
+        Reads serialized model information from a file.
         """
-        return pickle.load(f)
+        if hasattr(f, 'buffer'):
+            return pickle.load(f.buffer)
+        else:
+            return pickle.load(f)
 
     def dump(self, f):
         """
-        Writes serialized model information to a file.  Make sure to open the
-        file as a binary stream.
+        Writes serialized model information to a file.
         """
-        pickle.dump(self, f)
+
+        if hasattr(f, 'buffer'):
+            return pickle.dump(self, f.buffer)
+        else:
+            return pickle.dump(self, f)
 
     @classmethod
     def from_config(cls, config, name, section_key='scorer_models'):

@@ -1,13 +1,15 @@
 """
-.. autoclass:: revscoring.scorer_models.nb.GaussianNB
+A collection of Naive Bayes type classifier models.
+
+.. autoclass:: revscoring.scorer_models.GaussianNB
     :members:
     :member-order:
 
-.. autoclass:: revscoring.scorer_models.nb.MultinomialNB
+.. autoclass:: revscoring.scorer_models.MultinomialNB
     :members:
     :member-order:
 
-.. autoclass:: revscoring.scorer_models.nb.BernoulliNB
+.. autoclass:: revscoring.scorer_models.BernoulliNB
     :members:
     :member-order:
 """
@@ -35,7 +37,7 @@ class GaussianNB(NBModel):
     Implements a Gaussian Naive Bayes model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.Feature`
+        features : `list` ( :class:`revscoring.Feature` )
             The features that the model will be trained on
         version : str
             A version string representing the version of the model
@@ -53,7 +55,7 @@ class MultinomialNB(NBModel):
     Implements a Multinomial Naive Bayes model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.Feature`
+        features : `list` ( :class:`revscoring.Feature` )
             The features that the model will be trained on
         version : str
             A version string representing the version of the model
@@ -72,7 +74,7 @@ class BernoulliNB(NBModel):
     Implements a Bernoulli Naive Bayes model.
 
     :Params:
-        features : `collection` of :class:`~revscoring.features.Feature`
+        features : `list` ( :class:`revscoring.Feature` )
             The features that the model will be trained on
         version : str
             A version string representing the version of the model

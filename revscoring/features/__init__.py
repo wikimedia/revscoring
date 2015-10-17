@@ -1,9 +1,9 @@
 """
-This module implements a set of :class:`~revscoring.features.Feature`
-for use in scoring revisions.  :class:`~revscoring.features.Feature`
-lists can be provided to a :func:`~revscoring.dependencies.functions.solve`, or
-more commonly, to a :class:`~revscoring.extractors.extractor.Extractor` to
-obtain simple numerical/boolean vaklues that can be used when modeling revision
+This module implements a set of :class:`revscoring.Feature`
+for use in scoring revisions.  :class:`revscoring.Feature`
+lists can be provided to a :func:`revscoring.dependencies.solve`, or
+more commonly, to a :class:`revscoring.Extractor` to obtain simple
+numerical/boolean vaklues that can be used when modeling revision
 scores.  The provided features are split conceptually into a set of modules:
 
 * :mod:`revscoring.features.diff`

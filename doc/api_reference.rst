@@ -7,7 +7,6 @@ Subpackages
 -----------
 
 .. toctree::
-
     revscoring.dependencies
     revscoring.datasources
     revscoring.extractors
@@ -25,4 +24,3 @@ revscoring.errors module
 .. automodule:: revscoring.errors
     :members:
     :undoc-members:
-    :show-inheritance:
