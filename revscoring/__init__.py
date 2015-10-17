@@ -104,6 +104,6 @@ from .features import Feature
 from .languages import Language
 from .scorer_models import ScorerModel
 
-__version__ = "0.6.6"
+__version__ = "0.6.7"
 
 __all__ = [Datasource, Extractor, Feature, Language, ScorerModel]
