@@ -11,7 +11,7 @@ Scoring models:
 
     .. code-block:: python
 
-        >>> from mw.api import Session
+        >>> from mwapi import Session
         >>>
         >>> from revscoring.extractors import APIExtractor
         >>> from revscoring.languages import english
@@ -39,7 +39,7 @@ Feature extraction:
 
     .. code-block:: python
 
-        >>> from mw.api import Session
+        >>> from mwapi import Session
         >>>
         >>> from revscoring.extractors import APIExtractor
         >>> from revscoring.features import diff, parent_revision, revision, user
