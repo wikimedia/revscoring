@@ -56,7 +56,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.spanish``: myspell-es
 * ``languages.vietnamese``: hunspell-vi
 * ``languages.hebrew``: myspell-he
-* ``languages.portugueses``: myspell-pt
+* ``languages.portuguese``: myspell-pt
 * ``languages.persian``: myspell-fa
 
 Authors
