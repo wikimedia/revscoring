@@ -4,7 +4,7 @@ A generic, machine learning-based revision scoring system designed to be used
 to automatically differentiate damage from productive contributory behavior on
 Wikipedia.
 
-Examples
+Example
 ========
 
 Using a scorer_model to score a revision:
