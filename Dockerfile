@@ -2,11 +2,11 @@
 # Install wikimedia runscoring, with dependencies
 # See: https://github.com/wiki-ai/revscoring
 
-# Build via docker build --rm -t nealmcb/revscoring:0.1 .
+# Build via docker build --rm -t nealmcb/revscoring:0.3 .
 
-FROM ubuntu:trusty
+FROM jupyter/notebook
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get upgrade -y
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
   python3-dev \
@@ -25,8 +25,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
   myspell-fr \
   myspell-es \
   hunspell-vi \
-  myspell-he \
-  python3-pip
+  myspell-he
 
 RUN pip3 install --user revscoring
 
