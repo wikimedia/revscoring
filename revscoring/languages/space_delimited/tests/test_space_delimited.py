@@ -102,7 +102,6 @@ def test_utf16_issue():
     eq_(solve(sd.revision.misspellings_list, cache=cache), ["𐎤𐎢𐎽𐎢𐏁"])
 
 
-
 BADWORDS = [r"bad(words)?"]
 Dictionary = namedtuple("Dictionary", ["check"])
 

@@ -106,4 +106,4 @@ from .scorer_models import ScorerModel
 
 __version__ = "0.6.7"
 
-__all__ = [Datasource, Extractor, Feature, Language, ScorerModel]
+__all__ = [Datasource, Dependent, Extractor, Feature, Language, ScorerModel]
