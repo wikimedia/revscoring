@@ -10,6 +10,7 @@ addons:
     - liblapack-dev
     - libopenblas-dev
     - python3-dev
+    - enchant
     - myspell-en-au
     - myspell-en-gb
     - myspell-en-us
@@ -34,5 +35,6 @@ install:
   - python -c "import scipy;print(scipy.__version__)"
   - touch /home/travis/miniconda/lib/python3.4/site-packages/easy-install.pth
   - travis_wait pip install -r requirements.txt || date
+  - python -m nltk.downloader stopwords
 script:
   - nosetests -v --with-coverage --cover-package=revscoring
