@@ -1,18 +1,27 @@
 language: python
+sudo: false
 python:
   - "3.4"
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y g++ gfortran liblapack-dev libopenblas-dev python3-dev
-  - sudo apt-get install -y myspell-en-au myspell-en-gb myspell-en-us myspell-en-za
-  - sudo apt-get install -y myspell-fa
-  - sudo apt-get install -y myspell-fr
-  - sudo apt-get install -y myspell-es
-  - sudo apt-get install -y myspell-he
-  - sudo apt-get install -y hunspell-vi
-  - sudo apt-get install -y myspell-pt
-  - sudo apt-get install -y python3-numpy python3-scipy
-
+addons:
+  apt:
+    packages:
+    - g++
+    - gfortran
+    - liblapack-dev
+    - libopenblas-dev
+    - python3-dev
+    - myspell-en-au
+    - myspell-en-gb
+    - myspell-en-us
+    - myspell-en-za
+    - myspell-fa
+    - myspell-fr
+    - myspell-es
+    - myspell-he
+    - hunspell-vi
+    - myspell-pt
+    - python3-numpy
+    - python3-scipy
 install:
   - python -c "import numpy;print(numpy.__version__)"
   - python -c "import scipy;print(scipy.__version__)"
