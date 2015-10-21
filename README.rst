@@ -53,11 +53,12 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 
 * ``languages.english``:  myspell-en-us myspell-en-gb myspell-en-au
 * ``languages.french``: myspell-fr
-* ``languages.spanish``: myspell-es
-* ``languages.vietnamese``: hunspell-vi
+* ``languages.indonesian``: aspell-id
 * ``languages.hebrew``: myspell-he
 * ``languages.portuguese``: myspell-pt
 * ``languages.persian``: myspell-fa
+* ``languages.spanish``: myspell-es
+* ``languages.vietnamese``: hunspell-vi
 
 Authors
 =======
