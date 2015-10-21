@@ -115,7 +115,7 @@ def read_value_labels(f, features, decode_label):
 
 def run(feature_labels, model_file, scorer_model, test_prop):
 
-    scorer_model = train_test(scorer_model, feature_labels, test_prop)
+    scorer_model = _train_test(scorer_model, feature_labels, test_prop)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -124,7 +124,7 @@ def run(feature_labels, model_file, scorer_model, test_prop):
     scorer_model.dump(model_file)
 
 
-def train_test(scorer_model, feature_labels, test_prop):
+def _train_test(scorer_model, feature_labels, test_prop):
     feature_labels = list(feature_labels)
     random.shuffle(feature_labels)
 
