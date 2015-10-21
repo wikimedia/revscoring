@@ -19,6 +19,7 @@ addons:
     - myspell-fr
     - myspell-es
     - myspell-he
+    - aspell-id
     - hunspell-vi
     - myspell-pt
 before_install:
