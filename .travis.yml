@@ -9,7 +9,7 @@ before_install:
   - sudo apt-get install -y myspell-fr
   - sudo apt-get install -y myspell-es
   - sudo apt-get install -y myspell-he
-  - sudo apt-get install -y myspell-vi
+  - sudo apt-get install -y hunspell-vi
   - sudo apt-get install -y myspell-pt
   - sudo apt-get install -y python3-numpy python3-scipy
 
