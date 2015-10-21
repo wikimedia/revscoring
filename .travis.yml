@@ -20,9 +20,16 @@ addons:
     - myspell-he
     - hunspell-vi
     - myspell-pt
-    - python3-numpy
-    - python3-scipy
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - conda update --yes conda
+# Install packages
 install:
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy
+  - python --version
   - python -c "import numpy;print(numpy.__version__)"
   - python -c "import scipy;print(scipy.__version__)"
   - travis_wait pip install -r requirements.txt
