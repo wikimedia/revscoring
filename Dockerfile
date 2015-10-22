@@ -24,8 +24,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
   myspell-en-za \
   myspell-fr \
   myspell-es \
+  myspell-he \
   hunspell-vi \
-  myspell-he
+  aspell-id
 
 RUN pip3 install --user revscoring
 
