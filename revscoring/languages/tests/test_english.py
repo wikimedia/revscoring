@@ -112,6 +112,8 @@ INFORMAL = [
     "moron",
     "munch",
     "nope",
+    "nerd", "nerds",
+    "noob", "noobs",
     "omg",
     "ok", "okay",
     "poop", "poooops"
@@ -119,7 +121,9 @@ INFORMAL = [
     "retard", "retarded", "tard",
     "smelly",
     "soo", "soooooo",
+    "sorry",
     "stupid", "stooopid", "stupidface", "brainstupid"
+    "stink", "stinky", "stinks",
     "suck", "sucker", "sucking", "sux",
     "shouldn't", "shouldnt",
     "test edit",

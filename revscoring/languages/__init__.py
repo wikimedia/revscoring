@@ -4,6 +4,8 @@ This module implements a set of :class:`revscoring.Language`
 
 languages
 +++++++++
+.. automodule:: revscoring.languages.dutch
+
 .. automodule:: revscoring.languages.english
 
 .. automodule:: revscoring.languages.french
