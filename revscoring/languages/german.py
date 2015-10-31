@@ -60,7 +60,6 @@ badwords = [
 
 informals = [
     r"auserdem",
-    r"autorenportal",
     r"bins",
     r"(bla)+",
     r"blub+",

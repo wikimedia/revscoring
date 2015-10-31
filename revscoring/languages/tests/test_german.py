@@ -43,7 +43,6 @@ BAD = [
 
 INFORMAL = [
     "auserdem",
-    "autorenportal",
     "bins",
     "bla", "blabla", "blablabla",
     "blub", "blubb",
