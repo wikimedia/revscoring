@@ -5,6 +5,7 @@ from nose.tools import eq_
 from .. import english
 from ...datasources import revision
 from ...dependencies import solve
+from .util import compare_extraction
 
 BAD = [
     "ass", "arse", "ASS", "assface", "asses", "stupidass", "fatass", "lazyass",
@@ -167,20 +168,6 @@ OTHER = [
 ]
 
 
-def compare_extraction(extractor, examples, counter_examples):
-
-    for example in examples:
-        eq_(extractor.process(example), [example])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
-        eq_(extractor.process("Sentence end " + example + "."), [example])
-        eq_(extractor.process(example + " start of sentence."), [example])
-
-    for example in counter_examples:
-        eq_(extractor.process(example), [])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [])
-        eq_(extractor.process("Sentence end " + example + "."), [])
-        eq_(extractor.process(example + " start of sentence."), [])
-
 
 def test_badwords():
     compare_extraction(english.revision.badwords_list, BAD, OTHER)
@@ -188,29 +175,6 @@ def test_badwords():
 
 def test_informals():
     compare_extraction(english.revision.informals_list, INFORMAL, OTHER)
-
-
-def test_presence():
-    assert hasattr(english.revision, "words")
-    assert hasattr(english.revision, "content_words")
-    assert hasattr(english.revision, "badwords")
-    assert hasattr(english.revision, "informals")
-    assert hasattr(english.revision, "misspellings")
-
-    assert hasattr(english.parent_revision, "words")
-    assert hasattr(english.parent_revision, "content_words")
-    assert hasattr(english.parent_revision, "badwords")
-    assert hasattr(english.parent_revision, "informals")
-    assert hasattr(english.parent_revision, "misspellings")
-
-    assert hasattr(english.diff, "words_added")
-    assert hasattr(english.diff, "badwords_added")
-    assert hasattr(english.diff, "informals_added")
-    assert hasattr(english.diff, "misspellings_added")
-    assert hasattr(english.diff, "words_removed")
-    assert hasattr(english.diff, "badwords_removed")
-    assert hasattr(english.diff, "informals_removed")
-    assert hasattr(english.diff, "misspellings_removed")
 
 
 def test_revision():

@@ -5,6 +5,7 @@ from nose.tools import eq_
 from .. import italian
 from ...datasources import revision
 from ...dependencies import solve
+from .util import compare_extraction
 
 BAD = [
     "anale",
@@ -127,50 +128,12 @@ OTHER = [
 ]
 
 
-def compare_extraction(extractor, examples, counter_examples):
-
-    for example in examples:
-        eq_(extractor.process(example), [example])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
-        eq_(extractor.process("Sentence end " + example + "."), [example])
-        eq_(extractor.process(example + " start of sentence."), [example])
-
-    for example in counter_examples:
-        eq_(extractor.process(example), [])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [])
-        eq_(extractor.process("Sentence end " + example + "."), [])
-        eq_(extractor.process(example + " start of sentence."), [])
-
-
 def test_badwords():
     compare_extraction(italian.revision.badwords_list, BAD, OTHER)
 
 
 def test_informals():
     compare_extraction(italian.revision.informals_list, INFORMAL, OTHER)
-
-
-def test_presence():
-    assert hasattr(italian.revision, "words")
-    assert hasattr(italian.revision, "content_words")
-    assert hasattr(italian.revision, "badwords")
-    assert hasattr(italian.revision, "informals")
-    assert hasattr(italian.revision, "misspellings")
-
-    assert hasattr(italian.parent_revision, "words")
-    assert hasattr(italian.parent_revision, "content_words")
-    assert hasattr(italian.parent_revision, "badwords")
-    assert hasattr(italian.parent_revision, "informals")
-    assert hasattr(italian.parent_revision, "misspellings")
-
-    assert hasattr(italian.diff, "words_added")
-    assert hasattr(italian.diff, "badwords_added")
-    assert hasattr(italian.diff, "informals_added")
-    assert hasattr(italian.diff, "misspellings_added")
-    assert hasattr(italian.diff, "words_removed")
-    assert hasattr(italian.diff, "badwords_removed")
-    assert hasattr(italian.diff, "informals_removed")
-    assert hasattr(italian.diff, "misspellings_removed")
 
 
 def test_revision():

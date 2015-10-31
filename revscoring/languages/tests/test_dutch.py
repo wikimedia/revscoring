@@ -5,6 +5,7 @@ from nose.tools import eq_
 from .. import dutch
 from ...datasources import revision
 from ...dependencies import solve
+from .util import compare_extraction
 
 BAD = [
     "aars",
@@ -132,50 +133,12 @@ OTHER = [
 ]
 
 
-def compare_extraction(extractor, examples, counter_examples):
-
-    for example in examples:
-        eq_(extractor.process(example), [example])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
-        eq_(extractor.process("Sentence end " + example + "."), [example])
-        eq_(extractor.process(example + " start of sentence."), [example])
-
-    for example in counter_examples:
-        eq_(extractor.process(example), [])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [])
-        eq_(extractor.process("Sentence end " + example + "."), [])
-        eq_(extractor.process(example + " start of sentence."), [])
-
-
 def test_badwords():
     compare_extraction(dutch.revision.badwords_list, BAD, OTHER)
 
 
 def test_informals():
     compare_extraction(dutch.revision.informals_list, INFORMAL, OTHER)
-
-
-def test_presence():
-    assert hasattr(dutch.revision, "words")
-    assert hasattr(dutch.revision, "content_words")
-    assert hasattr(dutch.revision, "badwords")
-    assert hasattr(dutch.revision, "informals")
-    assert hasattr(dutch.revision, "misspellings")
-
-    assert hasattr(dutch.parent_revision, "words")
-    assert hasattr(dutch.parent_revision, "content_words")
-    assert hasattr(dutch.parent_revision, "badwords")
-    assert hasattr(dutch.parent_revision, "informals")
-    assert hasattr(dutch.parent_revision, "misspellings")
-
-    assert hasattr(dutch.diff, "words_added")
-    assert hasattr(dutch.diff, "badwords_added")
-    assert hasattr(dutch.diff, "informals_added")
-    assert hasattr(dutch.diff, "misspellings_added")
-    assert hasattr(dutch.diff, "words_removed")
-    assert hasattr(dutch.diff, "badwords_removed")
-    assert hasattr(dutch.diff, "informals_removed")
-    assert hasattr(dutch.diff, "misspellings_removed")
 
 
 def test_revision():

@@ -5,6 +5,7 @@ from nose.tools import eq_
 from .. import german
 from ...datasources import revision
 from ...dependencies import solve
+from .util import compare_extraction
 
 BAD = [
     "ärsche", "arsch", "arschfick", "arschficken", "arschgesicht", "arschloch",
@@ -144,50 +145,12 @@ OTHER = [
 ]
 
 
-def compare_extraction(extractor, examples, counter_examples):
-
-    for example in examples:
-        eq_(extractor.process(example), [example])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
-        eq_(extractor.process("Sentence end " + example + "."), [example])
-        eq_(extractor.process(example + " start of sentence."), [example])
-
-    for example in counter_examples:
-        eq_(extractor.process(example), [])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [])
-        eq_(extractor.process("Sentence end " + example + "."), [])
-        eq_(extractor.process(example + " start of sentence."), [])
-
-
 def test_badwords():
     compare_extraction(german.revision.badwords_list, BAD, OTHER)
 
 
 def test_informals():
     compare_extraction(german.revision.informals_list, INFORMAL, OTHER)
-
-
-def test_presence():
-    assert hasattr(german.revision, "words")
-    assert hasattr(german.revision, "content_words")
-    assert hasattr(german.revision, "badwords")
-    assert hasattr(german.revision, "informals")
-    assert hasattr(german.revision, "misspellings")
-
-    assert hasattr(german.parent_revision, "words")
-    assert hasattr(german.parent_revision, "content_words")
-    assert hasattr(german.parent_revision, "badwords")
-    assert hasattr(german.parent_revision, "informals")
-    assert hasattr(german.parent_revision, "misspellings")
-
-    assert hasattr(german.diff, "words_added")
-    assert hasattr(german.diff, "badwords_added")
-    assert hasattr(german.diff, "informals_added")
-    assert hasattr(german.diff, "misspellings_added")
-    assert hasattr(german.diff, "words_removed")
-    assert hasattr(german.diff, "badwords_removed")
-    assert hasattr(german.diff, "informals_removed")
-    assert hasattr(german.diff, "misspellings_removed")
 
 
 def test_revision():
