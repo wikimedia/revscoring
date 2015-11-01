@@ -10,22 +10,23 @@ languages
 
 .. automodule:: revscoring.languages.french
 
+.. automodule:: revscoring.languages.german
+
 .. automodule:: revscoring.languages.hebrew
 
 .. automodule:: revscoring.languages.indonesian
+
+.. automodule:: revscoring.languages.italian
 
 .. automodule:: revscoring.languages.persian
 
 .. automodule:: revscoring.languages.portuguese
 
 .. automodule:: revscoring.languages.spanish
-    :members:
 
 .. automodule:: revscoring.languages.turkish
-    :members:
 
 .. automodule:: revscoring.languages.vietnamese
-    :members:
 
 Base classes
 ++++++++++++
