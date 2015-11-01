@@ -5,6 +5,7 @@ from nose.tools import eq_
 from .. import spanish
 from ...datasources import revision
 from ...dependencies import solve
+from .util import compare_extraction
 
 BAD = [
     "aweonao",
@@ -188,22 +189,6 @@ OTHER = [
     """,
 ]
 
-
-def compare_extraction(extractor, examples, counter_examples):
-
-    for example in examples:
-        eq_(extractor.process(example), [example])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
-        eq_(extractor.process("Sentence end " + example + "."), [example])
-        eq_(extractor.process(example + " start of sentence."), [example])
-
-    for example in counter_examples:
-        eq_(extractor.process(example), [])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [])
-        eq_(extractor.process("Sentence end " + example + "."), [])
-        eq_(extractor.process(example + " start of sentence."), [])
-
-
 def test_badwords():
     compare_extraction(spanish.revision.badwords_list, BAD, OTHER)
 
@@ -225,29 +210,6 @@ def test_revision():
     # Infonoise
     cache = {revision.text: "Su cuerpo es largo!"}
     eq_(solve(spanish.revision.infonoise, cache=cache), 9/15)
-
-
-def test_presence():
-    assert hasattr(spanish.revision, "words")
-    assert hasattr(spanish.revision, "content_words")
-    assert hasattr(spanish.revision, "badwords")
-    assert hasattr(spanish.revision, "informals")
-    assert hasattr(spanish.revision, "misspellings")
-
-    assert hasattr(spanish.parent_revision, "words")
-    assert hasattr(spanish.parent_revision, "content_words")
-    assert hasattr(spanish.parent_revision, "badwords")
-    assert hasattr(spanish.parent_revision, "informals")
-    assert hasattr(spanish.parent_revision, "misspellings")
-
-    assert hasattr(spanish.diff, "words_added")
-    assert hasattr(spanish.diff, "badwords_added")
-    assert hasattr(spanish.diff, "informals_added")
-    assert hasattr(spanish.diff, "misspellings_added")
-    assert hasattr(spanish.diff, "words_removed")
-    assert hasattr(spanish.diff, "badwords_removed")
-    assert hasattr(spanish.diff, "informals_removed")
-    assert hasattr(spanish.diff, "misspellings_removed")
 
 
 def test_pickling():

@@ -73,15 +73,19 @@ support feature extraction.  In order to support this, we provide a
 collection of language feature sets that work like other features except
 that they are language-specific.  Language-specific feature sets are
 available for the following languages:
+:data:`~revscoring.languages.dutch`,
 :data:`~revscoring.languages.english`,
 :data:`~revscoring.languages.french`,
+:data:`~revscoring.languages.german`,
 :data:`~revscoring.languages.hebrew`,
 :data:`~revscoring.languages.indonesian`,
+:data:`~revscoring.languages.italian`,
 :data:`~revscoring.languages.persian`,
 :data:`~revscoring.languages.portuguese`,
 :data:`~revscoring.languages.spanish`,
 :data:`~revscoring.languages.turkish`, and
-:data:`~revscoring.languages.vietnamese`. See :mod:`revscoring.languages`
+:data:`~revscoring.languages.vietnamese`.
+See :mod:`revscoring.languages`
 
 Example:
 

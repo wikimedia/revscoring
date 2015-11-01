@@ -5,6 +5,7 @@ from nose.tools import eq_
 from .. import turkish
 from ...datasources import revision
 from ...dependencies import solve
+from .util import compare_extraction
 
 BAD = [
     "adamın dib", "adamın dip",
@@ -171,21 +172,6 @@ OTHER = [
 ]
 
 
-def compare_extraction(extractor, examples, counter_examples):
-
-    for example in examples:
-        eq_(extractor.process(example), [example])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
-        eq_(extractor.process("Sentence end " + example + "."), [example])
-        eq_(extractor.process(example + " start of sentence."), [example])
-
-    for example in counter_examples:
-        eq_(extractor.process(example), [])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [])
-        eq_(extractor.process("Sentence end " + example + "."), [])
-        eq_(extractor.process(example + " start of sentence."), [])
-
-
 def test_badwords():
     compare_extraction(turkish.revision.badwords_list, BAD, OTHER)
 
@@ -199,25 +185,6 @@ def test_revision():
     cache = {revision.text: "Bir sezonda m18, takımın mücadele."}
     eq_(solve(turkish.revision.words_list, cache=cache),
         ["Bir", "sezonda", "m18", "takımın", "mücadele"])
-
-
-def test_presence():
-    assert hasattr(turkish.revision, "words")
-    assert hasattr(turkish.revision, "content_words")
-    assert hasattr(turkish.revision, "badwords")
-    assert hasattr(turkish.revision, "informals")
-
-    assert hasattr(turkish.parent_revision, "words")
-    assert hasattr(turkish.parent_revision, "content_words")
-    assert hasattr(turkish.parent_revision, "badwords")
-    assert hasattr(turkish.parent_revision, "informals")
-
-    assert hasattr(turkish.diff, "words_added")
-    assert hasattr(turkish.diff, "badwords_added")
-    assert hasattr(turkish.diff, "informals_added")
-    assert hasattr(turkish.diff, "words_removed")
-    assert hasattr(turkish.diff, "badwords_removed")
-    assert hasattr(turkish.diff, "informals_removed")
 
 
 def test_pickling():

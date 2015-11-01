@@ -5,6 +5,7 @@ from nose.tools import eq_
 from .. import persian
 from ...datasources import revision
 from ...dependencies import solve
+from .util import compare_extraction
 
 BAD = [
     "جنده",
@@ -46,21 +47,6 @@ OTHER = [
 ]
 
 
-def compare_extraction(extractor, examples, counter_examples):
-
-    for example in examples:
-        eq_(extractor.process(example), [example])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
-        eq_(extractor.process("Sentence end " + example + "."), [example])
-        eq_(extractor.process(example + " start of sentence."), [example])
-
-    for example in counter_examples:
-        eq_(extractor.process(example), [])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [])
-        eq_(extractor.process("Sentence end " + example + "."), [])
-        eq_(extractor.process(example + " start of sentence."), [])
-
-
 def test_badwords():
     compare_extraction(persian.revision.badwords_list, BAD, OTHER)
 
@@ -78,29 +64,6 @@ def test_revision():
     # Misspellings
     cache = {revision.text: 'رخشندهٔ  معروف به پروین  worngly. <td>'}
     eq_(solve(persian.revision.misspellings_list, cache=cache), ["worngly"])
-
-
-def test_presence():
-    assert hasattr(persian.revision, "words")
-    assert hasattr(persian.revision, "content_words")
-    assert hasattr(persian.revision, "badwords")
-    assert hasattr(persian.revision, "informals")
-    assert hasattr(persian.revision, "misspellings")
-
-    assert hasattr(persian.parent_revision, "words")
-    assert hasattr(persian.parent_revision, "content_words")
-    assert hasattr(persian.parent_revision, "badwords")
-    assert hasattr(persian.parent_revision, "informals")
-    assert hasattr(persian.parent_revision, "misspellings")
-
-    assert hasattr(persian.diff, "words_added")
-    assert hasattr(persian.diff, "badwords_added")
-    assert hasattr(persian.diff, "informals_added")
-    assert hasattr(persian.diff, "misspellings_added")
-    assert hasattr(persian.diff, "words_removed")
-    assert hasattr(persian.diff, "badwords_removed")
-    assert hasattr(persian.diff, "informals_removed")
-    assert hasattr(persian.diff, "misspellings_removed")
 
 
 def test_pickling():

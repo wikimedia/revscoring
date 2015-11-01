@@ -11,6 +11,9 @@ addons:
     - libopenblas-dev
     - python3-dev
     - enchant
+    - aspell-de
+    - aspell-nl
+    - aspell-id
     - myspell-en-au
     - myspell-en-gb
     - myspell-en-us
@@ -19,7 +22,7 @@ addons:
     - myspell-fr
     - myspell-es
     - myspell-he
-    - aspell-id
+    - myspell-it
     - hunspell-vi
     - myspell-pt
 before_install:

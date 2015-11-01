@@ -17,25 +17,29 @@
         extract_features <features> --host=<url> [--rev-labels=<path>]
                                                  [--value-labels=<path>]
                                                  [--include-revid]
+                                                 [--extractors=<num>]
                                                  [--verbose] [--debug]
 
     Options:
-        -h --help                Print this documentation
-        <features>               Classpath to a list/tuple of features
-        --host=<url>             The url pointing to a MediaWiki API to use
-                                 for extracting features
-        --rev-labels=<path>      Path to a file containing rev_id-label pairs
-                                 [default: <stdin>]
-        --value-labels=<path>    Path to a file to write feature-labels to
-                                 [default: <stdout>]
-        --include-revid          If set, include the revision ID as the first
-                                 column in the output TSV
-        --verbose                Print dots and stuff
-        --debug                  Print debug logging
+        -h --help               Print this documentation
+        <features>              Classpath to a list/tuple of features
+        --host=<url>            The url pointing to a MediaWiki API to use
+                                for extracting features
+        --rev-labels=<path>     Path to a file containing rev_id-label pairs
+                                [default: <stdin>]
+        --value-labels=<path>   Path to a file to write feature-labels to
+                                [default: <stdout>]
+        --include-revid         If set, include the revision ID as the first
+                                column in the output TSV
+        --extractors=<num>      The number of extractors to run in parallel
+                                [default: <cpu count>]
+        --verbose               Print dots and stuff
+        --debug                 Print debug logging
 """
 import logging
 import sys
 from itertools import islice
+from multiprocessing import Pool, cpu_count
 
 import docopt
 import mwapi
@@ -45,8 +49,6 @@ from ..extractors import APIExtractor
 from .util import encode, import_from_path
 
 logger = logging.getLogger(__name__)
-
-BATCH_SIZE = 50
 
 
 def main(argv=None):
@@ -75,11 +77,16 @@ def main(argv=None):
 
     include_revid = bool(args['--include-revid'])
 
+    if args['--extractors'] == "<cpu count>":
+        extractors = cpu_count()
+    else:
+        extractors = int(extractors)
+
     verbose = args['--verbose']
     debug = args['--debug']
 
     run(rev_labels, value_labels, features, extractor, include_revid,
-        verbose, debug)
+        extractors, verbose, debug)
 
 
 def read_rev_labels(f):
@@ -94,50 +101,60 @@ def read_rev_labels(f):
 
 
 def run(rev_labels, value_labels, features, extractor, include_revid,
-        verbose, debug):
+        extractors, verbose, debug):
     logging.basicConfig(
         level=logging.WARNING if not debug else logging.DEBUG,
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
 
-    while True:
-        batch_rev_labels = list(islice(rev_labels, BATCH_SIZE))
-        if len(batch_rev_labels) == 0:
-            break
+    extractor_context = ConfiguredExtractor(extractor, features)
+    extractor_pool = Pool(processes=extractors)
 
-        rev_ids, labels = zip(*batch_rev_labels)
+    error_rev_label_features = extractor_pool.imap(extractor_context.extract,
+                                                   rev_labels)
 
-        error_values_label = zip(extractor.extract(rev_ids, features),
-                                 batch_rev_labels)
-        for (error, values), (rev_id, label) in error_values_label:
-            try:
-                if isinstance(error, RevisionNotFound):
-                    if verbose:
-                        sys.stderr.write("?")
-                        sys.stderr.flush()
-                elif error is not None:
-                    logger.error("An error occured while processing {0}:"
-                                 .format(rev_id))
-                    logger.error("\t{0}: {1}"
-                                 .format(error.__class__.__name__,
-                                         str(error)))
-                else:
-                    fields = list(values) + [label]
+    for error, rev_id, label, feature_values in error_rev_label_features:
+        if isinstance(error, RevisionNotFound):
+            if verbose:
+                sys.stderr.write("?")
+                sys.stderr.flush()
+        elif error is not None:
+            logger.error("An error occured while processing {0}:"
+                         .format(rev_id))
+            logger.error("\t{0}: {1}"
+                         .format(error.__class__.__name__,
+                                 str(error)))
+        else:
+            fields = list(feature_values) + [label]
 
-                    if include_revid:
-                        fields = [rev_id] + fields
+            if include_revid:
+                fields = [rev_id] + fields
 
-                    value_labels.write("\t".join(encode(v)
-                                                 for v in fields))
-                    value_labels.write("\n")
+            value_labels.write("\t".join(encode(v)
+                                         for v in fields))
+            value_labels.write("\n")
 
-                    if verbose:
-                        sys.stderr.write(".")
-                        sys.stderr.flush()
-
-            except KeyboardInterrupt:
-                sys.stderr.write("^C detected.  Shutting down.\n")
-                break
+            if verbose:
+                sys.stderr.write(".")
+                sys.stderr.flush()
 
     if verbose:
         sys.stderr.write("\n")
+
+
+class ConfiguredExtractor:
+
+    def __init__(self, extractor, features):
+        self.extractor = extractor
+        self.features = features
+
+    def extract(self, rev_label):
+        rev_id, label = rev_label
+        try:
+            feature_values = list(self.extractor.extract(rev_id, self.features))
+            error = None
+        except Exception as e:
+            feature_values = None
+            error = e
+
+        return error, rev_id, label, feature_values
