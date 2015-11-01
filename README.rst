@@ -48,7 +48,7 @@ some NLTK data.  The following command will get the necessary corpus.
 
 ``python -m nltk.downloader stopwords``
 
-You'll also need to install [enchant](https://enchant.org) compatible
+You'll also need to install `enchant <https://enchant.org>`_ compatible
 dictionaries of the languages you'd like to use.  We recommend the following:
 
 * ``languages.dutch``:  myspell-nl
