@@ -98,7 +98,7 @@ informals = [
     r"hoi",
     r"hal+o+",
     r"heb",
-    r"hee+[jyl]",
+    r"hee+[jyl]", r"heee+l",
     r"houd?",
     r"(hoi+)+",
     r"hoor",
