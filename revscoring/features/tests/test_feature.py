@@ -134,18 +134,18 @@ def test_ne():
 
 
 def test_and():
-    true_and_true = true and true
+    true_and_true = true.and_(true)
     check_feature(true_and_true, True)
 
-    true_and_not_true = true and not_(true)
+    true_and_not_true = true.and_(not_(true))
     check_feature(true_and_not_true, False)
 
 
 def test_or():
-    true_or_true = true or true
+    true_or_true = true.or_(true)
     check_feature(true_or_true, True)
 
-    true_or_not_true = true or not_(true)
+    true_or_not_true = true.or_(not_(true))
     check_feature(true_or_not_true, True)
 
 
