@@ -74,10 +74,10 @@ class Feature(Dependent):
         return ge(self, other)
 
     # Boolean operators
-    def __and__(self, other):
+    def and_(self, other):
         return and_(self, other)
 
-    def __or__(self, other):
+    def or_(self, other):
         return or_(self, other)
 
     def not_(self):
@@ -284,7 +284,7 @@ class or_(Comparison):
     CHAR = "or"
 
     def operate(self, left, right):
-        return left and right
+        return left or right
 
 
 class max(Modifier):
