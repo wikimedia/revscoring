@@ -73,6 +73,16 @@ class Feature(Dependent):
     def __ge__(self, other):
         return ge(self, other)
 
+    # Boolean operators
+    def __and__(self, other):
+        return and_(self, other)
+
+    def __or__(self, other):
+        return or_(self, other)
+
+    def not_(self):
+        return not_(self)
+
     def validate(self, value):
         if isinstance(value, self.returns):
             return value
@@ -253,6 +263,30 @@ class ne(Comparison):
         return left != right
 
 
+class and_(Comparison):
+    """
+    Generates a feature that represents the conjunction of two
+    :class:`revscoring.Feature` or constant values.
+    """
+
+    CHAR = "and"
+
+    def operate(self, left, right):
+        return left and right
+
+
+class or_(Comparison):
+    """
+    Generates a feature that represents the disjunction of two
+    :class:`revscoring.Feature` or constant values.
+    """
+
+    CHAR = "or"
+
+    def operate(self, left, right):
+        return left and right
+
+
 class max(Modifier):
     """
     Generates a feature that represents the maximum of a set of
@@ -303,3 +337,17 @@ class log(Modifier):
 
     def _process(self, feature_value):
         return math_log(feature_value)
+
+
+class not_(Modifier):
+    """
+    Generates a feature that represents the negation of a
+    :class:`revscoring.Feature`'s value.
+    """
+    def __init__(self, feature):
+        feature = Feature.or_constant(feature)
+        super().__init__("not {0}".format(feature.name), self._process,
+                         returns=bool, depends_on=[feature])
+
+    def _process(self, feature_value):
+        return not feature_value

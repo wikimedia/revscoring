@@ -4,12 +4,19 @@ from nose.tools import eq_, raises
 
 from ...dependencies import solve
 from ..feature import Feature
+from ..modifiers import not_
 
 
 def return_five():
     return 5
 
 five = Feature("five", return_five, returns=int, depends_on=[])
+
+
+def return_true():
+    return True
+
+true = Feature("true", return_true, returns=bool, depends_on=[])
 
 
 def identity_process(value):
@@ -124,6 +131,27 @@ def test_ne():
 
     five_ne_five = five != five
     check_feature(five_ne_five, False)
+
+
+def test_and():
+    true_and_true = true and true
+    check_feature(true_and_true, True)
+
+    true_and_not_true = true and not_(true)
+    check_feature(true_and_not_true, False)
+
+
+def test_or():
+    true_or_true = true or true
+    check_feature(true_or_true, True)
+
+    true_or_not_true = true or not_(true)
+    check_feature(true_or_not_true, True)
+
+
+def test_not():
+    not_true = not_(true)
+    check_feature(not_true, False)
 
 
 def test_complex():
