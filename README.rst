@@ -54,7 +54,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.dutch``:  myspell-nl
 * ``languages.english``:  myspell-en-us myspell-en-gb myspell-en-au
 * ``languages.french``: myspell-fr
-* ``languages.german``:  myspell-de-at myspell-de-ch myspell-de-ch
+* ``languages.german``:  myspell-de-at myspell-de-ch myspell-de-de
 * ``languages.indonesian``: aspell-id
 * ``languages.italian``: myspell-it
 * ``languages.hebrew``: myspell-he
