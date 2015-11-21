@@ -8,6 +8,8 @@ languages
 
 .. automodule:: revscoring.languages.english
 
+.. automodule:: revscoring.languages.estonian
+
 .. automodule:: revscoring.languages.french
 
 .. automodule:: revscoring.languages.german
@@ -25,6 +27,8 @@ languages
 .. automodule:: revscoring.languages.spanish
 
 .. automodule:: revscoring.languages.turkish
+
+.. automodule:: revscoring.languages.ukrainian
 
 .. automodule:: revscoring.languages.vietnamese
 
