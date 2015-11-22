@@ -18,6 +18,7 @@ addons:
     - myspell-en-gb
     - myspell-en-us
     - myspell-en-za
+    - aspell-et
     - myspell-fa
     - myspell-fr
     - myspell-es
@@ -25,6 +26,7 @@ addons:
     - myspell-it
     - hunspell-vi
     - myspell-pt
+    - aspell-uk
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - chmod +x miniconda.sh

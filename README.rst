@@ -53,6 +53,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 
 * ``languages.dutch``:  myspell-nl
 * ``languages.english``:  myspell-en-us myspell-en-gb myspell-en-au
+* ``languages.estonian``:  myspell-et
 * ``languages.french``: myspell-fr
 * ``languages.german``:  myspell-de-at myspell-de-ch myspell-de-de
 * ``languages.indonesian``: aspell-id
@@ -61,6 +62,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.portuguese``: myspell-pt
 * ``languages.persian``: myspell-fa
 * ``languages.spanish``: myspell-es
+* ``languages.ukrainian``: myspell-uk
 * ``languages.vietnamese``: hunspell-vi
 
 Authors
