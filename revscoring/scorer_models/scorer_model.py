@@ -321,11 +321,13 @@ class ScikitLearnClassifier(MLScorerModel):
 
             for actual in possible:
                 table_data.append(
-                    [actual] +
+                    [(str(actual))] +
                     [self.stats['table'].get((predicted, actual), 0)
                      for predicted in possible]
                 )
-            formatted.write(tabulate(table_data, headers=possible))
+            formatted.write(tabulate(
+                table_data,
+                headers=["~{0}".format(p) for p in possible]))
 
             return formatted.getvalue()
 
