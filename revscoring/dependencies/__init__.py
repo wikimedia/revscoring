@@ -1,6 +1,6 @@
 """
-This module provides a general set of utilities for implementing set of
-dependencies, solving then and performing injections.
+This module provides a general set of utilities for implementing a set of
+dependencies, solving them and injecting context and cache.
 
 .. automodule:: revscoring.dependencies.dependent
 
