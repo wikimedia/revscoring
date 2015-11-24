@@ -21,7 +21,7 @@ class Dependent:
         process : func
             A function to run when solving this dependency
         depends_on : `iterable`
-            A collection of
+            A collection of :class:`revscoring.Dependent` whose values are required by `process`
     """
     def __init__(self, name, process=None, depends_on=None,
                  dependencies=None):
