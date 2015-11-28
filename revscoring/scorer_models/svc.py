@@ -20,7 +20,7 @@ from collections import defaultdict
 
 from sklearn import svm
 
-from .scorer_model import ScikitLearnClassifier
+from .sklearn_classifier import ScikitLearnClassifier
 
 
 class SVC(ScikitLearnClassifier):

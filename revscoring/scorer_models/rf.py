@@ -9,7 +9,7 @@ import logging
 
 from sklearn.ensemble import RandomForestClassifier
 
-from .scorer_model import ScikitLearnClassifier
+from .sklearn_classifier import ScikitLearnClassifier
 
 logger = logging.getLogger("revscoring.scorers.rf")
 

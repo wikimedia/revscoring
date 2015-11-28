@@ -1,0 +1,8 @@
+
+SVC:
+  class: sklearn.svm.SVC
+  params:
+     -
+      kernel: ['linear']
+      probability: [true]
+      C: [0.1, 1, 10]
