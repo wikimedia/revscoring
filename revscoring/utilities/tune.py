@@ -41,6 +41,7 @@ import json
 import logging
 import multiprocessing
 import sys
+import time
 
 import docopt
 import yamlconf
@@ -111,16 +112,25 @@ def run(params_config, features, observations, scoring, test_prop, folds,
             raise RuntimeError("Estimator {0} does not have a fit() method."
                                .format(config['class']))
 
+        parameter_grid = grid_search.ParameterGrid(config['params'])
         logger.info("Running gridsearch for {0}...".format(name))
+        logger.debug("{0} parameter sets:".format(len(parameter_grid)))
+        for params in parameter_grid:
+            logger.debug(" - {0}".format(format_params(params)))
+        logger.debug("{0} folds per parameter set".format(folds))
+
+        start = time.time()
         grid_model = gridsearch(train_set, estimator, config['params'],
                                 scoring=scoring, folds=folds,
                                 processes=processes, verbose=verbose)
 
-        logger.info("Completed gridsearch for {0}.".format(name))
+        logger.info("Completed gridsearch for {0} in {1} hours."
+                    .format(name, round((time.time() - start) / (60 * 60), 3)))
         best_params, best_score, _ = max(grid_model.grid_scores_,
                                          key=lambda x: x[1])
         logger.info("\tBest fit: {0}={1} with {2}"
-                    .format(scoring, best_score, best_params))
+                    .format(scoring, round(best_score, 3),
+                            format_params(best_params)))
 
         test_f1, test_auc = test_model(test_set, grid_model)
         logger.info("\tTest fit: f1={0}, roc_auc={1}\n"
@@ -140,15 +150,16 @@ def run(params_config, features, observations, scoring, test_prop, folds,
             logger.info("\t\t" + line)
 
     # Sort the results by the best fit
-    best_fits.sort(key=lambda r: r[2])
-    possible_labels = set(label for _, label in observations)
+    best_fits.sort(key=lambda r: r[2], reverse=True)
+    possible_labels = set(label for _, label in train_set)
 
     # Write out the report
     report.write("# Model tuning report\n")
-    report.write("- Date: {0}\n".format(datetime.datetime().isoformat()))
+    report.write("- Date: {0}\n".format(datetime.datetime.now().isoformat()))
     report.write("- Train set: {0}\n".format(len(train_set)))
     report.write("- Test set: {0}\n".format(len(test_set)))
-    report.write("- Labels: {0}\n".format(tuple(possible_labels)))
+    report.write("- Labels: {0}\n".format(json.dumps(list(possible_labels))))
+    report.write("- Scoring: {0}\n".format(scoring))
     report.write("\n")
     report.write("# Best fits\n")
     report.write(tabulate(
@@ -157,12 +168,14 @@ def run(params_config, features, observations, scoring, test_prop, folds,
          for name, par, score, test_f1, test_auc in best_fits),
         headers=["model", "parameters", "score", "test_f1", "test_auc"]
     ))
+    report.write("\n")
 
     report.close()
 
 
 def format_params(doc):
-    return ", ".join("{0}={1}".format(k, json.dumps(v)) for k, v in doc)
+    return ", ".join("{0}={1}".format(k, json.dumps(v))
+                     for k, v in doc.items())
 
 
 def gridsearch(observations, estimator, param_grid=None,
@@ -176,18 +189,15 @@ def gridsearch(observations, estimator, param_grid=None,
 
     processes = processes or multiprocessing.cpu_count()
 
-    stratified_cv = cross_validation.StratifiedKFold(labels, n_folds=folds)
-
     grid_model = grid_search.GridSearchCV(
-        cv=stratified_cv,
+        cv=folds,
         estimator=estimator,
         param_grid=param_grid,
         scoring=scoring,
-        n_jobs=processes,
-        verbose=verbose
+        n_jobs=processes
     )
 
-    # This line actually performs the gridsearch
+    # To perform the gridsearch, we run fit()
     feature_values, labels = (list(vals) for vals in zip(*observations))
     grid_model.fit(feature_values, labels)
 
