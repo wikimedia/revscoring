@@ -42,10 +42,11 @@ import logging
 import multiprocessing
 import sys
 import time
+import traceback
 
 import docopt
 import yamlconf
-from sklearn import cross_validation, grid_search
+from sklearn import grid_search
 from sklearn.metrics import f1_score, roc_auc_score
 from tabulate import tabulate
 
@@ -106,48 +107,53 @@ def run(params_config, features, observations, scoring, test_prop, folds,
 
     # For each estimator, run gridsearch.
     for name, config in params_config.items():
-        EstimatorClass = yamlconf.import_module(config['class'])
-        estimator = EstimatorClass()
-        if not hasattr(estimator, "fit"):
-            raise RuntimeError("Estimator {0} does not have a fit() method."
-                               .format(config['class']))
+        try:
+            EstimatorClass = yamlconf.import_module(config['class'])
+            estimator = EstimatorClass()
+            if not hasattr(estimator, "fit"):
+                raise RuntimeError("Estimator {0} does not have a fit() method."
+                                   .format(config['class']))
 
-        parameter_grid = grid_search.ParameterGrid(config['params'])
-        logger.info("Running gridsearch for {0}...".format(name))
-        logger.debug("{0} parameter sets:".format(len(parameter_grid)))
-        for params in parameter_grid:
-            logger.debug(" - {0}".format(format_params(params)))
-        logger.debug("{0} folds per parameter set".format(folds))
+            parameter_grid = grid_search.ParameterGrid(config['params'])
+            logger.info("Running gridsearch for {0}...".format(name))
+            logger.debug("{0} parameter sets:".format(len(parameter_grid)))
+            for params in parameter_grid:
+                logger.debug(" - {0}".format(format_params(params)))
+            logger.debug("{0} folds per parameter set".format(folds))
 
-        start = time.time()
-        grid_model = gridsearch(train_set, estimator, config['params'],
-                                scoring=scoring, folds=folds,
-                                processes=processes, verbose=verbose)
+            start = time.time()
+            grid_model = gridsearch(train_set, estimator, config['params'],
+                                    scoring=scoring, folds=folds,
+                                    processes=processes, verbose=verbose)
 
-        logger.info("Completed gridsearch for {0} in {1} hours."
-                    .format(name, round((time.time() - start) / (60 * 60), 3)))
-        best_params, best_score, _ = max(grid_model.grid_scores_,
-                                         key=lambda x: x[1])
-        logger.info("\tBest fit: {0}={1} with {2}"
-                    .format(scoring, round(best_score, 3),
-                            format_params(best_params)))
+            logger.info("Completed gridsearch for {0} in {1} hours."
+                        .format(name, round((time.time() - start) / (60 * 60), 3)))
+            best_params, best_score, _ = max(grid_model.grid_scores_,
+                                             key=lambda x: x[1])
+            logger.info("\tBest fit: {0}={1} with {2}"
+                        .format(scoring, round(best_score, 3),
+                                format_params(best_params)))
 
-        test_f1, test_auc = test_model(test_set, grid_model)
-        logger.info("\tTest fit: f1={0}, roc_auc={1}\n"
-                    .format(test_f1, test_auc))
+            test_f1, test_auc = test_model(test_set, grid_model)
+            logger.info("\tTest fit: f1={0}, roc_auc={1}\n"
+                        .format(test_f1, test_auc))
 
-        best_fits.append((name, best_params, best_score, test_f1, test_auc))
+            best_fits.append((name, best_params, best_score, test_f1, test_auc))
 
-        logger.info("\tGrid scores:")
-        table = tabulate(
-            ((round(mean_score, 3), round(scores.std(), 3),
-              format_params(params))
-             for params, mean_score, scores in
-             grid_model.grid_scores_),
-            headers=["mean(score)", "std(score)", "params"]
-        )
-        for line in table.split("\n"):
-            logger.info("\t\t" + line)
+            logger.info("\tGrid scores:")
+            table = tabulate(
+                ((round(mean_score, 3), round(scores.std(), 3),
+                  format_params(params))
+                 for params, mean_score, scores in
+                 grid_model.grid_scores_),
+                headers=["mean(score)", "std(score)", "params"]
+            )
+            for line in table.split("\n"):
+                logger.info("\t\t" + line)
+        except Exception:
+            logger.warn("An error occurred while trying to fit {0}"
+                        .format(name))
+            logger.warn("Exception:\n" + traceback.format_exc())
 
     # Sort the results by the best fit
     best_fits.sort(key=lambda r: r[2], reverse=True)

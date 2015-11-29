@@ -1,0 +1,6 @@
+
+LogisticRegression:
+  class: sklearn.linear_model.LogisticRegression
+  params:
+    penalty: ["l1", "l2"]
+    C: [0.1, 1, 10]
