@@ -1,4 +1,0 @@
-/* This is just thinking out loud */
-
-class: revscores.scorers.LinearSVC
-file: ptwiki_svc.model
