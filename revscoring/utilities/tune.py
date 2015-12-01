@@ -22,8 +22,6 @@ Options:
                            and test against. [default: <stdin>]
     --scoring=<type>       The type of scoring strategy to optimize for when
                            choosing parameter sets [default: roc_auc]
-    --test-prop=<prop>     The proportion of observations that should be held
-                           asside for testing. [default: 0.25]
     --folds=<num>          The number of cross-validation folds to try
                            [default: 5]
     --report=<path>        Path to a file to write the tuning report to
@@ -43,14 +41,15 @@ import multiprocessing
 import sys
 import time
 import traceback
+from collections import defaultdict
 
 import docopt
 import yamlconf
-from sklearn import grid_search
-from sklearn.metrics import f1_score, roc_auc_score
+from sklearn import cross_validation, grid_search
 from tabulate import tabulate
 
 from . import util
+from .. import __version__
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +64,8 @@ def main(argv=None):
 
     params_config = yamlconf.load(open(args['<params-config>']))
 
-    features = yamlconf.import_module(args['<features>'])
+    features_path = args['<features>']
+    features = yamlconf.import_module(features_path)
 
     label_decoder = util.DECODERS[args['--label-type']]
     if args['--observations'] == "<stdin>":
@@ -77,7 +77,6 @@ def main(argv=None):
                                           label_decoder)
 
     scoring = args['--scoring']
-    test_prop = float(args['--test-prop'])
     folds = int(args['--folds'])
 
     if args['--report'] == "<stdout>":
@@ -92,89 +91,84 @@ def main(argv=None):
 
     verbose = args['--verbose']
 
-    run(params_config, features, observations, scoring, test_prop, folds,
+    run(params_config, features_path, observations, scoring, folds,
         report, processes, verbose)
 
 
-def run(params_config, features, observations, scoring, test_prop, folds,
+def run(params_config, features_path, observations, scoring, folds,
         report, processes, verbose):
 
-    # Split train and test
-    train_set, test_set = util.train_test_split(observations,
-                                                test_prop=test_prop)
+    observations = list(observations)
 
-    best_fits = []
+    # Prepare the worker pool
+    logger.debug("Starting up multiprocessing pool (processes={0})"
+                 .format(processes))
+    pool = multiprocessing.Pool(processes=processes)
 
-    # For each estimator, run gridsearch.
-    for name, config in params_config.items():
-        try:
-            EstimatorClass = yamlconf.import_module(config['class'])
-            estimator = EstimatorClass()
-            if not hasattr(estimator, "fit"):
-                raise RuntimeError("Estimator {0} does not have a fit() method."
-                                   .format(config['class']))
-
-            parameter_grid = grid_search.ParameterGrid(config['params'])
-            logger.info("Running gridsearch for {0}...".format(name))
-            logger.debug("{0} parameter sets:".format(len(parameter_grid)))
-            for params in parameter_grid:
-                logger.debug(" - {0}".format(format_params(params)))
-            logger.debug("{0} folds per parameter set".format(folds))
-
-            start = time.time()
-            grid_model = gridsearch(train_set, estimator, config['params'],
-                                    scoring=scoring, folds=folds,
-                                    processes=processes, verbose=verbose)
-
-            logger.info("Completed gridsearch for {0} in {1} hours."
-                        .format(name, round((time.time() - start) / (60 * 60), 3)))
-            best_params, best_score, _ = max(grid_model.grid_scores_,
-                                             key=lambda x: x[1])
-            logger.info("\tBest fit: {0}={1} with {2}"
-                        .format(scoring, round(best_score, 3),
-                                format_params(best_params)))
-
-            test_f1, test_auc = test_model(test_set, grid_model)
-            logger.info("\tTest fit: f1={0}, roc_auc={1}\n"
-                        .format(test_f1, test_auc))
-
-            best_fits.append((name, best_params, best_score, test_f1, test_auc))
-
-            logger.info("\tGrid scores:")
-            table = tabulate(
-                ((round(mean_score, 3), round(scores.std(), 3),
-                  format_params(params))
-                 for params, mean_score, scores in
-                 grid_model.grid_scores_),
-                headers=["mean(score)", "std(score)", "params"]
-            )
-            for line in table.split("\n"):
-                logger.info("\t\t" + line)
-        except Exception:
-            logger.warn("An error occurred while trying to fit {0}"
-                        .format(name))
-            logger.warn("Exception:\n" + traceback.format_exc())
-
-    # Sort the results by the best fit
-    best_fits.sort(key=lambda r: r[2], reverse=True)
-    possible_labels = set(label for _, label in train_set)
-
-    # Write out the report
+    # Start writing the model tuning report
+    possible_labels = set(label for _, label in observations)
     report.write("# Model tuning report\n")
+    report.write("- Revscoring version: {0}\n".format(__version__))
+    report.write("- Features: {0}\n".format(features_path))
     report.write("- Date: {0}\n".format(datetime.datetime.now().isoformat()))
-    report.write("- Train set: {0}\n".format(len(train_set)))
-    report.write("- Test set: {0}\n".format(len(test_set)))
+    report.write("- Observations: {0}\n".format(len(observations)))
     report.write("- Labels: {0}\n".format(json.dumps(list(possible_labels))))
     report.write("- Scoring: {0}\n".format(scoring))
+    report.write("- Folds: {0}\n".format(folds))
     report.write("\n")
-    report.write("# Best fits\n")
-    report.write(tabulate(
-        ((name, format_params(par), round(score, 3), round(test_f1, 3),
-          round(test_auc, 3))
-         for name, par, score, test_f1, test_auc in best_fits),
-        headers=["model", "parameters", "score", "test_f1", "test_auc"]
-    ))
+
+    # For each estimator and paramset, submit the job.
+    cv_result_sets = defaultdict(lambda : [])
+    for name, estimator, param_grid in _estimator_param_grid(params_config):
+        logger.debug("Submitting jobs for {0}:".format(name))
+        for params in param_grid:
+            logger.debug("\tsubmitting {0}..."
+                         .format(format_params(params)))
+            result = pool.apply_async(_cross_validate,
+                                      [observations, estimator, params],
+                                      {'scoring': scoring, 'folds': folds})
+            cv_result_sets[name].append((params, result))
+
+    # Barrier synchronization
+    logger.info("Running gridsearch for {0} model/params pairs ..."
+                .format(sum(len(p_r) for p_r in cv_result_sets)))
+    grid_scores = []
+    for name, param_results in cv_result_sets.items():
+        for params, result in param_results:
+            scores = result.get()  # This is a line that blocks
+            grid_scores.append((name, params, scores.mean(), scores.std()))
+
+    # Write the rest of the report!  First, print the top 10 combinations
+    report.write("# Top scoring configurations\n")
+    grid_scores.sort(key=lambda gs: gs[2], reverse=True)
+    table = tabulate(
+        ((name, round(mean_score, 3), round(scores.std(), 3),
+          format_params(params))
+         for name, params, mean_score, scores in
+         grid_scores[:10]),
+        headers=["model", "mean(scores)", "std(scores)", "params"]
+    )
+    report.write(table + "\n")
     report.write("\n")
+
+    # Now print out scores for each model.
+    report.write("# Models\n")
+    for name, param_results in cv_result_sets.items():
+        report.write("## {0}\n".format(name))
+
+        param_scores = ((p, r.get()) for p, r in param_results)
+        param_stats = [(p, s.mean(), s.std()) for p, s in param_scores]
+        param_stats.sort(key=lambda v:v[1], reverse=True)
+
+        table = tabulate(
+            ((round(mean_score, 3), round(scores.std(), 3),
+              format_params(params))
+             for params, mean_score, scores in
+             param_stats),
+            headers=["mean(scores)", "std(scores)", "params"]
+        )
+        report.write(table + "\n")
+        report.write("\n")
 
     report.close()
 
@@ -184,45 +178,40 @@ def format_params(doc):
                      for k, v in doc.items())
 
 
-def gridsearch(observations, estimator, param_grid=None,
-               scoring='roc_auc', folds=5, processes=None, verbose=False):
-    """
-    Determine the best model via cross validation. This should be run on
-    training data with test data withheld.
-    """
-    feature_values, labels = (list(vals) for vals in zip(*observations))
-    param_grid = param_grid or {}
+def _estimator_param_grid(params_config):
+    for name, config in params_config.items():
+        try:
+            EstimatorClass = yamlconf.import_module(config['class'])
+            estimator = EstimatorClass()
+        except Exception:
+            logger.warn("Could not load estimator {0}"
+                        .format(config['class']))
+            logger.warn("Exception:\n" + traceback.format_exc())
+            continue
 
-    processes = processes or multiprocessing.cpu_count()
+        if not hasattr(estimator, "fit"):
+            logger.warn("Estimator {0} does not have a fit() method."
+                        .format(config['class']))
+            continue
 
-    grid_model = grid_search.GridSearchCV(
-        cv=folds,
-        estimator=estimator,
-        param_grid=param_grid,
-        scoring=scoring,
-        n_jobs=processes
-    )
+        param_grid = grid_search.ParameterGrid(config['params'])
 
-    # To perform the gridsearch, we run fit()
-    feature_values, labels = (list(vals) for vals in zip(*observations))
-    grid_model.fit(feature_values, labels)
-
-    return grid_model
+        yield name, estimator, param_grid
 
 
-def test_model(observations, grid_model):
-    feature_values, labels = (list(vals) for vals in zip(*observations))
-    predictions = grid_model.predict(feature_values)
-    scores = get_scores(grid_model, feature_values)
+def _cross_validate(observations, estimator, params, scoring="roc_auc",
+                    folds=5, verbose=False):
 
-    return f1_score(labels, predictions), roc_auc_score(labels, scores)
-
-
-# To compute an ROC score, you need scores for each example, either a class
-# probability or a distance from the decision boundary
-def get_scores(model, X):
-    try:
-        scores = model.decision_function(X)
-    except:
-        scores = model.predict_proba(X)[:, 1]
+    start = time.time()
+    feature_values, labels = (list(vect) for vect in zip(*observations))
+    estimator.set_params(**params)
+    scores = cross_validation.cross_val_score(estimator, feature_values,
+                                              labels, scoring=scoring,
+                                              cv=folds)
+    duration = time.time() - start
+    logging.debug("Cross-validated {0} with {1} in {2} hours: {3} ({4})"
+                  .format(estimator, format_params(params),
+                          round(duration / (60 * 60), 3),
+                          round(scores.mean(), 3),
+                          round(scores.std(), 3)))
     return scores
