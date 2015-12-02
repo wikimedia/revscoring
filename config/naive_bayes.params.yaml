@@ -1,7 +1,6 @@
 GaussianNB:
   class: sklearn.naive_bayes.GaussianNB
-  params:
-    alpha: [0.1, 1, 10]
+  params: {}
 BernoulliNB:
   class: sklearn.naive_bayes.BernouliNB
   params: {}
