@@ -1,3 +1,5 @@
+|travis|_
+
 Revision Scoring
 ================
 A generic, machine learning-based revision scoring system designed to be used
@@ -73,3 +75,6 @@ Authors
         * `https://github.com/he7d3r`
     Adam Roses Wight:
         * `https://mediawiki.org/wiki/User:Adamw`
+
+.. |travis| image:: https://api.travis-ci.org/wiki-ai/revscoring.png
+.. _travis: https://travis-ci.org/wiki-ai/revscoring
