@@ -1,4 +1,4 @@
-|travis|_
+|travis|_ |codecov|_
 
 Revision Scoring
 ================
@@ -78,3 +78,5 @@ Authors
 
 .. |travis| image:: https://api.travis-ci.org/wiki-ai/revscoring.png
 .. _travis: https://travis-ci.org/wiki-ai/revscoring
+.. |codecov| image:: https://codecov.io/github/wiki-ai/revscoring/revscoring.svg
+.. _codecov: https://codecov.io/github/wiki-ai/revscoring
