@@ -205,13 +205,23 @@ def _cross_validate(observations, estimator, params, scoring="roc_auc",
     start = time.time()
     feature_values, labels = (list(vect) for vect in zip(*observations))
     estimator.set_params(**params)
-    scores = cross_validation.cross_val_score(estimator, feature_values,
-                                              labels, scoring=scoring,
-                                              cv=folds)
-    duration = time.time() - start
-    logging.debug("Cross-validated {0} with {1} in {2} hours: {3} ({4})"
-                  .format(estimator, format_params(params),
-                          round(duration / (60 * 60), 3),
-                          round(scores.mean(), 3),
-                          round(scores.std(), 3)))
-    return scores
+
+    try:
+        scores = cross_validation.cross_val_score(
+            estimator, feature_values, labels, scoring=scoring, cv=folds)
+
+        duration = time.time() - start
+        logging.debug("Cross-validated {0} with {1} in {2} hours: {3} ({4})"
+                      .format(estimator.__class__.__name__, 
+                              format_params(params),
+                              round(duration / (60 * 60), 3),
+                              round(scores.mean(), 3),
+                              round(scores.std(), 3)))
+        return scores
+
+    except Exception:
+        logger.warn("Could not load estimator {0}"
+                    .format(config['class']))
+        logger.warn("Exception:\n" + traceback.format_exc())
+        return [0]*folds
+
