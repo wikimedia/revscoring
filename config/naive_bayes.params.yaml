@@ -1,0 +1,10 @@
+GaussianNB:
+  class: sklearn.naive_bayes.GaussianNB
+  params: {}
+BernoulliNB:
+  class: sklearn.naive_bayes.BernouliNB
+  params: {}
+MultinomialNB:
+  class: sklearn.naive_bayes.MultinomialNB
+  params:
+  alpha: [0.1, 1, 10]

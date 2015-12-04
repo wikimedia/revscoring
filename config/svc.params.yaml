@@ -1,0 +1,14 @@
+SVC:
+  class: sklearn.svm.SVC
+  params:
+     -
+      kernel: ["rbf"]
+      probability: [true]
+      gamma: [0.0, 0.001, 0.0001]
+      cache_size: [1000]
+      C: [0.1, 1, 10]
+     -
+      kernel: ["linear"]
+      probability: [true]
+      cache_size: [1000]
+      C: [0.1, 1, 10]

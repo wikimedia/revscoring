@@ -40,8 +40,9 @@ import random
 import sys
 
 import docopt
+import yamlconf
 
-from .util import import_from_path
+from . import util
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +55,8 @@ def main(argv=None):
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
 
-    ScorerModel = import_from_path(args['<scorer_model>'])
-    features = import_from_path(args['<features>'])
+    ScorerModel = yamlconf.import_module(args['<scorer_model>'])
+    features = yamlconf.import_module(args['<features>'])
 
     version = args['--version']
 
@@ -67,55 +68,29 @@ def main(argv=None):
     scorer_model = ScorerModel(features, version=version, **model_kwargs)
 
     if args['--values-labels'] == "<stdin>":
-        values_labels_file = sys.stdin
+        observations_f = sys.stdin
     else:
-        values_labels_file = open(args['--values-labels'], 'r')
+        observations_f = open(args['--values-labels'], 'r')
 
     if args['--model-file'] == "<stdout>":
         model_file = sys.stdout.buffer
     else:
         model_file = open(args['--model-file'], 'wb')
 
-    decode_label = DECODERS[args['--label-type']]
+    decode_label = util.DECODERS[args['--label-type']]
 
-    feature_labels = read_value_labels(values_labels_file,
-                                       scorer_model.features,
-                                       decode_label)
+    observations = util.read_observations(observations_f,
+                                          scorer_model.features,
+                                          decode_label)
 
     test_prop = float(args['--test-prop'])
 
-    run(feature_labels, model_file, scorer_model, test_prop)
-
-DECODERS = {
-    'int': lambda v: int(v),
-    'float': lambda v: float(v),
-    'str': lambda v: str(v),
-    'bool': lambda v: v in ("True", "true", "1", "T", "y", "Y")
-}
+    run(observations, model_file, scorer_model, test_prop)
 
 
-def read_value_labels(f, features, decode_label):
-    for line in f:
-        parts = line.strip().split("\t")
-        values = parts[:-1]
-        label = parts[-1]
+def run(observations, model_file, scorer_model, test_prop):
 
-        label = decode_label(label)
-
-        feature_values = []
-        for feature, value in zip(features, values):
-
-            if feature.returns == bool:
-                feature_values.append(value == "True")
-            else:
-                feature_values.append(feature.returns(value))
-
-        yield feature_values, label
-
-
-def run(feature_labels, model_file, scorer_model, test_prop):
-
-    scorer_model = _train_test(scorer_model, feature_labels, test_prop)
+    scorer_model = _train_test(scorer_model, observations, test_prop)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -124,19 +99,17 @@ def run(feature_labels, model_file, scorer_model, test_prop):
     scorer_model.dump(model_file)
 
 
-def _train_test(scorer_model, feature_labels, test_prop):
-    feature_labels = list(feature_labels)
-    random.shuffle(feature_labels)
-
-    test_set_size = int(len(feature_labels) * test_prop)
-    test_set = feature_labels[:test_set_size]
+def _train_test(scorer_model, observations, test_prop):
+    train_set, test_set = util.train_test_split(observations,
+                                                test_prop=test_prop)
+    
     logger.debug("Test set: {0}".format(len(test_set)))
-
-    train_set = feature_labels[test_set_size:]
     logger.debug("Train set: {0}".format(len(train_set)))
 
+    logger.info("Training model...")
     scorer_model.train(train_set)
 
+    logger.info("Testing model...")
     scorer_model.test(test_set)
 
     return scorer_model
