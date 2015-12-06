@@ -237,11 +237,7 @@ def _cross_validate(observations, estimator, params, scoring="roc_auc",
                 cv=folds)
 
         duration = time.time() - start
-<<<<<<< HEAD
-        logging.debug("Cross-validated {0} with {1} in {2} hours: {3} ({4})"
-=======
         logging.debug("Cross-validated {0} with {1} in {2} minutes: {3} ({4})"
->>>>>>> Adds cv-timeout option to tune utility.
                       .format(estimator.__class__.__name__,
                               format_params(params),
                               round(duration / 60, 3),
