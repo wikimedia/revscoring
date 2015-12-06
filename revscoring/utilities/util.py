@@ -1,4 +1,5 @@
 import random
+import signal
 
 
 def encode(val, none_val="NULL"):
@@ -50,3 +51,22 @@ def train_test_split(observations, test_prop=0.25):
     train_set = observations[test_set_size:]
 
     return train_set, test_set
+
+
+class Timeout:
+    """
+    A context for performing a timeout.
+    """
+    def __init__(self, timeout_seconds):
+        self.timeout_seconds = int(timeout_seconds)
+
+    def handle_timeout(self, signum, frame):
+        raise RuntimeError("Execution timed out at {0} seconds."
+                           .format(self.timeout_seconds))
+
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.handle_timeout)
+        signal.alarm(self.timeout_seconds)
+
+    def __exit__(self, type, value, traceback):
+        signal.alarm(0)
