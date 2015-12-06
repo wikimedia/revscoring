@@ -168,7 +168,6 @@ OTHER = [
 ]
 
 
-
 def test_badwords():
     compare_extraction(english.revision.badwords_list, BAD, OTHER)
 

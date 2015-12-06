@@ -43,8 +43,6 @@ def test_revision():
     eq_(solve(french.revision.infonoise, cache=cache), 13/19)
 
 
-
-
 def test_pickling():
 
     eq_(french, pickle.loads(pickle.dumps(french)))

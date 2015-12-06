@@ -189,6 +189,7 @@ OTHER = [
     """,
 ]
 
+
 def test_badwords():
     compare_extraction(spanish.revision.badwords_list, BAD, OTHER)
 

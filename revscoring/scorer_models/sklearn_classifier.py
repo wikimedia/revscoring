@@ -2,7 +2,6 @@ import io
 import time
 from datetime import datetime
 
-from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import auc, roc_curve
 from tabulate import tabulate
 

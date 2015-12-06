@@ -1,5 +1,4 @@
 import random
-import sys
 
 
 def encode(val, none_val="NULL"):

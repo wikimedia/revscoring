@@ -38,11 +38,11 @@
 """
 import logging
 import sys
-from itertools import islice
 from multiprocessing import Pool, cpu_count
 
 import docopt
 import mwapi
+import yamlconf
 
 from ..errors import RevisionNotFound
 from ..extractors import APIExtractor
@@ -151,7 +151,8 @@ class ConfiguredExtractor:
     def extract(self, rev_label):
         rev_id, label = rev_label
         try:
-            feature_values = list(self.extractor.extract(rev_id, self.features))
+            feature_values = list(self.extractor.extract(rev_id,
+                                                         self.features))
             error = None
         except Exception as e:
             feature_values = None
