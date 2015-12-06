@@ -1,3 +1,5 @@
+|travis|_ |codecov|_
+
 Revision Scoring
 ================
 A generic, machine learning-based revision scoring system designed to be used
@@ -7,22 +9,22 @@ Wikipedia.
 Example
 ========
 
-Using a scorer_model to score a revision:
+Using a scorer_model to score a revision::
 
-    >>> import mwapi
-    >>> from revscoring import ScorerModel
-    >>> from revscoring.extractors import APIExtractor
-    >>>
-    >>> with open("models/enwiki.damaging.linear_svc.model") as f:
-    ...     scorer_model = ScorerModel.load(f)
-    ...
-    >>> extractor = APIExtractor(mwapi.Session(host="https://en.wikipedia.org",
-    ...                                        user_agent="revscoring demo"))
-    >>>
-    >>> feature_values = extractor.extract(123456789, scorer_model.features)
-    >>>
-    >>> print(scorer_model.score(feature_values))
-    {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}}
+  >>> import mwapi
+  >>> from revscoring import ScorerModel
+  >>> from revscoring.extractors import APIExtractor
+  >>>
+  >>> with open("models/enwiki.damaging.linear_svc.model") as f:
+  ...     scorer_model = ScorerModel.load(f)
+  ...
+  >>> extractor = APIExtractor(mwapi.Session(host="https://en.wikipedia.org",
+  ...                                        user_agent="revscoring demo"))
+  >>>
+  >>> feature_values = extractor.extract(123456789, scorer_model.features)
+  >>>
+  >>> print(scorer_model.score(feature_values))
+  {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}}
 
 
 Installation
@@ -73,3 +75,8 @@ Authors
         * `https://github.com/he7d3r`
     Adam Roses Wight:
         * `https://mediawiki.org/wiki/User:Adamw`
+
+.. |travis| image:: https://api.travis-ci.org/wiki-ai/revscoring.png
+.. _travis: https://travis-ci.org/wiki-ai/revscoring
+.. |codecov| image:: https://codecov.io/github/wiki-ai/revscoring/revscoring.svg
+.. _codecov: https://codecov.io/github/wiki-ai/revscoring
