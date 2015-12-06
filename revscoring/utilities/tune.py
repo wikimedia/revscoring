@@ -10,6 +10,8 @@ Usage:
                                     [--report=<path>]
                                     [--label-type=<type>]
                                     [--processes=<num>]
+                                    [--cv-timeout=<mins>]
+                                    [--scale-features]
                                     [--verbose]
                                     [--debug]
 
@@ -30,6 +32,10 @@ Options:
                            [default: str]
     --processes=<num>      The number of parallel processes to start for
                            model building [default: <cpu-count>]
+    --cv-timeout=<mins>    The number of minutes to wait for a model to
+                           cross-validate before timing out
+                           [default: <forever>]
+    --scale-features       Scales the feature values before tuning
     --verbose              Print progress information to stderr
     --debug                Print debug information to stderr
 
@@ -44,8 +50,9 @@ import traceback
 from collections import defaultdict
 
 import docopt
+import numpy
 import yamlconf
-from sklearn import cross_validation, grid_search
+from sklearn import cross_validation, grid_search, preprocessing
 from tabulate import tabulate
 
 from . import util
@@ -89,16 +96,28 @@ def main(argv=None):
     else:
         processes = int(args['--processes'])
 
+    if args['--cv-timeout'] == "<forever>":
+        cv_timeout = None
+    else:
+        cv_timeout = float(args['--cv-timeout']) * 60  # Convert to seconds
+
+    scale_features = args['--scale-features']
     verbose = args['--verbose']
 
     run(params_config, features_path, observations, scoring, folds,
-        report, processes, verbose)
+        report, processes, cv_timeout, scale_features, verbose)
 
 
 def run(params_config, features_path, observations, scoring, folds,
-        report, processes, verbose):
+        report, processes, cv_timeout, scale_features, verbose):
 
     observations = list(observations)
+    if scale_features:
+        logger.debug("Scaling features...")
+        ss = preprocessing.StandardScaler()
+        feature_values, labels = (list(vect) for vect in zip(*observations))
+        scaled_feature_values = ss.fit_transform(feature_values)
+        observations = list(zip(scaled_feature_values, labels))
 
     # Prepare the worker pool
     logger.debug("Starting up multiprocessing pool (processes={0})"
@@ -126,7 +145,8 @@ def run(params_config, features_path, observations, scoring, folds,
                          .format(format_params(params)))
             result = pool.apply_async(_cross_validate,
                                       [observations, estimator, params],
-                                      {'scoring': scoring, 'folds': folds})
+                                      {'cv_timeout': cv_timeout,
+                                       'scoring': scoring, 'folds': folds})
             cv_result_sets[name].append((params, result))
 
     # Barrier synchronization
@@ -200,27 +220,37 @@ def _estimator_param_grid(params_config):
 
 
 def _cross_validate(observations, estimator, params, scoring="roc_auc",
-                    folds=5, verbose=False):
+                    folds=5, cv_timeout=None, verbose=False):
 
     start = time.time()
     feature_values, labels = (list(vect) for vect in zip(*observations))
     estimator.set_params(**params)
 
     try:
-        scores = cross_validation.cross_val_score(
-            estimator, feature_values, labels, scoring=scoring, cv=folds)
+        logging.debug("Running cross-validation for " +
+                      "{0} with timeout of {1} seconds"
+                      .format(estimator.__class__.__name__, cv_timeout))
+        with util.Timeout(cv_timeout):
+            scores = cross_validation.cross_val_score(
+                estimator, feature_values,
+                labels, scoring=scoring,
+                cv=folds)
 
         duration = time.time() - start
+<<<<<<< HEAD
         logging.debug("Cross-validated {0} with {1} in {2} hours: {3} ({4})"
+=======
+        logging.debug("Cross-validated {0} with {1} in {2} minutes: {3} ({4})"
+>>>>>>> Adds cv-timeout option to tune utility.
                       .format(estimator.__class__.__name__,
                               format_params(params),
-                              round(duration / (60 * 60), 3),
+                              round(duration / 60, 3),
                               round(scores.mean(), 3),
                               round(scores.std(), 3)))
         return scores
 
     except Exception:
-        logger.warn("Could not load estimator {0}"
+        logger.warn("Could not cross-validate estimator {0}"
                     .format(estimator.__class__.__name__))
         logger.warn("Exception:\n" + traceback.format_exc())
-        return [0]*folds
+        return numpy.array([0]*folds)
