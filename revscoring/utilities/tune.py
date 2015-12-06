@@ -118,7 +118,7 @@ def run(params_config, features_path, observations, scoring, folds,
     report.write("\n")
 
     # For each estimator and paramset, submit the job.
-    cv_result_sets = defaultdict(lambda : [])
+    cv_result_sets = defaultdict(lambda: [])
     for name, estimator, param_grid in _estimator_param_grid(params_config):
         logger.debug("Submitting jobs for {0}:".format(name))
         for params in param_grid:
@@ -158,7 +158,7 @@ def run(params_config, features_path, observations, scoring, folds,
 
         param_scores = ((p, r.get()) for p, r in param_results)
         param_stats = [(p, s.mean(), s.std()) for p, s in param_scores]
-        param_stats.sort(key=lambda v:v[1], reverse=True)
+        param_stats.sort(key=lambda v: v[1], reverse=True)
 
         table = tabulate(
             ((round(mean_score, 3), round(scores.std(), 3),
@@ -212,7 +212,7 @@ def _cross_validate(observations, estimator, params, scoring="roc_auc",
 
         duration = time.time() - start
         logging.debug("Cross-validated {0} with {1} in {2} hours: {3} ({4})"
-                      .format(estimator.__class__.__name__, 
+                      .format(estimator.__class__.__name__,
                               format_params(params),
                               round(duration / (60 * 60), 3),
                               round(scores.mean(), 3),
@@ -221,7 +221,6 @@ def _cross_validate(observations, estimator, params, scoring="roc_auc",
 
     except Exception:
         logger.warn("Could not load estimator {0}"
-                    .format(config['class']))
+                    .format(estimator.__class__.__name__))
         logger.warn("Exception:\n" + traceback.format_exc())
         return [0]*folds
-

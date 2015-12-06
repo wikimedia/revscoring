@@ -132,14 +132,14 @@ INFORMAL = [
 
 OTHER = [
     """
-    Das Kürzel Gulag (russisch Гулаг) bezeich­net das Netz von Arbeits­lagern in
-    der Sowjet­union; im weiteren Sinn steht es für die Gesamt­heit des
+    Das Kürzel Gulag (russisch Гулаг) bezeich­net das Netz von Arbeits­lagern
+    in der Sowjet­union; im weiteren Sinn steht es für die Gesamt­heit des
     sowje­tischen Zwangs­arbeits­systems, das auch Spezial­gefäng­nisse,
-    Zwangs­arbeits­pflichten ohne Haft sowie einige psychia­trische Kliniken als
-    Haft­verbüßungs­orte umfasste. Von 1930 bis 1953 waren in den Lagern
-    mindes­tens 18 Millionen Menschen inhaf­tiert. Mehr als 2,7 Millionen starben
-    im Lager oder in der Verbannung. In den letzten Lebens­jahren Stalins
-    erreichte der Gulag mit rund 2,5 Millionen Insassen seine größte
+    Zwangs­arbeits­pflichten ohne Haft sowie einige psychia­trische Kliniken
+    als Haft­verbüßungs­orte umfasste. Von 1930 bis 1953 waren in den Lagern
+    mindes­tens 18 Millionen Menschen inhaf­tiert. Mehr als 2,7 Millionen
+    starben im Lager oder in der Verbannung. In den letzten Lebens­jahren
+    Stalins erreichte der Gulag mit rund 2,5 Millionen Insassen seine größte
     quantitative Aus­dehnung.
     """
 ]

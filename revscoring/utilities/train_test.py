@@ -36,7 +36,6 @@
 """
 import json
 import logging
-import random
 import sys
 
 import docopt
@@ -102,7 +101,7 @@ def run(observations, model_file, scorer_model, test_prop):
 def _train_test(scorer_model, observations, test_prop):
     train_set, test_set = util.train_test_split(observations,
                                                 test_prop=test_prop)
-    
+
     logger.debug("Test set: {0}".format(len(test_set)))
     logger.debug("Train set: {0}".format(len(train_set)))
 

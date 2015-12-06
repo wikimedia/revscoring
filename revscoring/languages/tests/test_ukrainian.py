@@ -34,8 +34,6 @@ OTHER = [
 ]
 
 
-
-
 def test_badwords():
     compare_extraction(ukrainian.revision.badwords_list, BAD, OTHER)
 

@@ -8,17 +8,10 @@
 .. autoclass:: revscoring.scorer_models.ScikitLearnClassifier
     :members:
 """
-import io
 import pickle
-import time
-from datetime import datetime
 from statistics import mean, stdev
 
 import yamlconf
-from sklearn.metrics import auc, roc_curve
-from tabulate import tabulate
-
-from .util import normalize_json
 
 
 class ScorerModel:

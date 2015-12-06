@@ -38,15 +38,15 @@
 """
 import logging
 import sys
-from itertools import islice
 from multiprocessing import Pool, cpu_count
 
 import docopt
 import mwapi
+import yamlconf
 
 from ..errors import RevisionNotFound
 from ..extractors import APIExtractor
-from .util import encode, import_from_path
+from .util import encode
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ def main(argv=None):
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
 
-    features = import_from_path(args['<features>'])
+    features = yamlconf.import_module(args['<features>'])
 
     session = mwapi.Session(args['--host'],
                             user_agent="Revscoring feature extractor utility")
@@ -151,7 +151,8 @@ class ConfiguredExtractor:
     def extract(self, rev_label):
         rev_id, label = rev_label
         try:
-            feature_values = list(self.extractor.extract(rev_id, self.features))
+            feature_values = list(self.extractor.extract(rev_id,
+                                                         self.features))
             error = None
         except Exception as e:
             feature_values = None
