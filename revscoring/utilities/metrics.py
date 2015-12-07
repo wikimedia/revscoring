@@ -9,7 +9,7 @@ def pr_auc_score(y_true, y_score):
     """
     precision, recall, thresholds = \
         precision_recall_curve(y_true, y_score[:, 1])
-    return auc(recall, precision)
+    return auc(recall, precision, reorder=True)
 
 pr_auc_scorer = make_scorer(pr_auc_score, greater_is_better=True,
                             needs_proba=True)
