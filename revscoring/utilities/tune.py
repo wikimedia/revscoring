@@ -162,11 +162,12 @@ def run(params_config, features_path, observations, scoring, folds,
     report.write("# Top scoring configurations\n")
     grid_scores.sort(key=lambda gs: gs[2], reverse=True)
     table = tabulate(
-        ((name, round(mean_score, 3), round(scores.std(), 3),
+        ((name, round(mean_score, 3), round(std_score, 3),
           format_params(params))
-         for name, params, mean_score, scores in
+         for name, params, mean_score, std_score in
          grid_scores[:10]),
-        headers=["model", "mean(scores)", "std(scores)", "params"]
+        headers=["model", "mean(scores)", "std(scores)", "params"],
+        tablefmt="pipe"
     )
     report.write(table + "\n")
     report.write("\n")
@@ -181,11 +182,12 @@ def run(params_config, features_path, observations, scoring, folds,
         param_stats.sort(key=lambda v: v[1], reverse=True)
 
         table = tabulate(
-            ((round(mean_score, 3), round(scores.std(), 3),
+            ((round(mean_score, 3), round(std_score, 3),
               format_params(params))
-             for params, mean_score, scores in
+             for params, mean_score, std_score in
              param_stats),
-            headers=["mean(scores)", "std(scores)", "params"]
+            headers=["mean(scores)", "std(scores)", "params"],
+            tablefmt="pipe"
         )
         report.write(table + "\n")
         report.write("\n")
@@ -227,9 +229,9 @@ def _cross_validate(observations, estimator, params, scoring="roc_auc",
     estimator.set_params(**params)
 
     try:
-        logging.debug("Running cross-validation for " +
-                      "{0} with timeout of {1} seconds"
-                      .format(estimator.__class__.__name__, cv_timeout))
+        logger.debug("Running cross-validation for " +
+                     "{0} with timeout of {1} seconds"
+                     .format(estimator.__class__.__name__, cv_timeout))
         with util.Timeout(cv_timeout):
             scores = cross_validation.cross_val_score(
                 estimator, feature_values,
@@ -237,12 +239,12 @@ def _cross_validate(observations, estimator, params, scoring="roc_auc",
                 cv=folds)
 
         duration = time.time() - start
-        logging.debug("Cross-validated {0} with {1} in {2} minutes: {3} ({4})"
-                      .format(estimator.__class__.__name__,
-                              format_params(params),
-                              round(duration / 60, 3),
-                              round(scores.mean(), 3),
-                              round(scores.std(), 3)))
+        logger.debug("Cross-validated {0} with {1} in {2} minutes: {3} ({4})"
+                     .format(estimator.__class__.__name__,
+                             format_params(params),
+                             round(duration / 60, 3),
+                             round(scores.mean(), 3),
+                             round(scores.std(), 3)))
         return scores
 
     except Exception:
