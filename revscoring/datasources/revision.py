@@ -11,13 +11,35 @@ Returns the `rev_id` of the current revision.
 
 metadata = Datasource("revision.metadata")
 """
-Returns a :class:`~revscoring.datasources.types.RevisionMetadata` for the
-current revision.
+Returns a `dict` of metadata for the current revision.
 """
 
 text = Datasource("revision.text")
 """
 Returns the text content of the current revision.
+"""
+
+
+def process_comment(metadata):
+    return metadata['comment']
+
+comment = Datasource("revision.comment", process_comment,
+                     depends_on=[metadata])
+"""
+Returns the comment saved with the revision.
+"""
+
+
+def process_parse_tree(revision_text):
+    if revision_text is None:
+        raise RevisionNotFound()
+    return mwp.parse(revision_text or "")
+
+parse_tree = Datasource("revision.parse_tree",
+                        process_parse_tree, depends_on=[text])
+"""
+Returns a :class:`mwparserfromhell.wikicode.Wikicode` abstract syntax tree
+representing the content of the current revision.
 """
 
 
@@ -35,19 +57,6 @@ Returns a list of tokens.
 
 
 # ################################ Parsed text ################################
-def process_parse_tree(revision_text):
-    if revision_text is None:
-        raise RevisionNotFound()
-    return mwp.parse(revision_text or "")
-
-parse_tree = Datasource("revision.parse_tree",
-                        process_parse_tree, depends_on=[text])
-"""
-Returns a :class:`mwparserfromhell.wikicode.Wikicode` abstract syntax tree
-representing the content of the current revision.
-"""
-
-
 def process_content(revision_parse_tree):
     return revision_parse_tree.strip_code()
 
@@ -90,6 +99,16 @@ Returns a list of :class:`mwparserfromhell.nodes.wikilink.Wikilink`'s present
 in the content of the current revision.
 """
 
+
+def process_internal_link_titles(internal_links):
+    return [str(l.title) for l in internal_links]
+
+internal_link_titles = Datasource("revision.internal_link_titles",
+                                  process_internal_link_titles,
+                                  depends_on=[internal_links])
+"""
+Returns a list of string titles of links (aka "targets")
+"""
 
 def process_tags(revision_parse_tree):
     return revision_parse_tree.filter_tags()
