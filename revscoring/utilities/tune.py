@@ -55,7 +55,7 @@ import yamlconf
 from sklearn import cross_validation, grid_search, preprocessing
 from tabulate import tabulate
 
-from . import util
+from . import metrics, util
 from .. import __version__
 
 logger = logging.getLogger(__name__)
@@ -83,7 +83,9 @@ def main(argv=None):
     observations = util.read_observations(observations_f, features,
                                           label_decoder)
 
-    scoring = args['--scoring']
+    # Get a sepecialized scorer if we have one
+    scoring = metrics.SCORERS.get(args['--scoring'], args['--scoring'])
+
     folds = int(args['--folds'])
 
     if args['--report'] == "<stdout>":
