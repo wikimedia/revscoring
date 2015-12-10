@@ -3,11 +3,11 @@ from ...features import Feature
 
 class Infonoise(Feature):
 
-    def __init__(self, name, stopwords, stem_word, words_source):
+    def __init__(self, name, stopwords, stem_word, words_datasource):
         self.stopwords = set(stopwords)
         self.stem_word = stem_word
         super().__init__(name, self.process, returns=float,
-                         depends_on=[words_source])
+                         depends_on=[words_datasource])
 
     def process(self, words):
         non_stopwords = (w for w in words if w.lower() not in self.stopwords)
