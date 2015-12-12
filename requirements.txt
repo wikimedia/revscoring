@@ -13,3 +13,4 @@ pyenchant >= 1.6.6, < 1.6.999
 scipy >= 0.13.3, < 0.16.999
 scikit-learn == 0.15.2
 tabulate >= 0.7.5, < 0.7.999
+yamlconf >= 0.0.5, < 0.0.999
