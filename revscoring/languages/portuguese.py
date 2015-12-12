@@ -26,7 +26,7 @@ except LookupError:
 
 badwords = [
     r"babaca",  # douchebag
-    r"bixa",  # ???
+    r"bixa",  # gay man
     r"boiola", r"boiolas",  # gay man
     r"boquete",  # blowjob
     r"bosta",  # shit
@@ -39,7 +39,7 @@ badwords = [
     r"chat[ao]",  # boring
     r"(ch|x)up[ao](r|va|u)?s?",  # blow me
     r"cocô",  # poo
-    r"comi",  # eat ???
+    r"comi",  # fucked
     r"cona(ssa)?s?",  # cunt
     r"cuz([aã]o|inho)",  # asshole
     r"doido",  # crazy
@@ -47,7 +47,7 @@ badwords = [
     r"feia",  # ugly
     r"fendi",  # ???
     r"foda[sr]?", r"fude[sr]?",  # fuck
-    r"gostos[aã][os]?", r"gostoso",  # yummy ???
+    r"gostos[aã][os]?", r"gostoso",  # hot
     r"idiotas?",  # idiot
     r"loka", r"loko",  # crazy
     r"maconheiro",  # bothead
@@ -58,15 +58,14 @@ badwords = [
     r"merdas?",  # shit
     r"noob",  # noob
     r"ot[áa]rios?",  # sucker
-    r"pariu",  # to give birth ???
+    r"pariu",  # part of "puta que o pariu"
     r"pategos",  # hick / yokel
     r"peid(a|ar|o|ei)s?",  # fart
     r"pênis",  # penis
     r"pilas?",  # dick
     r"piroca",  # dick
-    r"poha",  # ???
     r"porcaria", r"porno",  # filth/porn
-    r"porra",  # cum
+    r"porra", r"poha",  # cum
     r"pum",  # fart
     r"punhet(a|eiro)",  # jack off / masturbate
     r"put(o|a|aria|eiro|inha)s?",  # bitch/hooker
@@ -81,7 +80,7 @@ badwords = [
 
 informals = [
     r"adoro",  # love
-    r"aki",  # ???
+    r"aki",  # here
     r"amo",  # master
     r"(b+l+a+h*)+",  # bla, blah, bbblllaaaahhhhhblah
     r"carambas?",  # OMG
