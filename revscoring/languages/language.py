@@ -1,6 +1,7 @@
 """
 .. autoclass:: revscoring.Language
 """
+from ..util import NamedDict
 
 
 class Language:
@@ -15,6 +16,14 @@ class Language:
     def __init__(self, name, doc=None):
         self.__name__ = name
         self.__doc__ = doc if doc else name
+
+        self.revision = NamedDict()
+        self.parent_revision = NamedDict()
+        self.diff = NamedDict()
+        self.page = NamedDict()
+        self.user = NamedDict()
+        self.previous_user_revision = NamedDict()
+
 
     def __eq__(self, other):
         return isinstance(other, Language) and self.__name__ == other.__name__
