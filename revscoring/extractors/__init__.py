@@ -12,7 +12,7 @@ extractor
 .. automodule:: revscoring.extractors.extractor
 
 """
-from .extractor import Extractor
+from .extractor import Extractor, OfflineExtractor
 from .api import APIExtractor
 
-__all__ = [Extractor, APIExtractor]
+__all__ = [Extractor, OfflineExtractor, APIExtractor]
