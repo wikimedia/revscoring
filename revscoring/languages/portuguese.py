@@ -27,14 +27,15 @@ except LookupError:
 badwords = [
     r"baba[ckq](as?|ão|ões|u?i[cçs]s?e)",  # douchebag
     r"bi(ch|x)as?",  # gay man
-    r"boi(ol[ai](tico)?|l[aã]o|olo(go|[gj]i[sx]ta))s?",  # gay man
+    r"boio(l[ai](tico)?|l[aã]o|lo(go|[gj]i[sx]ta))s?",  # gay man
     r"bo(qu|k)etes?",  # blowjob
     r"bo[sx]t(ao?s?|alhao?)",  # shit
     r"b[uo]s?[cçs]s?et+(a[os]?|inha)?",  # pussy (vagina)
     r"bu[mn]d((inh)?as?|[ãa]o)",  # ass
     r"b[uo]rr[oaei](ce|[ius])?",  # donkey/jackass
     r"[ck]a[csç]s?ete?s?",  # bludgeon
-    r"[ck]ag(a(r|n?do|dao?|n?ei(r[ao])?|(lh)?a?o|nitas?|dela|lhoto)?|ou)",  # shit
+    # shit
+    r"[ck]ag(a(r|n?do|dao?|n?ei(r[ao])?|(lh)?a?o|nitas?|dela|lhoto)?|ou)",
     r"[ck]ara(l?hl?([ou]?s?|ao|inh[ou]s?)|i([ou]s?)?)",  # fuck
     r"(ch|x)at[ao]s?",  # boring
     r"(ch|x)up[aeiou]([dv]a|te|nha|ndo|r|u)?",  # blow me
