@@ -25,56 +25,59 @@ except LookupError:
 
 
 badwords = [
-    r"babaca",  # douchebag
-    r"bixa",  # gay man
-    r"boiola", r"boiolas",  # gay man
-    r"boquete",  # blowjob
-    r"bosta",  # shit
-    r"bucet(a|inha)s?",  # pussy (vagina)
-    r"bund(a|inha)s?",  # ass
-    r"burr[ao]s?",  # donkey/jackass
-    r"cacete",  # bludgeon
-    r"cag([ao]|ad[ao]|and[ao]|aneir[ao]|ar|ou)s?",  # shit
-    r"cara(i|io|lho)s?",  # fuck
-    r"chat[ao]",  # boring
-    r"(ch|x)up[ao](r|va|u)?s?",  # blow me
-    r"cocô",  # poo
-    r"comi",  # fucked
-    r"cona(ssa)?s?",  # cunt
-    r"cuz([aã]o|inho)",  # asshole
-    r"doido",  # crazy
-    r"fed(e|ido)",  # stinks/stinky
-    r"feia",  # ugly
+    r"baba[ckq](as?|ão|ões|u?i[cçs]s?e)",  # douchebag
+    r"bi(ch|x)as?",  # gay man
+    r"boio(l[ai](tico)?|l[aã]o|lo(go|[gj]i[sx]ta))s?",  # gay man
+    r"bo(qu|k)etes?",  # blowjob
+    r"bo[sx]t(ao?s?|alhao?)",  # shit
+    r"b[uo]s?[cçs]s?et+(a[os]?|inha)?",  # pussy (vagina)
+    r"bu[mn]d((inh)?as?|[ãa]o)",  # ass
+    r"b[uo]rr[oaei](ce|[ius])?",  # donkey/jackass
+    r"[ck]a[csç]s?ete?s?",  # bludgeon
+    # shit
+    r"[ck]ag(a(r|n?do|dao?|n?ei(r[ao])?|(lh)?a?o|nitas?|dela|lhoto)?|ou)",
+    r"[ck]ara(l?hl?([ou]?s?|ao|inh[ou]s?)|i([ou]s?)?)",  # fuck
+    r"(ch|x)at[ao]s?",  # boring
+    r"(ch|x)up[aeiou]([dv]a|te|nha|ndo|r|u)?",  # blow me
+    r"[ck]o[ck]ô",  # poo
+    r"[ck]om(er?|i)",  # fucked
+    r"[ck]onas?",  # cunt
+    r"[ck]uz([aã]o|inho)",  # asshole
+    r"doid(inh)?[ao]s?",  # crazy
+    r"fed?(id?[ao]|e|orent[ao])s?",  # stinks/stinky
+    r"fei[ao]s?",  # ugly
     r"fendi",  # ???
-    r"foda[sr]?", r"fude[sr]?",  # fuck
-    r"gostos[aã][os]?", r"gostoso",  # hot
-    r"idiotas?",  # idiot
-    r"loka", r"loko",  # crazy
-    r"maconheiro",  # bothead
-    r"mafia",  # mafia
+    r"f[ou]d(a[os]?|e[ru]?|idos?)",  # fuck
+    r"go[sx]tos([ao]s?|ão|ões|onas?)",  # hot
+    r"idiot(a|i[cçs]s?e)s?",  # idiot
+    r"lo(k[oa]s?|u[ck]([oa]s?|ura|a(mente)?))",  # crazy
+    r"maconheir[ao]s?",  # bothead
+    r"m[áa]fia",  # mafia
     r"maldizentes",  # slanderers
     r"mecos",  # cum ???
     r"mentir(a|os[oa])s?",  # lie/liar
-    r"merdas?",  # shit
+    r"merd(a|[ãa]o|oso|ica)s?",  # shit
     r"noob",  # noob
-    r"ot[áa]rios?",  # sucker
-    r"pariu",  # part of "puta que o pariu"
+    r"ot[áa]ri[oa]s?",  # sucker
+    r"pari[ou]",  # part of "puta que o pariu"
     r"pategos",  # hick / yokel
-    r"peid(a|ar|o|ei)s?",  # fart
-    r"pênis",  # penis
+    r"pau",  # dick
+    r"peid([ao]|[ãa]o|ei|ar(ia)?|ando|aç[oa])s?",  # fart
+    r"p[êe]nis+",  # penis
     r"pilas?",  # dick
     r"piroca",  # dick
-    r"porcaria", r"porno",  # filth/porn
-    r"porra", r"poha",  # cum
+    r"porcaria", r"porn[ôo]?",  # filth/porn
+    r"po(rr|h)a",  # cum
     r"pum",  # fart
-    r"punhet(a|eiro)",  # jack off / masturbate
-    r"put(o|a|aria|eiro|inha)s?",  # bitch/hooker
-    r"safado",  # shameless
-    r"tesão",  # turn-on / horny
-    r"tran[sz]ar",  # sex
-    r"tr(eta|oxa)",  # bullshit
-    r"vadia",  # bitch
-    r"viad(agem|ão|inho|o)s?",  # gay person ("fucker")
+    r"punhet(a|eir[oa])s?",  # jack off / masturbate
+    r"put([ao]|[ao]na|aria|eiro|inha)s?",  # bitch/hooker
+    r"safad([ao]|ona)s?",  # shameless
+    r"te[sz]ão", r"te[sz]ud[oa]s?",  # turn-on / horny
+    r"tran[sz]([aá](r(am)?|n?do)?|ou)",  # sex
+    r"tretas?",  # bullshit
+    r"trou?(ch|x)as?",
+    r"vadi([ao]s?|agem)",  # bitch
+    r"viad(agem?|[aã]?o|inh[ou])s?",  # gay person ("fucker")
     r"xixi"  # pee
 ]
 
