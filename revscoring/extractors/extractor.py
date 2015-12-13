@@ -16,11 +16,14 @@ logger = logging.getLogger(__name__)
 
 class Extractor(Context):
     """
-    Implements a context for extracting features for a revision or a set of
+    Implements a context for extracting dependents for a revision or a set of
     revisions.
     """
 
-    def extract(self, rev_id, features, context=None, cache=None):
+    def extract(self, rev_ids, dependents, context=None, caches=None):
+        raise NotImplementedError()
+
+    def extract_roots(self, rev_ids, dependents, context=None, caches=None):
         raise NotImplementedError()
 
     @classmethod
@@ -43,11 +46,27 @@ class OfflineExtractor(Context):
         logger.warning("Loading OfflineExtractor.  You probably want an " +
                        "APIExtractor unless this is the test server.")
 
-    def extract(self, rev_id, features, context=None, cache=None):
+    def extract(self, rev_ids, dependents, context=None, caches=None):
+        caches = caches or {}
+        if hasattr(rev_ids, "__iter__"):
+            return self._extract_many(rev_ids, dependents, context=context,
+                                      caches=caches)
+        else:
+            rev_id = rev_ids
+            cache = caches
+            return self._extract(rev_id, dependents, context=context,
+                                 cache=cache)
+
+    def _extract(self, rev_id, features, context=None, cache=None):
         cache = cache or {}
         cache[revision.id] = rev_id
-        return self.solve(features, cache=cache)
+        return self.solve(features, context=context, cache=cache)
+
+    def _extract_many(self, rev_ids, features, context=None, caches=None):
+        for rev_id in rev_ids:
+            yield None, self._extract(rev_id, features, context=context,
+                                      cache=caches.get(rev_id))
 
     @classmethod
     def from_config(cls, config, name, section_key="extractors"):
-        cls()
+        return cls()
