@@ -1,35 +1,29 @@
-from ...datasources import Datasource
+from ..datasource import Datasource
 
 
-class TokenFrequency(Datasource):
+class frequency(Datasource):
 
-    def __init__(self, name, tokens_datasource, if_none=None):
-        self.if_none = if_none
+    def __init__(self, name, items_datasource):
+        name = self.format_name(name, [items_datasource])
         super().__init__(name, self.process,
-                         depends_on=[tokens_datasource])
+                         depends_on=[items_datasource])
 
-    def process(self, tokens):
-        if tokens is None:
-            if self.if_none is not None:
-                return self.if_none()
-            else:
-                return {}
+    def process(self, items):
 
         freq = {}
-        for token in tokens:
-            if token in freq:
-                freq[token] += 1
+        for item in items:
+            if item in freq:
+                freq[item] += 1
             else:
-                freq[token] = 1
+                freq[item] = 1
 
         return freq
 
 
-class TokenFrequencyDiff(Datasource):
+class frequency_diff(Datasource):
 
-    def __init__(self, name, old_tf_datasource, new_tf_datasource,
-                 if_none=None):
-        self.if_none = if_none
+    def __init__(self, name, old_tf_datasource, new_tf_datasource):
+        name = self.format_name(name, [old_tf_datasource, new_tf_datasource])
         super().__init__(name, self.process,
                          depends_on=[old_tf_datasource, new_tf_datasource])
 
@@ -54,9 +48,10 @@ class TokenFrequencyDiff(Datasource):
         return tf_diff
 
 
-class ProportionalTokenFrequencyDiff(Datasource):
+class prop_frequency_diff(Datasource):
 
     def __init__(self, name, old_tf_datasource, tf_diff_datasource):
+        name = self.format_name(name, [old_tf_datasource, tf_diff_datasource])
         super().__init__(name, self.process,
                          depends_on=[old_tf_datasource, tf_diff_datasource])
 

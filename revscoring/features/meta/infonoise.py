@@ -1,23 +1,16 @@
 from ...features import Feature
 
 
-class Infonoise(Feature):
+class infonoise(MetaFeature):
 
-    def __init__(self, name, stopwords, stem_word, words_datasource):
-        self.stopwords = set(stopwords)
-        self.stem_word = stem_word
-        super().__init__(name, self.process, returns=float,
-                         depends_on=[words_datasource])
+    def __init__(self, name, words_datasource,
+                 stemmed_non_stopwords_datasource):
+        super().__init__(name=name, returns=float,
+                         depends_on=[words_datasource,
+                                     stemmed_non_stopwords_datasource])
 
-    def process(self, words):
-        non_stopwords = (w for w in words if w.lower() not in self.stopwords)
-        non_stopword_stems = (self.stem_word(w) for w in non_stopwords)
-
-        length_of_stemmed = sum(len(w) for w in non_stopword_stems)
-
-        if len(words) > 0:
-            length_of_words = sum(len(w) for w in words)
-        else:
-            length_of_words = 0
+    def process(self, words, stemmed_non_stopwords):
+        length_of_stemmed = sum(len(w) for w in stemmed_non_stopwords)
+        length_of_words = sum(len(w) for w in words)
 
         return length_of_stemmed / max(length_of_words, 1)

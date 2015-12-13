@@ -1,16 +1,17 @@
 from nose.tools import eq_, raises
 
 from .. import revision
-from ...dependencies import solve
-from ...errors import RevisionNotFound
+from ....dependencies import solve
+from ....errors import RevisionNotFound
+from ...revision import text
 
 
 def test_content():
-    cache = {revision.text: "This is some {{markup}} and [[stuff]]."}
+    cache = {text: "This is some {{markup}} and [[stuff]]."}
     content = solve(revision.content, cache=cache)
     eq_(content, "This is some  and stuff.")
 
-    cache = {revision.text: "This is a foobar {{foobar}} <td>"}
+    cache = {text: "This is a foobar {{foobar}} <td>"}
     eq_(solve(revision.content_tokens, cache=cache),
         ["This", " ", "is", " ", "a", " ", "foobar", "  "])
 
@@ -65,8 +66,8 @@ Testing some text. {{:User:Hats/Template3}}
     """
     templates = solve(revision.templates, cache={revision.text: text})
 
-    eq_([str(t.name) for t in templates], ["template0", "template1",
-                                           ":User:Hats/Template3"])
+    eq_([str(t.name) for t in templates],
+        ["template0", "template1", ":User:Hats/Template3"])
 
 
 @raises(RevisionNotFound)
