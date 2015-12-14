@@ -6,6 +6,8 @@ from ...datasources import Datasource
 from ..parent_revision import text
 
 
+# Datsources ##################################################################
+
 def process_item_doc(text):
     if text is None:
         return None
@@ -33,3 +35,6 @@ item = Datasource("parent_revision.item", process_item,
 """
 Generates a `~pywikibase.Item`.
 """
+
+
+# Features ####################################################################

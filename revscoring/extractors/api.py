@@ -328,6 +328,10 @@ class APIExtractor(Extractor):
 
     @classmethod
     def process_revision_text(cls, revision_doc):
+        """
+        TODO: Check if there is no parent of if the revision has been deleted.
+        If the parent_revision has been deleted, raise an error.
+        """
         if revision_doc is None:
             return None
         return revision_doc.get('*', "")

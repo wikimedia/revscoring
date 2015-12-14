@@ -8,32 +8,12 @@ from .util import MARKUP_RE, NUMERIC_RE, SYMBOLIC_RE
 bytes_changed = revision.bytes - parent_revision.bytes
 """
 Represents encoded content bytes changed in this edit. It uses UTF-8 encoding.
-
-:Returns:
-    int
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import parent_revision
-        >>> list(extractor.extract(655097130, [diff.bytes_changed]))
-        [297]
 """
 
 bytes_changed_ratio = bytes_changed / modifiers.max(parent_revision.bytes, 1)
 """
 Represents ratio of bytes changed in this edit compared to parent revision
 size (in bytes).
-
-:Returns:
-    float
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import parent_revision
-        >>> list(extractor.extract(655097130, [diff.bytes_changed_ratio]))
-        [0.012515275378197294]
 """
 
 
