@@ -108,6 +108,6 @@ from .features import Feature
 from .languages import Language
 from .scorer_models import ScorerModel
 
-__version__ = "0.7.10"  # Change in setup.py
+__version__ = "0.7.11"  # Change in setup.py
 
 __all__ = [Datasource, Dependent, Extractor, Feature, Language, ScorerModel]
