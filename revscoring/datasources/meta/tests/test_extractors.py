@@ -1,8 +1,10 @@
+import pickle
+
 from nose.tools import eq_
 
 from ....dependencies import solve
 from ...datasource import Datasource
-from ..regex_extractors import SegmentRegexExtractor, TextRegexExtractor
+from ..extractors import regextract
 
 
 def return_foo():
@@ -12,11 +14,11 @@ segments = Datasource("segments")
 
 text = Datasource("text")
 
-text_extractor = TextRegexExtractor("text_extractor", text,
-                                    ["foo bar", "bar foo"])
+text_extractor = regextract(["foo bar", "bar foo"], text,
+                            name="text_extractor")
 
-segment_extractor = SegmentRegexExtractor("text_extractor", segments,
-                                          ["foo bar", "bar foo"])
+segment_extractor = regextract(["foo bar", "bar foo"], segments,
+                               name="text_extractor")
 
 
 def test_text_extractor():
@@ -25,6 +27,8 @@ def test_text_extractor():
     eq_(solve(text_extractor, cache=cache),
         ["foo bar", "bar foo"])
 
+    eq_(pickle.loads(pickle.dumps(text_extractor)), text_extractor)
+
 
 def test_segment_extractor():
     cache = {segments: ["This is some text foo bar nope bar foo", "foo bar",
@@ -32,3 +36,5 @@ def test_segment_extractor():
 
     eq_(solve(segment_extractor, cache=cache),
         ["foo bar", "bar foo", "foo bar"])
+
+    eq_(pickle.loads(pickle.dumps(segment_extractor)), segment_extractor)

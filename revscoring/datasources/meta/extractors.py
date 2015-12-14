@@ -5,13 +5,23 @@ from ..datasource import Datasource
 
 class regextract(Datasource):
     """
-    Abstract base-class that represents a Regex extractor.
+    Generates a list of strings that match any of a set of privided `regexes`
+
+    :Parameters:
+        regexes : `list` ( `str` )
+            A list of regexes to find in the text
+        text_datasource : :class:`revscoring.Datasource`
+            A datasource that returns a `str` or a `list` of `str`
+        regex_flags : `int`
+            A set of regex flags to use in matching
+        name : `str`
+            A name for the new datasource
     """
     def __init__(self, regexes, text_datasource, regex_flags=re.I, name=None):
         group_pattern = r"\b(" + r"|".join(regexes) + r")\b"
         self.group_re = re.compile(group_pattern, flags=regex_flags)
-        name = self.format_name(name, [regexes, text_datasource])
-        super().__init__(name, depends_on=[text_datasource])
+        name = self._format_name(name, [regexes, text_datasource])
+        super().__init__(name, self.process, depends_on=[text_datasource])
 
     def process(self, text_or_texts):
         if isinstance(text_or_texts, str):

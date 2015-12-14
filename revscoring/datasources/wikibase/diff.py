@@ -1,11 +1,11 @@
 from . import parent_revision, revision
 from ..datasource import Datasource
-from .util import dicts_diff
+from .util import diff_dicts
 
 
 def process_sitelinks_diff(past_item, current_item):
     past_sitelinks = past_item.sitelinks if past_item is not None else {}
-    return dicts_diff(past_sitelinks, current_item.sitelinks)
+    return diff_dicts(past_sitelinks, current_item.sitelinks)
 
 sitelinks_diff = Datasource("diff.sitelinks_diff", process_sitelinks_diff,
                             depends_on=[parent_revision.item, revision.item])
@@ -16,7 +16,7 @@ Generates a :class`~revscoring.datasources.wikibase.DiffDict` of sitelinks keys
 
 def process_labels_diff(past_item, current_item):
     past_labels = past_item.labels if past_item is not None else {}
-    return dicts_diff(past_labels, current_item.labels)
+    return diff_dicts(past_labels, current_item.labels)
 
 labels_diff = Datasource("diff.labels_diff", process_labels_diff,
                          depends_on=[parent_revision.item, revision.item])
@@ -25,9 +25,9 @@ Generates a :class`~revscoring.datasources.wikibase.DiffDict` of labels keys
 """
 
 
-def process_aliases_diff(current_item, past_item):
+def process_aliases_diff(past_item, current_item):
     past_aliases = past_item.aliases if past_item is not None else {}
-    return dicts_diff(past_aliases, current_item.aliases)
+    return diff_dicts(past_aliases, current_item.aliases)
 
 aliases_diff = Datasource("diff.aliases_diff", process_aliases_diff,
                           depends_on=[parent_revision.item, revision.item])
@@ -36,9 +36,9 @@ Generates a :class`~revscoring.datasources.wikibase.DiffDict` of alias keys
 """
 
 
-def process_descriptions_diff(current_item, past_item):
+def process_descriptions_diff(past_item, current_item):
     past_descriptions = past_item.descriptions if past_item is not None else {}
-    return dicts_diff(past_descriptions, current_item.descriptions)
+    return diff_dicts(past_descriptions, current_item.descriptions)
 
 descriptions_diff = Datasource("diff.descriptions_diff",
                                process_descriptions_diff,
@@ -50,9 +50,9 @@ keys
 """
 
 
-def process_claims_diff(current_item, past_item):
+def process_claims_diff(past_item, current_item):
     past_claims = past_item.claims if past_item is not None else {}
-    return dicts_diff(past_claims, current_item.claims)
+    return diff_dicts(past_claims, current_item.claims)
 
 claims_diff = Datasource("diff.claims_diff",
                          process_claims_diff,
@@ -63,9 +63,9 @@ keys
 """
 
 
-def process_badges_diff(current_item, past_item):
+def process_badges_diff(past_item, current_item):
     past_badges = past_item.badges if past_item is not None else {}
-    return dicts_diff(past_badges, current_item.badges)
+    return diff_dicts(past_badges, current_item.badges)
 
 badges_diff = Datasource("diff.badges_diff",
                          process_badges_diff,
@@ -76,7 +76,7 @@ keys
 """
 
 
-def process_added_claims(claims_diff, current_item, past_item):
+def process_added_claims(claims_diff, past_item, current_item):
     added_claims = []
     for p_number in claims_diff.added:
         added_claims += current_item.claims[p_number]
@@ -96,7 +96,7 @@ Generates a `list` of description added claims.
 """
 
 
-def process_removed_claims(claims_diff, current_item, past_item):
+def process_removed_claims(claims_diff, past_item, current_item):
     removed_claims = []
     for p_number in claims_diff.removed:
         removed_claims += past_item.claims[p_number]
@@ -116,7 +116,7 @@ Generates a `list` of description removed claims.
 """
 
 
-def process_changed_claims(claims_diff, current_item, past_item):
+def process_changed_claims(claims_diff, past_item, current_item):
     changed_claims = []
     for p_number in claims_diff.changed():
         parent_guids = {claim.snak:claim

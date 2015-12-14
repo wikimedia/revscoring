@@ -1,30 +1,88 @@
-from nose.tools import eq_
+from nose.tools import eq_, raises
 
 from .. import parent_revision
 from ....dependencies import solve
-from ...parent_revision import text
-
-
-def test_tokens():
-    cache = {text: "Some text words 55."}
-    eq_(solve(parent_revision.tokens, cache=cache),
-        ["Some", " ", "text", " ", "words", " ", "55", "."])
-
-    # Make sure we don't error when there is no parent revision
-    cache = {text: None}
-    eq_(solve(parent_revision.tokens, cache=cache),
-        [])
+from ....errors import RevisionNotFound
+from ...parent_revision import text as parent_revision_text
 
 
 def test_content():
-    cache = {text: "Some text words 55. {{foo}}"}
-    eq_(solve(parent_revision.content, cache=cache),
-        "Some text words 55. ")
+    cache = {parent_revision_text: "This is some {{markup}} and [[stuff]]."}
+    content = solve(parent_revision.content, cache=cache)
+    eq_(content, "This is some  and stuff.")
 
-    # Make sure we don't error when there is no parent revision
-    cache = {text: None}
-    eq_(solve(parent_revision.content, cache=cache), "")
-
-    cache = {text: "This is a foobar {{foobar}} <td>"}
+    cache = {parent_revision_text: "This is a foobar {{foobar}} <td>"}
     eq_(solve(parent_revision.content_tokens, cache=cache),
         ["This", " ", "is", " ", "a", " ", "foobar", "  "])
+
+
+def test_headings():
+    text = """
+= Heading 1 =
+Foo bar baz.
+
+== Heading 2 ==
+Doo be doo be doo? ==Hats==
+
+== Heading 2 again ==
+Testing some text.
+
+====== HEADING 6 ======
+    """
+    headings = solve(parent_revision.headings,
+                     cache={parent_revision_text: text})
+
+    eq_([h.level for h in headings], [1, 2, 2, 6])
+
+    eq_(solve(parent_revision.heading_titles,
+              cache={parent_revision_text: text}),
+        ["Heading 1", "Heading 2", "Heading 2 again", "HEADING 6"])
+
+
+def test_intental_link_titles():
+    text = "This is some [[Text]] with [http://foobar] [[links|hyperlinks]]"
+
+    eq_(solve(parent_revision.internal_link_titles,
+              cache={parent_revision_text: text}),
+        ["Text", "links"])
+
+
+def test_external_link_urls():
+    text = "This is some [http://foobar] with [//foobar] [[links|hyperlinks]]"
+
+    eq_(solve(parent_revision.external_link_urls,
+              cache={parent_revision_text: text}),
+        ["http://foobar", "//foobar"])
+
+
+def test_tag_names():
+    text = "This <span>is</span> <ref>tags</ref> to <!--<ref>detect</ref>-->"
+
+    eq_(solve(parent_revision.tag_names, cache={parent_revision_text: text}),
+        ["span", "ref"])
+
+
+def test_templates():
+    text = """
+{{template0}}
+= Heading 1 {{template1}}=
+Foo bar baz.
+
+== Heading 2 ==
+
+== Heading 2 again ==
+Testing some text. {{:User:Hats/Template3}}
+
+====== HEADING 6 ======
+    """
+    eq_(solve(parent_revision.template_names,
+              cache={parent_revision_text: text}),
+        ["template0", "template1", ":User:Hats/Template3"])
+
+
+def test_not_found_tokens():
+    solve(parent_revision.tokens, cache={parent_revision_text: None})
+
+
+def test_not_found_parse_tree():
+    solve(parent_revision.parse_tree, cache={parent_revision_text: None})
