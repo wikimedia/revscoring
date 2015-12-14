@@ -108,7 +108,7 @@ informals = [
     "fermatevi",
     "frega",
     "grassetto",
-    "(ha)+",
+    "ha(ha)+",
     "inserisci",
     "intestazione",
     "leggete",
