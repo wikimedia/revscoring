@@ -5,7 +5,7 @@ from nose.tools import eq_
 
 from ...datasources import revision, user
 from ...dependencies import solve
-from ..user import age, is_anon, is_bot
+from ..user import age, in_group, is_anon
 
 
 def test_age():
@@ -67,20 +67,21 @@ def test_is_anon():
     assert solve(is_anon, cache=cache)
 
 
-def test_is_bot():
-    FakeUserInfo = namedtuple("UserInfo", ['groups'])
+def test_in_group():
+    FakeUserInfo = namedtuple("UserInfo", ['groups', 'implicitgroups'])
 
     cache = {
-        user.info: FakeUserInfo(["foo", "bar", "bot"])
+        user.info: FakeUserInfo(["foo", "bar", "bot"], ['autoconfirmed'])
     }
-    assert solve(is_bot, cache=cache)
+    assert solve(in_group('bot'), cache=cache)
 
     cache = {
-        user.info: FakeUserInfo(["foo", "bar"])
+        user.info: FakeUserInfo(["foo", "bar"], [])
     }
-    assert not solve(is_bot, cache=cache)
+    assert not solve(in_group('bot'), cache=cache)
 
     cache = {
-        user.info: None
+        user.info: FakeUserInfo(["rollbacker", "sysop"], ['autoconfirmed'])
     }
-    assert not solve(is_bot, cache=cache)
+    assert solve(in_group('autoconfirmed'), cache=cache)
+    assert solve(in_group('sysop'), cache=cache)

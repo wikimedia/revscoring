@@ -2,7 +2,7 @@ import json
 
 import pywikibase
 
-from ..datasources import Datasource
+from ...datasources import Datasource
 from ..revision import text
 
 

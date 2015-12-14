@@ -5,7 +5,7 @@ from deltas.tokenizers import wikitext_split
 
 from ...errors import RevisionNotFound
 from ..datasource import Datasource
-from ..meta import ItemFilter, ItemMapper, TokensMatching
+from ..meta import filter, map, regex_matching
 from ..revision import text
 
 
@@ -14,7 +14,7 @@ def process_tokens(text):
         raise RevisionNotFound()
     return [t for t in wikitext_split.tokenize(text)]
 
-tokens = Datasource("revision.tokens",
+tokens = Datasource("wikitext.revision.tokens",
                     process_tokens, depends_on=[text])
 """
 Returns a list of tokens.
@@ -30,7 +30,7 @@ def tokens_matching(regex, name=None, regex_flags=re.I):
                .format("wikitext.revision.tokens_matching",
                        regex.pattern)
 
-    return TokensMatching(name, tokens, regex)
+    return regex_matching(regex, tokens, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all content tokens
 that match a regular expression.
@@ -45,10 +45,84 @@ def tokens_in_types(types, name=None):
                .format("wikitext.revision.tokens_in_types",
                        types)
 
-    return ItemFilter(name, tokens, lambda t: t.type in types)
+    return filter(lambda t: t.type in types, tokens, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all content tokens
 that are within a set of types.
+"""
+
+number_tokens = tokens_in_types(
+    {'number'},
+    name="wikitext.revision.number_tokens"
+)
+"""
+Returns a list of numeric tokens
+"""
+
+whitespace_tokens = tokens_in_types(
+    {'whitespace'},
+    name="wikitext.revision.whitespace_tokens"
+)
+"""
+Returns a list of whitespace tokens
+"""
+
+markup_tokens = tokens_in_types(
+    {'dbrack_open', 'dbrack_close', 'brack_open', 'brack_close', 'tab_open',
+     'tab_close', 'dcurly_open', 'dcurly_close', 'curly_open', 'curly_close',
+     'bold', 'italics', 'equals'},
+    name="wikitext.revision.markup_tokens"
+)
+"""
+Returns a list of markup tokens
+"""
+
+cjk_tokens = tokens_in_types(
+    {'cjk'},
+    name="wikitext.revision.cjk_tokens"
+)
+"""
+Returns a list of Chinese/Japanese/Korean tokens
+"""
+
+entity_tokens = tokens_in_types(
+    {'entity'},
+    name="wikitext.revision.entity_tokens"
+)
+"""
+Returns a list of HTML entity tokens
+"""
+
+url_tokens = tokens_in_types(
+    {'url'},
+    name="wikitext.revision.url_tokens"
+)
+"""
+Returns a list of URL tokens
+"""
+
+word_tokens = tokens_in_types(
+    {'word'},
+    name="wikitext.revision.word_tokens"
+)
+"""
+Returns a list of word tokens
+"""
+
+punctuation_tokens = tokens_in_types(
+    {'period', 'qmark', 'epoint', 'comma', 'colon', 'scolon'},
+    name="wikitext.revision.punctuation_tokens"
+)
+"""
+Returns a list of punctuation tokens
+"""
+
+break_tokens = tokens_in_types(
+    {'break'},
+    name="wikitext.revision.break_tokens"
+)
+"""
+Returns a list of break tokens
 """
 
 
@@ -96,7 +170,7 @@ def content_tokens_matching(regex, name=None, regex_flags=re.I):
                .format("wikitext.revision.content_tokens_matching",
                        regex.pattern)
 
-    return TokensMatching(name, content_tokens, regex)
+    return regex_matching(regex, content_tokens, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all content tokens
 that match a regular expression.
@@ -111,7 +185,7 @@ def content_tokens_in_types(types, name=None, regex_flags=re.I):
                .format("wikitext.revision.content_tokens_in_types",
                        types)
 
-    return ItemFilter(name, content_tokens, lambda t: t.type in types)
+    return filter(lambda t: t.type in types, content_tokens, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all content tokens
 that are within a set of types.
@@ -130,11 +204,10 @@ the content of the revision.
 
 
 def extract_heading_title(heading):
-    return str(heading.title)
+    return str(heading.title).strip()
 
-heading_titles = ItemMapper("wikitext.revision.heading_titles",
-                            headings,
-                            extract_heading_title)
+heading_titles = map(extract_heading_title, headings,
+                     name="wikitext.revision.heading_titles")
 """
 Returns a list of heading titles
 """
@@ -149,7 +222,7 @@ def heading_titles_matching(regex, name=None, regex_flags=re.I):
                .format("wikitext.revision.heading_titles_matching",
                        regex.pattern)
 
-    return TokensMatching(name, heading_titles, regex)
+    return regex_matching(regex, heading_titles, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all header titles
 that match a regular expression.
@@ -171,9 +244,8 @@ present in the content of the revision.
 def extract_external_link_url(elink):
     return str(elink.url)
 
-external_link_urls = ItemMapper("wikitext.revision.external_link_url",
-                                external_links,
-                                extract_external_link_url)
+external_link_urls = map(extract_external_link_url, external_links,
+                         name="wikitext.revision.external_link_url")
 """
 Returns a list of string urls of external links (aka "targets")
 """
@@ -188,7 +260,7 @@ def external_link_urls_matching(regex, name=None, regex_flags=re.I):
                .format("wikitext.revision.external_link_urls_matching",
                        regex.pattern)
 
-    return TokensMatching(name, external_link_urls, regex)
+    return regex_matching(regex, external_link_urls, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all external link URLs
 that match a regular expression.
@@ -210,9 +282,8 @@ in the content of the revision.
 def extract_internal_link_title(ilink):
     return str(ilink.title)
 
-internal_link_titles = ItemMapper("wikitext.revision.internal_link_titles",
-                                  internal_links,
-                                  extract_internal_link_title)
+internal_link_titles = map(extract_internal_link_title, internal_links,
+                           name="wikitext.revision.internal_link_titles")
 """
 Returns a list of string titles of internal links (aka "targets")
 """
@@ -227,7 +298,7 @@ def internal_link_titles_matching(regex, name=None, regex_flags=re.I):
                .format("wikitext.revision.internal_link_titles_matching",
                        regex.pattern)
 
-    return TokensMatching(name, internal_link_titles, regex)
+    return regex_matching(regex, internal_link_titles, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all internal link
 titles names that match a regular expression.
@@ -246,10 +317,9 @@ content of the revision.
 
 
 def extract_tag_name(tag):
-    return str(tag.name)
+    return str(tag.tag)
 
-tag_names = ItemMapper("wikitext.revision.tag_names", tags,
-                       extract_tag_name)
+tag_names = map(extract_tag_name, tags, name="wikitext.revision.tag_names")
 """
 Returns a list of html tag names present in the content of the revision
 """
@@ -263,7 +333,7 @@ def tag_names_matching(regex, name=None, regex_flags=re.I):
         name = "{0}({1})" \
                .format("wikitext.revision.tag_names_matching", regex.pattern)
 
-    return TokensMatching(name, tag_names, regex)
+    return regex_matching(regex, tag_names, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all tag names that
 match a regular expression.
@@ -283,8 +353,9 @@ present in the content of the revision.
 
 def extract_template_name(template):
     return str(template.name)
-template_names = ItemMapper("wikitext.revision.template_names", templates,
-                            extract_template_name)
+
+template_names = map(extract_template_name, templates,
+                     name="wikitext.revision.template_names")
 """
 Returns a list of template names present in the content of the revision
 """
@@ -299,7 +370,7 @@ def template_names_matching(regex, name=None, regex_flags=re.I):
                .format("wikitext.revision.template_names_matching",
                        regex.pattern)
 
-    return TokensMatching(name, template_names, regex)
+    return regex_matching(regex, template_names, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all template names
 that match a regular expression.

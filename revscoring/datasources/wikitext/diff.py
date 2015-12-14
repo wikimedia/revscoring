@@ -6,7 +6,7 @@ from deltas import segment_matcher
 
 from . import parent_revision, revision
 from ..datasource import Datasource
-from ..meta import ItemFilter, TokensMatching
+from ..meta import filter, regex_matching
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ def tokens_added_matching(regex, name=None, regex_flags=re.I):
                .format("wikitext.revision.tokens_added_matching",
                        regex.pattern)
 
-    return TokensMatching(name, tokens_added, regex)
+    return regex_matching(regex, tokens_added, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all content tokens
 added that match a regular expression.
@@ -72,7 +72,7 @@ def tokens_added_in_types(types, name=None):
                .format("wikitext.diff.tokens_added_in_types",
                        types)
 
-    return ItemFilter(name, tokens_added, lambda t: t.type in types)
+    return filter(lambda t: t.type in types, tokens_added, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all content tokens
 added that are within a set of types.
@@ -104,7 +104,7 @@ def tokens_removed_matching(regex, name=None, regex_flags=re.I):
                .format("wikitext.revision.tokens_removed_matching",
                        regex.pattern)
 
-    return TokensMatching(name, tokens_removed, regex)
+    return regex_matching(regex, tokens_removed, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all content tokens
 removed that match a regular expression.
@@ -119,7 +119,7 @@ def tokens_removed_in_types(types, name=None):
                .format("wikitext.diff.tokens_removed_in_types",
                        types)
 
-    return ItemFilter(name, tokens_removed, lambda t: t.type in types)
+    return filter(lambda t: t.type in types, tokens_removed, name=name)
 """
 Constructs a :class:`revscoring.Datasource` that returns all content tokens
 removed that are within a set of types.
