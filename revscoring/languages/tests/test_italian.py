@@ -124,7 +124,7 @@ OTHER = [
     che le FS reputarono meritevoli di ulteriori commesse nell'attesa del
     completamento del progetto dei nuovi gruppi idonei a fronteggiare lo
     sviluppo del traffico conseguente alla statalizzazione.
-    """
+    """, "ha"
 ]
 
 
