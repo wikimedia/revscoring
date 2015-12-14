@@ -59,7 +59,7 @@ def tokens_added_matching(regex, name=None, regex_flags=re.I):
 
     return regex_matching(regex, tokens_added, name=name)
 """
-Constructs a :class:`revscoring.Datasource` that returns all content tokens
+Constructs a :class:`revscoring.Datasource` that returns all tokens
 added that match a regular expression.
 """
 
@@ -74,8 +74,83 @@ def tokens_added_in_types(types, name=None):
 
     return filter(lambda t: t.type in types, tokens_added, name=name)
 """
-Constructs a :class:`revscoring.Datasource` that returns all content tokens
+Constructs a :class:`revscoring.Datasource` that returns all tokens
 added that are within a set of types.
+"""
+
+
+number_tokens_added = tokens_added_in_types(
+    {'number'},
+    name="wikitext.diff.parent_revision.number_tokens_added"
+)
+"""
+Returns a list of numeric tokens
+"""
+
+whitespace_tokens_added = tokens_added_in_types(
+    {'whitespace'},
+    name="wikitext.diff.parent_revision.whitespace_tokens_added"
+)
+"""
+Returns a list of whitespace tokens
+"""
+
+markup_tokens_added = tokens_added_in_types(
+    {'dbrack_open', 'dbrack_close', 'brack_open', 'brack_close', 'tab_open',
+     'tab_close', 'dcurly_open', 'dcurly_close', 'curly_open', 'curly_close',
+     'bold', 'italics', 'equals'},
+    name="wikitext.diff.parent_revision.markup_tokens_added"
+)
+"""
+Returns a list of markup tokens
+"""
+
+cjk_tokens_added = tokens_added_in_types(
+    {'cjk'},
+    name="wikitext.diff.parent_revision.cjk_tokens_added"
+)
+"""
+Returns a list of Chinese/Japanese/Korean tokens
+"""
+
+entity_tokens_added = tokens_added_in_types(
+    {'entity'},
+    name="wikitext.diff.parent_revision.entity_tokens_added"
+)
+"""
+Returns a list of HTML entity tokens
+"""
+
+url_tokens_added = tokens_added_in_types(
+    {'url'},
+    name="wikitext.diff.parent_revision.url_tokens_added"
+)
+"""
+Returns a list of URL tokens
+"""
+
+word_tokens_added = tokens_added_in_types(
+    {'word'},
+    name="wikitext.diff.parent_revision.word_tokens_added"
+)
+"""
+Returns a list of word tokens
+"""
+
+punctuation_tokens_added = tokens_added_in_types(
+    {'period', 'qmark', 'epoint', 'comma', 'colon', 'scolon'},
+    name="wikitext.diff.parent_revision.punctuation_tokens_added"
+)
+"""
+Returns a list of punctuation tokens
+"""
+
+break_tokens_added = tokens_added_in_types(
+    {'break'},
+    name="wikitext.diff.parent_revision.break_tokens_added"
+)
+"""
+Returns a list of break tokens
 """
 
 
@@ -106,7 +181,7 @@ def tokens_removed_matching(regex, name=None, regex_flags=re.I):
 
     return regex_matching(regex, tokens_removed, name=name)
 """
-Constructs a :class:`revscoring.Datasource` that returns all content tokens
+Constructs a :class:`revscoring.Datasource` that returns all tokens
 removed that match a regular expression.
 """
 
@@ -121,8 +196,83 @@ def tokens_removed_in_types(types, name=None):
 
     return filter(lambda t: t.type in types, tokens_removed, name=name)
 """
-Constructs a :class:`revscoring.Datasource` that returns all content tokens
+Constructs a :class:`revscoring.Datasource` that returns all tokens
 removed that are within a set of types.
+"""
+
+
+number_tokens_removed = tokens_removed_in_types(
+    {'number'},
+    name="wikitext.diff.parent_revision.number_tokens_removed"
+)
+"""
+Returns a list of numeric tokens
+"""
+
+whitespace_tokens_removed = tokens_removed_in_types(
+    {'whitespace'},
+    name="wikitext.diff.parent_revision.whitespace_tokens_removed"
+)
+"""
+Returns a list of whitespace tokens
+"""
+
+markup_tokens_removed = tokens_removed_in_types(
+    {'dbrack_open', 'dbrack_close', 'brack_open', 'brack_close', 'tab_open',
+     'tab_close', 'dcurly_open', 'dcurly_close', 'curly_open', 'curly_close',
+     'bold', 'italics', 'equals'},
+    name="wikitext.diff.parent_revision.markup_tokens_removed"
+)
+"""
+Returns a list of markup tokens
+"""
+
+cjk_tokens_removed = tokens_removed_in_types(
+    {'cjk'},
+    name="wikitext.diff.parent_revision.cjk_tokens_removed"
+)
+"""
+Returns a list of Chinese/Japanese/Korean tokens
+"""
+
+entity_tokens_removed = tokens_removed_in_types(
+    {'entity'},
+    name="wikitext.diff.parent_revision.entity_tokens_removed"
+)
+"""
+Returns a list of HTML entity tokens
+"""
+
+url_tokens_removed = tokens_removed_in_types(
+    {'url'},
+    name="wikitext.diff.parent_revision.url_tokens_removed"
+)
+"""
+Returns a list of URL tokens
+"""
+
+word_tokens_removed = tokens_removed_in_types(
+    {'word'},
+    name="wikitext.diff.parent_revision.word_tokens_removed"
+)
+"""
+Returns a list of word tokens
+"""
+
+punctuation_tokens_removed = tokens_removed_in_types(
+    {'period', 'qmark', 'epoint', 'comma', 'colon', 'scolon'},
+    name="wikitext.diff.parent_revision.punctuation_tokens_removed"
+)
+"""
+Returns a list of punctuation tokens
+"""
+
+break_tokens_removed = tokens_removed_in_types(
+    {'break'},
+    name="wikitext.diff.parent_revision.break_tokens_removed"
+)
+"""
+Returns a list of break tokens
 """
 
 

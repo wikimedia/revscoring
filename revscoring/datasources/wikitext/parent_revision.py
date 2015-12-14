@@ -123,7 +123,6 @@ break_tokens = tokens_in_types(
 Returns a list of break tokens
 """
 
-
 def process_parse_tree(text):
     return mwp.parse(text or "")
 
@@ -311,8 +310,8 @@ def process_tags(revision_parse_tree):
 tags = Datasource("wikitext.parent_revision.tags", process_tags,
                   depends_on=[parse_tree])
 """
-Returns a list of html :class:`mwparserfromhell.nodes.tag.Tag`'s present in the
-content of the revision.
+Returns a list of html :class:`mwparserfromhell.nodes.tag.Tag`'s present in
+the content of the revision.
 """
 
 
