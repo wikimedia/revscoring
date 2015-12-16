@@ -2,9 +2,9 @@ import pickle
 
 from nose.tools import eq_
 
+from .. import extractors
 from ....dependencies import solve
 from ...datasource import Datasource
-from ..extractors import regextract
 
 
 def return_foo():
@@ -14,11 +14,11 @@ segments = Datasource("segments")
 
 text = Datasource("text")
 
-text_extractor = regextract(["foo bar", "bar foo"], text,
-                            name="text_extractor")
+text_extractor = extractors.regex(["foo bar", "bar foo"], text,
+                                  name="text_extractor")
 
-segment_extractor = regextract(["foo bar", "bar foo"], segments,
-                               name="text_extractor")
+segment_extractor = extractors.regex(["foo bar", "bar foo"], segments,
+                                     name="text_extractor")
 
 
 def test_text_extractor():

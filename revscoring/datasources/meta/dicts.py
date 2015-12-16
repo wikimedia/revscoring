@@ -1,7 +1,7 @@
 from ..datasource import Datasource
 
 
-class dict_keys(Datasource):
+class keys(Datasource):
     """
     Generates a set of `dict` keys
 
@@ -20,7 +20,7 @@ class dict_keys(Datasource):
         return d.keys()
 
 
-class dict_values(Datasource):
+class values(Datasource):
     """
     Generates a list of `dict` values
 

@@ -2,20 +2,22 @@ import pickle
 
 from nose.tools import eq_
 
+from .. import mappers
 from ....dependencies import solve
 from ...datasource import Datasource
-from ..mappers import abs, lower_case, map
 
 tokens = Datasource("tokens")
 my_ints = Datasource("my_ints")
 
+
 def extract_first_char(token):
     return token[:1]
-first_char = map(extract_first_char, tokens, name="first_char")
 
-lower_case_tokens = lower_case(tokens, name="lower_case_tokens")
+first_char = mappers.map(extract_first_char, tokens, name="first_char")
 
-abs_ints = abs(my_ints)
+lower_case_tokens = mappers.lower_case(tokens, name="lower_case_tokens")
+
+abs_ints = mappers.abs(my_ints)
 
 
 def test_item_mapper():
@@ -33,9 +35,10 @@ def test_lower_case():
 
     eq_(pickle.loads(pickle.dumps(lower_case_tokens)), lower_case_tokens)
 
-def test_lower_case():
+
+def test_abs():
     cache = {my_ints: [1, 0, -1]}
     eq_(solve(abs_ints, cache=cache),
-        [1, 0 , 1])
+        [1, 0, 1])
 
     eq_(pickle.loads(pickle.dumps(abs_ints)), abs_ints)

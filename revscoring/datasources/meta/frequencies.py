@@ -51,7 +51,7 @@ class delta(Datasource):
 
         delta_table = {}
         for item, new_count in new_tf.items():
-            old_count = old_ft.get(token, 0)
+            old_count = old_ft.get(item, 0)
             if new_count != old_count:
                 delta_table[item] = new_count - old_count
 
@@ -82,6 +82,12 @@ class prop_delta(Datasource):
     def process(self, old_tf, ft_diff):
         prop_delta = {}
         for item, delta in ft_diff.items():
-            prop_delta[item] = delta / old_tf.get(item, 1)
+            if delta > 0:
+                if item in old_tf:
+                    prop_delta[item] = delta / (old_tf[item] + delta)
+                else:
+                    prop_delta[item] = delta
+            else:
+                prop_delta[item] = delta / old_tf[item]
 
         return prop_delta

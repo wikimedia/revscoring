@@ -40,7 +40,7 @@ def test_proportional_token_frequency_diff():
     cache = {old_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45,
              new_tokens: ["a"] * 1 + ["b"] * 5 + ["d"] * 3}
     eq_(solve(prop_delta, cache=cache),
-        {'a': -2 / 3, 'b': 3 / 2, 'c': -1, 'd': 3})
+        {'a': -2 / 3, 'b': 3 / 5, 'c': -1, 'd': 3})
 
     eq_(pickle.loads(pickle.dumps(prop_delta)),
         prop_delta)

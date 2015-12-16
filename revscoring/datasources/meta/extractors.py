@@ -3,7 +3,7 @@ import re
 from ..datasource import Datasource
 
 
-class regextract(Datasource):
+class regex(Datasource):
     """
     Generates a list of strings that match any of a set of privided `regexes`
 
