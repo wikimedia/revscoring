@@ -1,3 +1,10 @@
+import re
+
+import mwparserfromhell
+
+from .....datasources import Datasource
+from .....datasources.meta import filters
+from .....errors import RevisionNotFound
 
 
 class Datasources:
@@ -6,9 +13,7 @@ class Datasources:
         self.prefix = prefix
 
         def process_wikicode(text):
-            if text is None:
-                raise RevisionNotFound()
-            return mwparserfromhell.parse(text or "")
+            return mwparserfromhell.parse(text)
 
         self.wikicode = Datasource(
             prefix + ".wikicode",
@@ -16,7 +21,7 @@ class Datasources:
         )
         """
         A :class:`mwparserfromhell.wikicode.Wikicode` abstract syntax
-        tree representing the content of the revision.
+        tree representing the structure of the page.
         """
 
         self.content = execute_method(
@@ -45,20 +50,6 @@ class Datasources:
         A list of heading titles
         """
 
-    def heading_titles_matchings(self, regex, name=None, regex_flags=re.I):
-        """
-        Builds a datasource that represents all header titles that match a
-        regular expression.
-        """
-        if not hasattr(regex, "pattern"):
-            regex = re.compile(regex, regex_flags)
-        if name is None:
-            name = "{0}({1})".format(self.prefix + ".heading_titles_matching",
-                                     regex.pattern)
-        return filters.regex_matching(regex,
-                                      self.heading_titles,
-                                      name=name)
-
         self.external_links = execute_method(
             "filter_external_links", self.wikicode,
             name=prefix + ".external_links"
@@ -77,23 +68,6 @@ class Datasources:
         A list of external link urls
         """
 
-        def external_link_urls_matching(regex, name=None, regex_flags=re.I):
-            """
-            A list of external link URLs that match a regular expression
-            """
-            if not hasattr(regex, "pattern"):
-                regex = re.compile(regex, regex_flags)
-
-            if name is None:
-                name = "{0}({1})" \
-                       .format(prefix + ".external_link_urls_matching",
-                               regex.pattern)
-
-            return filters.regex_matching(
-                regex, self.external_link_urls, name=name
-            )
-
-
         self.wikilinks = execute_method(
             "filter_wikilinks", self.wikicode,
             name=prefix + ".wikilinks"
@@ -101,7 +75,6 @@ class Datasources:
         """
         A list of :class:`mwparserfromhell.nodes.heading.Wikilink`'s
         """
-
 
         def extract_internal_link_title(ilink):
             return str(ilink.title)
@@ -113,23 +86,6 @@ class Datasources:
         Returns a list of string titles of internal links (aka "targets")
         """
 
-
-        def internal_link_titles_matching(regex, name=None, regex_flags=re.I):
-            if not hasattr(regex, "pattern"):
-                regex = re.compile(regex, regex_flags)
-
-            if name is None:
-                name = "{0}({1})" \
-                       .format(prefix + ".internal_link_titles_matching",
-                               regex.pattern)
-
-            return regex_matching(regex, internal_link_titles, name=name)
-        """
-        Constructs a :class:`revscoring.Datasource` that returns all internal link
-        titles names that match a regular expression.
-        """
-
-
         self.tags = execute_method(
             "filter_tags", self.wikicode,
             name=prefix + ".tags"
@@ -138,30 +94,13 @@ class Datasources:
         A list of :class:`mwparserfromhell.nodes.heading.Tag`'s
         """
 
-
         def extract_tag_name(tag):
             return str(tag.tag)
-
-        self.tag_names = map(extract_tag_name, tags, name=prefix + ".tag_names")
+        self.tag_names = map(extract_tag_name, tags,
+                             name=prefix + ".tag_names")
         """
         Returns a list of html tag names present in the content of the revision
         """
-
-
-        def tag_names_matching(regex, name=None, regex_flags=re.I):
-            if not hasattr(regex, "pattern"):
-                regex = re.compile(regex, regex_flags)
-
-            if name is None:
-                name = "{0}({1})" \
-                       .format(prefix + ".tag_names_matching", regex.pattern)
-
-            return regex_matching(regex, tag_names, name=name)
-        """
-        Constructs a :class:`revscoring.Datasource` that returns all tag names that
-        match a regular expression.
-        """
-
 
         self.templates = execute_method(
             "filter_templates", self.wikicode,
@@ -171,10 +110,8 @@ class Datasources:
         A list of :class:`mwparserfromhell.nodes.heading.Templates`'s
         """
 
-
         def extract_template_name(template):
             return str(template.name)
-
         self.template_names = map(
             extract_template_name, templates,
             name=prefix + ".template_names"
@@ -183,21 +120,90 @@ class Datasources:
         Returns a list of template names present in the content of the revision
         """
 
-
-        def template_names_matching(regex, name=None, regex_flags=re.I):
-            if not hasattr(regex, "pattern"):
-                regex = re.compile(regex, regex_flags)
-
-            if name is None:
-                name = "{0}({1})" \
-                       .format(prefix + ".template_names_matching",
-                               regex.pattern)
-
-            return regex_matching(regex, template_names, name=name)
+    def heading_titles_matchings(self, regex, name=None):
         """
-        Constructs a :class:`revscoring.Datasource` that returns all template names
+        Constructs a :class:`revscoring.Datasource` that generates a `list` of
+        all header titles that match a regular expression.
+        """
+        if not hasattr(regex, "pattern"):
+            regex = re.compile(regex)
+        if name is None:
+            name = "{0}({1})".format(self.prefix + ".heading_titles_matching",
+                                     regex.pattern)
+        return filters.regex_matching(regex, self.heading_titles, name=name)
+
+    def headings_by_level(self, level, name=None):
+        """
+        Constructs a :class:`revscoring.Datasource` that generates a `list` of
+        all headers of a level.
+        """
+        def filter(heading):
+            return heading.level == level
+
+        if name is None:
+            name = "{0}({1})".format(self.prefix + ".headings_by_level",
+                                     level)
+        return filters.filter(filter, self.headings, name=name)
+
+    def external_link_urls_matching(self, regex, name=None):
+        """
+        Constructs a :class:`revscoring.Datasource` that generates a `list` of
+        external link URLs that match a regular expression
+        """
+        if not hasattr(regex, "pattern"):
+            regex = re.compile(regex)
+
+        if name is None:
+            name = "{0}({1})" \
+                   .format(self.prefix + ".external_link_urls_matching",
+                           regex.pattern)
+
+        return filters.regex_matching(regex, self.external_link_urls,
+                                      name=name)
+
+    def internal_link_titles_matching(self, regex, name=None):
+        """
+        Constructs a :class:`revscoring.Datasource` that generates a `list`
+        of internal link titles names that match a regular expression.
+        """
+        if not hasattr(regex, "pattern"):
+            regex = re.compile(regex)
+
+        if name is None:
+            name = "{0}({1})" \
+                   .format(self.prefix + ".internal_link_titles_matching",
+                           regex.pattern)
+
+        return regex_matching(regex, internal_link_titles, name=name)
+
+    def tag_names_matching(self, regex, name=None):
+        """
+        Constructs a :class:`revscoring.Datasource` that returns all tag names
         that match a regular expression.
         """
+        if not hasattr(regex, "pattern"):
+            regex = re.compile(regex)
+
+        if name is None:
+            name = "{0}({1})" \
+                   .format(self.prefix + ".tag_names_matching", regex.pattern)
+
+        return regex_matching(regex, tag_names, name=name)
+
+    def template_names_matching(regex, name=None):
+        """
+        Constructs a :class:`revscoring.Datasource` that returns all template
+        names that match a regular expression.
+        """
+        if not hasattr(regex, "pattern"):
+            regex = re.compile(regex)
+
+        if name is None:
+            name = "{0}({1})" \
+                   .format(prefix + ".template_names_matching",
+                           regex.pattern)
+
+        return regex_matching(regex, template_names, name=name)
 
 
 class execute_method(Datasource):
