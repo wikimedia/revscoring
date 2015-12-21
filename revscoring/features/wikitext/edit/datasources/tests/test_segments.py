@@ -3,13 +3,13 @@ import pickle
 from deltas import Delete, Equal, Insert
 from nose.tools import eq_
 
-from ......datasources import parent_revision, revision
+from ......datasources.revision_oriented import revision
 from ......dependencies import solve
 from ..segments import segments_added, segments_removed
 
 
 def test_segments():
-    cache = {parent_revision.text: "This is not a string.",
+    cache = {revision.parent.text: "This is not a string.",
              revision.text: "This is too a int!"}
     eq_(solve(segments_added, cache=cache),
         ['too', 'int!'])

@@ -3,11 +3,11 @@ import pickle
 from nose.tools import eq_
 
 from .. import delta
-from ......datasources import parent_revision, revision
+from ......datasources.revision_oriented import revision
 from ......dependencies import solve
 
 r_text = revision.text
-p_text = parent_revision.text
+p_text = revision.parent.text
 
 
 def test_pickling():

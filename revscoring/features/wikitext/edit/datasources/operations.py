@@ -4,7 +4,7 @@ import time
 from deltas import segment_matcher
 
 from .....datasources import Datasource
-from ...tokens import parent_revision, revision
+from ...tokens import revision
 from ..util import prefix
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ def process_operations(a, b):
 
 operations = Datasource(
     prefix + ".operations", process_operations,
-    depends_on=[parent_revision.datasources.tokens,
+    depends_on=[revision.parent.datasources.tokens,
                 revision.datasources.tokens]
 )
 """

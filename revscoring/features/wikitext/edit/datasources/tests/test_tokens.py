@@ -3,7 +3,7 @@ import pickle
 from deltas import Delete, Equal, Insert
 from nose.tools import eq_
 
-from ......datasources import parent_revision, revision
+from ......datasources.revision_oriented import revision
 from ......dependencies import solve
 from ..tokens import (breaks_added, breaks_removed, cjks_added, cjks_removed,
                       entities_added, entities_removed, markups_added,
@@ -18,7 +18,7 @@ from ..tokens import (breaks_added, breaks_removed, cjks_added, cjks_removed,
 
 
 def test_tokens():
-    cache = {parent_revision.text: "This is not a string.",
+    cache = {revision.parent.text: "This is not a string.",
              revision.text: "This is too a string."}
     eq_(solve(tokens_added, cache=cache),
         ['too'])
@@ -30,7 +30,7 @@ def test_tokens():
 
 
 def test_tokens_matching():
-    cache = {parent_revision.text: "This is not 55 a sring.",
+    cache = {revision.parent.text: "This is not 55 a sring.",
              revision.text: "This is too 56 a tring."}
     eq_(solve(tokens_added_matching("^t"), cache=cache),
         ['too', 'tring'])
@@ -39,7 +39,7 @@ def test_tokens_matching():
 
 
 def test_tokens_in_types():
-    cache = {parent_revision.text: "This is not 55 a string.",
+    cache = {revision.parent.text: "This is not 55 a string.",
              revision.text: "This is too 56 a string!"}
     eq_(solve(tokens_added_in_types({'word', 'number'}), cache=cache),
         ['too', '56'])
@@ -48,7 +48,7 @@ def test_tokens_in_types():
 
 
 def test_numbers():
-    cache = {parent_revision.text: "This is 55 not a string.",
+    cache = {revision.parent.text: "This is 55 not a string.",
              revision.text: "This is 56 too a string."}
     eq_(solve(numbers_added, cache=cache),
         ['56'])
@@ -60,7 +60,7 @@ def test_numbers():
 
 
 def test_whitespaces():
-    cache = {parent_revision.text: "This is  \na string.",
+    cache = {revision.parent.text: "This is  \na string.",
              revision.text: "This \t is a string."}
     eq_(solve(whitespaces_added, cache=cache),
         [' \t '])
@@ -72,7 +72,7 @@ def test_whitespaces():
 
 
 def test_markup():
-    cache = {parent_revision.text: "This is 55 {{not}} a string.",
+    cache = {revision.parent.text: "This is 55 {{not}} a string.",
              revision.text: "This is 56 [[too]] a string."}
     eq_(solve(markups_added, cache=cache),
         ['[[', ']]'])
@@ -84,7 +84,7 @@ def test_markup():
 
 
 def test_cjks():
-    cache = {parent_revision.text: "This is 55 {{るいは}} a string.",
+    cache = {revision.parent.text: "This is 55 {{るいは}} a string.",
              revision.text: "This is 56 [[壌のは]] a string."}
     eq_(solve(cjks_added, cache=cache),
         ['壌', 'の'])
@@ -96,7 +96,7 @@ def test_cjks():
 
 
 def test_entities():
-    cache = {parent_revision.text: "This is &nsbp; not a string.",
+    cache = {revision.parent.text: "This is &nsbp; not a string.",
              revision.text: "This is &middot; too a string."}
     eq_(solve(entities_added, cache=cache),
         ['&middot;'])
@@ -108,7 +108,7 @@ def test_entities():
 
 
 def test_urls():
-    cache = {parent_revision.text: "This is https://google.com not a string.",
+    cache = {revision.parent.text: "This is https://google.com not a string.",
              revision.text: "This is //google.com too a string."}
     eq_(solve(urls_added, cache=cache),
         ['//google.com'])
@@ -120,7 +120,7 @@ def test_urls():
 
 
 def test_words():
-    cache = {parent_revision.text: "This is 55 not a string.",
+    cache = {revision.parent.text: "This is 55 not a string.",
              revision.text: "This is 56 too a string."}
     eq_(solve(words_added, cache=cache),
         ['too'])
@@ -132,7 +132,7 @@ def test_words():
 
 
 def test_uppercase_words():
-    cache = {parent_revision.text: "This is 55 NOT a string.",
+    cache = {revision.parent.text: "This is 55 NOT a string.",
              revision.text: "This is 56 TOO a string."}
     eq_(solve(uppercase_words_added, cache=cache),
         ['TOO'])
@@ -146,7 +146,7 @@ def test_uppercase_words():
 
 
 def test_punctuations():
-    cache = {parent_revision.text: "This is 55 not a string.",
+    cache = {revision.parent.text: "This is 55 not a string.",
              revision.text: "This is 56 too a string?"}
     eq_(solve(punctuations_added, cache=cache),
         ['?'])
@@ -158,7 +158,7 @@ def test_punctuations():
 
 
 def test_breaks():
-    cache = {parent_revision.text: "This is \n\n not a string.",
+    cache = {revision.parent.text: "This is \n\n not a string.",
              revision.text: "This is 56 too a \n\n string."}
     eq_(solve(breaks_added, cache=cache),
         ['\n\n'])

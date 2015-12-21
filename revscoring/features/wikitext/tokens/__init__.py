@@ -1,9 +1,8 @@
 from .tokenized import tokenized
 from .tokenized_revision import (TokenizedRevision, TokenIsInTypes,
                                  is_uppercase_word)
-from .revision import revision
-from .parent_revision import parent_revision
+from .revision_oriented import revision
 from . import delta
 
-__all__ = [tokenized, revision, parent_revision, delta,
+__all__ = [tokenized, revision, delta,
            TokenizedRevision, TokenIsInTypes, is_uppercase_word]

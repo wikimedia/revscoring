@@ -5,15 +5,10 @@ from .datasources import Datasources
 
 class TokenizedRevision:
 
-    def __init__(self, prefix, text_datasource=None, tokens_datasource=None):
+    def __init__(self, prefix, revision_tokens_datasource,
+                 parent_tokens_datasource=None):
 
-        if tokens_datasource is None:
-            if text_datasource is None:
-                raise TypeError("Either text or tokens must be specified.")
-            else:
-                tokens_datasource = tokenized(text_datasource)
-
-        self.datasources = Datasources(prefix, tokens_datasource)
+        self.datasources = Datasources(prefix, revision_tokens_datasource)
 
         self.tokens = aggregators.len(self.datasources.tokens)
         self.numbers = aggregators.len(self.datasources.numbers)
@@ -27,3 +22,7 @@ class TokenizedRevision:
             aggregators.len(self.datasources.uppercase_words)
         self.punctuations = aggregators.len(self.datasources.punctuations)
         self.breaks = aggregators.len(self.datasources.breaks)
+
+        if parent_tokens_datasource is not None:
+            self.parent = \
+                TokenizedRevision(".parent", parent_tokens_datasource)

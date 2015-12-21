@@ -23,7 +23,7 @@ I guess we'll never know.
 def test_tokens():
 
     tokens = TokenizedRevision("test_tokenized_revision",
-                               tokens_datasource=my_tokens)
+                               my_tokens)
 
     eq_(solve(tokens.tokens, cache={my_text: text}), 97)
     eq_(pickle.loads(pickle.dumps(tokens.tokens)), tokens.tokens)
