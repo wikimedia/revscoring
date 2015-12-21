@@ -63,6 +63,5 @@ types
 
 """
 from .datasource import Datasource
-from .types import RevisionMetadata, UserInfo
 
-__all__ = [Datasource, RevisionMetadata, UserInfo]
+__all__ = [Datasource]
