@@ -1,0 +1,1 @@
+prefix = "wikitext.edit"

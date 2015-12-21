@@ -57,15 +57,3 @@ class ParsedRevision:
         """
         The number of templates
         """
-
-    def headings_by_level(self, level, name=None):
-        """
-        Constructs a :class:`revscoring.Feature` that generates a count of
-        all headers of a level.
-        """
-        if name is None:
-            name = "{0}({1})".format(self.prefix + ".headings_by_level",
-                                     level)
-
-        return aggregators.len(self.datasources.headings_by_level(level),
-                               name=name)

@@ -1,15 +1,9 @@
-from ....datasources.revision import text as revision_text
-from ....datasources.parent_revision import text as parent_revision_text
-
 from .tokenized import tokenized
-from .tokens import Tokens, TokenIsInTypes, is_uppercase_word
-from .delta import Delta
+from .tokenized_revision import (TokenizedRevision, TokenIsInTypes,
+                                 is_uppercase_word)
+from .revision import revision
+from .parent_revision import parent_revision
+from . import delta
 
-revision = Tokens("tokens.revision", revision_text)
-
-parent_revision = Tokens("tokens.parent_revision", parent_revision_text)
-
-delta = Delta("tokens.diff", parent_revision, revision)
-
-__all__ = [tokenized, Tokens, TokenIsInTypes, is_uppercase_word,
-           Delta, revision, parent_revision, delta]
+__all__ = [tokenized, revision, parent_revision, delta,
+           TokenizedRevision, TokenIsInTypes, is_uppercase_word]

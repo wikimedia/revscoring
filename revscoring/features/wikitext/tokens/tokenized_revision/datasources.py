@@ -1,38 +1,28 @@
 import re
 
-from ....datasources.meta import filters, frequencies, mappers
-from ....util import NamedDict
-from ...meta import aggregators
-from .tokenized import tokenized
+from .....datasources.meta import filters, frequencies, mappers
+from ....meta import aggregators
+from ..tokenized import tokenized
 
 
-class Tokens:
+class Datasources:
 
-    def __init__(self, prefix, text_datasource=None, tokens_datasource=None):
+    def __init__(self, prefix, tokens_datasource):
 
-        if tokens_datasource is None:
-            if text_datasource is None:
-                raise TypeError("Either text or tokens must be specified.")
-
-            tokens_datasource = tokenized(text_datasource)
-
-        # Datasources
-        self.datasources = NamedDict()
-
-        self.datasources.tokens = tokens_datasource
+        self.tokens = tokens_datasource
         """
         A list of all tokens
         """
 
-        self.datasources.token_frequency = frequencies.table(
-            self.datasources.tokens,
+        self.token_frequency = frequencies.table(
+            self.tokens,
             name=prefix + ".token_frequency"
         )
         """
         A frequency table of all tokens.
         """
 
-        self.datasources.numbers = self.tokens_in_types(
+        self.numbers = self.tokens_in_types(
             {'number'},
             name=prefix + ".numbers"
         )
@@ -40,15 +30,15 @@ class Tokens:
         A list of numeric tokens
         """
 
-        self.datasources.number_frequency = frequencies.table(
-            self.datasources.numbers,
+        self.number_frequency = frequencies.table(
+            self.numbers,
             name=prefix + ".number_frequency"
         )
         """
         A frequency table of number tokens.
         """
 
-        self.datasources.whitespaces = self.tokens_in_types(
+        self.whitespaces = self.tokens_in_types(
             {'whitespace'},
             name=prefix + ".whitespaces"
         )
@@ -56,15 +46,15 @@ class Tokens:
         A list of whitespace tokens
         """
 
-        self.datasources.whitespace_frequency = frequencies.table(
-            self.datasources.whitespaces,
+        self.whitespace_frequency = frequencies.table(
+            self.whitespaces,
             name=prefix + ".whitespace_frequency"
         )
         """
         A frequency table of whichspace tokens.
         """
 
-        self.datasources.markups = self.tokens_in_types(
+        self.markups = self.tokens_in_types(
             {'dbrack_open', 'dbrack_close', 'brack_open', 'brack_close',
              'tab_open', 'tab_close', 'dcurly_open', 'dcurly_close',
              'curly_open', 'curly_close', 'bold', 'italics', 'equals'},
@@ -74,15 +64,15 @@ class Tokens:
         A list of markup tokens
         """
 
-        self.datasources.markup_frequency = frequencies.table(
-            self.datasources.markups,
+        self.markup_frequency = frequencies.table(
+            self.markups,
             name=prefix + ".markup_frequency"
         )
         """
         A frequency table of markup tokens.
         """
 
-        self.datasources.cjks = self.tokens_in_types(
+        self.cjks = self.tokens_in_types(
             {'cjk'},
             name=prefix + ".cjks"
         )
@@ -90,15 +80,15 @@ class Tokens:
         A list of Chinese/Japanese/Korean tokens
         """
 
-        self.datasources.cjk_frequency = frequencies.table(
-            self.datasources.cjks,
+        self.cjk_frequency = frequencies.table(
+            self.cjks,
             name=prefix + ".cjk_frequency"
         )
         """
         A frequency table of cjk tokens.
         """
 
-        self.datasources.entities = self.tokens_in_types(
+        self.entities = self.tokens_in_types(
             {'entity'},
             name=prefix + ".entities"
         )
@@ -106,15 +96,15 @@ class Tokens:
         A list of HTML entity tokens
         """
 
-        self.datasources.entity_frequency = frequencies.table(
-            self.datasources.entities,
+        self.entity_frequency = frequencies.table(
+            self.entities,
             name=prefix + ".entity_frequency"
         )
         """
         A frequency table of entity tokens.
         """
 
-        self.datasources.urls = self.tokens_in_types(
+        self.urls = self.tokens_in_types(
             {'url'},
             name=prefix + ".urls"
         )
@@ -122,15 +112,15 @@ class Tokens:
         A list of URL tokens
         """
 
-        self.datasources.url_frequency = frequencies.table(
-            self.datasources.urls,
+        self.url_frequency = frequencies.table(
+            self.urls,
             name=prefix + ".url_frequency"
         )
         """
         A frequency table of url tokens.
         """
 
-        self.datasources.words = self.tokens_in_types(
+        self.words = self.tokens_in_types(
             {'word'},
             name=prefix + ".words"
         )
@@ -138,16 +128,16 @@ class Tokens:
         A list of word tokens
         """
 
-        self.datasources.word_frequency = frequencies.table(
-            mappers.lower_case(self.datasources.words),
+        self.word_frequency = frequencies.table(
+            mappers.lower_case(self.words),
             name=prefix + ".word_frequency"
         )
         """
         A frequency table of lower-cased word tokens.
         """
 
-        self.datasources.uppercase_words = filters.filter(
-            is_uppercase_word, self.datasources.words,
+        self.uppercase_words = filters.filter(
+            is_uppercase_word, self.words,
             name=prefix + ".uppercase_words"
         )
         """
@@ -155,8 +145,8 @@ class Tokens:
         characters long.
         """
 
-        self.datasources.uppercase_word_frequency = frequencies.table(
-            self.datasources.uppercase_words,
+        self.uppercase_word_frequency = frequencies.table(
+            self.uppercase_words,
             name=prefix + ".uppercase_word_frequency"
         )
         """
@@ -164,7 +154,7 @@ class Tokens:
         characters long.
         """
 
-        self.datasources.punctuations = self.tokens_in_types(
+        self.punctuations = self.tokens_in_types(
             {'period', 'qmark', 'epoint', 'comma', 'colon', 'scolon',
              'japan_punct'},
             name=prefix + ".punctuations"
@@ -173,15 +163,15 @@ class Tokens:
         A list of punctuation tokens
         """
 
-        self.datasources.punctuation_frequency = frequencies.table(
-            self.datasources.punctuations,
+        self.punctuation_frequency = frequencies.table(
+            self.punctuations,
             name=prefix + ".punctuation_frequency"
         )
         """
         A frequency table of punctuation tokens.
         """
 
-        self.datasources.breaks = self.tokens_in_types(
+        self.breaks = self.tokens_in_types(
             {'break'},
             name=prefix + ".breaks"
         )
@@ -189,28 +179,13 @@ class Tokens:
         A list of break tokens
         """
 
-        self.datasources.break_frequency = frequencies.table(
-            self.datasources.breaks,
+        self.break_frequency = frequencies.table(
+            self.breaks,
             name=prefix + ".break_frequency"
         )
         """
         A frequency table of break tokens.
         """
-
-        # Features
-
-        self.tokens = aggregators.len(self.datasources.tokens)
-        self.numbers = aggregators.len(self.datasources.numbers)
-        self.whitespaces = aggregators.len(self.datasources.whitespaces)
-        self.markups = aggregators.len(self.datasources.markups)
-        self.cjks = aggregators.len(self.datasources.cjks)
-        self.entities = aggregators.len(self.datasources.entities)
-        self.urls = aggregators.len(self.datasources.urls)
-        self.words = aggregators.len(self.datasources.words)
-        self.uppercase_words = \
-            aggregators.len(self.datasources.uppercase_words)
-        self.punctuations = aggregators.len(self.datasources.punctuations)
-        self.breaks = aggregators.len(self.datasources.breaks)
 
     def tokens_in_types(self, types, name=None):
         """
@@ -224,7 +199,7 @@ class Tokens:
                    .format("tokens_in_types", types)
 
         return filters.filter(token_is_in_types.filter,
-                              self.datasources.tokens, name=name)
+                              self.tokens, name=name)
 
     def tokens_matching(self, regex, name=None, regex_flags=re.I):
         """
@@ -237,7 +212,7 @@ class Tokens:
         if name is None:
             name = "{0}({1})".format("tokens_matching", regex.pattern)
 
-        return filters.regex_matching(regex, self.datasources.tokens,
+        return filters.regex_matching(regex, self.tokens,
                                       name=name)
 
 
