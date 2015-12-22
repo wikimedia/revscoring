@@ -17,7 +17,7 @@ delta = frequencies.delta(old_ft, new_ft, name="delta")
 prop_delta = frequencies.prop_delta(old_ft, delta, name="prop_delta")
 
 
-def test_token_frequency():
+def test_table():
     cache = {new_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45}
     eq_(solve(new_ft, cache=cache),
         {'a': 3, 'b': 2, 'c': 45})
@@ -26,7 +26,7 @@ def test_token_frequency():
         new_ft)
 
 
-def test_token_frequency_diff():
+def test_delta():
     cache = {old_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45,
              new_tokens: ["a"] * 1 + ["b"] * 5 + ["d"] * 3}
     eq_(solve(delta, cache=cache),
@@ -36,11 +36,16 @@ def test_token_frequency_diff():
         delta)
 
 
-def test_proportional_token_frequency_diff():
+def test_prop_delta():
     cache = {old_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45,
              new_tokens: ["a"] * 1 + ["b"] * 5 + ["d"] * 3}
-    eq_(solve(prop_delta, cache=cache),
-        {'a': -2 / 3, 'b': 3 / 5, 'c': -1, 'd': 3})
+
+    pd = solve(prop_delta, cache=cache)
+    eq_(pd.keys(), {'a', 'b', 'c', 'd'})
+    eq_(round(pd['a'], 2), -0.67)
+    eq_(round(pd['b'], 2), 1)
+    eq_(round(pd['c'], 2), -1)
+    eq_(round(pd['d'], 2), 3)
 
     eq_(pickle.loads(pickle.dumps(prop_delta)),
         prop_delta)

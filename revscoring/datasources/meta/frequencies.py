@@ -83,10 +83,7 @@ class prop_delta(Datasource):
         prop_delta = {}
         for item, delta in ft_diff.items():
             if delta > 0:
-                if item in old_tf:
-                    prop_delta[item] = delta / (old_tf[item] + delta)
-                else:
-                    prop_delta[item] = delta
+                prop_delta[item] = delta / (old_tf.get(item, 0) + 1)
             else:
                 prop_delta[item] = delta / old_tf[item]
 
