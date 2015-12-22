@@ -1,9 +1,9 @@
 from itertools import groupby
 
 from . import datasources
-from ....datasources.meta import mappers
-from ...feature import Feature
-from ...meta import aggregators
+from .....datasources.meta import mappers
+from ....feature import Feature
+from ....meta import aggregators
 from .util import prefix
 
 chars_added = aggregators.sum(

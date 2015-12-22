@@ -1,9 +1,9 @@
 import logging
 import re
 
-from .....datasources import Datasource
-from .....datasources.meta import filters
-from ...tokenized import TokenIsInTypes, is_uppercase_word
+from ......datasources import Datasource
+from ......datasources.meta import filters
+from ....tokenized import TokenIsInTypes, is_uppercase_word
 from ..util import prefix
 from .operations import operations
 

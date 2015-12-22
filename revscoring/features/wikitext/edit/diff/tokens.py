@@ -1,9 +1,7 @@
 from . import datasources
-from ....datasources.meta import mappers
-from ...meta import aggregators
+from .....datasources.meta import mappers
+from ....meta import aggregators
 from .util import prefix
-
-print(dir(datasources))
 
 tokens_added = aggregators.len(
     datasources.tokens_added,

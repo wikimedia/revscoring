@@ -3,8 +3,8 @@ import time
 
 from deltas import segment_matcher
 
-from .....datasources import Datasource
-from ...tokenized import revision
+from ......datasources import Datasource
+from ....tokenized import revision
 from ..util import prefix
 
 logger = logging.getLogger(__name__)

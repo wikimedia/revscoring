@@ -5,7 +5,7 @@ from nose.tools import eq_
 
 from ......datasources.revision_oriented import revision
 from ......dependencies import solve
-from ..operations import operations
+from ..datasources import operations
 
 
 def test_operations():
