@@ -203,3 +203,30 @@ def test_badges_diff():
     eq_(pickle.loads(pickle.dumps(diff.badges_added)), diff.badges_added)
     eq_(pickle.loads(pickle.dumps(diff.badges_removed)), diff.badges_removed)
     eq_(pickle.loads(pickle.dumps(diff.badges_changed)), diff.badges_changed)
+
+
+def test_proportion_of_qid_added():
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
+
+    eq_(round(solve(diff.proportion_of_qid_added, cache=cache), 2), 0.95)
+    eq_(pickle.loads(pickle.dumps(diff.proportion_of_qid_added)),
+        diff.proportion_of_qid_added)
+
+
+def test_proportion_of_language_added():
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
+
+    eq_(round(solve(diff.proportion_of_language_added, cache=cache), 2), 0.0)
+    eq_(pickle.loads(pickle.dumps(diff.proportion_of_language_added)),
+        diff.proportion_of_language_added)
+
+
+def test_proportion_of_links_added():
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
+
+    eq_(round(solve(diff.proportion_of_links_added, cache=cache), 2), 0.87)
+    eq_(pickle.loads(pickle.dumps(diff.proportion_of_links_added)),
+        diff.proportion_of_links_added)
