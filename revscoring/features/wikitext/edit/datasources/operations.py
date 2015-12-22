@@ -4,7 +4,7 @@ import time
 from deltas import segment_matcher
 
 from .....datasources import Datasource
-from ...tokens import revision
+from ...tokenized import revision
 from ..util import prefix
 
 logger = logging.getLogger(__name__)

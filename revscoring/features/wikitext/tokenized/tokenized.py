@@ -4,7 +4,7 @@ from ....datasources import Datasource
 
 
 def process_tokens(text):
-    return [t for t in wikitext_split.tokenize(text)]
+    return [t for t in wikitext_split.tokenize(text or "")]
 
 
 def tokenized(text_datasource, name=None):

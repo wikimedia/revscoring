@@ -1,4 +1,6 @@
+from .parsed_revision import ParsedRevision
+from .revision_oriented import revision
 from .util import diff_dicts, DictDiff
 from . import diff
-from . import parent_revision
-from . import revision
+
+__all__ = [diff, diff_dicts, DictDiff, revision, ParsedRevision]

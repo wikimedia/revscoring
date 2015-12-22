@@ -7,7 +7,7 @@ from .datasources import Datasources
 
 class ParsedRevision:
 
-    def __init__(self, prefix, text_datasource):
+    def __init__(self, prefix, text_datasource, parent_text_datasource=None):
         self.datasources = Datasources(prefix, text_datasource)
 
         self.content_chars = aggregators.len(
@@ -57,3 +57,9 @@ class ParsedRevision:
         """
         The number of templates
         """
+
+        if parent_text_datasource is not None:
+            self.parent = ParsedRevision(
+                prefix + ".parent",
+                parent_text_datasource
+            )

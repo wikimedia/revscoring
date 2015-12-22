@@ -4,19 +4,25 @@ import pickle
 
 from nose.tools import eq_
 
-from .. import diff, parent_revision, revision
-from ....dependencies import solve
+from .. import diff
+from .....dependencies import solve
+from ...revision_oriented import revision
 
 pwd = os.path.dirname(os.path.realpath(__file__))
-ALAN_TOURING = json.load(open(os.path.join(pwd, "alan_touring.json")))
-ALAN_TOURING_OLD = json.load(open(os.path.join(pwd, "alan_touring.old.json")))
+ALAN_TOURING = json.load(open(os.path.join(
+    pwd, "../../tests/alan_touring.json")))
+ALAN_TOURING_OLD = json.load(open(os.path.join(
+    pwd, "../../tests/alan_touring.old.json")))
+
+revision_item_doc = revision.datasources.item_doc
+parent_item_doc = revision.parent.datasources.item_doc
 
 
 def test_sitelinks_diff():
-    cache = {revision.item_doc: ALAN_TOURING,
-             parent_revision.item_doc: ALAN_TOURING_OLD}
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
 
-    sitelinks_diff = solve(diff.sitelinks_diff, cache=cache)
+    sitelinks_diff = solve(diff.datasources.sitelinks_diff, cache=cache)
     eq_(sitelinks_diff.added,
         {'alswiki', 'fowiki', 'itwikiquote', 'commonswiki', 'mgwiki',
          'cywikiquote', 'ruwikiquote', 'kkwiki', 'ttwiki', 'cawikiquote',
@@ -63,14 +69,15 @@ def test_sitelinks_diff():
          'arzwiki', 'ganwiki', 'ckbwiki', 'ocwiki', 'plwiki', 'dewiki',
          'viwiki', 'hywiki', 'mkwiki', 'mrwiki', 'mtwiki', 'vowiki'})
 
-    eq_(pickle.loads(pickle.dumps(diff.sitelinks_diff)), diff.sitelinks_diff)
+    eq_(pickle.loads(pickle.dumps(diff.datasources.sitelinks_diff)),
+        diff.datasources.sitelinks_diff)
 
 
 def test_labels_diff():
-    cache = {revision.item_doc: ALAN_TOURING,
-             parent_revision.item_doc: ALAN_TOURING_OLD}
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
 
-    labels_diff = solve(diff.labels_diff, cache=cache)
+    labels_diff = solve(diff.datasources.labels_diff, cache=cache)
     eq_(labels_diff.added,
         {'tt', 'fo', 'pa', 'nan', 'sgs', 'mg', 'zh-cn', 'ba', 'fur', 'sco',
          'co', 'gsw', 'uz', 'kk', 'zh-hans', 'new', 'ce', 'de-ch'})
@@ -100,14 +107,15 @@ def test_labels_diff():
          'ga', 'bn', 'sh', 'gl', 'cs', 'ckb', 'ur', 'tl', 'pl', 'lv', 'id',
          'gd', 'war', 'gu', 'an', 'oc', 'en-ca', 'be-tarask', 'ilo'})
 
-    eq_(pickle.loads(pickle.dumps(diff.labels_diff)), diff.labels_diff)
+    eq_(pickle.loads(pickle.dumps(diff.datasources.labels_diff)),
+        diff.datasources.labels_diff)
 
 
 def test_aliases_diff():
-    cache = {revision.item_doc: ALAN_TOURING,
-             parent_revision.item_doc: ALAN_TOURING_OLD}
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
 
-    aliases_diff = solve(diff.aliases_diff, cache=cache)
+    aliases_diff = solve(diff.datasources.aliases_diff, cache=cache)
     eq_(aliases_diff.added,
         {'ko', 'ru'})
     eq_(aliases_diff.removed, set())
@@ -117,14 +125,15 @@ def test_aliases_diff():
     eq_(aliases_diff.unchanged,
         {'en', 'be-tarask', 'de', 'jbo', 'it', 'fr', 'ja'})
 
-    eq_(pickle.loads(pickle.dumps(diff.aliases_diff)), diff.aliases_diff)
+    eq_(pickle.loads(pickle.dumps(diff.datasources.aliases_diff)),
+        diff.datasources.aliases_diff)
 
 
 def test_descriptions_diff():
-    cache = {revision.item_doc: ALAN_TOURING,
-             parent_revision.item_doc: ALAN_TOURING_OLD}
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
 
-    descriptions_diff = solve(diff.descriptions_diff, cache=cache)
+    descriptions_diff = solve(diff.datasources.descriptions_diff, cache=cache)
     eq_(descriptions_diff.added,
         {'da', 'sk', 'as', 'zh-cn', 'pl', 'ru', 'nl', 'zh', 'gl', 'nn', 'pam',
          'nb', 'sv', 'ko', 'zh-hans'})
@@ -134,15 +143,15 @@ def test_descriptions_diff():
     eq_(descriptions_diff.changed, {'fa'})
     eq_(descriptions_diff.unchanged, {'fr', 'it', 'es', 'de', 'en', 'ilo'})
 
-    eq_(pickle.loads(pickle.dumps(diff.descriptions_diff)),
-        diff.descriptions_diff)
+    eq_(pickle.loads(pickle.dumps(diff.datasources.descriptions_diff)),
+        diff.datasources.descriptions_diff)
 
 
 def test_claims_diff():
-    cache = {revision.item_doc: ALAN_TOURING,
-             parent_revision.item_doc: ALAN_TOURING_OLD}
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
 
-    claims_diff = solve(diff.claims_diff, cache=cache)
+    claims_diff = solve(diff.datasources.claims_diff, cache=cache)
     eq_(claims_diff.added,
         {'P31', 'P1741', 'P950', 'P935', 'P27', 'P1296', 'P1415', 'P1207',
          'P549', 'P512', 'P1343', 'P906', 'P1816', 'P735', 'P25', 'P1417',
@@ -161,18 +170,36 @@ def test_claims_diff():
         {'P244', 'P269', 'P268', 'P535', 'P18', 'P373', 'P185', 'P213', 'P463',
          'P349', 'P184', 'P214'})
 
-    eq_(pickle.loads(pickle.dumps(diff.claims_diff)), diff.claims_diff)
+    eq_(pickle.loads(pickle.dumps(diff.datasources.claims_diff)),
+        diff.datasources.claims_diff)
+
+    eq_(solve(diff.claims_added, cache=cache), 46)
+    eq_(solve(diff.claims_removed, cache=cache), 2)
+    eq_(solve(diff.claims_changed, cache=cache), 10)
+
+    eq_(pickle.loads(pickle.dumps(diff.claims_added)), diff.claims_added)
+    eq_(pickle.loads(pickle.dumps(diff.claims_removed)), diff.claims_removed)
+    eq_(pickle.loads(pickle.dumps(diff.claims_changed)), diff.claims_changed)
 
 
 def test_badges_diff():
-    cache = {revision.item_doc: ALAN_TOURING,
-             parent_revision.item_doc: ALAN_TOURING_OLD}
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
 
-    badges_diff = solve(diff.badges_diff, cache=cache)
+    badges_diff = solve(diff.datasources.badges_diff, cache=cache)
     eq_(badges_diff.added, {'lawiki', 'aswiki', 'enwiki', 'ruwiki', 'azwiki'})
     eq_(badges_diff.removed, set())
     eq_(badges_diff.intersection, set())
     eq_(badges_diff.changed, set())
     eq_(badges_diff.unchanged, set())
 
-    eq_(pickle.loads(pickle.dumps(diff.badges_diff)), diff.badges_diff)
+    eq_(pickle.loads(pickle.dumps(diff.datasources.badges_diff)),
+        diff.datasources.badges_diff)
+
+    eq_(solve(diff.badges_added, cache=cache), 5)
+    eq_(solve(diff.badges_removed, cache=cache), 0)
+    eq_(solve(diff.badges_changed, cache=cache), 0)
+
+    eq_(pickle.loads(pickle.dumps(diff.badges_added)), diff.badges_added)
+    eq_(pickle.loads(pickle.dumps(diff.badges_removed)), diff.badges_removed)
+    eq_(pickle.loads(pickle.dumps(diff.badges_changed)), diff.badges_changed)

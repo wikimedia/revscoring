@@ -1,15 +1,14 @@
 import re
 
 from .....datasources.meta import filters, frequencies, mappers
-from ....meta import aggregators
 from ..tokenized import tokenized
 
 
 class Datasources:
 
-    def __init__(self, prefix, tokens_datasource):
+    def __init__(self, prefix, text_datasource):
 
-        self.tokens = tokens_datasource
+        self.tokens = tokenized(text_datasource)
         """
         A list of all tokens
         """

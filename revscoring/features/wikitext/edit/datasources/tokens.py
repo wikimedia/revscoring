@@ -3,7 +3,7 @@ import re
 
 from .....datasources import Datasource
 from .....datasources.meta import filters
-from ...tokens import TokenIsInTypes, is_uppercase_word
+from ...tokenized import TokenIsInTypes, is_uppercase_word
 from ..util import prefix
 from .operations import operations
 

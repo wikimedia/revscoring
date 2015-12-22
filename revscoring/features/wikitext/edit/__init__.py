@@ -1,3 +1,4 @@
+from . import datasources
 from .segments import segments_added, segments_removed
 from .chars import (chars_added, chars_removed, numeric_chars_added,
                     numeric_chars_removed, whitespace_chars_added,
@@ -20,6 +21,7 @@ from .tokens import (tokens_added, tokens_removed, numbers_added,
                      longest_uppercase_word_added)
 
 __all__ = [
+    datasources,
     segments_added, segments_removed,
 
     # Characters
