@@ -68,7 +68,7 @@ class User:
                  include_last_revision=False):
 
         self.id = Datasource(prefix + ".id")
-        self.name = Datasource(prefix + ".name")
+        self.text = Datasource(prefix + ".text")
         if include_info:
             self.editcount = Datasource(prefix + ".editcount")
             self.registration = Datasource(prefix + ".registration")
@@ -95,7 +95,7 @@ class Page:
 
     def __init__(self, prefix, include_creation=False):
         self.id = Datasource(prefix + ".id")
-        self.namespace = Datasource(prefix + ".namespace")
+        self.namespace = Namespace(prefix + ".namespace")
         self.title = Datasource(prefix + ".title")
 
         if include_creation:
@@ -106,6 +106,13 @@ class Page:
                 include_content=False,
                 include_user_last_revision=False
             )
+
+
+class Namespace:
+
+    def __init__(self, prefix):
+        self.id = Datasource(prefix + ".id")
+        self.name = Datasource(prefix + ".name")
 
 
 def _process_bytes(text):
