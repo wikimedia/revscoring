@@ -2,19 +2,18 @@ import re
 
 import mwparserfromhell
 
-from .....datasources import Datasource
-from .....datasources.meta import filters, mappers
-from .....errors import RevisionNotFound
+from ....datasources import Datasource
+from ....datasources.meta import filters, mappers
 
 
-class Datasources:
+class Revision:
 
-    def __init__(self, prefix, text_datasource):
-        self.prefix = prefix
+    def __init__(self, prefix, revision_datasources):
+        super().__init__(prefix, revision_datasources)
 
         self.wikicode = Datasource(
-            prefix + ".wikicode",
-            _process_wikicode, depends_on=[text_datasource]
+            self.prefix + ".wikicode",
+            _process_wikicode, depends_on=[revision_datasources.text]
         )
         """
         A :class:`mwparserfromhell.wikicode.Wikicode` abstract syntax
@@ -23,7 +22,7 @@ class Datasources:
 
         self.content = execute_method(
             "strip_code", self.wikicode,
-            name=prefix + ".content"
+            name=self.prefix + ".content"
         )
         """
         The viewable content (no markup or templates) of the revision.
@@ -31,7 +30,7 @@ class Datasources:
 
         self.headings = execute_method(
             "filter_headings", self.wikicode,
-            name=prefix + ".headings"
+            name=self.prefix + ".headings"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.Heading`'s
@@ -39,7 +38,7 @@ class Datasources:
 
         self.heading_titles = mappers.map(
             _extract_heading_title, self.headings,
-            name=prefix + ".heading_titles"
+            name=self.prefix + ".heading_titles"
         )
         """
         A list of heading titles
@@ -47,7 +46,7 @@ class Datasources:
 
         self.external_links = execute_method(
             "filter_external_links", self.wikicode,
-            name=prefix + ".external_links"
+            name=self.prefix + ".external_links"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.ExternalLink`'s
@@ -55,7 +54,7 @@ class Datasources:
 
         self.external_link_urls = mappers.map(
             _extract_external_link_url, self.external_links,
-            name=prefix + ".external_link_url"
+            name=self.prefix + ".external_link_url"
         )
         """
         A list of external link urls
@@ -63,7 +62,7 @@ class Datasources:
 
         self.wikilinks = execute_method(
             "filter_wikilinks", self.wikicode,
-            name=prefix + ".wikilinks"
+            name=self.prefix + ".wikilinks"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.Wikilink`'s
@@ -71,7 +70,7 @@ class Datasources:
 
         self.wikilink_titles = mappers.map(
             _extract_wikilink_title, self.wikilinks,
-            name=prefix + ".wikilink_titles"
+            name=self.prefix + ".wikilink_titles"
         )
         """
         Returns a list of string titles of internal links (aka "targets")
@@ -79,7 +78,7 @@ class Datasources:
 
         self.tags = execute_method(
             "filter_tags", self.wikicode,
-            name=prefix + ".tags"
+            name=self.prefix + ".tags"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.Tag`'s
@@ -87,7 +86,7 @@ class Datasources:
 
         self.tag_names = mappers.map(
             _extract_tag_name, self.tags,
-            name=prefix + ".tag_names"
+            name=self.prefix + ".tag_names"
         )
         """
         Returns a list of html tag names present in the content of the revision
@@ -95,7 +94,7 @@ class Datasources:
 
         self.templates = execute_method(
             "filter_templates", self.wikicode,
-            name=prefix + ".templates"
+            name=self.prefix + ".templates"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.Templates`'s
@@ -103,7 +102,7 @@ class Datasources:
 
         self.template_names = mappers.map(
             _extract_template_name, self.templates,
-            name=prefix + ".template_names"
+            name=self.prefix + ".template_names"
         )
         """
         Returns a list of template names present in the content of the revision
