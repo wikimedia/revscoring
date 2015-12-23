@@ -74,14 +74,14 @@ class prop_delta(Datasource):
         name : `str`
             A name for the datasource.
     """
-    def __init__(self, old_ft_datasource, ft_diff_datasource, name=None):
-        name = self._format_name(name, [old_ft_datasource, ft_diff_datasource])
+    def __init__(self, old_ft_datasource, delta_datasource, name=None):
+        name = self._format_name(name, [old_ft_datasource, delta_datasource])
         super().__init__(name, self.process,
-                         depends_on=[old_ft_datasource, ft_diff_datasource])
+                         depends_on=[old_ft_datasource, delta_datasource])
 
-    def process(self, old_tf, ft_diff):
+    def process(self, old_tf, ft_delta):
         prop_delta = {}
-        for item, delta in ft_diff.items():
+        for item, delta in ft_delta.items():
             if delta > 0:
                 prop_delta[item] = delta / (old_tf.get(item, 0) + 1)
             else:

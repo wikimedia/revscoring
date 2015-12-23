@@ -18,7 +18,7 @@ class map(Datasource):
     """
     def __init__(self, apply, items_datasource, name=None):
         self.apply = apply
-        name = self._format_name(name, [items_datasource])
+        name = self._format_name(name, [apply, items_datasource])
         super().__init__(name, self.process, depends_on=[items_datasource])
 
     def process(self, items):

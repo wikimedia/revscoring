@@ -37,15 +37,16 @@ def test_delta():
 
 
 def test_prop_delta():
-    cache = {old_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45,
-             new_tokens: ["a"] * 1 + ["b"] * 5 + ["d"] * 3}
+    cache = {old_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45 + ["e"] * 2,
+             new_tokens: ["a"] * 1 + ["b"] * 5 + ["d"] * 3 + ["e"] * 3}
 
     pd = solve(prop_delta, cache=cache)
-    eq_(pd.keys(), {'a', 'b', 'c', 'd'})
+    eq_(pd.keys(), {'a', 'b', 'c', 'd', 'e'})
     eq_(round(pd['a'], 2), -0.67)
     eq_(round(pd['b'], 2), 1)
     eq_(round(pd['c'], 2), -1)
     eq_(round(pd['d'], 2), 3)
+    eq_(round(pd['e'], 2), 0.33)
 
     eq_(pickle.loads(pickle.dumps(prop_delta)),
         prop_delta)
