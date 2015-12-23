@@ -3,40 +3,49 @@ import pickle
 
 from nose.tools import eq_
 
-from .....datasources import Datasource
-from .....dependencies import solve
-from ..parsed_revision import ParsedRevision
+from ....datasources import revision_oriented
+from ....dependencies import solve
+from ..revision_oriented import revision
 
 pwd = os.path.dirname(os.path.realpath(__file__))
-ALAN_TEXT = open(os.path.join(pwd, "../../tests/alan_touring.json")).read()
+ALAN_TEXT = open(os.path.join(pwd, "alan_touring.json")).read()
 
-my_text = Datasource("my_text")
+r_text = revision_oriented.revision.text
 
-my_parsed = ParsedRevision("my_parsed", my_text)
+has_p106 = revision.has_property('P106')
+has_p999 = revision.has_property('P999')
 
-has_p106 = my_parsed.has_property('P106')
-has_p999 = my_parsed.has_property('P999')
-
-has_p106_q82594 = my_parsed.has_property_value('P106', "Q82594")
-has_p106_test = my_parsed.has_property_value('P106', "Test")
-has_p999_foo = my_parsed.has_property_value('P999', "Foo")
+has_p106_q82594 = revision.has_property_value('P106', "Q82594")
+has_p106_test = revision.has_property_value('P106', "Test")
+has_p999_foo = revision.has_property_value('P999', "Foo")
 
 
 def test_item_doc():
-    solve(my_parsed.datasources.item_doc, cache={my_text: ALAN_TEXT})
+    solve(revision.datasources.item_doc, cache={r_text: ALAN_TEXT})
 
-    eq_(pickle.loads(pickle.dumps(my_parsed.datasources.item_doc)),
-        my_parsed.datasources.item_doc)
+    eq_(pickle.loads(pickle.dumps(revision.datasources.item_doc)),
+        revision.datasources.item_doc)
 
 
 def test_item():
-    solve(my_parsed.datasources.item, cache={my_text: ALAN_TEXT})
+    solve(revision.datasources.item, cache={r_text: ALAN_TEXT})
 
-    eq_(pickle.loads(pickle.dumps(my_parsed.datasources.item)),
-        my_parsed.datasources.item)
+    eq_(pickle.loads(pickle.dumps(revision.datasources.item)),
+        revision.datasources.item)
 
-    eq_(solve(my_parsed.claims, cache={my_text: ALAN_TEXT}), 71)
-    eq_(solve(my_parsed.datasources.claims, cache={my_text: ALAN_TEXT}),
+    eq_(solve(revision.properties, cache={r_text: ALAN_TEXT}), 57)
+    eq_(solve(revision.datasources.properties,
+              cache={r_text: ALAN_TEXT}).keys(),
+        {'P1430', 'P906', 'P1816', 'P570', 'P31', 'P1343', 'P2021', 'P535',
+         'P800', 'P569', 'P373', 'P1819', 'P108', 'P227', 'P185', 'P910',
+         'P1273', 'P69', 'P244', 'P20', 'P101', 'P106', 'P18', 'P1563', 'P25',
+         'P646', 'P1296', 'P214', 'P950', 'P463', 'P1006', 'P268', 'P21',
+         'P1417', 'P22', 'P1207', 'P19', 'P91', 'P735', 'P1412', 'P166',
+         'P269', 'P1741', 'P1196', 'P27', 'P140', 'P512', 'P1415', 'P691',
+         'P345', 'P949', 'P1263', 'P549', 'P184', 'P935', 'P349', 'P213'})
+
+    eq_(solve(revision.claims, cache={r_text: ALAN_TEXT}), 71)
+    eq_(solve(revision.datasources.claims, cache={r_text: ALAN_TEXT}),
         {('P646', '/m/0n00'), ('P101', 'Q897511'), ('P20', 'Q2011497'),
          ('P166', 'Q10762848'), ('P800', 'Q20895949'), ('P950', 'XX945020'),
          ('P1816', 'mp18700'), ('P1563', 'Turing'),
@@ -65,16 +74,16 @@ def test_item():
          ('P1415', '101036578'), ('P106', 'Q170790'), ('P1819', 'I00586443'),
          ('P949', '000133188'), ('P19', 'Q20895942'), ('P800', 'Q20895966'),
          ('P108', 'Q220798')})
-    eq_(solve(my_parsed.aliases, cache={my_text: ALAN_TEXT}), 11)
-    eq_(solve(my_parsed.datasources.aliases, cache={my_text: ALAN_TEXT}),
-        {('de', 'Alan Mathison Turing'), ('ko', '앨런 매티슨 튜링'),
-         ('en', 'Alan Mathison Turing'), ('jbo', 'alan turin'),
-         ('be-tarask', 'Алан Цюрынг'), ('ru', 'Тьюринг, Алан'),
-         ('be-tarask', "Элан Т'юрынг"), ('it', 'Alan Mathison Turing'),
-         ('fr', 'Alan Mathison Turing'), ('be-tarask', "Т'юрынг"),
-         ('ja', 'アラン・テューリング')})
-    eq_(solve(my_parsed.sources, cache={my_text: ALAN_TEXT}), 53)
-    eq_(solve(my_parsed.datasources.sources, cache={my_text: ALAN_TEXT}),
+    eq_(solve(revision.aliases, cache={r_text: ALAN_TEXT}), 9)
+    eq_(solve(revision.datasources.aliases, cache={r_text: ALAN_TEXT}),
+        {'de': ['Alan Mathison Turing'], 'en': ['Alan Mathison Turing'],
+         'fr': ['Alan Mathison Turing'], 'ru': ['Тьюринг, Алан'],
+         'jbo': ['alan turin'], 'it': ['Alan Mathison Turing'],
+         'ko': ['앨런 매티슨 튜링'],
+         'be-tarask': ["Элан Т'юрынг", 'Алан Цюрынг', "Т'юрынг"],
+         'ja': ['アラン・テューリング']})
+    eq_(solve(revision.sources, cache={r_text: ALAN_TEXT}), 53)
+    eq_(solve(revision.datasources.sources, cache={r_text: ALAN_TEXT}),
         {('P19', 'Q122744', 0), ('P570', '+1954-06-07T00:00:00Z', 1),
          ('P19', 'Q122744', 1), ('P570', '+1954-06-07T00:00:00Z', 2),
          ('P570', '+1954-06-07T00:00:00Z', 3), ('P535', '12651680', 0),
@@ -100,18 +109,18 @@ def test_item():
          ('P549', '8014', 0), ('P1196', 'Q10737', 0), ('P91', 'Q6636', 0),
          ('P268', '12205670t', 0), ('P570', '+1954-06-07T00:00:00Z', 0),
          ('P1563', 'Turing', 0)})
-    eq_(solve(my_parsed.qualifiers, cache={my_text: ALAN_TEXT}), 6)
-    eq_(solve(my_parsed.datasources.qualifiers, cache={my_text: ALAN_TEXT}),
+    eq_(solve(revision.qualifiers, cache={r_text: ALAN_TEXT}), 6)
+    eq_(solve(revision.datasources.qualifiers, cache={r_text: ALAN_TEXT}),
         {('P1343', 'Q17329836', 'P854'), ('P1343', 'Q2627728', 'P854'),
         ('P69', 'Q2278254', 'P580'), ('P108', 'Q220798', 'P582'),
         ('P108', 'Q220798', 'P580'), ('P108', 'Q230899', 'P580')})
-    eq_(solve(my_parsed.badges, cache={my_text: ALAN_TEXT}), 5)
-    eq_(solve(my_parsed.datasources.badges, cache={my_text: ALAN_TEXT}),
-        {('aswiki', 'Q17437798'), ('azwiki', 'Q17437796'),
-         ('enwiki', 'Q17437798'), ('lawiki', 'Q17437796'),
-         ('ruwiki', 'Q17437798')})
-    eq_(solve(my_parsed.labels, cache={my_text: ALAN_TEXT}), 126)
-    eq_(solve(my_parsed.datasources.labels, cache={my_text: ALAN_TEXT}),
+    eq_(solve(revision.badges, cache={r_text: ALAN_TEXT}), 5)
+    eq_(solve(revision.datasources.badges, cache={r_text: ALAN_TEXT}),
+        {'aswiki': ['Q17437798'], 'ruwiki': ['Q17437798'],
+         'azwiki': ['Q17437796'], 'lawiki': ['Q17437796'],
+         'enwiki': ['Q17437798']})
+    eq_(solve(revision.labels, cache={r_text: ALAN_TEXT}), 126)
+    eq_(solve(revision.datasources.labels, cache={r_text: ALAN_TEXT}),
         {'th': 'แอลัน ทัวริง', 'is': 'Alan Turing', 'ku': 'Alan Turing',
          'sgs': 'Alans Tiorėngs', 'ar': 'آلان تورنج', 'kk': 'Алан Тьюринг',
          'yue': '圖靈', 'ta': 'அலன் டூரிங்', 'cs': 'Alan Turing',
@@ -157,8 +166,8 @@ def test_item():
          'ko': '앨런 튜링', 'tl': 'Alan Turing', 'rue': 'Алан Тюрінґ',
          'lb': 'Alan M. Turing', 'id': 'Alan Turing', 'bg': 'Алън Тюринг',
          'ba': 'Алан Тьюринг', 'hi': 'एलेन ट्यूरिंग'})
-    eq_(solve(my_parsed.sitelinks, cache={my_text: ALAN_TEXT}), 134)
-    eq_(solve(my_parsed.datasources.sitelinks, cache={my_text: ALAN_TEXT}),
+    eq_(solve(revision.sitelinks, cache={r_text: ALAN_TEXT}), 134)
+    eq_(solve(revision.datasources.sitelinks, cache={r_text: ALAN_TEXT}),
         {'mrwiki': 'ॲलन ट्युरिंग', 'warwiki': 'Alan Turing',
          'mkwiki': 'Алан Тјуринг', 'bawiki': 'Алан Тьюринг',
          'mnwiki': 'Алан Матисон Тюринг', 'mgwiki': 'Alan Turing',
@@ -225,8 +234,8 @@ def test_item():
          'ltwiki': 'Alan Turing', 'cawikiquote': 'Alan Turing',
          'simplewiki': 'Alan Turing', 'cowiki': 'Alanu Turing',
          'ganwiki': '圖靈', 'ckbwiki': 'ئالان تیورینگ', 'slwiki': 'Alan Turing'})
-    eq_(solve(my_parsed.descriptions, cache={my_text: ALAN_TEXT}), 22)
-    eq_(solve(my_parsed.datasources.descriptions, cache={my_text: ALAN_TEXT}),
+    eq_(solve(revision.descriptions, cache={r_text: ALAN_TEXT}), 22)
+    eq_(solve(revision.datasources.descriptions, cache={r_text: ALAN_TEXT}),
         {'da': 'britisk informatiker, matematiker og ingeniør',
          'ko': '영국의 수학자, 논리학자, 암호해독학자, 컴퓨터 과학자',
          'it': 'matematico, logico e crittografo britannico',
@@ -255,17 +264,17 @@ def test_item():
 
 
 def test_has_property():
-    assert solve(has_p106, cache={my_text: ALAN_TEXT})
-    assert not solve(has_p999, cache={my_text: ALAN_TEXT})
+    assert solve(has_p106, cache={r_text: ALAN_TEXT})
+    assert not solve(has_p999, cache={r_text: ALAN_TEXT})
 
     eq_(pickle.loads(pickle.dumps(has_p106)), has_p106)
     eq_(pickle.loads(pickle.dumps(has_p999)), has_p999)
 
 
 def test_has_property_value():
-    assert solve(has_p106_q82594, cache={my_text: ALAN_TEXT})
-    assert not solve(has_p106_test, cache={my_text: ALAN_TEXT})
-    assert not solve(has_p999_foo, cache={my_text: ALAN_TEXT})
+    assert solve(has_p106_q82594, cache={r_text: ALAN_TEXT})
+    assert not solve(has_p106_test, cache={r_text: ALAN_TEXT})
+    assert not solve(has_p999_foo, cache={r_text: ALAN_TEXT})
 
     eq_(pickle.loads(pickle.dumps(has_p106_q82594)), has_p106_q82594)
     eq_(pickle.loads(pickle.dumps(has_p106_test)), has_p106_test)

@@ -3,15 +3,16 @@ import json
 import pywikibase
 
 from ....datasources import Datasource
+from .diff import Diff
 
 
-class Datasources:
+class Revision:
 
-    def __init__(self, prefix, text_datasource):
+    def __init__(self, prefix, revision_datasources):
 
         self.item_doc = Datasource(
             prefix + ".item_doc", _process_item_doc,
-            depends_on=[text_datasource]
+            depends_on=[revision_datasources.text]
         )
         """
         A JSONable `dict` of content for a Wikibase content.
@@ -54,8 +55,15 @@ class Datasources:
         A `dict` of lang/description pairs in the revision
         """
 
+        self.properties = Datasource(
+            prefix + ".properties", _process_properties, depends_on=[self.item]
+        )
+        """
+        A `set` of properties in the revision
+        """
+
         self.claims = Datasource(
-            prefix + ".claims", _process_claims, depends_on=[self.item]
+            prefix + ".claim", _process_claims, depends_on=[self.item]
         )
         """
         A `set` of unique claims in the revision
@@ -82,6 +90,16 @@ class Datasources:
         A `set` of unique badges in the revision
         """
 
+        if hasattr(revision_datasources, "parent") and \
+           hasattr(revision_datasources.parent, "text"):
+            self.parent = Revision(
+                prefix + ".parent",
+                revision_datasources.parent
+            )
+
+            if hasattr(revision_datasources, "diff"):
+                self.diff = Diff(prefix + ".diff", self)
+
 
 def _process_item_doc(text):
     return json.loads(text or "")
@@ -93,6 +111,10 @@ def _process_item(item_doc):
     return item
 
 
+def _process_properties(item):
+    return item.claims
+
+
 def _process_claims(item):
     return set(
         (property, _claim_to_str(claim))
@@ -102,11 +124,7 @@ def _process_claims(item):
 
 
 def _process_aliases(item):
-    return set(
-        (lang, alias)
-        for lang in item.aliases
-        for alias in item.aliases[lang]
-    )
+    return item.aliases
 
 
 def _process_sources(item):
@@ -128,11 +146,7 @@ def _process_qualifiers(item):
 
 
 def _process_badges(item):
-    return set(
-        (wiki, badge)
-        for wiki in item.badges
-        for badge in item.badges[wiki]
-    )
+    return item.badges
 
 
 def _process_labels(item):

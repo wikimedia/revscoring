@@ -4,18 +4,16 @@ import pickle
 
 from nose.tools import eq_
 
-from .. import diff
-from .....dependencies import solve
-from ...revision_oriented import revision
+from ....dependencies import solve
+from ..revision_oriented import revision
 
 pwd = os.path.dirname(os.path.realpath(__file__))
-ALAN_TOURING = json.load(open(os.path.join(
-    pwd, "../../tests/alan_touring.json")))
-ALAN_TOURING_OLD = json.load(open(os.path.join(
-    pwd, "../../tests/alan_touring.old.json")))
+ALAN_TOURING = json.load(open(os.path.join(pwd, "alan_touring.json")))
+ALAN_TOURING_OLD = json.load(open(os.path.join(pwd, "alan_touring.old.json")))
 
 revision_item_doc = revision.datasources.item_doc
 parent_item_doc = revision.parent.datasources.item_doc
+diff = revision.diff
 
 
 def test_sitelinks_diff():
@@ -147,39 +145,70 @@ def test_descriptions_diff():
         diff.datasources.descriptions_diff)
 
 
-def test_claims_diff():
+def test_properties_diff():
     cache = {revision_item_doc: ALAN_TOURING,
              parent_item_doc: ALAN_TOURING_OLD}
 
-    claims_diff = solve(diff.datasources.claims_diff, cache=cache)
-    eq_(claims_diff.added,
+    properties_diff = solve(diff.datasources.properties_diff, cache=cache)
+    eq_(properties_diff.added,
         {'P31', 'P1741', 'P950', 'P935', 'P27', 'P1296', 'P1415', 'P1207',
          'P549', 'P512', 'P1343', 'P906', 'P1816', 'P735', 'P25', 'P1417',
          'P1412', 'P691', 'P949', 'P800', 'P1273', 'P1196', 'P1819', 'P646',
          'P140', 'P1563', 'P1430', 'P345', 'P1263', 'P1006', 'P166', 'P2021',
          'P910', 'P108', 'P22'})
-    eq_(claims_diff.removed, {'P509', 'P107'})
-    eq_(claims_diff.intersection,
+    eq_(properties_diff.removed, {'P509', 'P107'})
+    eq_(properties_diff.intersection,
         {'P69', 'P268', 'P213', 'P106', 'P20', 'P19', 'P214', 'P269', 'P91',
          'P570', 'P18', 'P185', 'P227', 'P101', 'P463', 'P535', 'P373', 'P184',
          'P244', 'P21', 'P349', 'P569'})
-    eq_(claims_diff.changed,
+    eq_(properties_diff.changed,
         {'P19', 'P570', 'P91', 'P569', 'P20', 'P227', 'P101', 'P69', 'P21',
          'P106'})
-    eq_(claims_diff.unchanged,
+    eq_(properties_diff.unchanged,
         {'P244', 'P269', 'P268', 'P535', 'P18', 'P373', 'P185', 'P213', 'P463',
          'P349', 'P184', 'P214'})
 
-    eq_(pickle.loads(pickle.dumps(diff.datasources.claims_diff)),
-        diff.datasources.claims_diff)
+    eq_(pickle.loads(pickle.dumps(diff.datasources.properties_diff)),
+        diff.datasources.properties_diff)
+
+    eq_(solve(diff.properties_added, cache=cache), 35)
+    eq_(solve(diff.properties_removed, cache=cache), 2)
+    eq_(solve(diff.properties_changed, cache=cache), 10)
+
+    eq_(pickle.loads(pickle.dumps(diff.properties_added)),
+        diff.properties_added)
+    eq_(pickle.loads(pickle.dumps(diff.properties_removed)),
+        diff.properties_removed)
+    eq_(pickle.loads(pickle.dumps(diff.properties_changed)),
+        diff.properties_changed)
+
+
+def test_claims_diff():
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
+
+    eq_({c.id for c in solve(diff.datasources.claims_added, cache=cache)},
+        {'P1430', 'P1006', 'P691', 'P512', 'P1816', 'P735', 'P646', 'P1412',
+         'P1196', 'P2021', 'P950', 'P1273', 'P31', 'P1563', 'P906', 'P949',
+         'P106', 'P1417', 'P22', 'P1263', 'P549', 'P19', 'P1207', 'P1415',
+         'P345', 'P1741', 'P800', 'P1296', 'P910', 'P166', 'P140', 'P108',
+         'P1819', 'P935', 'P25', 'P69', 'P27', 'P1343'})
+    eq_({c.id for c in solve(diff.datasources.claims_removed, cache=cache)},
+        {'P107', 'P509'})
+    eq_({c.id for c, _ in solve(diff.datasources.claims_changed, cache=cache)},
+        {'P21', 'P570', 'P101', 'P19', 'P106', 'P91', 'P20', 'P69', 'P569',
+         'P227'})
 
     eq_(solve(diff.claims_added, cache=cache), 46)
     eq_(solve(diff.claims_removed, cache=cache), 2)
     eq_(solve(diff.claims_changed, cache=cache), 10)
 
-    eq_(pickle.loads(pickle.dumps(diff.claims_added)), diff.claims_added)
-    eq_(pickle.loads(pickle.dumps(diff.claims_removed)), diff.claims_removed)
-    eq_(pickle.loads(pickle.dumps(diff.claims_changed)), diff.claims_changed)
+    eq_(pickle.loads(pickle.dumps(diff.claims_added)),
+        diff.claims_added)
+    eq_(pickle.loads(pickle.dumps(diff.claims_removed)),
+        diff.claims_removed)
+    eq_(pickle.loads(pickle.dumps(diff.claims_changed)),
+        diff.claims_changed)
 
 
 def test_badges_diff():
