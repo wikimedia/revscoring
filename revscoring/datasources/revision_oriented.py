@@ -17,6 +17,7 @@ class Revision:
                  include_page=True,
                  include_page_creation=False,
                  include_content=False):
+        self.prefix = prefix
 
         self.id = Datasource(prefix + ".id")
         self.parent_id = Datasource(prefix + ".parent_id")
@@ -61,12 +62,17 @@ class Revision:
                 depends_on=[self.text]
             )
 
+        if include_content and include_parent:
+            self.diff = Diff(
+                prefix + ".diff"
+            )
+
 
 class User:
 
     def __init__(self, prefix, include_info=True,
                  include_last_revision=False):
-
+        self.prefix = prefix
         self.id = Datasource(prefix + ".id")
         self.text = Datasource(prefix + ".text")
         if include_info:
@@ -94,6 +100,7 @@ class User:
 class Page:
 
     def __init__(self, prefix, include_creation=False):
+        self.prefix = prefix
         self.id = Datasource(prefix + ".id")
         self.namespace = Namespace(prefix + ".namespace")
         self.title = Datasource(prefix + ".title")
@@ -111,8 +118,15 @@ class Page:
 class Namespace:
 
     def __init__(self, prefix):
+        self.prefix = prefix
         self.id = Datasource(prefix + ".id")
         self.name = Datasource(prefix + ".name")
+
+
+class Diff:
+
+    def __init__(self, prefix):
+        self.prefix = prefix
 
 
 def _process_bytes(text):

@@ -4,9 +4,6 @@ from .util import check_datasource
 
 def test_revision():
     check_datasource(revision.id)
-    assert hasattr(revision, "parent")
-    assert hasattr(revision, "user")
-    assert hasattr(revision, "page")
     check_datasource(revision.timestamp)
     check_datasource(revision.comment)
     check_datasource(revision.byte_len)
@@ -15,6 +12,10 @@ def test_revision():
     check_datasource(revision.content_format)
     check_datasource(revision.text)
     check_datasource(revision.bytes)
+    assert hasattr(revision, "parent")
+    assert hasattr(revision, "user")
+    assert hasattr(revision, "page")
+    assert hasattr(revision, "diff")
 
     # revision.parent
     check_datasource(revision.parent.id)
@@ -32,6 +33,7 @@ def test_revision():
     check_datasource(revision.parent.bytes)
     assert not hasattr(revision.parent, "page")
     assert not hasattr(revision.parent, "parent")
+    assert not hasattr(revision.parent, "diff")
 
     # revision.page
     check_datasource(revision.page.id)
@@ -54,6 +56,7 @@ def test_revision():
     assert not hasattr(revision.page.creation, "page")
     assert not hasattr(revision.page.creation, "text")
     assert not hasattr(revision.page.creation, "bytes")
+    assert not hasattr(revision.page.creation, "diff")
 
     # revision.user
     check_datasource(revision.user.id)
@@ -89,3 +92,4 @@ def test_revision():
     assert not hasattr(revision.user.last_revision, "parent")
     assert not hasattr(revision.user.last_revision, "text")
     assert not hasattr(revision.user.last_revision, "bytes")
+    assert not hasattr(revision.user.last_revision, "diff")
