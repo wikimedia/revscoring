@@ -24,5 +24,7 @@ class TokenizedRevision:
         self.breaks = aggregators.len(self.datasources.breaks)
 
         if parent_text_datasource is not None:
-            self.parent = \
-                TokenizedRevision(".parent", parent_text_datasource)
+            self.parent = TokenizedRevision(
+                prefix + ".parent",
+                parent_text_datasource
+            )
