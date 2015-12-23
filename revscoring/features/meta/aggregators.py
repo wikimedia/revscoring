@@ -7,10 +7,13 @@ min_builtin = min
 
 
 class sum(Feature):
-    def __init__(self, items_datasource, name=None, type=float):
+    def __init__(self, items_datasource, name=None, returns=float):
         name = self._format_name(name, [items_datasource])
-        super().__init__(name, sum_builtin, depends_on=[items_datasource],
-                         returns=float)
+        super().__init__(name, self.process, depends_on=[items_datasource],
+                         returns=returns)
+
+    def process(self, items):
+        return self.returns(sum_builtin(items))
 
 
 class len(Feature):
@@ -30,7 +33,7 @@ class max(Feature):
         if len(items) == 0:
             return self.returns()
         else:
-            return max_builtin(items)
+            return self.returns(max_builtin(items))
 
 
 class min(Feature):
@@ -43,4 +46,4 @@ class min(Feature):
         if len(items) == 0:
             return self.returns()
         else:
-            return min_builtin(items)
+            return self.returns(min_builtin(items))
