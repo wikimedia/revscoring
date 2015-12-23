@@ -1,7 +1,6 @@
 import re
 
 from ..datasources import revision_oriented
-from .feature import Feature
 from .meta import bools
 
 
