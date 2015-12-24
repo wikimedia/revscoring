@@ -12,6 +12,8 @@ MW_REGISTRATION_EPOCH = mwtypes.Timestamp("2006-01-01T00:00:00Z")
 class Revision:
 
     def __init__(self, prefix, revision_datasources):
+        self.prefix = prefix
+        self.datasources = revision_datasources
 
         self.day_of_week = Feature(
             prefix + ".day_of_week", _process_day_of_week,

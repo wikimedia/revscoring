@@ -8,9 +8,7 @@ builtin_bytes = bytes
 class Revision:
 
     def __init__(self, prefix,
-                 include_info=True,
                  include_parent=True,
-                 include_parent_info=False,
                  include_user=True,
                  include_user_info=True,
                  include_user_last_revision=False,
@@ -26,7 +24,6 @@ class Revision:
             self.parent = Revision(
                 prefix + ".parent",
                 include_parent=False,
-                include_info=include_parent_info,
                 include_user_info=False,
                 include_page=False,
                 include_content=include_content
@@ -45,15 +42,14 @@ class Revision:
                 include_last_revision=include_user_last_revision
             )
 
-        if include_info:
-            self.timestamp = Datasource(prefix + ".timestamp")
-            self.comment = Datasource(prefix + ".comment")
-            self.byte_len = Datasource(prefix + ".byte_length")
-            self.minor = Datasource(prefix + ".minor")
-            self.content_model = \
-                Datasource(prefix + ".content_model")
-            self.content_format = \
-                Datasource(prefix + ".content_format")
+        self.timestamp = Datasource(prefix + ".timestamp")
+        self.comment = Datasource(prefix + ".comment")
+        self.byte_len = Datasource(prefix + ".byte_length")
+        self.minor = Datasource(prefix + ".minor")
+        self.content_model = \
+            Datasource(prefix + ".content_model")
+        self.content_format = \
+            Datasource(prefix + ".content_format")
 
         if include_content:
             self.text = Datasource(prefix + ".text")
@@ -136,7 +132,6 @@ def _process_bytes(text):
 
 revision = Revision(
     "revision",
-    include_parent_info=True,
     include_page_creation=True,
     include_content=True,
     include_user_last_revision=True
