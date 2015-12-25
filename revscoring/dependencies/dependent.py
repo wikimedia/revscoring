@@ -59,3 +59,59 @@ class Dependent:
 
     def __repr__(self):
         return "<" + self.name + ">"
+
+
+class DependentSet:
+    def __init__(self, name):
+        self._dependents = set()
+        self._dependent_sets = set()
+        self.name = name
+
+    def __setattr__(self, attr, value):
+        super().__setattr__(attr, value)
+
+        if isinstance(value, Dependent):
+            if value in self._dependents:
+                logger.warn("{0} has already been added to {1}.  Could be "
+                            .format(value, self) + "overwritten?")
+            self._dependents.add(value)
+        elif isinstance(value, DependentSet):
+            self._dependent_sets.add(value)
+
+    # String methods
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        return "{" + self.name + "}"
+
+    # Set methods
+    def __len__(self):
+        return len(self._dependents.union(*self._dependent_sets))
+
+    def __contains__(self, item):
+        return item in self._dependents.union(*self._dependent_sets)
+
+    def add(self, item):
+        raise NotImplementedError()
+
+    def discard(self, item):
+        raise NotImplementedError()
+
+    def __iter__(self):
+        return iter(self._dependents.union(*self._dependent_sets))
+
+    def __reversed__(self):
+        return reversed(self._dependents.union(*self._dependent_sets))
+
+    def pop(self):
+        raise NotImplementedError()
+
+    def __sub__(self, other):
+        return self._dependents.union(*self._dependent_sets) - other
+
+    def __and__(self, other):
+        return self._dependents.union(*self._dependent_sets) & other
+
+    def __or__(self, other):
+        return self._dependents.union(*self._dependent_sets) | other
