@@ -47,7 +47,7 @@ class Revision:
             )
 
         if hasattr(revision_datasources, "user") and \
-           hasattr(revision_datasources.user, "registration"):
+           hasattr(revision_datasources.user, "info"):
             self.user = User(
                 prefix + ".user",
                 revision_datasources
@@ -68,29 +68,24 @@ class ParentRevision(Revision):
 
 class User:
     def __init__(self, prefix, revision_datasources):
-        self.seconds_since_registration = Feature(
-            prefix + ".seconds_since_registration",
-            self._process_seconds_since_registration,
-            returns=int,
-            depends_on=[revision_datasources.user.id,
-                        revision_datasources.user.registration,
-                        revision_datasources.timestamp])
 
-        self.last_revision = LastUserRevision(
-            prefix + ".last_revision",
-            revision_datasources
-        )
+        self.prefix = prefix
+        self.datasources = revision_datasources.user
 
-    def _process_seconds_since_registration(self, id, registration, timestamp):
-        if id is None:  # User is anon
-            return 0
-        else:
-            # Handles users who registered before registration dates were
-            # recorded
-            registration = registration or MW_REGISTRATION_EPOCH
-            print(registration)
+        if hasattr(self.datasources, 'info'):
+            self.seconds_since_registration = Feature(
+                prefix + ".seconds_since_registration",
+                _process_seconds_since_registration,
+                returns=int,
+                depends_on=[revision_datasources.user.id,
+                            revision_datasources.user.info.registration,
+                            revision_datasources.timestamp])
 
-            return _process_seconds_since(registration, timestamp)
+        if hasattr(self.datasources, 'last_revision'):
+            self.last_revision = LastUserRevision(
+                prefix + ".last_revision",
+                revision_datasources
+            )
 
 
 class LastUserRevision(Revision):
@@ -138,6 +133,18 @@ def _process_seconds_since(old_timestamp, current_timestamp):
         return 0
     else:
         return current_timestamp - old_timestamp
+
+
+def _process_seconds_since_registration(id, registration, timestamp):
+    if id is None:  # User is anon
+        return 0
+    else:
+        # Handles users who registered before registration dates were
+        # recorded
+        registration = registration or MW_REGISTRATION_EPOCH
+        print(registration)
+
+        return _process_seconds_since(registration, timestamp)
 
 
 revision = Revision("temporal.revision", revision_oriented.revision)
