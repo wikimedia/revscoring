@@ -1,6 +1,8 @@
+from . import datasources
 from ...datasources import revision_oriented
-from ...util import NamedDict
 from ..meta import aggregators
+
+prefix = "bytes.revision"
 
 
 class Revision:
@@ -18,6 +20,6 @@ class Revision:
             )
 
 revision = Revision(
-    "bytes.revision",
-    revision_oriented.revision
+    prefix,
+    datasources.Revision(prefix, revision_oriented.revision)
 )

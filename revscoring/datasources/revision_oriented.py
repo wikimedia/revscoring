@@ -1,11 +1,12 @@
 import sys
 
+from ..dependencies import DependentSet
 from .datasource import Datasource
 
 builtin_bytes = bytes
 
 
-class Revision:
+class Revision(DependentSet):
 
     def __init__(self, prefix,
                  include_parent=True,
@@ -15,10 +16,17 @@ class Revision:
                  include_page=True,
                  include_page_creation=False,
                  include_content=False):
-        self.prefix = prefix
+        super().__init__(prefix)
 
         self.id = Datasource(prefix + ".id")
-        self.parent_id = Datasource(prefix + ".parent_id")
+        self.timestamp = Datasource(prefix + ".timestamp")
+        self.comment = Datasource(prefix + ".comment")
+        self.byte_len = Datasource(prefix + ".byte_length")
+        self.minor = Datasource(prefix + ".minor")
+        self.content_model = Datasource(prefix + ".content_model")
+
+        if include_content:
+            self.text = Datasource(prefix + ".text")
 
         if include_parent:
             self.parent = Revision(
@@ -42,47 +50,22 @@ class Revision:
                 include_last_revision=include_user_last_revision
             )
 
-        self.timestamp = Datasource(prefix + ".timestamp")
-        self.comment = Datasource(prefix + ".comment")
-        self.byte_len = Datasource(prefix + ".byte_length")
-        self.minor = Datasource(prefix + ".minor")
-        self.content_model = \
-            Datasource(prefix + ".content_model")
-        self.content_format = \
-            Datasource(prefix + ".content_format")
-
-        if include_content:
-            self.text = Datasource(prefix + ".text")
-            self.bytes = Datasource(
-                prefix + ".bytes", _process_bytes,
-                depends_on=[self.text]
-            )
-
         if include_content and include_parent:
             self.diff = Diff(
                 prefix + ".diff"
             )
 
 
-class User:
+class User(DependentSet):
 
     def __init__(self, prefix, include_info=True,
                  include_last_revision=False):
-        self.prefix = prefix
+        super().__init__(prefix)
         self.id = Datasource(prefix + ".id")
         self.text = Datasource(prefix + ".text")
+
         if include_info:
-            self.editcount = Datasource(prefix + ".editcount")
-            self.registration = Datasource(prefix + ".registration")
-            self.groups = Datasource(prefix + ".groups")
-            self.emailable = Datasource(prefix + ".emailable")
-            self.gender = Datasource(prefix + ".gender")
-            self.block_id = Datasource(prefix + ".block_id")
-            self.blocked_by = Datasource(prefix + ".blocked_by")
-            self.blocked_by_id = Datasource(prefix + ".blocked_by_id")
-            self.blocked_timestamp = Datasource(prefix + ".blocked_timestamp")
-            self.block_reason = Datasource(prefix + ".block_reason")
-            self.block_expiry = Datasource(prefix + ".block_expiry")
+            self.info = UserInfo(prefix + ".info")
 
         if include_last_revision:
             self.last_revision = Revision(
@@ -93,10 +76,20 @@ class User:
             )
 
 
-class Page:
+class UserInfo(DependentSet):
+    def __init__(self, prefix):
+        super().__init__(prefix)
+        self.editcount = Datasource(prefix + ".editcount")
+        self.registration = Datasource(prefix + ".registration")
+        self.groups = Datasource(prefix + ".groups")
+        self.emailable = Datasource(prefix + ".emailable")
+        self.gender = Datasource(prefix + ".gender")
+
+
+class Page(DependentSet):
 
     def __init__(self, prefix, include_creation=False):
-        self.prefix = prefix
+        super().__init__(prefix)
         self.id = Datasource(prefix + ".id")
         self.namespace = Namespace(prefix + ".namespace")
         self.title = Datasource(prefix + ".title")
@@ -111,23 +104,19 @@ class Page:
             )
 
 
-class Namespace:
+class Namespace(DependentSet):
 
     def __init__(self, prefix):
-        self.prefix = prefix
+        super().__init__(prefix)
         self.id = Datasource(prefix + ".id")
         self.name = Datasource(prefix + ".name")
 
 
-class Diff:
+class Diff(DependentSet):
 
     def __init__(self, prefix):
+        super().__init__(prefix)
         self.prefix = prefix
-
-
-def _process_bytes(text):
-    # TODO: Figure out a way to not assume UTF-8
-    return builtin_bytes(text, "utf8", "replace")
 
 
 revision = Revision(
