@@ -32,3 +32,5 @@ def test_context():
 
     context = Context(context={bar: lambda: "baz"})
     eq_(context.solve(foobar), "foobaz")
+    context.update(context={bar: lambda: "buzz"})
+    eq_(context.solve(foobar), "foobuzz")
