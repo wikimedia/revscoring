@@ -1,100 +1,52 @@
-"""
-.. autoclass:: revscoring.extractors.api.APIExtractor
-"""
 import logging
 from collections import defaultdict
-from itertools import islice
+from itertools import groupby, islice
 
-import mwapi
-from mwtypes import Namespace, Timestamp
-
-from .. import dependencies
-from ..datasources import (Datasource, RevisionMetadata, UserInfo,
-                           parent_revision, revision, site, user)
-from ..errors import RevisionNotFound
-from .extractor import Extractor
+from . import datasources
+from .. import Extractor as BaseExtractor
+from ...datasources import Datasource, revision_oriented
+from ...dependencies import expand
+from ...errors import RevisionNotFound, UserNotFound
+from .revision_oriented import Revision
+from .util import REV_PROPS, USER_PROPS
 
 logger = logging.getLogger(__name__)
 
-revision_doc = Datasource("revision.doc")
-parent_revision_doc = Datasource("parent_revision.doc")
-previous_user_revision_doc = Datasource("previous_user_revision.doc")
-page_creation_doc = Datasource("page_creation.doc")
-user_doc = Datasource("user.doc")
-site_doc = Datasource("site.doc")
 
-
-class APIExtractor(Extractor):
-    """
-    Implements a :class:`revscoring.Extractor` using a
-    MediaWiki API.
-
-    :Parameters:
-        session : :class:`mwapi.Session`
-            An API session to use
-        context : `dict` | `iterable`
-            A collection of :class:`revscoring.Dependent` to
-            inject when extracting.
-        cache : `dict`
-            A collection of pre-computed values to inject when extracting
-    """
+class Extractor(BaseExtractor):
     def __init__(self, session, context=None, cache=None):
-        cache = cache or {}
-        context = dependencies.normalize_context(context)
-
+        super().__init__(context=context, cache=cache)
         self.session = session
+        self.dependents = Datasource("extractor.dependents")
 
-        local_cache = {
-            site.namespace_map: self.get_namespace_map()
-        }
-        local_context = {d: d for d in [
-            Datasource("revision.doc", self.process_revision_doc,
-                       depends_on=[revision.id]),
-            Datasource("revision.metadata", self.process_revision_metadata,
-                       depends_on=[revision_doc]),
-            Datasource("revision.text", self.process_revision_text,
-                       depends_on=[revision_doc]),
-            Datasource("parent_revision.doc", self.process_parent_revision_doc,
-                       depends_on=[revision.metadata]),
-            Datasource("parent_revision.metadata",
-                       self.process_revision_metadata_if_exists,
-                       depends_on=[parent_revision_doc]),
-            Datasource("parent_revision.text",
-                       self.process_revision_text,
-                       depends_on=[parent_revision_doc]),
-            Datasource("previous_user_revision.doc",
-                       self.process_previous_user_revision_doc,
-                       depends_on=[revision.metadata]),
-            Datasource("previous_user_revision.metadata",
-                       self.process_revision_metadata_if_exists,
-                       depends_on=[previous_user_revision_doc]),
-            Datasource("page_creation.doc",
-                       self.process_page_creation_doc,
-                       depends_on=[revision.metadata]),
-            Datasource("page_creation.metadata",
-                       self.process_revision_metadata,
-                       depends_on=[page_creation_doc]),
-            Datasource("user.doc",
-                       self.process_user_doc,
-                       depends_on=[revision.metadata]),
-            Datasource("user.info",
-                       self.process_user_info,
-                       depends_on=[user_doc])
-        ]}
+        rev_doc = self.get_rev_doc_by_id(revision_oriented.revision)
+        self.revision = Revision(
+            revision_oriented.revision, self, rev_doc,
+            id_datasource=revision_oriented.revision.id
+        )
 
-        local_context.update(context)
-        local_cache.update(cache)
+        # Registers revision_oriented context
+        self.update(context=self.revision)
 
-        super().__init__(local_context, local_cache)
+    def get_rev_doc_by_id(self, revision):
+        return datasources.RevDocById(revision, self)
 
-    def extract(self, rev_ids, dependents, context=None, caches=None):
+    def get_page_creation_rev_doc(self, page):
+        return datasources.PageCreationRevDoc(page, self)
+
+    def get_user_info_doc(self, user):
+        return datasources.UserInfoDoc(user, self)
+
+    def get_last_user_rev_doc(self, user):
+        return datasources.LastUserRevDoc(user, self)
+
+    def extract(self, rev_ids, dependents, context=None, cache=None):
         """
         Extracts a values for a set of
         :class:`~revscoring.dependents.dependent.Dependent` (e.g.
         :class:`~revscoring.features.feature.Feature` or
         :class:`~revscoring.datasources.datasource.Datasource`) for a revision
         or a set of revisions
-
         :Parameters:
             rev_ids : int | `iterable`
                 Either a single rev_id or an `iterable` of rev_ids
@@ -105,98 +57,119 @@ class APIExtractor(Extractor):
                 :class:`~revscoring.dependents.dependent.Dependent` to inject
             cache : `dict`
                 A set of call-specific pre-computed values to inject
-
         :Returns:
             An generator of extracted values if a single rev_id was provided or
             a genetator of (error, values) pairs where error is `None` if no
             error occured during extraction.
         """
-        caches = caches or {}
-        context = dependencies.normalize_context(context)
+        context = context or {}
 
         if hasattr(rev_ids, "__iter__"):
-            return self._extract_many(rev_ids, dependents, context, caches)
+            return self._extract_many(rev_ids, dependents, context)
         else:
             rev_id = rev_ids
-            cache = caches
             return self._extract(rev_id, dependents, context, cache)
 
-    def _extract_many(self, rev_ids, dependents, context, caches):
-        all_dependents = set(dependencies.expand(dependents))
+    def _extract_many(self, rev_ids, dependents, context):
+        all_dependents = set(expand(dependents))
 
-        # Prime caches
-        extract_caches = defaultdict(dict)
-        for rev_id in caches:
-            extract_caches[rev_id].update(caches[rev_id])
+        revision_caches = defaultdict(lambda: {})
+
+        errored = {}
 
         # Build up caches for data that can be queried in batch
-        if revision.metadata in all_dependents or \
-           revision.text in all_dependents:
-            rev_ids_missing_data = [
-                rid for rid in rev_ids
-                if rid not in extract_caches or
-                revision.text not in extract_caches[rid] or
-                revision.metadata not in extract_caches[rid] or
-                revision_doc not in extract_caches[rid]
-            ]
-            rev_docs = self.get_rev_doc_map(rev_ids_missing_data)
+        if self.revision & all_dependents:
+            rvprop = set(REV_PROPS)
+            if self.revision.text in all_dependents:
+                rvprop.add('content')
 
+            # Get revision data
+            logger.info("Batch requesting {0} revision from the API"
+                        .format(len(rev_ids)))
+            rev_docs = self.get_rev_doc_map(rev_ids, rvprop=rvprop)
             for rev_id in rev_ids:
-                extract_caches[rev_id][revision_doc] = rev_docs.get(rev_id)
+                if rev_id in rev_docs:
+                    revision_caches[rev_id][self.revision.doc] = \
+                        rev_docs[rev_id]
+                else:
+                    errored[rev_id] = RevisionNotFound(self.revision, rev_id)
 
-            if parent_revision.metadata in all_dependents or \
-               parent_revision.text in all_dependents:
+            if self.revision.parent & all_dependents:
+                parent_revs = {r.get('parentid'): r
+                               for r in rev_docs.values()
+                               if r.get('parentid', 0) > 0}
 
-                parent_ids = [r.get('parentid') for r in rev_docs.values()
-                              if r.get('parentid', 0) > 0]
+                logger.info("Batch requesting {0} revision.parent from the API"
+                            .format(len(parent_revs)))
+                parent_rev_docs = self.get_rev_doc_map(parent_revs.keys(),
+                                                       rvprop=rvprop)
 
-                parent_rev_docs = self.get_rev_doc_map(parent_ids)
+                for parent_id in parent_revs:
+                    rev_doc = parent_revs[parent_id]
+                    rev_id = rev_doc['revid']
+                    if parent_id in parent_rev_docs:
+                        revision_caches[rev_id][self.revision.parent.doc] = \
+                            parent_rev_docs[parent_id]
+                    else:
+                        errored[rev_id] = \
+                            RevisionNotFound(self.parent.revision, parent_id)
 
-                for rev_doc in rev_docs.values():
-                    extract_caches[rev_doc['revid']][parent_revision_doc] = \
-                        parent_rev_docs.get(rev_doc['parentid'])
+            if self.revision.user.info & all_dependents:
+                user_revs = groupby((r for r in rev_docs.values()
+                                     if r.get('userid', 0) > 0),
+                                    lambda r: r.get('user'))
+                user_texts = {ut: list(revs) for ut, revs in user_revs}
+                logger.info("Batch requesting {0} revision.user.info from "
+                            .format(len(user_texts)) + "the API")
+                user_info_docs = self.get_user_doc_map(user_texts.keys(),
+                                                       usprop=USER_PROPS)
 
-            if user.info in all_dependents:
-                user_texts = [r.get('user') for r in rev_docs.values()]
-                user_docs = self.get_user_doc_map(user_texts)
-
-                for rev_doc in rev_docs.values():
-                    extract_caches[rev_doc['revid']][user_doc] = \
-                        user_docs.get(rev_doc.get('user'))
+                for user_text in user_texts:
+                    rev_docs = user_texts[user_text]
+                    for rev_doc in rev_docs:
+                        rev_id = rev_doc['revid']
+                        if user_text in user_info_docs:
+                            revision_caches[rev_id]\
+                                           [self.revision.user.info.doc] =\
+                                user_info_docs[user_text]
+                        else:
+                                errored[rev_id] = \
+                                    UserNotFound(self.revision.user, user_text)
 
         # Now extract dependent values one-by-one
+
         for rev_id in rev_ids:
-            try:
-                values = self._extract(rev_id, dependents, context=context,
-                                       cache=extract_caches[rev_id])
-                yield None, list(values)
-            except Exception as e:
-                yield e, None
+            # If an error happened, give up hope
+            if rev_id in errored:
+                yield errored[rev_id], None
+            else:
+                # If no error happened, try to solve the other dependencies.
+                try:
+                    values = self._extract(rev_id, dependents, context=context,
+                                           cache=revision_caches[rev_id])
+                    yield None, list(values)
+                except Exception as e:
+                    yield e, None
 
     def _extract(self, rev_id, dependents, cache, context):
-        extract_cache = {revision.id: rev_id}
+        all_dependents = set(expand(dependents))
+
+        extract_cache = {self.revision.id: rev_id,
+                         self.dependents: all_dependents}
         extract_cache.update(cache)
         return self.solve(dependents, context=context, cache=extract_cache)
 
-    def get_namespace_map(self):
-        logger.info("Requesting site info from the API")
-        doc = self.session.get(
-            action="query", meta="siteinfo",
-            siprop={'general', 'namespaces', 'namespacealiases'})
-
-        return self.namespace_map_from_doc(doc['query'])
-
-    def get_rev_doc_map(self, rev_ids, props={'ids', 'user', 'timestamp',
-                                              'userid', 'comment', 'content',
-                                              'flags', 'size'}):
+    def get_rev_doc_map(self, rev_ids, rvprop={'ids', 'user', 'timestamp',
+                                               'userid', 'comment', 'content',
+                                               'flags', 'size'}):
         if len(rev_ids) == 0:
             return {}
-        logger.info("Batch requesting {0} revisions from the API"
-                    .format(len(rev_ids)))
-        return {rd['revid']: rd
-                for rd in self.query_revisions_by_revids(
-                    revids=rev_ids,
-                    rvprop=props)}
+
+        logger.debug("Building a map of {0} revisions: {1}"
+                    .format(len(rev_ids), rev_ids))
+        rev_docs = self.query_revisions_by_revids(rev_ids, rvprop=rvprop)
+
+        return {rd['revid']: rd for rd in rev_docs}
 
     def query_revisions_by_revids(self, revids, batch=50, **params):
         revids_iter = iter(revids)
@@ -209,24 +182,17 @@ class APIExtractor(Extractor):
                                        revids=batch_ids, **params)
 
                 for page_doc in doc['query'].get('pages', {}).values():
-                    page_meta = {k: v for k, v in page_doc.items()
-                                 if k != 'revisions'}
-                    if 'revisions' in page_doc:
-                        for revision_doc in page_doc['revisions']:
-                            revision_doc['page'] = page_meta
-                            yield revision_doc
+                    yield from _normalize_revisions(page_doc)
 
-    def get_user_doc_map(self, user_texts, props={'blockinfo',
-                                                  'implicitgroups',
-                                                  'groups', 'registration',
-                                                  'emailable', 'editcount',
-                                                  'gender'}):
+    def get_user_doc_map(self, user_texts,
+                         usprop={'groups', 'registration', 'emailable',
+                                 'editcount', 'gender'}):
         if len(user_texts) == 0:
             return {}
-        logger.info("Batch requesting {0} users from the API"
-                    .format(len(user_texts)))
+        logger.debug("Building a map of {0} user.info.docs"
+                     .format(len(user_texts)))
         return {ud['name']: ud
-                for ud in self.query_users_by_text(user_texts, usprop=props)}
+                for ud in self.query_users_by_text(user_texts, usprop=usprop)}
 
     def query_users_by_text(self, user_texts, batch=50, **params):
         user_texts_iter = iter(user_texts)
@@ -241,177 +207,52 @@ class APIExtractor(Extractor):
                 for user_doc in doc['query'].get('users', []):
                     yield user_doc
 
-    def process_revision_doc(self, rev_id):
-        logger.info("Requesting a revision ({0}) from the API".format(rev_id))
-        props = {'ids', 'user', 'timestamp', 'userid', 'comment',
-                 'content', 'flags', 'size'}
-        return self.get_rev_doc_map([rev_id], props=props).get(rev_id)
-
-    def process_parent_revision_doc(self, revision_metadata):
-        props = {'ids', 'user', 'timestamp', 'userid', 'comment',
-                 'content', 'flags', 'size'}
-        if revision_metadata.parent_id is not None and \
-                revision_metadata.parent_id > 0:
-            rev_id = revision_metadata.parent_id
-            logger.info("Requesting a parent revision ({0}) from the API"
-                        .format(rev_id))
-            return self.get_rev_doc_map([rev_id], props=props).get(rev_id)
-        else:
+    def get_user_last_revision(self, user_text, rev_timestamp,
+                               ucprop={'ids', 'timestamp', 'comment', 'size'}):
+        if user_text is None or rev_timestamp is None:
             return None
 
-    def process_previous_user_revision_doc(self, revision_metadata):
-        if revision_metadata.user_text is not None:
-            logger.info("Requesting previous user revision ({0}) from the API"
-                        .format(revision_metadata.user_text))
-            doc = self.session.get(
-                action="query",
-                list="usercontribs",
-                ucuser=revision_metadata.user_text,
-                upprop={'ids', 'timestamp'},
-                uclimit=1,
-                ucdir="older",
-                ucstart=str(revision_metadata.timestamp-1)
-            )
+        logger.debug("Requesting the last revision by {0} from the API"
+                     .format(user_text))
+        doc = self.session.get(action="query", list="usercontribs",
+                               ucuser=user_text, ucprop=ucprop,
+                               uclimit=1, ucdir="older",
+                               ucstart=(rev_timestamp - 1))
 
-            rev_docs = doc['query']['usercontribs']
+        rev_docs = doc['query']['usercontribs']
 
-            if len(rev_docs) > 0:
-                return rev_docs[0]
-            else:
-                return None
+        if len(rev_docs) > 0:
+            return rev_docs[0]
         else:
+            # It's OK to not find a revision here.
             return None
 
-    def process_page_creation_doc(self, revision_metadata):
-        logger.info("Requesting page creation ({0}) from the API"
-                    .format(revision_metadata.page_id))
-        doc = self.session.get(
-            action="query",
-            prop="revisions",
-            pageids=revision_metadata.page_id,
-            rvdir="newer",
-            rvlimit=1,
-            rvprop={'ids', 'user', 'timestamp', 'userid', 'comment',
-                    'flags', 'size'}
-        )
+    def get_page_creation_doc(self, page_id,
+                              rvprop={'ids', 'user', 'timestamp', 'userid',
+                                      'comment', 'flags', 'size'}):
+        if page_id is None:
+            return None
+
+        logger.debug("Requesting creation revision for ({0}) from the API"
+                     .format(page_id))
+        doc = self.session.get(action="query", prop="revisions",
+                               pageids=page_id, rvdir="newer", rvlimit=1,
+                               rvprop=rvprop)
+
         page_doc = doc['query'].get('pages', {'revisions': []}).values()
         rev_docs = page_doc['revisions']
 
         if len(rev_docs) == 1:
             return rev_docs[0]
         else:
+            # This is bad, but it should be handled by the calling funcion
             return None
 
-    def process_user_doc(self, revision_metadata):
-        logger.info("Requesting user info ({0}) from the API"
-                    .format(revision_metadata.user_text))
 
-        user_name = revision_metadata.user_text
-        return self.get_user_doc_map([user_name]).get(user_name)
-
-    @classmethod
-    def process_revision_metadata(cls, revision_doc):
-        if revision_doc is None:
-            raise RevisionNotFound()
-        return cls.revision_metadata_from_doc(revision_doc)
-
-    @classmethod
-    def process_revision_metadata_if_exists(cls, revision_doc):
-        if revision_doc is None:
-            return None
-        else:
-            return cls.revision_metadata_from_doc(revision_doc)
-
-    @classmethod
-    def process_user_info(cls, user_doc):
-        return cls.user_info_from_doc(user_doc)
-
-    @classmethod
-    def process_revision_text(cls, revision_doc):
-        """
-        TODO: Check if there is no parent of if the revision has been deleted.
-        If the parent_revision has been deleted, raise an error.
-        """
-        if revision_doc is None:
-            return None
-        return revision_doc.get('*', "")
-
-    @classmethod
-    def revision_metadata_from_doc(cls, rev_doc):
-        if rev_doc is None:
-            return None
-        try:
-            timestamp = Timestamp(rev_doc.get('timestamp'))
-        except ValueError:
-            timestamp = None
-
-        return RevisionMetadata(rev_doc.get('revid'),
-                                rev_doc.get('parentid'),
-                                rev_doc.get('user'),
-                                rev_doc.get('userid'),
-                                timestamp,
-                                rev_doc.get('comment'),
-                                rev_doc.get('page', {}).get('pageid'),
-                                rev_doc.get('page', {}).get('ns'),
-                                rev_doc.get('page', {}).get('title'),
-                                rev_doc.get('size'),
-                                'minor' in rev_doc)
-
-    @classmethod
-    def user_info_from_doc(cls, user_doc):
-        if user_doc is None:
-            return None
-        try:
-            registration = Timestamp(user_doc.get('registration'))
-        except ValueError:
-            registration = None
-
-        return UserInfo(
-            user_doc.get('userid'),
-            user_doc.get('name'),
-            user_doc.get('editcount'),
-            registration,
-            user_doc.get('groups', []),
-            user_doc.get('implicitgroups', []),
-            "emailable" in user_doc,
-            user_doc.get('gender'),
-            user_doc.get('blockid'),
-            user_doc.get('blockedby'),
-            user_doc.get('blockedbyid'),
-            user_doc.get('blockedtimestamp'),
-            user_doc.get('blockreason'),
-            user_doc.get('blockexpiry')
-        )
-
-    @classmethod
-    def namespace_map_from_doc(cls, site_doc):
-        aliases = site_doc.get('namespacealiases', [])
-        alias_map = {}
-        for alias_doc in aliases:
-            prev_list = alias_map.get(alias_doc['id'], [])
-            prev_list.append(alias_doc['*'])
-            alias_map[alias_doc['id']] = prev_list
-
-        namespace_map = {}
-        for ns_doc in site_doc.get('namespaces', {}).values():
-            namespace = namespace_from_doc(ns_doc, aliases=alias_map)
-            namespace_map[namespace.id] = namespace
-
-        return namespace_map
-
-    @classmethod
-    def from_config(cls, config, name, section_key="extractors"):
-        logger.info("Loading APIExtractor '{0}' from config.".format(name))
-        section = config[section_key][name]
-        kwargs = {k: v for k, v in section.items() if k != "class"}
-        return cls(mwapi.Session(**kwargs))
-
-
-def namespace_from_doc(doc, aliases=None):
-    aliases = {}
-    return Namespace(doc['id'],
-                     doc['*'],
-                     canonical=doc.get('canonical'),
-                     aliases=set(aliases.get(doc['id'], [])),
-                     case=doc['case'],
-                     content='content' in doc)
+def _normalize_revisions(page_doc):
+    page_meta = {k: v for k, v in page_doc.items()
+                 if k != 'revisions'}
+    if 'revisions' in page_doc:
+        for revision_doc in page_doc['revisions']:
+            revision_doc['page'] = page_meta
+            yield revision_doc
