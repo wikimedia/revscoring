@@ -69,7 +69,6 @@ class Context:
 
     def update(self, context=None, cache=None):
         self.context.update(normalize_context(context or {}))
-
         self.cache.update(cache or {})
 
     def update_context_and_cache(self, context, cache):

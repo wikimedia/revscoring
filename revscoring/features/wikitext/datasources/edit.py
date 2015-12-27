@@ -17,7 +17,7 @@ class Diff:
         super().__init__(*args, **kwargs)
 
         self.operations = Datasource(
-            self.prefix + ".operations", _process_operations,
+            self._name + ".operations", _process_operations,
             depends_on=[self.revision.parent.tokens,
                         self.revision.tokens]
         )
@@ -33,7 +33,7 @@ class Diff:
         """
 
         self.segments_added = Datasource(
-            self.prefix + ".segments_added", _process_segments_added,
+            self._name + ".segments_added", _process_segments_added,
             depends_on=[self.operations]
         )
         """
@@ -42,7 +42,7 @@ class Diff:
         """
 
         self.segments_removed = Datasource(
-            self.prefix + ".segments_removed", _process_segments_removed,
+            self._name + ".segments_removed", _process_segments_removed,
             depends_on=[self.operations]
         )
         """
@@ -51,7 +51,7 @@ class Diff:
         """
 
         self.tokens_added = Datasource(
-            self.prefix + ".tokens_added", _process_tokens_added,
+            self._name + ".tokens_added", _process_tokens_added,
             depends_on=[self.operations]
         )
         """
@@ -60,7 +60,7 @@ class Diff:
         """
 
         self.tokens_removed = Datasource(
-            self.prefix + ".tokens_removed", _process_tokens_removed,
+            self._name + ".tokens_removed", _process_tokens_removed,
             depends_on=[self.operations]
         )
         """
@@ -69,28 +69,28 @@ class Diff:
         """
 
         self.numbers_added = self.tokens_added_in_types(
-            {'number'}, name=self.prefix + ".numbers_added"
+            {'number'}, name=self._name + ".numbers_added"
         )
         """
         A list of numeric tokens added in the edit
         """
 
         self.numbers_removed = self.tokens_removed_in_types(
-            {'number'}, name=self.prefix + ".numbers_removed"
+            {'number'}, name=self._name + ".numbers_removed"
         )
         """
         A list of numeric tokens removed in the edit
         """
 
         self.whitespaces_added = self.tokens_added_in_types(
-            {'whitespace'}, name=self.prefix + ".whitespaces_added"
+            {'whitespace'}, name=self._name + ".whitespaces_added"
         )
         """
         A list of whitespace tokens added in the edit
         """
 
         self.whitespaces_removed = self.tokens_removed_in_types(
-            {'whitespace'}, name=self.prefix + ".whitespaces_removed"
+            {'whitespace'}, name=self._name + ".whitespaces_removed"
         )
         """
         A list of whitespace tokens removed in the edit
@@ -100,7 +100,7 @@ class Diff:
             {'dbrack_open', 'dbrack_close', 'brack_open', 'brack_close',
              'tab_open', 'tab_close', 'dcurly_open', 'dcurly_close',
              'curly_open', 'curly_close', 'bold', 'italics', 'equals'},
-            name=self.prefix + ".markups_added"
+            name=self._name + ".markups_added"
         )
         """
         A list of markup tokens added in the edit
@@ -110,63 +110,63 @@ class Diff:
             {'dbrack_open', 'dbrack_close', 'brack_open', 'brack_close',
              'tab_open', 'tab_close', 'dcurly_open', 'dcurly_close',
              'curly_open', 'curly_close', 'bold', 'italics', 'equals'},
-            name=self.prefix + ".markups_removed"
+            name=self._name + ".markups_removed"
         )
         """
         A list of markup tokens removed in the edit
         """
 
         self.cjks_added = self.tokens_added_in_types(
-            {'cjk'}, name=self.prefix + ".cjks_added"
+            {'cjk'}, name=self._name + ".cjks_added"
         )
         """
         A list of Chinese/Japanese/Korean tokens added in the edit
         """
 
         self.cjks_removed = self.tokens_removed_in_types(
-            {'cjk'}, name=self.prefix + ".cjks_removed"
+            {'cjk'}, name=self._name + ".cjks_removed"
         )
         """
         A list of Chinese/Japanese/Korean tokens removed in the edit
         """
 
         self.entities_added = self.tokens_added_in_types(
-            {'entity'}, name=self.prefix + ".entities_added"
+            {'entity'}, name=self._name + ".entities_added"
         )
         """
         A list of HTML entity tokens added in the edit
         """
 
         self.entities_removed = self.tokens_removed_in_types(
-            {'entity'}, name=self.prefix + ".entities_removed"
+            {'entity'}, name=self._name + ".entities_removed"
         )
         """
         A list of HTML entity tokens removed in the edit
         """
 
         self.urls_added = self.tokens_added_in_types(
-            {'url'}, name=self.prefix + ".urls_added"
+            {'url'}, name=self._name + ".urls_added"
         )
         """
         A list of URL tokens rempved in the edit
         """
 
         self.urls_removed = self.tokens_removed_in_types(
-            {'url'}, name=self.prefix + ".urls_removed"
+            {'url'}, name=self._name + ".urls_removed"
         )
         """
         A list of URL tokens added in the edit
         """
 
         self.words_added = self.tokens_added_in_types(
-            {'word'}, name=self.prefix + ".words_added"
+            {'word'}, name=self._name + ".words_added"
         )
         """
         A list of word tokens added in the edit
         """
 
         self.words_removed = self.tokens_removed_in_types(
-            {'word'}, name=self.prefix + ".words_removed"
+            {'word'}, name=self._name + ".words_removed"
         )
         """
         A list of word tokens removed in the edit
@@ -174,7 +174,7 @@ class Diff:
 
         self.uppercase_words_added = filters.filter(
             is_uppercase_word, self.words_added,
-            name=self.prefix + ".uppercase_words_added"
+            name=self._name + ".uppercase_words_added"
         )
         """
         A list of fully UPPERCASE word tokens added in the edit
@@ -182,7 +182,7 @@ class Diff:
 
         self.uppercase_words_removed = filters.filter(
             is_uppercase_word, self.words_removed,
-            name=self.prefix + ".uppercase_words_removed"
+            name=self._name + ".uppercase_words_removed"
         )
         """
         A list of fully UPPERCASE word tokens removed in the edit
@@ -191,7 +191,7 @@ class Diff:
         self.punctuations_added = self.tokens_added_in_types(
             {'period', 'qmark', 'epoint', 'comma', 'colon', 'scolon',
              'japan_punct'},
-            name=self.prefix + ".punctuations_added"
+            name=self._name + ".punctuations_added"
         )
         """
         A list of punctuation tokens added in the edit
@@ -200,7 +200,7 @@ class Diff:
         self.punctuations_removed = self.tokens_removed_in_types(
             {'period', 'qmark', 'epoint', 'comma', 'colon', 'scolon',
              'japan_punct'},
-            name=self.prefix + ".punctuations_removed"
+            name=self._name + ".punctuations_removed"
         )
         """
         A list of punctuation tokens removed in the edit
@@ -208,7 +208,7 @@ class Diff:
 
         self.breaks_added = self.tokens_added_in_types(
             {'break'},
-            name=self.prefix + ".breaks_added"
+            name=self._name + ".breaks_added"
         )
         """
         A list of break tokens added in the edit
@@ -216,7 +216,7 @@ class Diff:
 
         self.breaks_removed = self.tokens_removed_in_types(
             {'break'},
-            name=self.prefix + ".breaks_removed"
+            name=self._name + ".breaks_removed"
         )
         """
         A list of break tokens removed in the edit
@@ -230,7 +230,7 @@ class Diff:
         if not hasattr(regex, "pattern"):
             regex = re.compile(regex, regex_flags)
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".tokens_added_matching",
+            name = "{0}({1})".format(self._name + ".tokens_added_matching",
                                      regex.pattern)
         return filters.regex_matching(regex, self.tokens_added, name=name)
 
@@ -243,7 +243,7 @@ class Diff:
             regex = re.compile(regex, regex_flags)
         if name is None:
             name = "{0}({1})" \
-                   .format(self.prefix + ".tokens_removed_matching",
+                   .format(self._name + ".tokens_removed_matching",
                            regex.pattern)
 
         return filters.regex_matching(regex, self.tokens_removed, name=name)
@@ -255,7 +255,7 @@ class Diff:
         """
         types = set(types)
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".tokens_added_in_types",
+            name = "{0}({1})".format(self._name + ".tokens_added_in_types",
                                      types)
         return filters.filter(TokenIsInTypes(types).filter, self.tokens_added,
                               name=name)
@@ -267,7 +267,7 @@ class Diff:
         """
         types = set(types)
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".tokens_removed_in_types",
+            name = "{0}({1})".format(self._name + ".tokens_removed_in_types",
                                      types)
         return filters.filter(TokenIsInTypes(types).filter,
                               self.tokens_removed, name=name)

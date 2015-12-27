@@ -1,30 +1,31 @@
 import re
 
 from ..datasources import revision_oriented
+from ..dependencies import DependentSet
 from .meta import bools
 
 
-class Revision:
+class Revision(DependentSet):
 
-    def __init__(self, prefix, revision_datasources):
-        self.prefix = prefix
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
         self.datasources = revision_datasources
 
         if hasattr(revision_datasources, 'parent'):
             self.parent = Revision(
-                prefix + ".parent",
+                name + ".parent",
                 revision_datasources.parent
             )
 
         if hasattr(revision_datasources, 'page'):
             self.page = Page(
-                prefix + ".page",
+                name + ".page",
                 revision_datasources.page
             )
 
         if hasattr(revision_datasources, 'user'):
             self.user = User(
-                prefix + ".user",
+                name + ".user",
                 revision_datasources.user
             )
 
@@ -33,25 +34,25 @@ class Revision:
             regex = re.compile(regex, re.I)
 
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".comment_matches",
+            name = "{0}({1})".format(self._name + ".comment_matches",
                                      repr(regex.pattern))
 
         return bools.regex_match(regex, self.datasources.comment,
                                  name=name)
 
 
-class Page:
-    def __init__(self, prefix, page_datasources):
-        self.prefix = prefix
+class Page(DependentSet):
+    def __init__(self, name, page_datasources):
+        super().__init__(name)
         self.datasources = page_datasources
 
         if hasattr(page_datasources, "namespace"):
-            self.namespace = Namespace(prefix + ".namespace",
+            self.namespace = Namespace(name + ".namespace",
                                        page_datasources.namespace)
 
     def id_in_set(self, ids, name=None):
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".id_in_set", repr(ids))
+            name = "{0}({1})".format(self._name + ".id_in_set", repr(ids))
 
         return bools.set_contains_item(ids, self.datasources.id, name=name)
 
@@ -60,20 +61,20 @@ class Page:
             regex = re.compile(regex, re.I)
 
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".title_matches",
+            name = "{0}({1})".format(self._name + ".title_matches",
                                      repr(regex.pattern))
 
         return bools.regex_match(regex, self.datasources.title, name=name)
 
 
-class Namespace:
-    def __init__(self, prefix, namespace_datasources):
-        self.prefix = prefix
+class Namespace(DependentSet):
+    def __init__(self, name, namespace_datasources):
+        super().__init__(name)
         self.datasources = namespace_datasources
 
     def id_in_set(self, ids, name=None):
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".id_in_set", repr(ids))
+            name = "{0}({1})".format(self._name + ".id_in_set", repr(ids))
 
         return bools.set_contains_item(ids, self.datasources.id, name=name)
 
@@ -82,21 +83,21 @@ class Namespace:
             regex = re.compile(regex, re.I)
 
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".name_matches",
+            name = "{0}({1})".format(self._name + ".name_matches",
                                      repr(regex.pattern))
 
         return bools.regex_match(regex, self.datasources.name, name=name)
 
 
-class User:
+class User(DependentSet):
 
-    def __init__(self, prefix, user_datasource):
-        self.prefix = prefix
+    def __init__(self, name, user_datasource):
+        super().__init__(name)
         self.datasources = user_datasource
 
     def id_in_set(self, ids, name=None):
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".id_in_set", repr(ids))
+            name = "{0}({1})".format(self._name + ".id_in_set", repr(ids))
 
         return bools.set_contains_item(ids, self.datasources.id,
                                        name=name)
@@ -106,17 +107,18 @@ class User:
             regex = re.compile(regex, re.I)
 
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".text_matches",
+            name = "{0}({1})".format(self._name + ".text_matches",
                                      repr(regex.pattern))
 
         return bools.regex_match(regex, self.datasources.text, name=name)
 
     def in_group(self, groups, name=None):
         if name is None:
-            name = "{0}({1})".format(self.prefix + ".in_group",
+            name = "{0}({1})".format(self._name + ".in_group",
                                      repr(groups))
 
-        return bools.sets_intersect(groups, self.datasources.groups, name=name)
+        return bools.sets_intersect(groups, self.datasources.info.groups,
+                                    name=name)
 
 
 revision = Revision("revision", revision_oriented.revision)

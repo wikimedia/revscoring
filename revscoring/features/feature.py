@@ -39,7 +39,7 @@ class Feature(Dependent):
             return value
 
     def __hash__(self):
-        return hash(('feature', self.name))
+        return hash('feature.' + self.name)
 
     # Binary math
     def __add__(self, summand):

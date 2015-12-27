@@ -3,15 +3,17 @@ import json
 import pywikibase
 
 from ....datasources import Datasource
+from ....dependencies import DependentSet
 from .diff import Diff
 
 
-class Revision:
+class Revision(DependentSet):
 
-    def __init__(self, prefix, revision_datasources):
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
 
         self.item_doc = Datasource(
-            prefix + ".item_doc", _process_item_doc,
+            name + ".item_doc", _process_item_doc,
             depends_on=[revision_datasources.text]
         )
         """
@@ -19,7 +21,7 @@ class Revision:
         """
 
         self.item = Datasource(
-            prefix + ".item", _process_item,
+            name + ".item", _process_item,
             depends_on=[self.item_doc]
         )
         """
@@ -27,28 +29,28 @@ class Revision:
         """
 
         self.sitelinks = Datasource(
-            prefix + ".sitelinks", _process_sitelinks, depends_on=[self.item]
+            name + ".sitelinks", _process_sitelinks, depends_on=[self.item]
         )
         """
         A `dict` of wiki/sitelink pairs in the revision
         """
 
         self.labels = Datasource(
-            prefix + ".labels", _process_labels, depends_on=[self.item]
+            name + ".labels", _process_labels, depends_on=[self.item]
         )
         """
         A `dict` of lang/label pairs in the revision
         """
 
         self.aliases = Datasource(
-            prefix + ".aliases", _process_aliases, depends_on=[self.item]
+            name + ".aliases", _process_aliases, depends_on=[self.item]
         )
         """
         A `set` of unique aliases in the revision
         """
 
         self.descriptions = Datasource(
-            prefix + ".descriptions", _process_descriptions,
+            name + ".descriptions", _process_descriptions,
             depends_on=[self.item]
         )
         """
@@ -56,35 +58,35 @@ class Revision:
         """
 
         self.properties = Datasource(
-            prefix + ".properties", _process_properties, depends_on=[self.item]
+            name + ".properties", _process_properties, depends_on=[self.item]
         )
         """
         A `set` of properties in the revision
         """
 
         self.claims = Datasource(
-            prefix + ".claim", _process_claims, depends_on=[self.item]
+            name + ".claim", _process_claims, depends_on=[self.item]
         )
         """
         A `set` of unique claims in the revision
         """
 
         self.sources = Datasource(
-            prefix + ".sources", _process_sources, depends_on=[self.item]
+            name + ".sources", _process_sources, depends_on=[self.item]
         )
         """
         A `set` of unique sources in the revision
         """
 
         self.qualifiers = Datasource(
-            prefix + ".qualifiers", _process_qualifiers, depends_on=[self.item]
+            name + ".qualifiers", _process_qualifiers, depends_on=[self.item]
         )
         """
         A `set` of unique qualifiers in the revision
         """
 
         self.badges = Datasource(
-            prefix + ".badges", _process_badges, depends_on=[self.item]
+            name + ".badges", _process_badges, depends_on=[self.item]
         )
         """
         A `set` of unique badges in the revision
@@ -93,12 +95,12 @@ class Revision:
         if hasattr(revision_datasources, "parent") and \
            hasattr(revision_datasources.parent, "text"):
             self.parent = Revision(
-                prefix + ".parent",
+                name + ".parent",
                 revision_datasources.parent
             )
 
             if hasattr(revision_datasources, "diff"):
-                self.diff = Diff(prefix + ".diff", self)
+                self.diff = Diff(name + ".diff", self)
 
 
 def _process_item_doc(text):

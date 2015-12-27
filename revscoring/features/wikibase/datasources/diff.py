@@ -1,109 +1,110 @@
 from ....datasources import Datasource
+from ....dependencies import DependentSet
 from ..util import diff_dicts
 
 
-class Diff:
+class Diff(DependentSet):
 
-    def __init__(self, prefix, revision_datasources):
-        self.prefix = prefix
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
 
         self.revision_item = revision_datasources.item
         self.parent_item = revision_datasources.parent.item
 
         # sitelinks
         self.sitelinks_diff = Datasource(
-            prefix + ".sitelinks_diff", diff_dicts,
+            name + ".sitelinks_diff", diff_dicts,
             depends_on=[revision_datasources.parent.sitelinks,
                         revision_datasources.sitelinks]
         )
         self.sitelinks_added, self.sitelinks_removed, self.sitelinks_changed =\
-            diff_parts(prefix + ".sitelinks", self.sitelinks_diff)
+            diff_parts(name + ".sitelinks", self.sitelinks_diff)
 
         # labels
         self.labels_diff = Datasource(
-            prefix + ".labels_diff", diff_dicts,
+            name + ".labels_diff", diff_dicts,
             depends_on=[revision_datasources.parent.labels,
                         revision_datasources.labels]
         )
         self.labels_added, self.labels_removed, self.labels_changed = \
-            diff_parts(prefix + ".labels", self.labels_diff)
+            diff_parts(name + ".labels", self.labels_diff)
 
         # aliases
         self.aliases_diff = Datasource(
-            prefix + ".aliases_diff", diff_dicts,
+            name + ".aliases_diff", diff_dicts,
             depends_on=[revision_datasources.parent.aliases,
                         revision_datasources.aliases]
         )
         self.aliases_added, self.aliases_removed, self.aliases_changed = \
-            diff_parts(prefix + ".aliases", self.aliases_diff)
+            diff_parts(name + ".aliases", self.aliases_diff)
 
         # descriptions
         self.descriptions_diff = Datasource(
-            prefix + ".descriptions_diff", diff_dicts,
+            name + ".descriptions_diff", diff_dicts,
             depends_on=[revision_datasources.parent.descriptions,
                         revision_datasources.descriptions]
         )
         (self.descriptions_added, self.descriptions_removed,
          self.descriptions_changed) = \
-                diff_parts(prefix + ".descriptions", self.descriptions_diff)
+                diff_parts(name + ".descriptions", self.descriptions_diff)
 
         # properties
         self.properties_diff = Datasource(
-            prefix + ".properties_diff", diff_dicts,
+            name + ".properties_diff", diff_dicts,
             depends_on=[revision_datasources.parent.properties,
                         revision_datasources.properties]
         )
         (self.properties_added, self.properties_removed,
          self.properties_changed) = \
-            diff_parts(prefix + ".properties", self.properties_diff)
+            diff_parts(name + ".properties", self.properties_diff)
 
         self.claims_added = Datasource(
-            prefix + ".claims_added", _process_claims_added,
+            name + ".claims_added", _process_claims_added,
             depends_on=[self.properties_diff, self.parent_item,
                         self.revision_item]
         )
         self.claims_removed = Datasource(
-            prefix + ".claims_removed", _process_claims_removed,
+            name + ".claims_removed", _process_claims_removed,
             depends_on=[self.properties_diff, self.parent_item,
                         self.revision_item]
         )
         self.claims_changed = Datasource(
-            prefix + ".claims_changed", _process_claims_changed,
+            name + ".claims_changed", _process_claims_changed,
             depends_on=[self.properties_diff, self.parent_item,
                         self.revision_item]
         )
         self.sources_added = Datasource(
-            prefix + ".sources_added", _process_sources_added,
+            name + ".sources_added", _process_sources_added,
             depends_on=[self.claims_changed]
         )
         self.sources_removed = Datasource(
-            prefix + ".sources_removed", _process_sources_removed,
+            name + ".sources_removed", _process_sources_removed,
             depends_on=[self.claims_changed]
         )
         self.qualifiers_added = Datasource(
-            prefix + ".qualifiers_added", _process_qualifiers_added,
+            name + ".qualifiers_added", _process_qualifiers_added,
             depends_on=[self.claims_changed]
         )
         self.qualifiers_removed = Datasource(
-            prefix + ".qualifiers_removed", _process_qualifiers_removed,
+            name + ".qualifiers_removed", _process_qualifiers_removed,
             depends_on=[self.claims_changed]
         )
 
         # badges
         self.badges_diff = Datasource(
-            prefix + ".badges_diff", diff_dicts,
+            name + ".badges_diff", diff_dicts,
             depends_on=[revision_datasources.parent.badges,
                         revision_datasources.badges]
         )
         self.badges_added, self.badges_removed, self.badges_changed = \
-            diff_parts(prefix + ".badges", self.badges_diff)
+            diff_parts(name + ".badges", self.badges_diff)
 
 
-def diff_parts(prefix, diff):
+def diff_parts(name, diff):
     return (
-        dict_diff_field("added", diff, name=prefix + "_added"),
-        dict_diff_field("removed", diff, name=prefix + "_removed"),
-        dict_diff_field("changed", diff, name=prefix + "_changed")
+        dict_diff_field("added", diff, name=name + "_added"),
+        dict_diff_field("removed", diff, name=name + "_removed"),
+        dict_diff_field("changed", diff, name=name + "_changed")
     )
 
 
@@ -182,7 +183,7 @@ def _process_sources_added(claims_changed):
                         sources_added.append(claim)
     return sources_added
 
-    sources_added = Datasource(prefix + ".sources_added",
+    sources_added = Datasource(name + ".sources_added",
                                process_sources_added,
                                depends_on=[claims_changed])
 

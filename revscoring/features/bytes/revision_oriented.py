@@ -1,25 +1,26 @@
 from . import datasources
 from ...datasources import revision_oriented
+from ...dependencies import DependentSet
 from ..meta import aggregators
 
-prefix = "bytes.revision"
+name = "bytes.revision"
 
+class Revision(DependentSet):
 
-class Revision:
-
-    def __init__(self, prefix, revision_datasources):
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
         self.length = aggregators.len(
             revision_datasources.bytes,
-            name=prefix + ".length"
+            name=name + ".length"
         )
 
         if hasattr(revision_datasources, "parent"):
             self.parent = Revision(
-                prefix + ".parent",
+                name + ".parent",
                 revision_datasources.parent
             )
 
 revision = Revision(
-    prefix,
-    datasources.Revision(prefix, revision_oriented.revision)
+    name,
+    datasources.Revision(name, revision_oriented.revision)
 )

@@ -239,7 +239,9 @@ def _solve(dependent, context, cache, history=None):
             except Exception as e:
                 message = "Failed to process {0}: {1}".format(dependent, e)
                 tb = traceback.extract_stack()
-                raise CaughtDependencyError(message, e, tb)
+                formatted_exception = traceback.format_exc()
+                raise CaughtDependencyError(message, e, tb,
+                                            formatted_exception)
 
             # Add value to cache
             cache[dependent] = value

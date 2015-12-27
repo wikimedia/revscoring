@@ -6,10 +6,10 @@ from ....datasources import Datasource
 from ....datasources.meta import filters, frequencies, mappers
 
 
-class Revision():
+class Revision:
 
-    def __init__(self, prefix, revision_datasources):
-        super().__init__(prefix, revision_datasources)
+    def __init__(self, name, revision_datasources):
+        super().__init__(name, revision_datasources)
 
         self.tokens = tokenized(revision_datasources.text)
         """
@@ -18,35 +18,35 @@ class Revision():
 
         self.token_frequency = frequencies.table(
             self.tokens,
-            name=self.prefix + ".token_frequency"
+            name=self._name + ".token_frequency"
         )
         """
         A frequency table of all tokens.
         """
 
         self.numbers = self.tokens_in_types(
-            {'number'}, name=self.prefix + ".numbers"
+            {'number'}, name=self._name + ".numbers"
         )
         """
         A list of numeric tokens
         """
 
         self.number_frequency = frequencies.table(
-            self.numbers, name=self.prefix + ".number_frequency"
+            self.numbers, name=self._name + ".number_frequency"
         )
         """
         A frequency table of number tokens.
         """
 
         self.whitespaces = self.tokens_in_types(
-            {'whitespace'}, name=self.prefix + ".whitespaces"
+            {'whitespace'}, name=self._name + ".whitespaces"
         )
         """
         A list of whitespace tokens
         """
 
         self.whitespace_frequency = frequencies.table(
-            self.whitespaces, name=self.prefix + ".whitespace_frequency"
+            self.whitespaces, name=self._name + ".whitespace_frequency"
         )
         """
         A frequency table of whichspace tokens.
@@ -56,63 +56,63 @@ class Revision():
             {'dbrack_open', 'dbrack_close', 'brack_open', 'brack_close',
              'tab_open', 'tab_close', 'dcurly_open', 'dcurly_close',
              'curly_open', 'curly_close', 'bold', 'italics', 'equals'},
-            name=self.prefix + ".markups"
+            name=self._name + ".markups"
         )
         """
         A list of markup tokens
         """
 
         self.markup_frequency = frequencies.table(
-            self.markups, name=self.prefix + ".markup_frequency"
+            self.markups, name=self._name + ".markup_frequency"
         )
         """
         A frequency table of markup tokens.
         """
 
         self.cjks = self.tokens_in_types(
-            {'cjk'}, name=self.prefix + ".cjks"
+            {'cjk'}, name=self._name + ".cjks"
         )
         """
         A list of Chinese/Japanese/Korean tokens
         """
 
         self.cjk_frequency = frequencies.table(
-            self.cjks, name=self.prefix + ".cjk_frequency"
+            self.cjks, name=self._name + ".cjk_frequency"
         )
         """
         A frequency table of cjk tokens.
         """
 
         self.entities = self.tokens_in_types(
-            {'entity'}, name=self.prefix + ".entities"
+            {'entity'}, name=self._name + ".entities"
         )
         """
         A list of HTML entity tokens
         """
 
         self.entity_frequency = frequencies.table(
-            self.entities, name=self.prefix + ".entity_frequency"
+            self.entities, name=self._name + ".entity_frequency"
         )
         """
         A frequency table of entity tokens.
         """
 
         self.urls = self.tokens_in_types(
-            {'url'}, name=self.prefix + ".urls"
+            {'url'}, name=self._name + ".urls"
         )
         """
         A list of URL tokens
         """
 
         self.url_frequency = frequencies.table(
-            self.urls, name=self.prefix + ".url_frequency"
+            self.urls, name=self._name + ".url_frequency"
         )
         """
         A frequency table of url tokens.
         """
 
         self.words = self.tokens_in_types(
-            {'word'}, name=self.prefix + ".words"
+            {'word'}, name=self._name + ".words"
         )
         """
         A list of word tokens
@@ -120,7 +120,7 @@ class Revision():
 
         self.word_frequency = frequencies.table(
             mappers.lower_case(self.words),
-            name=self.prefix + ".word_frequency"
+            name=self._name + ".word_frequency"
         )
         """
         A frequency table of lower-cased word tokens.
@@ -128,7 +128,7 @@ class Revision():
 
         self.uppercase_words = filters.filter(
             is_uppercase_word, self.words,
-            name=self.prefix + ".uppercase_words"
+            name=self._name + ".uppercase_words"
         )
         """
         A list of uppercase word tokens that are at least two
@@ -137,7 +137,7 @@ class Revision():
 
         self.uppercase_word_frequency = frequencies.table(
             self.uppercase_words,
-            name=self.prefix + ".uppercase_word_frequency"
+            name=self._name + ".uppercase_word_frequency"
         )
         """
         A frequency table of uppercase word tokens that are at least two
@@ -147,28 +147,28 @@ class Revision():
         self.punctuations = self.tokens_in_types(
             {'period', 'qmark', 'epoint', 'comma', 'colon', 'scolon',
              'japan_punct'},
-            name=self.prefix + ".punctuations"
+            name=self._name + ".punctuations"
         )
         """
         A list of punctuation tokens
         """
 
         self.punctuation_frequency = frequencies.table(
-            self.punctuations, name=self.prefix + ".punctuation_frequency"
+            self.punctuations, name=self._name + ".punctuation_frequency"
         )
         """
         A frequency table of punctuation tokens.
         """
 
         self.breaks = self.tokens_in_types(
-            {'break'}, name=self.prefix + ".breaks"
+            {'break'}, name=self._name + ".breaks"
         )
         """
         A list of break tokens
         """
 
         self.break_frequency = frequencies.table(
-            self.breaks, name=self.prefix + ".break_frequency"
+            self.breaks, name=self._name + ".break_frequency"
         )
         """
         A frequency table of break tokens.
@@ -211,7 +211,7 @@ class Diff():
         self.token_delta = frequencies.delta(
             self.revision.parent.token_frequency,
             self.revision.token_frequency,
-            name=self.prefix + ".token_delta"
+            name=self._name + ".token_delta"
         )
         """
         A token frequency delta table
@@ -220,7 +220,7 @@ class Diff():
         self.token_prop_delta = frequencies.prop_delta(
             self.revision.parent.token_frequency,
             self.token_delta,
-            name=self.prefix + ".token_prop_delta"
+            name=self._name + ".token_prop_delta"
         )
         """
         A token proportional frequency delta table
@@ -229,7 +229,7 @@ class Diff():
         self.number_delta = frequencies.delta(
             self.revision.parent.number_frequency,
             self.revision.number_frequency,
-            name=self.prefix + ".number_delta"
+            name=self._name + ".number_delta"
         )
         """
         A number frequency delta table
@@ -238,7 +238,7 @@ class Diff():
         self.number_prop_delta = frequencies.prop_delta(
             self.revision.parent.number_frequency,
             self.number_delta,
-            name=self.prefix + ".number_prop_delta"
+            name=self._name + ".number_prop_delta"
         )
         """
         A number proportional frequency delta table
@@ -247,7 +247,7 @@ class Diff():
         self.whitespace_delta = frequencies.delta(
             self.revision.parent.whitespace_frequency,
             self.revision.whitespace_frequency,
-            name=self.prefix + ".whitespace_delta"
+            name=self._name + ".whitespace_delta"
         )
         """
         A whitespace frequency delta table
@@ -256,7 +256,7 @@ class Diff():
         self.whitespace_prop_delta = frequencies.prop_delta(
             self.revision.parent.whitespace_frequency,
             self.whitespace_delta,
-            name=self.prefix + ".whitespace_prop_delta"
+            name=self._name + ".whitespace_prop_delta"
         )
         """
         A whitespace proportional frequency delta table
@@ -265,7 +265,7 @@ class Diff():
         self.markup_delta = frequencies.delta(
             self.revision.parent.markup_frequency,
             self.revision.markup_frequency,
-            name=self.prefix + ".markup_delta"
+            name=self._name + ".markup_delta"
         )
         """
         A markup frequency delta table
@@ -274,7 +274,7 @@ class Diff():
         self.markup_prop_delta = frequencies.prop_delta(
             self.revision.parent.markup_frequency,
             self.markup_delta,
-            name=self.prefix + ".markup_prop_delta"
+            name=self._name + ".markup_prop_delta"
         )
         """
         A markup proportional frequency delta table
@@ -283,7 +283,7 @@ class Diff():
         self.cjk_delta = frequencies.delta(
             self.revision.parent.cjk_frequency,
             self.revision.cjk_frequency,
-            name=self.prefix + ".cjk_delta"
+            name=self._name + ".cjk_delta"
         )
         """
         A cjk frequency delta table
@@ -292,7 +292,7 @@ class Diff():
         self.cjk_prop_delta = frequencies.prop_delta(
             self.revision.parent.cjk_frequency,
             self.cjk_delta,
-            name=self.prefix + ".cjk_prop_delta"
+            name=self._name + ".cjk_prop_delta"
         )
         """
         A cjk proportional frequency delta table
@@ -301,7 +301,7 @@ class Diff():
         self.entity_delta = frequencies.delta(
             self.revision.parent.entity_frequency,
             self.revision.entity_frequency,
-            name=self.prefix + ".entity_delta"
+            name=self._name + ".entity_delta"
         )
         """
         A entity frequency delta table
@@ -310,7 +310,7 @@ class Diff():
         self.entity_prop_delta = frequencies.prop_delta(
             self.revision.parent.entity_frequency,
             self.entity_delta,
-            name=self.prefix + ".entity_prop_delta"
+            name=self._name + ".entity_prop_delta"
         )
         """
         A entity proportional frequency delta table
@@ -319,7 +319,7 @@ class Diff():
         self.url_delta = frequencies.delta(
             self.revision.parent.url_frequency,
             self.revision.url_frequency,
-            name=self.prefix + ".url_delta"
+            name=self._name + ".url_delta"
         )
         """
         A url frequency delta table
@@ -328,7 +328,7 @@ class Diff():
         self.url_prop_delta = frequencies.prop_delta(
             self.revision.parent.url_frequency,
             self.url_delta,
-            name=self.prefix + ".url_prop_delta"
+            name=self._name + ".url_prop_delta"
         )
         """
         A url proportional frequency delta table
@@ -337,7 +337,7 @@ class Diff():
         self.word_delta = frequencies.delta(
             self.revision.parent.word_frequency,
             self.revision.word_frequency,
-            name=self.prefix + ".word_delta"
+            name=self._name + ".word_delta"
         )
         """
         A lower-cased word frequency delta table
@@ -346,7 +346,7 @@ class Diff():
         self.word_prop_delta = frequencies.prop_delta(
             self.revision.parent.word_frequency,
             self.word_delta,
-            name=self.prefix + ".word_prop_delta"
+            name=self._name + ".word_prop_delta"
         )
         """
         A lower-cased word proportional frequency delta table
@@ -355,7 +355,7 @@ class Diff():
         self.uppercase_word_delta = frequencies.delta(
             self.revision.parent.uppercase_word_frequency,
             self.revision.uppercase_word_frequency,
-            name=self.prefix + ".uppercase_word_delta"
+            name=self._name + ".uppercase_word_delta"
         )
         """
         A uppercase word frequency delta table
@@ -364,7 +364,7 @@ class Diff():
         self.uppercase_word_prop_delta = frequencies.prop_delta(
             self.revision.parent.uppercase_word_frequency,
             self.uppercase_word_delta,
-            name=self.prefix + ".uppercase_word_prop_delta"
+            name=self._name + ".uppercase_word_prop_delta"
         )
         """
         A uppercase word proportional frequency delta table
@@ -373,7 +373,7 @@ class Diff():
         self.punctuation_delta = frequencies.delta(
             self.revision.parent.punctuation_frequency,
             self.revision.punctuation_frequency,
-            name=self.prefix + ".punctuation_delta"
+            name=self._name + ".punctuation_delta"
         )
         """
         A punctuation frequency delta table
@@ -382,7 +382,7 @@ class Diff():
         self.punctuation_prop_delta = frequencies.prop_delta(
             self.revision.parent.punctuation_frequency,
             self.punctuation_delta,
-            name=self.prefix + ".punctuation_prop_delta"
+            name=self._name + ".punctuation_prop_delta"
         )
         """
         A punctuation proportional frequency delta table
@@ -391,7 +391,7 @@ class Diff():
         self.break_delta = frequencies.delta(
             self.revision.parent.break_frequency,
             self.revision.break_frequency,
-            name=self.prefix + ".break_delta"
+            name=self._name + ".break_delta"
         )
         """
         A break frequency delta table
@@ -400,7 +400,7 @@ class Diff():
         self.break_prop_delta = frequencies.prop_delta(
             self.revision.parent.break_frequency,
             self.break_delta,
-            name=self.prefix + ".break_prop_delta"
+            name=self._name + ".break_prop_delta"
         )
         """
         A break proportional frequency delta table

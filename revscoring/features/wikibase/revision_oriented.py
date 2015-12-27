@@ -1,9 +1,9 @@
 from . import datasources, features
 from ...datasources import revision_oriented
 
-prefix = "wikibase.revision"
+name = "wikibase.revision"
 
 revision = features.Revision(
-    prefix,
-    datasources.Revision(prefix, revision_oriented.revision)
+    name,
+    datasources.Revision(name, revision_oriented.revision)
 )

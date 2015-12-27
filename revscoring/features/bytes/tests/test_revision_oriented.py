@@ -9,7 +9,6 @@ from ..revision_oriented import revision
 length_change = revision.parent.length - revision.length
 
 
-
 def test_length():
     cache = {revision_oriented.revision.parent.text: "I am ascii",
              revision_oriented.revision.text: "地を南北に縦走する"}

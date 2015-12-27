@@ -1,13 +1,14 @@
 import re
 
+from ....dependencies import DependentSet
 from ...feature import Feature
 from ...meta import aggregators, bools
 
 
-class Diff():
+class Diff(DependentSet):
 
-    def __init__(self, prefix, datasources):
-        self.prefix = prefix
+    def __init__(self, name, datasources):
+        super().__init__(name)
         self.datasources = datasources
 
         # Sitelinks
@@ -72,7 +73,7 @@ class Diff():
 
         # AF/38
         self.proportion_of_qid_added = Feature(
-            prefix + ".proportion_of_qid_added",
+            name + ".proportion_of_qid_added",
             _process_proportion_of_qid_added,
             returns=float, depends_on=[self.datasources.parent_item,
                                        self.datasources.revision_item]
@@ -80,14 +81,15 @@ class Diff():
 
         # AF/38
         self.proportion_of_language_added = Feature(
-            prefix + ".proportion_of_language_added",
+            name + ".proportion_of_language_added",
             _process_proportion_of_language_added,
             returns=float, depends_on=[self.datasources.parent_item,
                                        self.datasources.revision_item]
         )
 
         self.proportion_of_links_added = Feature(
-            "proportion_of_links_added", _process_proportion_of_links_added,
+            name + ".proportion_of_links_added",
+            _process_proportion_of_links_added,
             returns=float, depends_on=[self.datasources.parent_item,
                                        self.datasources.revision_item]
         )
@@ -105,7 +107,7 @@ class Diff():
                 feature's name will be 'property_changed(<property>)'
         """
         if name is None:
-            name = self.prefix + ".property_changed({0})" \
+            name = self._name + ".property_changed({0})" \
                                  .format(repr(property))
         return bools.item_in_set(property, self.datasources.properties_changed,
                                  name=name)

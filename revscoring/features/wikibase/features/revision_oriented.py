@@ -1,13 +1,14 @@
 
+from ....dependencies import DependentSet
 from ...feature import Feature
 from ...meta import aggregators, bools
 from .diff import Diff
 
 
-class Revision:
+class Revision(DependentSet):
 
-    def __init__(self, prefix, revision_datasources):
-        self.prefix = prefix
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
 
         self.datasources = revision_datasources
 
@@ -22,10 +23,10 @@ class Revision:
         self.badges = aggregators.len(self.datasources.badges)
 
         if hasattr(self.datasources, "parent"):
-            self.parent = Revision(prefix + ".parent", self.datasources.parent)
+            self.parent = Revision(name + ".parent", self.datasources.parent)
 
         if hasattr(self.datasources, "diff"):
-            self.diff = Diff(prefix + ".diff", self.datasources.diff)
+            self.diff = Diff(name + ".diff", self.datasources.diff)
 
     def has_property(self, property, name=None):
         """
@@ -39,7 +40,7 @@ class Revision:
                 feature's name will be 'has_property(<property>)'
         """
         if name is None:
-            name = self.prefix + ".has_property({0})".format(repr(property))
+            name = self._name + ".has_property({0})".format(repr(property))
 
         return bools.item_in_set(property, self.datasources.properties,
                                  name=name)
@@ -59,7 +60,7 @@ class Revision:
                 'has_property_value(<property>, <value>)'
         """
         if name is None:
-            name = self.prefix + ".has_property_value({0}, {1})" \
+            name = self._name + ".has_property_value({0}, {1})" \
                                  .format(repr(property), repr(value))
 
         return HasPropertyValue(name, property, value, self.datasources.item)

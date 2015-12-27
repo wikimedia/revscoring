@@ -1,22 +1,26 @@
+import logging
 from datetime import datetime
 
 import mwtypes
 from pytz import utc
 
 from ...datasources import revision_oriented
+from ...dependencies import DependentSet
 from ..feature import Feature
 
 MW_REGISTRATION_EPOCH = mwtypes.Timestamp("2006-01-01T00:00:00Z")
 
+logger = logging.getLogger(__name__)
 
-class Revision:
 
-    def __init__(self, prefix, revision_datasources):
-        self.prefix = prefix
+class Revision(DependentSet):
+
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
         self.datasources = revision_datasources
 
         self.day_of_week = Feature(
-            prefix + ".day_of_week", _process_day_of_week,
+            name + ".day_of_week", _process_day_of_week,
             returns=int,
             depends_on=[revision_datasources.timestamp]
         )
@@ -25,7 +29,7 @@ class Revision:
         """
 
         self.hour_of_day = Feature(
-            prefix + ".hour_of_day", _process_hour_of_day,
+            name + ".hour_of_day", _process_hour_of_day,
             returns=int,
             depends_on=[revision_datasources.timestamp]
         )
@@ -35,46 +39,45 @@ class Revision:
 
         if hasattr(revision_datasources, "parent"):
             self.parent = ParentRevision(
-                prefix + ".parent",
+                name + ".parent",
                 revision_datasources
             )
 
         if hasattr(revision_datasources, "page") and \
            hasattr(revision_datasources.page, "creation"):
             self.page = Page(
-                prefix + ".page",
+                name + ".page",
                 revision_datasources
             )
 
         if hasattr(revision_datasources, "user") and \
            hasattr(revision_datasources.user, "info"):
             self.user = User(
-                prefix + ".user",
+                name + ".user",
                 revision_datasources
             )
 
 
 class ParentRevision(Revision):
-    def __init__(self, prefix, revision_datasources):
-        super().__init__(prefix, revision_datasources.parent)
+    def __init__(self, name, revision_datasources):
+        super().__init__(name, revision_datasources.parent)
 
         self.seconds_since = Feature(
-            prefix + ".seconds_since",
+            name + ".seconds_since",
             _process_seconds_since,
             returns=int,
             depends_on=[revision_datasources.parent.timestamp,
                         revision_datasources.timestamp])
 
 
-class User:
-    def __init__(self, prefix, revision_datasources):
-
-        self.prefix = prefix
+class User(DependentSet):
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
         self.datasources = revision_datasources.user
 
         if hasattr(self.datasources, 'info'):
             self.seconds_since_registration = Feature(
-                prefix + ".seconds_since_registration",
+                name + ".seconds_since_registration",
                 _process_seconds_since_registration,
                 returns=int,
                 depends_on=[revision_datasources.user.id,
@@ -83,35 +86,37 @@ class User:
 
         if hasattr(self.datasources, 'last_revision'):
             self.last_revision = LastUserRevision(
-                prefix + ".last_revision",
+                name + ".last_revision",
                 revision_datasources
             )
 
 
 class LastUserRevision(Revision):
-    def __init__(self, prefix, revision_datasources):
-        super().__init__(prefix, revision_datasources.user.last_revision)
+    def __init__(self, name, revision_datasources):
+        super().__init__(name, revision_datasources.user.last_revision)
 
         self.seconds_since = Feature(
-            prefix + ".seconds_since",
+            name + ".seconds_since",
             _process_seconds_since,
             returns=int,
             depends_on=[revision_datasources.user.last_revision.timestamp,
                         revision_datasources.timestamp])
 
 
-class Page:
-    def __init__(self, prefix, revision_datasources):
+class Page(DependentSet):
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
         self.creation = PageCreation(
-            prefix + ".creation",
+            name + ".creation",
             revision_datasources
         )
 
 
-class PageCreation:
-    def __init__(self, prefix, revision_datasources):
+class PageCreation(DependentSet):
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
         self.seconds_since = Feature(
-            prefix + ".seconds_since",
+            name + ".seconds_since",
             _process_seconds_since,
             returns=int,
             depends_on=[revision_datasources.page.creation.timestamp,
@@ -142,9 +147,13 @@ def _process_seconds_since_registration(id, registration, timestamp):
         # Handles users who registered before registration dates were
         # recorded
         registration = registration or MW_REGISTRATION_EPOCH
-        print(registration)
-
-        return _process_seconds_since(registration, timestamp)
+        if registration > timestamp:
+            # Something is weird.  Probably an old user.
+            logger.info("Timestamp chronology issue {0} < {1}"
+                        .format(timestamp, registration))
+            return 60 * 60 * 24 * 356  # one year
+        else:
+            return _process_seconds_since(registration, timestamp)
 
 
 revision = Revision("temporal.revision", revision_oriented.revision)

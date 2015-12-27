@@ -1,34 +1,35 @@
 from . import edit, parsed, tokenized
+from ....dependencies import DependentSet
 
 
-class BaseRevision:
+class BaseRevision(DependentSet):
 
-    def __init__(self, prefix, revision_datasources):
-        self.prefix = prefix
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
         self.text = revision_datasources.text
 
         if hasattr(revision_datasources, "parent"):
             self.parent = Revision(
-                prefix + ".parent",
+                name + ".parent",
                 revision_datasources.parent
             )
 
 
 class Revision(parsed.Revision, tokenized.Revision, BaseRevision):
 
-    def __init__(self, prefix, revision_datasources):
+    def __init__(self, name, revision_datasources):
         # Initializes all of the Revision datasources
-        super().__init__(prefix, revision_datasources)
+        super().__init__(name, revision_datasources)
 
         # Initializes the diff using the Revision datasources
         if hasattr(revision_datasources, "diff"):
-            self.diff = Diff(prefix + ".diff", self)
+            self.diff = Diff(name + ".diff", self)
 
 
-class BaseDiff:
+class BaseDiff(DependentSet):
 
-    def __init__(self, prefix, revision):
-        self.prefix = prefix
+    def __init__(self, name, revision):
+        super().__init__(name)
         self.revision = revision
 
 

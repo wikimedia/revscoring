@@ -26,6 +26,8 @@ class Dependent:
     """
     def __init__(self, name, process=None, depends_on=None,
                  dependencies=None):
+        if not isinstance(name, str):
+            raise TypeError("Name {0} is not a str.".format(name))
         self.name = name
         self.process = process or not_implemented
         self.dependencies = dependencies or depends_on or []
@@ -46,7 +48,7 @@ class Dependent:
         return self.process(*args, **kwargs)
 
     def __hash__(self):
-        return hash(('dependent', self.name))
+        return hash('dependent.' + self.name)
 
     def __eq__(self, other):
         return hash(self) == hash(other)
@@ -65,12 +67,13 @@ class DependentSet:
     def __init__(self, name):
         self._dependents = set()
         self._dependent_sets = set()
-        self.name = name
+        self._name = name
 
     def __setattr__(self, attr, value):
         super().__setattr__(attr, value)
 
         if isinstance(value, Dependent):
+            logger.debug("Registering {0} to {1}".format(value, self._name))
             if value in self._dependents:
                 logger.warn("{0} has already been added to {1}.  Could be "
                             .format(value, self) + "overwritten?")
@@ -80,10 +83,19 @@ class DependentSet:
 
     # String methods
     def __str__(self):
-        return repr(self)
+        return self.__repr__()
 
     def __repr__(self):
-        return "{" + self.name + "}"
+        return "{" + self._name + "}"
+
+    def __hash__(self):
+        return hash('dependent.' + self._name)
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return not self == other
 
     # Set methods
     def __len__(self):
