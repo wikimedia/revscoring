@@ -64,9 +64,9 @@ class Dependent:
 
 
 class DependentSet:
-    def __init__(self, name):
-        self._dependents = set()
-        self._dependent_sets = set()
+    def __init__(self, name, _dependents=None, _dependent_sets=None):
+        self._dependents = _dependents or set()
+        self._dependent_sets = _dependent_sets or set()
         self._name = name
 
     def __setattr__(self, attr, value):
@@ -89,7 +89,7 @@ class DependentSet:
         return "{" + self._name + "}"
 
     def __hash__(self):
-        return hash('dependent.' + self._name)
+        return hash('dependent_set.' + self._name)
 
     def __eq__(self, other):
         return hash(self) == hash(other)

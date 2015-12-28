@@ -44,16 +44,17 @@ def test_dictionary():
               cache=cache),
         {'this': 1, 'is': 1, 'a': 2, 'and': 1, 'apples': 1})
 
-    eq_(solve(my_dict.diff.datasources.dict_word_delta, cache=cache),
+    diff = my_dict.revision.diff
+    eq_(solve(diff.datasources.dict_word_delta, cache=cache),
         {'gurg': 1, 'mog': -1, 'zink': 1})
 
-    pd = solve(my_dict.diff.datasources.dict_word_prop_delta, cache=cache)
+    pd = solve(diff.datasources.dict_word_prop_delta, cache=cache)
     eq_(pd.keys(), {'gurg', 'mog', 'zink'})
     eq_(round(pd['gurg'], 2), 0.33)
     eq_(round(pd['mog'], 2), -1)
     eq_(round(pd['zink'], 2), 1)
 
-    pd = solve(my_dict.diff.datasources.non_dict_word_prop_delta, cache=cache)
+    pd = solve(diff.datasources.non_dict_word_prop_delta, cache=cache)
     eq_(pd.keys(), {'apples'})
     eq_(round(pd['apples'], 2), -1)
 
@@ -62,25 +63,21 @@ def test_dictionary():
     eq_(solve(my_dict.revision.non_dict_words, cache=cache), 5)
     eq_(solve(my_dict.revision.parent.non_dict_words, cache=cache), 6)
 
-    eq_(solve(my_dict.diff.dict_word_delta_sum, cache=cache), 1.0)
-    eq_(solve(my_dict.diff.dict_word_delta_increase, cache=cache), 2)
-    eq_(solve(my_dict.diff.dict_word_delta_decrease, cache=cache), -1)
-    eq_(solve(my_dict.diff.non_dict_word_delta_sum, cache=cache), 1)
-    eq_(solve(my_dict.diff.non_dict_word_delta_increase, cache=cache), 0)
-    eq_(solve(my_dict.diff.non_dict_word_delta_decrease, cache=cache), -1)
+    eq_(solve(diff.dict_word_delta_sum, cache=cache), 1.0)
+    eq_(solve(diff.dict_word_delta_increase, cache=cache), 2)
+    eq_(solve(diff.dict_word_delta_decrease, cache=cache), -1)
+    eq_(solve(diff.non_dict_word_delta_sum, cache=cache), 1)
+    eq_(solve(diff.non_dict_word_delta_increase, cache=cache), 0)
+    eq_(solve(diff.non_dict_word_delta_decrease, cache=cache), -1)
 
-    eq_(round(solve(my_dict.diff.dict_word_prop_delta_sum,
-                    cache=cache), 2), 0.33)
-    eq_(round(solve(my_dict.diff.dict_word_prop_delta_increase,
-                    cache=cache), 2), 1.33)
-    eq_(round(solve(my_dict.diff.dict_word_prop_delta_decrease,
-                    cache=cache), 2), -1)
-    eq_(round(solve(my_dict.diff.non_dict_word_prop_delta_sum,
-                    cache=cache), 2), -1)
-    eq_(round(solve(my_dict.diff.non_dict_word_prop_delta_increase,
-                    cache=cache), 2), 0)
-    eq_(round(solve(my_dict.diff.non_dict_word_prop_delta_decrease,
-                    cache=cache), 2), -1)
+    eq_(round(solve(diff.dict_word_prop_delta_sum, cache=cache), 2), 0.33)
+    eq_(round(solve(diff.dict_word_prop_delta_increase, cache=cache), 2), 1.33)
+    eq_(round(solve(diff.dict_word_prop_delta_decrease, cache=cache), 2), -1)
+    eq_(round(solve(diff.non_dict_word_prop_delta_sum, cache=cache), 2), -1)
+    eq_(round(solve(diff.non_dict_word_prop_delta_increase, cache=cache), 2),
+        0)
+    eq_(round(solve(diff.non_dict_word_prop_delta_decrease, cache=cache), 2),
+        -1)
 
 
 def test_pickling():
@@ -93,32 +90,29 @@ def test_pickling():
     eq_(pickle.loads(pickle.dumps(my_dict.revision.parent.non_dict_words)),
         my_dict.revision.parent.non_dict_words)
 
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.dict_word_delta_sum)),
-        my_dict.diff.dict_word_delta_sum)
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.dict_word_delta_increase)),
-        my_dict.diff.dict_word_delta_increase)
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.dict_word_delta_decrease)),
-        my_dict.diff.dict_word_delta_decrease)
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.non_dict_word_delta_sum)),
-        my_dict.diff.non_dict_word_delta_sum)
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.non_dict_word_delta_increase)),
-        my_dict.diff.non_dict_word_delta_increase)
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.non_dict_word_delta_decrease)),
-        my_dict.diff.non_dict_word_delta_decrease)
+    diff = my_dict.revision.diff
+    eq_(pickle.loads(pickle.dumps(diff.dict_word_delta_sum)),
+        diff.dict_word_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.dict_word_delta_increase)),
+        diff.dict_word_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.dict_word_delta_decrease)),
+        diff.dict_word_delta_decrease)
+    eq_(pickle.loads(pickle.dumps(diff.non_dict_word_delta_sum)),
+        diff.non_dict_word_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.non_dict_word_delta_increase)),
+        diff.non_dict_word_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.non_dict_word_delta_decrease)),
+        diff.non_dict_word_delta_decrease)
 
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.dict_word_prop_delta_sum)),
-        my_dict.diff.dict_word_prop_delta_sum)
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.dict_word_prop_delta_increase)),
-        my_dict.diff.dict_word_prop_delta_increase)
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.dict_word_prop_delta_decrease)),
-        my_dict.diff.dict_word_prop_delta_decrease)
-    eq_(pickle.loads(pickle.dumps(my_dict.diff.non_dict_word_prop_delta_sum)),
-        my_dict.diff.non_dict_word_prop_delta_sum)
-    eq_(pickle.loads(pickle.dumps(
-            my_dict.diff.non_dict_word_prop_delta_increase
-        )),  # noqa
-        my_dict.diff.non_dict_word_prop_delta_increase)
-    eq_(pickle.loads(pickle.dumps(
-            my_dict.diff.non_dict_word_prop_delta_decrease
-        )),  # noqa
-        my_dict.diff.non_dict_word_prop_delta_decrease)
+    eq_(pickle.loads(pickle.dumps(diff.dict_word_prop_delta_sum)),
+        diff.dict_word_prop_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.dict_word_prop_delta_increase)),
+        diff.dict_word_prop_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.dict_word_prop_delta_decrease)),
+        diff.dict_word_prop_delta_decrease)
+    eq_(pickle.loads(pickle.dumps(diff.non_dict_word_prop_delta_sum)),
+        diff.non_dict_word_prop_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.non_dict_word_prop_delta_increase)),
+        diff.non_dict_word_prop_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.non_dict_word_prop_delta_decrease)),
+        diff.non_dict_word_prop_delta_decrease)

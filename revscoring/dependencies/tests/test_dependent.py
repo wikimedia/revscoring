@@ -1,3 +1,5 @@
+import pickle
+
 from nose.tools import eq_
 
 from ..dependent import Dependent, DependentSet
@@ -44,3 +46,5 @@ def test_dependent_set():
     eq_(my_dependents & {f}, {f})
     eq_(my_dependents | {e}, {c, d, e, f})
     eq_(my_dependents - {f}, {c, d})
+
+    eq_(pickle.loads(pickle.dumps(my_dependents)), my_dependents)

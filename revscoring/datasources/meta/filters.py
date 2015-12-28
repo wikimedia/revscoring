@@ -18,13 +18,17 @@ class filter(Datasource):
         name : `str`
             A name for the datasource.
     """
-    def __init__(self, include, items_datasource, name=None):
+    def __init__(self, include, items_datasource, inverse=False, name=None):
         self.include = include
+        self.inverse = inverse
         name = self._format_name(name, [items_datasource])
         super().__init__(name, self.process, depends_on=[items_datasource])
 
     def process(self, items):
-        return [item for item in items if self.include(item)]
+        if not self.inverse:
+            return [item for item in items if self.include(item)]
+        else:
+            return [item for item in items if not self.include(item)]
 
 
 class regex_matching(filter):
