@@ -45,7 +45,7 @@ import mwapi
 import yamlconf
 
 from ..errors import RevisionNotFound
-from ..extractors import APIExtractor
+from ..extractors import api
 from .util import encode
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ def main(argv=None):
 
     session = mwapi.Session(args['--host'],
                             user_agent="Revscoring feature extractor utility")
-    extractor = APIExtractor(session)
+    extractor = api.Extractor(session)
 
     if args['--rev-labels'] == "<stdin>":
         rev_labels = read_rev_labels(sys.stdin)

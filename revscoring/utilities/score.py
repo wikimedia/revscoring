@@ -20,10 +20,9 @@ import json
 import logging
 
 import docopt
-
 import mwapi
 
-from ..extractors import APIExtractor
+from ..extractors import api
 from ..scorer_models import MLScorerModel
 
 
@@ -32,7 +31,7 @@ def main(argv=None):
 
     model = MLScorerModel.load(open(args['<model-file>'], 'rb'))
 
-    extractor = APIExtractor(mwapi.Session(args['--host']))
+    extractor = api.Extractor(mwapi.Session(args['--host']))
 
     rev_ids = [int(rev_id) for rev_id in args['<rev_id>']]
 
