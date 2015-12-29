@@ -2,6 +2,7 @@ from mwtypes import Timestamp
 
 from ..datasources import revision, user
 from .feature import Feature
+from .meta import item_in_set
 
 # Date that registrations started being recorded in MediaWiki
 USER_REGISTRATION_EPOCH = Timestamp("20050101000000")
@@ -54,25 +55,9 @@ Represents whether the user is anonymous or registered.
 """
 
 
-def process_is_bot(user_info):
-    if user_info is None:
-        return False
-    return "bot" in user_info.groups
-
-is_bot = Feature("user.is_bot", process_is_bot,
-                 returns=bool, depends_on=[user.info])
+def in_group(group, name=None):
+    return item_in_set(group, user.groups, name=name)
 """
-Represents whether the user is bot or not.
-
-:Returns:
-    bool
-
-:Example:
-    ..code-block:: python
-
-        >>> from revscoring.features import revision
-        >>> list(extractor.extract(655097130, [user.is_bot]))
-        [False]
+Returns a :class:`revscoring.Feature` that generates `True` if the user is in
+`group` or `False` otherwise.
 """
-
-all = [age, is_anon, is_bot]

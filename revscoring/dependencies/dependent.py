@@ -31,6 +31,14 @@ class Dependent:
         self.dependencies = dependencies or depends_on or []
         self.calls = 0
 
+    def _format_name(self, name, args):
+        if name is None:
+            name = "{0}({1})" \
+                   .format(self.__class__.__name__,
+                           ", ".join(repr(arg) for arg in args))
+
+        return name
+
     def __call__(self, *args, **kwargs):
         logger.debug("Executing {0} ({1} calls so far)."
                      .format(self, self.calls))

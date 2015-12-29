@@ -100,9 +100,11 @@ class Feature(Dependent):
 
 class Constant(Feature):
 
-    def __init__(self, value):
+    def __init__(self, value, name=None):
         self.value = value
-        super().__init__(str(value), self._process,
+        if name is None:
+            name = str(value)
+        super().__init__(name, self._process,
                          returns=type(value), depends_on=[])
 
     def _process(self):
@@ -117,11 +119,13 @@ class BinaryOperator(Modifier):
 
     CHAR = "?"
 
-    def __init__(self, left, right, returns=None):
+    def __init__(self, left, right, returns=None, name=None):
         left = Feature.or_constant(left)
         right = Feature.or_constant(right)
 
-        name = "({0} {1} {2})".format(left.name, self.CHAR, right.name)
+        if name is None:
+            name = "({0} {1} {2})".format(left.name, self.CHAR, right.name)
+
         if returns is None:
             returns = type(self.operate(left.returns(), right.returns()))
 

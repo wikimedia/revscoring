@@ -1,8 +1,10 @@
+import pickle
+
 from deltas import Delete, Equal, Insert
 from nose.tools import eq_
 
 from .. import diff, parent_revision, revision
-from ...dependencies import solve
+from ....dependencies import solve
 
 PARENT_REVISION_TEXT = "foo Bar 53 {{herp}} derp!"
 REVISION_TEXT = "Herp Derp 75 {{and}} also?"
@@ -50,42 +52,53 @@ def test_operations():
 
     operations, a, b = solve(diff.operations, cache=cache)
 
+    eq_(pickle.loads(pickle.dumps(diff.operations)), diff.operations)
 
-def test_added_tokens():
+
+def test_tokens_added():
     cache = {
         diff.operations: (OPERATIONS, PARENT_REVISIONS_TOKENS, REVISION_TOKENS)
     }
 
-    added_tokens = solve(diff.added_tokens, cache=cache)
+    tokens_added = solve(diff.tokens_added, cache=cache)
 
-    eq_(added_tokens, ['Herp', 'Derp', '75', 'and', 'also', '?'])
+    eq_(tokens_added, ['Herp', 'Derp', '75', 'and', 'also', '?'])
+
+    eq_(pickle.loads(pickle.dumps(diff.tokens_added)), diff.tokens_added)
 
 
-def test_removed_tokens():
+def test_tokens_removed():
     cache = {
         diff.operations: (OPERATIONS, PARENT_REVISIONS_TOKENS, REVISION_TOKENS)
     }
 
-    removed_tokens = solve(diff.removed_tokens, cache=cache)
+    tokens_removed = solve(diff.tokens_removed, cache=cache)
 
-    eq_(removed_tokens, ['foo', 'Bar', '53', 'herp', 'derp', '!'])
+    eq_(tokens_removed, ['foo', 'Bar', '53', 'herp', 'derp', '!'])
+
+    eq_(pickle.loads(pickle.dumps(diff.tokens_removed)), diff.tokens_removed)
 
 
-def test_added_segments():
+def test_segments_added():
     cache = {
         diff.operations: (OPERATIONS, PARENT_REVISIONS_TOKENS, REVISION_TOKENS)
     }
 
-    added_segments = solve(diff.added_segments, cache=cache)
+    segments_added = solve(diff.segments_added, cache=cache)
 
-    eq_(added_segments, ['Herp', 'Derp', '75', 'and', 'also?'])
+    eq_(segments_added, ['Herp', 'Derp', '75', 'and', 'also?'])
+
+    eq_(pickle.loads(pickle.dumps(diff.segments_added)), diff.segments_added)
 
 
-def test_removed_segments():
+def test_segments_removed():
     cache = {
         diff.operations: (OPERATIONS, PARENT_REVISIONS_TOKENS, REVISION_TOKENS)
     }
 
-    removed_segments = solve(diff.removed_segments, cache=cache)
+    segments_removed = solve(diff.segments_removed, cache=cache)
 
-    eq_(removed_segments, ['foo', 'Bar', '53', 'herp', 'derp!'])
+    eq_(segments_removed, ['foo', 'Bar', '53', 'herp', 'derp!'])
+
+    eq_(pickle.loads(pickle.dumps(diff.segments_removed)),
+        diff.segments_removed)
