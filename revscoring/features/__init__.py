@@ -3,52 +3,43 @@ This module implements a set of :class:`revscoring.Feature`
 for use in scoring revisions.  :class:`revscoring.Feature`
 lists can be provided to a :func:`revscoring.dependencies.solve`, or
 more commonly, to a :class:`revscoring.Extractor` to obtain simple
-numerical/boolean vaklues that can be used when modeling revision
+numerical/boolean values that can be used when modeling revision
 scores.  The provided features are split conceptually into a set of modules:
 
-* :mod:`revscoring.features.diff`
-* :mod:`revscoring.features.page`
-* :mod:`revscoring.features.parent_revision`
-* :mod:`revscoring.features.previous_user_revision`
-* :mod:`revscoring.features.revision`
-* :mod:`revscoring.features.user`
+Feature collections
++++++++++++++++++++
 
-diff
-++++
-.. automodule:: revscoring.features.diff
-    :members:
+:mod:`~revscoring.features.revision_oriented`
+    Basic features of revisions. E.g. ``revision.user.text_matches(r'.*Bot')``
+:mod:`~revscoring.features.bytes`
+    Features of the number of bytes of content, byte length of characters,
+    etc.
+:mod:`~revscoring.features.temporal`
+    Features of the time between events of a interest. E.g.
+    ``revision.user.last_revision.seconds_since``
+:mod:`~revscoring.features.wikibase`
+    Features of wikibase items and changes made to them. E.g.
+    ``revision.diff.property_changed('P31')``
+:mod:`~revscoring.features.wikitext`
+    Features of wikitext content and differences between revisions. E.g.
+    ``revision.diff.uppercase_words_added``
 
-page
-++++
-.. automodule:: revscoring.features.page
-    :members:
-
-parent_revision
-+++++++++++++++
-.. automodule:: revscoring.features.parent_revision
-    :members:
-
-previous_user_revision
-++++++++++++++++++++++
-.. automodule:: revscoring.features.previous_user_revision
-    :members:
-
-revision
-++++++++
-.. automodule:: revscoring.features.revision
-    :members:
-
-user
-++++
-.. automodule:: revscoring.features.user
-    :members:
-
-modifiers
+Functions
 +++++++++
-.. automodule:: revscoring.features.modifiers
 
-feature
-+++++++
+.. automodule:: revscoring.features.functions
+
+Modifiers
++++++++++
+Modifiers are functions that can be applied to a :class:`revscoring.Feature`
+to modify the value.  E.g. :class:`~revscoring.features.modifiers.log`,
+:class:`~revscoring.features.modifiers.max` and
+:class:`~revscoring.features.modifiers.add`.
+See :mod:`~revscoring.features.modifiers` for the full list.
+
+Base classes
+++++++++++++
+
 .. automodule:: revscoring.features.feature
 """
 

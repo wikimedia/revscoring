@@ -1,6 +1,12 @@
 """
 .. autoclass:: revscoring.Feature
     :members:
+
+.. autoclass:: revscoring.features.Modifier
+    :members:
+
+.. autoclass:: revscoring.features.Constant
+    :members:
 """
 from math import log as math_log
 
@@ -99,6 +105,15 @@ class Feature(Dependent):
 
 
 class Constant(Feature):
+    """
+    A special sub-type of `revscoring.Feature` that returns a constant value.
+
+    :Parameters:
+        value : `mixed`
+            Any type of potential feature value
+        name : `str`
+            A name to give the feature
+    """
 
     def __init__(self, value, name=None):
         self.value = value
@@ -112,6 +127,20 @@ class Constant(Feature):
 
 
 class Modifier(Feature):
+    """
+    Represents a modification of one or more predictive feature.
+
+    :Parameters:
+        name : str
+            The name of the feature
+        process : `func`
+            A function that will generate a feature value
+        return_type : `type`
+            A type to compare the return of this function to.
+        dependencies : `list`(`hashable`)
+                An ordered list of dependencies that correspond
+                to the `*args` of `process`
+    """
     pass
 
 

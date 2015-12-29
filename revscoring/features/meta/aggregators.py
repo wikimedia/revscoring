@@ -1,3 +1,13 @@
+"""
+.. autoclass revscoring.features.meta.aggregators.sum
+
+.. autoclass revscoring.features.meta.aggregators.len
+
+.. autoclass revscoring.features.meta.aggregators.max
+
+.. autoclass revscoring.features.meta.aggregators.min
+"""
+
 from ..feature import Feature
 
 len_builtin = len

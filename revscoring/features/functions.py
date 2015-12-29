@@ -1,7 +1,21 @@
+"""
+.. autofunction:: revscoring.features.trim
+"""
 from .feature import Constant, Feature, Modifier
 
 
 def trim(features, context=None):
+    """
+    Trims a feature set down to a bare set of :class:`~revscoring.Feature` by
+    removing :class:`~revscoring.features.Modifier` and
+    :class:`~revscoring.features.Constant`.
+
+    :Parameters:
+        features : `list` ( :class:`revscoring.Feature` )
+            A feature list to trim
+        context : `dict` | `set`
+            A context to apply while trimming
+    """
     context = context or {}
     cache = set()
 
