@@ -1,6 +1,6 @@
-import sys
+from .features import Dictionary, RegexMatches
 
-from .space_delimited import SpaceDelimited
+name = "hebrew"
 
 try:
     import enchant
@@ -9,8 +9,10 @@ except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'he'.  " +
                       "Consider installing 'myspell-he'.")
 
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
 
-badwords = [
+
+badword_regexes = [
     r"ה?קא?ק(י|ות|ה)",
     r"ה?חרא",
     r"חארות",
@@ -59,7 +61,10 @@ badwords = [
     r"דגכ",
     r"זובי"
 ]
-informals = [
+
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+
+informal_regexes = [
     r"חחח+",
     r"[בה]ייי",
     r"פהה+",
@@ -94,40 +99,4 @@ informals = [
     r"יימח"
 ]
 
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-hebrew
-======
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    dictionary=dictionary,
-    informals=informals
-)
+informals = RegexMatches(name + ".informals", informal_regexes)

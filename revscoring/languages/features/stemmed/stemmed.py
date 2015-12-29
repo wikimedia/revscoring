@@ -1,19 +1,14 @@
-from ....features.wikitext import tokenized
-from .revision_oriented import StemmedDiff, StemmedRevision
+from . import datasources, features
+from ....dependencies import DependentSet
+from ....features import wikitext
 
 
-class Stemmed:
+class Stemmed(DependentSet):
 
-    def __init__(self, prefix, stem_word):
-
-        self.revision = StemmedRevision(
-            prefix + ".revision", stem_word,
-            tokenized.revision.datasources.words,
-            tokenized.revision.parent.datasources.words
-        )
-
-        self.diff = StemmedDiff(
-            prefix + ".diff", stem_word,
-            self.revision.datasources,
-            self.revision.parent.datasources
+    def __init__(self, name, stem_word):
+        super().__init__(name)
+        self.revision = features.Revision(
+            name + ".revision",
+            datasources.Revision(name + ".revision", stem_word,
+                                 wikitext.revision.datasources)
         )

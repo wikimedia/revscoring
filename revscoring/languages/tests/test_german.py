@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import german
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -144,30 +144,46 @@ OTHER = [
     """
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(german.revision.badwords_list, BAD, OTHER)
+    compare_extraction(german.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(german.badwords, pickle.loads(pickle.dumps(german.badwords)))
 
 
 def test_informals():
-    compare_extraction(german.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(german.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(german.informals, pickle.loads(pickle.dumps(german.informals)))
+
+def test_dictionary():
+    cache = {r_text: "Hinzu kamen rund sechs m80 Personen."}
+    eq_(solve(german.dictionary.revision.datasources.dict_words, cache=cache),
+        ["Hinzu", "kamen", "rund", "sechs", "Personen"])
+    eq_(solve(german.dictionary.revision.datasources.non_dict_words,
+        cache=cache),
+        ["m80"])
+
+    eq_(german.dictionary, pickle.loads(pickle.dumps(german.dictionary)))
+
+def test_stopwords():
+    cache = {r_text: "im Lager oder in der Verbannung."}
+    eq_(solve(german.stopwords.revision.datasources.stopwords, cache=cache),
+        ["im", "oder", "in", "der"])
+    eq_(solve(german.stopwords.revision.datasources.non_stopwords,
+              cache=cache),
+        ["Lager", "Verbannung"])
+
+    eq_(german.stopwords, pickle.loads(pickle.dumps(german.stopwords)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "Hinzu kamen rund sechs m80 Personen."}
-    eq_(solve(german.revision.words_list, cache=cache),
-        ["Hinzu", "kamen", "rund", "sechs", "m80", "Personen"])
+def test_stemmed():
+    cache = {r_text: "Hinzu kamen rund sechs m80 Personen."}
+    eq_(solve(german.stemmed.revision.datasources.stems, cache=cache),
+        ["hinzu", "kam", "rund", "sech", "m80", "person"])
 
-    # Misspellings
-    cache = {revision.text: 'Hinzu kamen rund worngly. <td>'}
-    eq_(solve(german.revision.misspellings_list, cache=cache), ["worngly"])
-
-    # Infonoise
-    cache = {revision.text: "Hinzu kamen rund!"}
-    eq_(solve(german.revision.infonoise, cache=cache), 12/14)
-
-
-def test_pickling():
-
-    eq_(german, pickle.loads(pickle.dumps(german)))
+    eq_(german.stemmed, pickle.loads(pickle.dumps(german.stemmed)))

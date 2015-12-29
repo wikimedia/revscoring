@@ -1,6 +1,6 @@
-import sys
+from .features import Dictionary, RegexMatches, Stopwords
 
-from .space_delimited import SpaceDelimited
+name = "indonesian"
 
 try:
     import enchant
@@ -8,6 +8,8 @@ try:
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'id'.  " +
                       "Consider installing 'aspell-id'.")
+
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
 
 # STOPWORDS from https://code.google.com/p/stop-words/source/browse/trunk/
 #                stop-words/stop-words-collection-2014.02.24/stop-words/
@@ -84,7 +86,10 @@ stopwords = set([
     r"waduh", r"wah", r"wahai", r"sewaktu", r"walau", r"walaupun", r"wong",
     r"yaitu", r"yakni", r"yang"
 ])
-badwords = [
+
+stopwords = Stopwords(name + ".stopwords", stopwords)
+
+badword_regexes = [
     r"anjing",  # dog
     r"bajingan",  # crook
     r"bangsat",  # asshole / motherfucker
@@ -142,47 +147,12 @@ badwords = [
     r"thaicia"  # ???
 ]
 
-informals = [
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+
+informal_regexes = [
     r"hai",  # hi
     r"halo",  # hello
     r"janc[uo]k",  # closest friend
 ]
 
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-indonesian
-==========
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    dictionary=dictionary,
-    informals=informals,
-    stopwords=stopwords
-)
+informals = RegexMatches(name + ".informals", informal_regexes)

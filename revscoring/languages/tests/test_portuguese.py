@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import portuguese
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -117,30 +117,51 @@ OTHER = [
     "arvere"
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(portuguese.revision.badwords_list, BAD, OTHER)
+    compare_extraction(portuguese.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(portuguese.badwords, pickle.loads(pickle.dumps(portuguese.badwords)))
 
 
 def test_informals():
-    compare_extraction(portuguese.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(portuguese.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(portuguese.informals, pickle.loads(pickle.dumps(portuguese.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "A haver, rebeliões: e m80 da Normandia."}
-    eq_(solve(portuguese.revision.words_list, cache=cache),
-        ["A", "haver", "rebeliões", "e", "m80", "da", "Normandia"])
+def test_dictionary():
+    cache = {r_text: "A haver, rebeliões: e m80 da Normandia."}
+    eq_(solve(portuguese.dictionary.revision.datasources.dict_words,
+              cache=cache),
+        ["A", "haver", "rebeliões", "e", "da", "Normandia"])
+    eq_(solve(portuguese.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ["m80"])
 
-    # Misspellings
-    cache = {revision.text: 'O número de vítimas é difícil worngly. <td>'}
-    eq_(solve(portuguese.revision.misspellings_list, cache=cache), ["worngly"])
-
-    # Infonoise
-    cache = {revision.text: "Esta a o corrida!"}
-    eq_(solve(portuguese.revision.infonoise, cache=cache), 4/13)
+    eq_(portuguese.dictionary,
+        pickle.loads(pickle.dumps(portuguese.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {r_text: "Esta a o corrida!"}
+    eq_(solve(portuguese.stopwords.revision.datasources.stopwords,
+        cache=cache),
+        ["Esta", "a", "o"])
+    eq_(solve(portuguese.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ["corrida"])
 
-    eq_(portuguese, pickle.loads(pickle.dumps(portuguese)))
+    eq_(portuguese.stopwords, pickle.loads(pickle.dumps(portuguese.stopwords)))
+
+
+def test_stemmmed():
+    cache = {r_text: "A haver, rebeliões: e m80 da Normandia."}
+    eq_(solve(portuguese.stemmed.revision.datasources.stems, cache=cache),
+        ["a", "hav", "rebeliõ", "e", "m80", "da", "normand"])
+
+    eq_(portuguese.stemmed, pickle.loads(pickle.dumps(portuguese.stemmed)))

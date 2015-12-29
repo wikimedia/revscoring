@@ -1,6 +1,6 @@
-import sys
+from .features import Dictionary, RegexMatches, Stopwords
 
-from .space_delimited import SpaceDelimited
+name = "turkish"
 
 try:
     from nltk.corpus import stopwords as nltk_stopwords
@@ -10,7 +10,9 @@ except LookupError:
                       "You may need to install the nltk 'stopwords' " +
                       "corpora.  See http://www.nltk.org/data.html")
 
-badwords = [
+stopwords = Stopwords(name + ".stopwords", stopwords)
+
+badword_regexes = [
     r"ağzına sıçayım", r"ahlaksız", r"ahmak", r"am", r"amcık", r"amın oğlu",
     r"amına koyayım", r"amına koyyim", r"amk", r"aptal",
     r"beyinsiz", r"bok", r"boktan",
@@ -112,7 +114,9 @@ badwords = [
     r"şerefsiz"
 ]
 
-informals = [
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+
+informal_regexes = [
     r"achtırma",
     r"achıyorlardı",
     r"arkadashlar",
@@ -181,40 +185,4 @@ informals = [
     r"ıshıksız"
 ]
 
-
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-turkish
-=======
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.informals
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.informals
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    informals=informals,
-    stopwords=stopwords
-)
-"""
-turkish
-"""
+informals = RegexMatches(name + ".informals", informal_regexes)

@@ -34,20 +34,20 @@ def test_stemmed():
     eq_(solve(stemmed.revision.parent.datasources.stem_frequency, cache=cache),
         {'t': 2, 'i': 2, 'g': 1, 'a': 2, 'w': 1, 'n': 1})
 
-    eq_(solve(stemmed.diff.datasources.stem_delta, cache=cache),
+    diff = stemmed.revision.diff
+    eq_(solve(diff.datasources.stem_delta, cache=cache),
         {'b': 1, 'g': -1, 's': 1})
-    eq_(solve(stemmed.diff.stem_delta_sum, cache=cache), 1)
-    eq_(solve(stemmed.diff.stem_delta_increase, cache=cache), 2)
-    eq_(solve(stemmed.diff.stem_delta_decrease, cache=cache), -1)
+    eq_(solve(diff.stem_delta_sum, cache=cache), 1)
+    eq_(solve(diff.stem_delta_increase, cache=cache), 2)
+    eq_(solve(diff.stem_delta_decrease, cache=cache), -1)
 
-    eq_(solve(stemmed.diff.datasources.stem_prop_delta, cache=cache),
+    eq_(solve(diff.datasources.stem_prop_delta, cache=cache),
         {'b': 1, 'g': -1, 's': 1})
-    eq_(round(solve(stemmed.diff.stem_prop_delta_sum, cache=cache), 2), 1.0)
-    eq_(round(solve(stemmed.diff.stem_prop_delta_increase, cache=cache), 2),
+    eq_(round(solve(diff.stem_prop_delta_sum, cache=cache), 2), 1.0)
+    eq_(round(solve(diff.stem_prop_delta_increase, cache=cache), 2),
         2.0)
-    eq_(round(solve(stemmed.diff.stem_prop_delta_decrease, cache=cache), 2),
+    eq_(round(solve(diff.stem_prop_delta_decrease, cache=cache), 2),
         -1.0)
-    assert False
 
 
 def test_pickling():
@@ -59,15 +59,17 @@ def test_pickling():
         stemmed.revision.parent.unique_stems)
     eq_(pickle.loads(pickle.dumps(stemmed.revision.parent.stem_chars)),
         stemmed.revision.parent.stem_chars)
-    eq_(pickle.loads(pickle.dumps(stemmed.diff.stem_delta_sum)),
-        stemmed.diff.stem_delta_sum)
-    eq_(pickle.loads(pickle.dumps(stemmed.diff.stem_delta_increase)),
-        stemmed.diff.stem_delta_increase)
-    eq_(pickle.loads(pickle.dumps(stemmed.diff.stem_delta_decrease)),
-        stemmed.diff.stem_delta_decrease)
-    eq_(pickle.loads(pickle.dumps(stemmed.diff.stem_prop_delta_sum)),
-        stemmed.diff.stem_prop_delta_sum)
-    eq_(pickle.loads(pickle.dumps(stemmed.diff.stem_prop_delta_increase)),
-        stemmed.diff.stem_prop_delta_increase)
-    eq_(pickle.loads(pickle.dumps(stemmed.diff.stem_prop_delta_decrease)),
-        stemmed.diff.stem_prop_delta_decrease)
+
+    diff = stemmed.revision.diff
+    eq_(pickle.loads(pickle.dumps(diff.stem_delta_sum)),
+        diff.stem_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.stem_delta_increase)),
+        diff.stem_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.stem_delta_decrease)),
+        diff.stem_delta_decrease)
+    eq_(pickle.loads(pickle.dumps(diff.stem_prop_delta_sum)),
+        diff.stem_prop_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.stem_prop_delta_increase)),
+        diff.stem_prop_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.stem_prop_delta_decrease)),
+        diff.stem_prop_delta_decrease)

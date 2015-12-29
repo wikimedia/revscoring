@@ -9,11 +9,11 @@ class Revision(DependentSet):
         self.dictionary_check = dictionary_check
 
         self.dict_words = filters.filter(
-            dictionary_check, wikitext_revision.words,
+            dictionary_check, mappers.map(str, wikitext_revision.words),
             name=name + ".dict_words"
         )
         self.non_dict_words = filters.filter(
-            dictionary_check, wikitext_revision.words,
+            dictionary_check, mappers.map(str, wikitext_revision.words),
             name=name + ".non_dict_words", inverse=True
         )
         self.dict_word_frequency = frequencies.table(
@@ -41,20 +41,20 @@ class Diff(DependentSet):
 
         # Based on edit.diff
         self.dict_words_added = filters.filter(
-            dictionary_check, wikitext_diff.words_added,
+            dictionary_check, mappers.map(str, wikitext_diff.words_added),
             name=name + ".dict_words_added"
         )
         self.dict_words_removed = filters.filter(
-            dictionary_check, wikitext_diff.words_removed,
+            dictionary_check, mappers.map(str, wikitext_diff.words_removed),
             name=name + ".dict_words_removed"
         )
         self.non_dict_words_added = filters.filter(
-            dictionary_check, wikitext_diff.words_added,
-            name=name + ".dict_words_added", inverse=True
+            dictionary_check, mappers.map(str, wikitext_diff.words_added),
+            name=name + ".non_dict_words_added", inverse=True
         )
         self.non_dict_words_removed = filters.filter(
-            dictionary_check, wikitext_diff.words_removed,
-            name=name + ".dict_words_removed", inverse=True
+            dictionary_check, mappers.map(str, wikitext_diff.words_removed),
+            name=name + ".non_dict_words_removed", inverse=True
         )
 
         # Frequencies

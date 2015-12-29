@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import ukrainian
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -33,26 +33,41 @@ OTHER = [
     """,
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(ukrainian.revision.badwords_list, BAD, OTHER)
+    compare_extraction(ukrainian.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(ukrainian.badwords, pickle.loads(pickle.dumps(ukrainian.badwords)))
 
 
 def test_informals():
-    compare_extraction(ukrainian.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(ukrainian.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(ukrainian.informals, pickle.loads(pickle.dumps(ukrainian.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "потовщена, ущільнена і m80, передня пара."}
-    eq_(solve(ukrainian.revision.words_list, cache=cache),
-        ["потовщена", "ущільнена", "і", "m80", "передня", "пара"])
+def test_dictionary():
+    cache = {r_text: 'потовщена, ущільнена і, worngly. <td>'}
+    eq_(solve(ukrainian.dictionary.revision.datasources.dict_words,
+              cache=cache),
+        ['потовщена', 'ущільнена', 'і'])
+    eq_(solve(ukrainian.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ["worngly"])
 
-    # Misspellings
-    cache = {revision.text: 'потовщена, ущільнена і, worngly. <td>'}
-    eq_(solve(ukrainian.revision.misspellings_list, cache=cache), ["worngly"])
+    eq_(ukrainian.dictionary, pickle.loads(pickle.dumps(ukrainian.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {r_text: "ущільнена і міцна передня як крил у комах."}
+    eq_(solve(ukrainian.stopwords.revision.datasources.stopwords, cache=cache),
+        ["як"])
+    eq_(solve(ukrainian.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ['ущільнена', 'і', 'міцна', 'передня', 'крил', 'у', 'комах'])
 
-    eq_(ukrainian, pickle.loads(pickle.dumps(ukrainian)))
+    eq_(ukrainian.stopwords, pickle.loads(pickle.dumps(ukrainian.stopwords)))

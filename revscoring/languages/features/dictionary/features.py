@@ -58,7 +58,7 @@ class Diff(DependentSet):
             dicts.values(self.datasources.non_dict_word_delta)
         self.non_dict_word_delta_sum = aggregators.sum(
             non_dict_word_delta_values,
-            name=name + ".dict_word_delta_sum",
+            name=name + ".non_dict_word_delta_sum",
             returns=int
         )
         self.non_dict_word_delta_increase = aggregators.sum(

@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import persian
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -46,26 +46,42 @@ OTHER = [
     """
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(persian.revision.badwords_list, BAD, OTHER)
+    compare_extraction(persian.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(persian.badwords, pickle.loads(pickle.dumps(persian.badwords)))
 
 
 def test_informals():
-    compare_extraction(persian.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(persian.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(persian.informals, pickle.loads(pickle.dumps(persian.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "I have an m80; and a shovel."}
-    eq_(solve(persian.revision.words_list, cache=cache),
-        ["I", "have", "an", "m80", "and", "a", "shovel"])
+def test_dictionary():
+    cache = {r_text: "خشندهٔ اعتصامی معروف به پروین اعتصامی (زاده ۲"}
+    eq_(solve(persian.dictionary.revision.datasources.dict_words,
+              cache=cache),
+        ['معروف', 'به', 'پروین', 'زاده'])
+    eq_(solve(persian.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ['خشنده', 'اعتصامی', 'اعتصامی'])
 
-    # Misspellings
-    cache = {revision.text: 'رخشندهٔ  معروف به پروین  worngly. <td>'}
-    eq_(solve(persian.revision.misspellings_list, cache=cache), ["worngly"])
+    eq_(persian.dictionary,
+        pickle.loads(pickle.dumps(persian.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {r_text: "خشندهٔ اعتصامی معروف به پروین اعتصامی (زاده ۲"}
+    eq_(solve(persian.stopwords.revision.datasources.stopwords, cache=cache),
+        ['معروف'])
+    eq_(solve(persian.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ['خشنده', 'اعتصامی', 'به', 'پروین', 'اعتصامی', 'زاده'])
 
-    eq_(persian, pickle.loads(pickle.dumps(persian)))
+    eq_(persian.stopwords, pickle.loads(pickle.dumps(persian.stopwords)))

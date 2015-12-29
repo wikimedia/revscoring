@@ -1,6 +1,6 @@
-import sys
+from .features import Dictionary, RegexMatches, Stopwords
 
-from .space_delimited import SpaceDelimited
+name = "persian"
 
 try:
     import enchant
@@ -8,6 +8,8 @@ try:
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'fa'.  " +
                       "Consider installing 'myspell-fa'.")
+
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
 
 # Copy-pasted from https://meta.wikimedia.org/w/index.php?oldid=13044766
 stopwords = set([
@@ -72,8 +74,9 @@ stopwords = set([
     "یافت", "یونسکو", "یکی"
 ])
 
-badwords = [
-    # Mother|wife|sister is prsotitue
+stopwords = Stopwords(name + ".stopwords", stopwords)
+
+badword_regexes = [
     r"(madar|nanae|zan|khahar)\s*?(ghahbeh|ghahveh|ghabe|jendeh?|be khata)",
     r"khar madar",  # Sister and mother (only used in swears)
     r"khar kos deh",  # Sister is whore
@@ -202,7 +205,9 @@ badwords = [
     r"مردک"  # man (very informal)
 ]
 
-informals = [
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+
+informal_regexes = [
     r"آله", r"فرموده?", r"فرمودند", r"السلام", r"حضرت\b", r"\([سعص]\)",
     r"\(ره\)",
     r"\(قس\)",
@@ -218,45 +223,4 @@ informals = [
     r"علیها", r"مد ?ظله"
 ]
 
-
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-persian
-=======
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    dictionary=dictionary,
-    informals=informals,
-    stopwords=stopwords
-)
-"""
-persian
-"""
+informals = RegexMatches(name + ".informals", informal_regexes)

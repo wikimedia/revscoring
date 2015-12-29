@@ -1,21 +1,18 @@
-from . import datasources
 from ....datasources.meta import dicts, filters, mappers
+from ....dependencies import DependentSet
 from ....features.meta import aggregators
 
 
-class StemmedRevision:
+class Revision(DependentSet):
 
-    def __init__(self, prefix, stem_word, revision_words_datasource,
-                 parent_words_datasource=None):
+    def __init__(self, name, revision_datasources):
+        super().__init__(name)
 
-        self.datasources = datasources.StemmedRevision(
-            prefix, stem_word,
-            revision_words_datasource
-        )
+        self.datasources = revision_datasources
 
         self.unique_stems = aggregators.len(
             dicts.keys(self.datasources.stem_frequency),
-            name=prefix + ".stems"
+            name=name + ".stems"
         )
         """
         A count of unique stemmed words.
@@ -23,52 +20,48 @@ class StemmedRevision:
 
         self.stem_chars = aggregators.sum(
             mappers.map(len, self.datasources.stems),
-            name=prefix + ".stems_length",
+            name=name + ".stems_length",
             returns=int
         )
         """
         A count of characters in stemmed words.
         """
 
-        if parent_words_datasource is not None:
-            self.parent = StemmedRevision(
-                prefix + ".parent", stem_word,
-                parent_words_datasource
-            )
+        if hasattr(self.datasources, 'parent'):
+            self.parent = Revision(name + ".parent", self.datasources.parent)
+
+        if hasattr(self.datasources, 'diff'):
+            self.diff = Diff(name + ".diff", self.datasources.diff)
 
 
-class StemmedDiff:
+class Diff(DependentSet):
 
-    def __init__(self, prefix, stem_word, revision_datasources,
-                 parent_datasources):
-
-        self.datasources = datasources.StemmedDiff(
-            prefix, stem_word,
-            revision_datasources, parent_datasources
-        )
+    def __init__(self, name, diff_datasources):
+        super().__init__(name)
+        self.datasources = diff_datasources
 
         self.stem_delta_sum = aggregators.sum(
             dicts.values(self.datasources.stem_delta),
-            name=prefix + ".stem_delta_sum"
+            name=name + ".stem_delta_sum"
         )
         self.stem_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.stem_delta)),
-            name=prefix + ".stem_delta_increase"
+            name=name + ".stem_delta_increase"
         )
         self.stem_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.stem_delta)),
-            name=prefix + ".stem_delta_decrease"
+            name=name + ".stem_delta_decrease"
         )
 
         self.stem_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.stem_prop_delta),
-            name=prefix + ".stem_prop_delta_sum"
+            name=name + ".stem_prop_delta_sum"
         )
         self.stem_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.stem_prop_delta)),
-            name=prefix + ".stem_prop_delta_increase"
+            name=name + ".stem_prop_delta_increase"
         )
         self.stem_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.stem_prop_delta)),
-            name=prefix + ".stem_prop_delta_decrease"
+            name=name + ".stem_prop_delta_decrease"
         )

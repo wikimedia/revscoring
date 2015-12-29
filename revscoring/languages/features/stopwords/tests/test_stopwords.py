@@ -41,18 +41,19 @@ def test_stopwords():
         cache=cache),
         {'hat': 1, 'king': 1, 'france': 1})
 
-    eq_(solve(my_stops.diff.datasources.stopword_delta, cache=cache),
+    diff = my_stops.revision.diff
+    eq_(solve(diff.datasources.stopword_delta, cache=cache),
         {'of': 1, 'the': 1, 'and': 1})
-    pd = solve(my_stops.diff.datasources.stopword_prop_delta, cache=cache)
+    pd = solve(diff.datasources.stopword_prop_delta, cache=cache)
     eq_(pd.keys(), {'of', 'the', 'and'})
     eq_(round(pd['of'], 2), 0.50)
     eq_(round(pd['the'], 2), 0.50)
     eq_(round(pd['and'], 2), 1)
 
-    eq_(solve(my_stops.diff.datasources.non_stopword_delta, cache=cache),
+    eq_(solve(diff.datasources.non_stopword_delta, cache=cache),
         {'hat': -1, 'waffle': 1, 'king': 1, 'normandy': 1, 'york': 1,
          'france': -1})
-    pd = solve(my_stops.diff.datasources.non_stopword_prop_delta, cache=cache)
+    pd = solve(diff.datasources.non_stopword_prop_delta, cache=cache)
     eq_(pd.keys(), {'hat', 'waffle', 'king', 'normandy', 'york', 'france'})
     eq_(round(pd['hat'], 2), -1)
     eq_(round(pd['waffle'], 2), 1)
@@ -65,25 +66,21 @@ def test_stopwords():
     eq_(solve(my_stops.revision.non_stopwords, cache=cache), 5)
     eq_(solve(my_stops.revision.parent.non_stopwords, cache=cache), 3)
 
-    eq_(solve(my_stops.diff.stopword_delta_sum, cache=cache), 3)
-    eq_(solve(my_stops.diff.stopword_delta_increase, cache=cache), 3)
-    eq_(solve(my_stops.diff.stopword_delta_decrease, cache=cache), 0)
-    eq_(solve(my_stops.diff.non_stopword_delta_sum, cache=cache), 2)
-    eq_(solve(my_stops.diff.non_stopword_delta_increase, cache=cache), 4)
-    eq_(solve(my_stops.diff.non_stopword_delta_decrease, cache=cache), -2)
+    eq_(solve(diff.stopword_delta_sum, cache=cache), 3)
+    eq_(solve(diff.stopword_delta_increase, cache=cache), 3)
+    eq_(solve(diff.stopword_delta_decrease, cache=cache), 0)
+    eq_(solve(diff.non_stopword_delta_sum, cache=cache), 2)
+    eq_(solve(diff.non_stopword_delta_increase, cache=cache), 4)
+    eq_(solve(diff.non_stopword_delta_decrease, cache=cache), -2)
 
-    eq_(round(solve(my_stops.diff.stopword_prop_delta_sum,
-                    cache=cache), 2), 2)
-    eq_(round(solve(my_stops.diff.stopword_prop_delta_increase,
-                    cache=cache), 2), 2)
-    eq_(round(solve(my_stops.diff.stopword_prop_delta_decrease,
-                    cache=cache), 2), 0)
-    eq_(round(solve(my_stops.diff.non_stopword_prop_delta_sum,
-                    cache=cache), 2), 1.5)
-    eq_(round(solve(my_stops.diff.non_stopword_prop_delta_increase,
-                    cache=cache), 2), 3.5)
-    eq_(round(solve(my_stops.diff.non_stopword_prop_delta_decrease,
-                    cache=cache), 2), -2)
+    eq_(round(solve(diff.stopword_prop_delta_sum, cache=cache), 2), 2)
+    eq_(round(solve(diff.stopword_prop_delta_increase, cache=cache), 2), 2)
+    eq_(round(solve(diff.stopword_prop_delta_decrease, cache=cache), 2), 0)
+    eq_(round(solve(diff.non_stopword_prop_delta_sum, cache=cache), 2), 1.5)
+    eq_(round(solve(diff.non_stopword_prop_delta_increase, cache=cache), 2),
+        3.5)
+    eq_(round(solve(diff.non_stopword_prop_delta_decrease, cache=cache), 2),
+        -2)
 
 
 def test_pickling():
@@ -96,32 +93,33 @@ def test_pickling():
     eq_(pickle.loads(pickle.dumps(my_stops.revision.parent.non_stopwords)),
         my_stops.revision.parent.non_stopwords)
 
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.stopword_delta_sum)),
-        my_stops.diff.stopword_delta_sum)
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.stopword_delta_increase)),
-        my_stops.diff.stopword_delta_increase)
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.stopword_delta_decrease)),
-        my_stops.diff.stopword_delta_decrease)
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.non_stopword_delta_sum)),
-        my_stops.diff.non_stopword_delta_sum)
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.non_stopword_delta_increase)),
-        my_stops.diff.non_stopword_delta_increase)
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.non_stopword_delta_decrease)),
-        my_stops.diff.non_stopword_delta_decrease)
+    diff = my_stops.revision.diff
+    eq_(pickle.loads(pickle.dumps(diff.stopword_delta_sum)),
+        diff.stopword_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.stopword_delta_increase)),
+        diff.stopword_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.stopword_delta_decrease)),
+        diff.stopword_delta_decrease)
+    eq_(pickle.loads(pickle.dumps(diff.non_stopword_delta_sum)),
+        diff.non_stopword_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.non_stopword_delta_increase)),
+        diff.non_stopword_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.non_stopword_delta_decrease)),
+        diff.non_stopword_delta_decrease)
 
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.stopword_prop_delta_sum)),
-        my_stops.diff.stopword_prop_delta_sum)
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.stopword_prop_delta_increase)),
-        my_stops.diff.stopword_prop_delta_increase)
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.stopword_prop_delta_decrease)),
-        my_stops.diff.stopword_prop_delta_decrease)
-    eq_(pickle.loads(pickle.dumps(my_stops.diff.non_stopword_prop_delta_sum)),
-        my_stops.diff.non_stopword_prop_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.stopword_prop_delta_sum)),
+        diff.stopword_prop_delta_sum)
+    eq_(pickle.loads(pickle.dumps(diff.stopword_prop_delta_increase)),
+        diff.stopword_prop_delta_increase)
+    eq_(pickle.loads(pickle.dumps(diff.stopword_prop_delta_decrease)),
+        diff.stopword_prop_delta_decrease)
+    eq_(pickle.loads(pickle.dumps(diff.non_stopword_prop_delta_sum)),
+        diff.non_stopword_prop_delta_sum)
     eq_(pickle.loads(pickle.dumps(
-            my_stops.diff.non_stopword_prop_delta_increase
+            diff.non_stopword_prop_delta_increase
         )),  # noqa
-        my_stops.diff.non_stopword_prop_delta_increase)
+        diff.non_stopword_prop_delta_increase)
     eq_(pickle.loads(pickle.dumps(
-            my_stops.diff.non_stopword_prop_delta_decrease
+            diff.non_stopword_prop_delta_decrease
         )),  # noqa
-        my_stops.diff.non_stopword_prop_delta_decrease)
+        diff.non_stopword_prop_delta_decrease)

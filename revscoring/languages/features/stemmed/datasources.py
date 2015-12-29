@@ -1,40 +1,49 @@
 from ....datasources.meta import frequencies, mappers
-from ....features.wikitext import edit
+from ....dependencies import DependentSet
 
 
-class StemmedRevision:
-    def __init__(self, prefix, stem_word, words_datasource):
+class Revision(DependentSet):
+    def __init__(self, name, stem_word, wikitext_revision):
+        super().__init__(name)
 
         self.stems = mappers.map(
-            stem_word, words_datasource,
-            name=prefix + ".stems"
+            stem_word, wikitext_revision.words,
+            name=name + ".stems"
         )
 
         self.stem_frequency = frequencies.table(
             self.stems,
-            name=prefix + ".stem_frequency"
+            name=name + ".stem_frequency"
         )
 
+        if hasattr(wikitext_revision, 'parent'):
+            self.parent = Revision(name + ".parent", stem_word,
+                                   wikitext_revision.parent)
 
-class StemmedDiff:
-    def __init__(self, prefix, stem_word, revision_datasources,
-                 parent_datasources):
+        if hasattr(wikitext_revision, 'diff'):
+            self.diff = Diff(name + ".diff", stem_word,
+                             wikitext_revision.diff, self)
+
+
+class Diff(DependentSet):
+    def __init__(self, name, stem_word, wikitext_diff, revision):
+        super().__init__(name)
 
         self.stems_added = mappers.map(
-            stem_word, edit.diff.datasources.words_added,
-            name=prefix + ".stems_added"
+            stem_word, wikitext_diff.words_added,
+            name=name + ".stems_added"
         )
         self.stems_removed = mappers.map(
-            stem_word, edit.diff.datasources.words_removed,
-            name=prefix + ".stems_removed"
+            stem_word, wikitext_diff.words_removed,
+            name=name + ".stems_removed"
         )
 
         self.stem_delta = frequencies.delta(
-            parent_datasources.stem_frequency,
-            revision_datasources.stem_frequency,
-            name=prefix + ".stem_delta"
+            revision.parent.stem_frequency,
+            revision.stem_frequency,
+            name=name + ".stem_delta"
         )
         self.stem_prop_delta = frequencies.prop_delta(
-            parent_datasources.stem_frequency, self.stem_delta,
-            name=prefix + ".stem_prop_delta"
+            revision.parent.stem_frequency, self.stem_delta,
+            name=name + ".stem_prop_delta"
         )

@@ -6,14 +6,14 @@ from .....datasources import revision_oriented
 from .....dependencies import solve
 from ..dictionary import Dictionary
 
-my_words = {"yakka", "foob", "mog", "gurg", "pubbawup", "zink", "watoom",
-            "gazork", "chumble", "spuzz"}
+calvins_words = {"yakka", "foob", "mog", "gurg", "pubbawup", "zink", "watoom",
+                 "gazork", "chumble", "spuzz"}
 
 
 def dictionary_check(word):
-    return word.lower() in my_words
+    return word.lower() in calvins_words
 
-my_dict = Dictionary("my_language", dictionary_check)
+my_dict = Dictionary("calvin.dictionary", dictionary_check)
 
 r_text = revision_oriented.revision.text
 p_text = revision_oriented.revision.parent.text
@@ -66,7 +66,7 @@ def test_dictionary():
     eq_(solve(diff.dict_word_delta_sum, cache=cache), 1.0)
     eq_(solve(diff.dict_word_delta_increase, cache=cache), 2)
     eq_(solve(diff.dict_word_delta_decrease, cache=cache), -1)
-    eq_(solve(diff.non_dict_word_delta_sum, cache=cache), 1)
+    eq_(solve(diff.non_dict_word_delta_sum, cache=cache), -1)
     eq_(solve(diff.non_dict_word_delta_increase, cache=cache), 0)
     eq_(solve(diff.non_dict_word_delta_decrease, cache=cache), -1)
 

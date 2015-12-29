@@ -1,6 +1,6 @@
-import sys
+from .features import Dictionary, RegexMatches, Stemmed, Stopwords
 
-from .space_delimited import SpaceDelimited
+name = "spanish"
 
 try:
     import enchant
@@ -9,11 +9,15 @@ except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'es'.  " +
                       "Consider installing 'myspell-es'.")
 
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+
 try:
     from nltk.stem.snowball import SnowballStemmer
     stemmer = SnowballStemmer("spanish")
 except ValueError:
     raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+
+stemmed = Stemmed(name + ".stemmed", stemmer.stem)
 
 try:
     from nltk.corpus import stopwords as nltk_stopwords
@@ -23,7 +27,9 @@ except LookupError:
                       "You may need to install the nltk 'stopwords' " +
                       "corpora.  See http://www.nltk.org/data.html")
 
-badwords = [
+stopwords = Stopwords(name + ".stopwords", stopwords)
+
+badword_regexes = [
     r"awe(onao|vo)",  # idiot
     r"babosa",  # slug
     r"bastardo",  # bastard
@@ -186,7 +192,10 @@ badwords = [
     r"zapatona",  # shoe ???
     r"zorr(a|ear)"  # bitch
 ]
-informals = [
+
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+
+informal_regexes = [
     r"agan",  # ???
     r"agregenme",  # ???
     r"aguante",  # stamina
@@ -274,47 +283,4 @@ informals = [
     r"zorpia"  # ???
 ]
 
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-spanish
-=======
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-.. autoattribute:: revision.infonoise
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-.. autoattribute:: parent_revision.infonoise
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-    """,
-    badwords=badwords,
-    dictionary=dictionary,
-    informals=informals,
-    stemmer=stemmer,
-    stopwords=stopwords
-)
-"""
-spanish
-"""
+informals = RegexMatches(name + ".informals", informal_regexes)

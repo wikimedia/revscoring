@@ -153,7 +153,7 @@ class Diff:
 
         self.uppercase_words_added = aggregators.len(
             self.datasources.uppercase_words_added,
-            name=self._name + ".words_added"
+            name=self._name + ".uppercase_words_added"
         )
         """
         A count of the word tokens added in this edit.
@@ -161,7 +161,7 @@ class Diff:
 
         self.uppercase_words_removed = aggregators.len(
             self.datasources.uppercase_words_removed,
-            name=self._name + ".words_removed"
+            name=self._name + ".uppercase_words_removed"
         )
         """
         A count of the word tokens removed in this edit.

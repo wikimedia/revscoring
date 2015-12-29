@@ -73,7 +73,8 @@ class DependentSet:
         super().__setattr__(attr, value)
 
         if isinstance(value, Dependent):
-            logger.debug("Registering {0} to {1}".format(value, self._name))
+            logger.log(logging.NOTSET,
+                       "Registering {0} to {1}".format(value, self._name))
             if value in self._dependents:
                 logger.warn("{0} has already been added to {1}.  Could be "
                             .format(value, self) + "overwritten?")

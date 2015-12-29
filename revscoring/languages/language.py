@@ -1,10 +1,10 @@
 """
 .. autoclass:: revscoring.Language
 """
-from ..util import NamedDict
+from ..dependencies import DependentSet
 
 
-class Language:
+class Language(DependentSet):
     """
     Implements a set of language-specific features.
 
@@ -14,16 +14,6 @@ class Language:
             comparing languages to each other.
     """
     def __init__(self, name, doc=None):
+        self.name = name
         self.__name__ = name
-        self.__doc__ = doc if doc else name
-
-        self.revision = NamedDict()
-        self.parent_revision = NamedDict()
-        self.diff = NamedDict()
-        self.page = NamedDict()
-        self.user = NamedDict()
-        self.previous_user_revision = NamedDict()
-
-
-    def __eq__(self, other):
-        return isinstance(other, Language) and self.__name__ == other.__name__
+        self.__doc__ = doc
