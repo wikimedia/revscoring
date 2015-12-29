@@ -1,8 +1,10 @@
 import pickle
 import traceback
 
-from ..errors import (CaughtDependencyError, DependencyError, DependencyLoop,
-                      MissingResource, RevisionNotFound)
+from ..dependencies import Dependent, DependentSet
+from ..errors import (CaughtDependencyError, CommentDeleted, DependencyError,
+                      DependencyLoop, MissingResource, PageNotFound,
+                      RevisionNotFound, TextDeleted, UserDeleted, UserNotFound)
 
 
 def test_exceptions_picklability():
@@ -23,5 +25,20 @@ def test_exceptions_picklability():
     mr = MissingResource("FooBar")
     pickle.loads(pickle.dumps(mr))
 
-    rnf = RevisionNotFound()
+    rnf = RevisionNotFound(DependentSet("revision"), 10)
     pickle.loads(pickle.dumps(rnf))
+
+    pnf = PageNotFound(DependentSet("page"), 12)
+    pickle.loads(pickle.dumps(pnf))
+
+    unf = UserNotFound(DependentSet("user"), 10)
+    pickle.loads(pickle.dumps(unf))
+
+    ud = UserDeleted(DependentSet("revision"))
+    pickle.loads(pickle.dumps(ud))
+
+    cd = CommentDeleted(DependentSet("revision"))
+    pickle.loads(pickle.dumps(cd))
+
+    td = TextDeleted(DependentSet("revision"))
+    pickle.loads(pickle.dumps(td))

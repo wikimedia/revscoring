@@ -8,7 +8,7 @@ import logging
 
 import yamlconf
 
-from ..datasources import revision
+from ..datasources import revision_oriented
 from ..dependencies import Context
 
 logger = logging.getLogger(__name__)

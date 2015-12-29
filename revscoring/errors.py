@@ -56,19 +56,19 @@ class MissingResource(DependencyError):
 
 
 class RevisionNotFound(MissingResource):
-    def __init__(self, datasources, rev_id, arg=None):
+    def __init__(self, datasources, rev_id=None, arg=None):
         super().__init__("Could not find revision ({0}:{1})"
                          .format(datasources, repr(rev_id)))
 
 
 class UserNotFound(MissingResource):
-     def __init__(self, datasources, user_text, arg=None):
+     def __init__(self, datasources, user_text=None, arg=None):
          super().__init__("Could not find user account ({0}:{1})"
                           .format(datasources, repr(user_text)))
 
 
 class PageNotFound(MissingResource):
-     def __init__(self, datasources, page_id, arg=None):
+     def __init__(self, datasources, page_id=None, arg=None):
          super().__init__("Could not find page ({0}:{1})"
                           .format(datasources, repr(page_id)))
 

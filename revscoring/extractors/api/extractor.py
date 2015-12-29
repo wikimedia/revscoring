@@ -2,6 +2,8 @@ import logging
 from collections import defaultdict
 from itertools import groupby, islice
 
+import mwapi
+
 from . import datasources
 from .. import Extractor as BaseExtractor
 from ...datasources import Datasource, revision_oriented
@@ -247,6 +249,13 @@ class Extractor(BaseExtractor):
         else:
             # This is bad, but it should be handled by the calling funcion
             return None
+
+    @classmethod
+    def from_config(cls, config, name, section_key="extractors"):
+        logger.info("Loading api.Extractor '{0}' from config.".format(name))
+        section = config[section_key][name]
+        kwargs = {k: v for k, v in section.items() if k != "class"}
+        return cls(mwapi.Session(**kwargs))
 
 
 def _normalize_revisions(page_doc):
