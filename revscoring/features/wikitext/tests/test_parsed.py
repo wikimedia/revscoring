@@ -16,6 +16,7 @@ cite_templates = revision.template_names_matching(r"^cite")
 
 r_text = revision_oriented.revision.text
 
+
 def test_content():
 
     cache = {r_text: "This is some text.\n" +

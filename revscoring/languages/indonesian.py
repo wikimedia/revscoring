@@ -32,7 +32,7 @@ stopwords = set([
     r"boleh", r"bolehkah", r"bolehlah", r"buat", r"bukan", r"bukankah",
     r"bukanlah", r"bukannya",
     r"cuma", r"percuma",
-    r"dahulu", r"dalam", r"dan", r"dapat", r"dari", r"daripada",  r"dekat",
+    r"dahulu", r"dalam", r"dan", r"dapat", r"dari", r"daripada", r"dekat",
     r"demi", r"demikian", r"demikianlah", r"sedemikian", r"dengan",
     r"depan", r"di", r"dia", r"dialah", r"dini", r"diri", r"dirinya",
     r"terdiri", r"dong", r"dulu",

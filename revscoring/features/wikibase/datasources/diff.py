@@ -159,7 +159,7 @@ def _process_claims_removed(properties_diff, past_item, current_item):
 def _process_claims_changed(properties_diff, past_item, current_item):
     claims_changed = []
     for property in properties_diff.changed:
-        parent_guids = {claim.snak:claim
+        parent_guids = {claim.snak: claim
                         for claim in past_item.claims[property]}
         for claim in current_item.claims[property]:
             if claim.snak in parent_guids and \
@@ -182,10 +182,6 @@ def _process_sources_added(claims_changed):
                     if claim.hash not in parent_guids:
                         sources_added.append(claim)
     return sources_added
-
-    sources_added = Datasource(name + ".sources_added",
-                               process_sources_added,
-                               depends_on=[claims_changed])
 
 
 def _process_sources_removed(claims_changed):

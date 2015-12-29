@@ -2,7 +2,7 @@ import logging
 
 import mwtypes
 
-from ...datasources import Datasource, revision_oriented
+from ...datasources import Datasource
 from ...dependencies import DependentSet
 from ...errors import CommentDeleted, TextDeleted, UserDeleted
 from .util import key, key_exists, or_none

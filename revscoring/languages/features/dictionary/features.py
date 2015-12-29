@@ -1,4 +1,3 @@
-from . import datasources
 from ....datasources.meta import dicts, filters
 from ....dependencies import DependentSet
 from ....features.meta import aggregators

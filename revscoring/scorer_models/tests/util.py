@@ -36,7 +36,7 @@ def train_score(model):
     ))
     deterministic.shuffle(observations)
 
-    mid = int(len(observations)/2)
+    mid = int(len(observations) / 2)
     train_set = observations[:mid]
     test_set = observations[mid:]
 

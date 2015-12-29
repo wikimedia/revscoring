@@ -492,7 +492,7 @@ class Diff:
         The sum of delta increases in the break frequency table
         """
 
-        vbreak_delta_decrease = aggregators.sum(
+        self.break_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.break_delta)),
             name=self._name + ".break_delta_decrease"
         )

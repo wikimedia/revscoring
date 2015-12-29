@@ -87,7 +87,7 @@ badword_regexes = [
     r"stronza(t[ae])?",
     r"stronz[io]",
     r"stupido",
-    r"suca",  r"succhia",
+    r"suca", r"succhia",
     r"suka",
     r"tette",
     r"troi[ae]",

@@ -202,7 +202,8 @@ class Diff:
             name=self._name + ".uppercase_word_chars_removed", returns=int
         )
         """
-        A count of the number of UPPERCASE word characters removed in this edit.
+        A count of the number of UPPERCASE word characters removed in this
+        edit.
         """
 
         self.punctuation_chars_added = aggregators.sum(

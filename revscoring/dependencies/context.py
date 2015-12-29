@@ -45,7 +45,7 @@ class Context:
         See :func:`~revscoring.dependencies.expand` for call
         signature.
         """
-        context, cache = _update_context_and_cache(context, cache)
+        context, cache = self.update_context_and_cache(context, cache)
         return expand(dependents, context=context, cache=cache)
 
     def dig(self, dependents, cache=None, context=None):
@@ -54,7 +54,7 @@ class Context:
 
         See :func:`~revscoring.dependencies.dig` for call signature.
         """
-        context, cache = _update_context_and_cache(context, cache)
+        context, cache = self.update_context_and_cache(context, cache)
         return dig(dependents, context=context, cache=cache)
 
     def draw(self, dependent, cache=None, context=None):

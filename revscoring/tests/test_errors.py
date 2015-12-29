@@ -1,7 +1,7 @@
 import pickle
 import traceback
 
-from ..dependencies import Dependent, DependentSet
+from ..dependencies import DependentSet
 from ..errors import (CaughtDependencyError, CommentDeleted, DependencyError,
                       DependencyLoop, MissingResource, PageNotFound,
                       RevisionNotFound, TextDeleted, UserDeleted, UserNotFound)

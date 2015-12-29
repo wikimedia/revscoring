@@ -5,6 +5,7 @@ from ..meta import aggregators
 
 name = "bytes.revision"
 
+
 class Revision(DependentSet):
 
     def __init__(self, name, revision_datasources):

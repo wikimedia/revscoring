@@ -113,8 +113,7 @@ def draw(dependent, context=None, cache=None, depth=0):
     :Returns:
         None
     """
-    return "\n".join(draw_lines(dependent, context, cache, depth)) \
-           + "\n"
+    return "\n".join(draw_lines(dependent, context, cache, depth)) + "\n"
 
 
 def draw_lines(dependent, context, cache, depth):
@@ -132,7 +131,7 @@ def draw_lines(dependent, context, cache, depth):
         # Check if we're a dependent with explicit dependencies
         if hasattr(dependent, "dependencies"):
             for dependency in dependent.dependencies:
-                yield from draw_lines(dependency, context, cache, depth+1)
+                yield from draw_lines(dependency, context, cache, depth + 1)
 
 
 def dig(dependents, context=None, cache=None):

@@ -59,7 +59,7 @@ class OfflineExtractor(Context):
 
     def _extract(self, rev_id, features, context=None, cache=None):
         cache = cache or {}
-        cache[revision.id] = rev_id
+        cache[revision_oriented.revision.id] = rev_id
         return self.solve(features, context=context, cache=cache)
 
     def _extract_many(self, rev_ids, features, context=None, caches=None):

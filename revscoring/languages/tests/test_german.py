@@ -160,6 +160,7 @@ def test_informals():
 
     eq_(german.informals, pickle.loads(pickle.dumps(german.informals)))
 
+
 def test_dictionary():
     cache = {r_text: "Hinzu kamen rund sechs m80 Personen."}
     eq_(solve(german.dictionary.revision.datasources.dict_words, cache=cache),
@@ -169,6 +170,7 @@ def test_dictionary():
         ["m80"])
 
     eq_(german.dictionary, pickle.loads(pickle.dumps(german.dictionary)))
+
 
 def test_stopwords():
     cache = {r_text: "im Lager oder in der Verbannung."}

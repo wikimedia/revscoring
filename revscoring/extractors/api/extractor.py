@@ -130,13 +130,13 @@ class Extractor(BaseExtractor):
                     rev_docs = user_texts[user_text]
                     for rev_doc in rev_docs:
                         rev_id = rev_doc['revid']
+                        cache = revision_caches[rev_id]
                         if user_text in user_info_docs:
-                            revision_caches[rev_id]\
-                                           [self.revision.user.info.doc] =\
+                            cache[self.revision.user.info.doc] = \
                                 user_info_docs[user_text]
                         else:
-                                errored[rev_id] = \
-                                    UserNotFound(self.revision.user, user_text)
+                            errored[rev_id] = \
+                                UserNotFound(self.revision.user, user_text)
 
         # Now extract dependent values one-by-one
 
@@ -168,7 +168,7 @@ class Extractor(BaseExtractor):
             return {}
 
         logger.debug("Building a map of {0} revisions: {1}"
-                    .format(len(rev_ids), rev_ids))
+                     .format(len(rev_ids), rev_ids))
         rev_docs = self.query_revisions_by_revids(rev_ids, rvprop=rvprop)
 
         return {rd['revid']: rd for rd in rev_docs}

@@ -165,7 +165,8 @@ LANGUAGE_RE = re.compile(LANGUAGE_REGEXES)
 
 def _process_proportion_of_language_added(parent_item, revision_item):
     parent_item_doc = parent_item.toJSON() if parent_item is not None else {}
-    revision_item_res = len(re.findall(LANGUAGE_RE, str(revision_item.toJSON())))
+    revision_item_res = len(re.findall(LANGUAGE_RE,
+                                       str(revision_item.toJSON())))
     parent_item_res = len(re.findall(LANGUAGE_RE, str(parent_item_doc)))
     return float(revision_item_res - parent_item_res) / \
         float(revision_item_res + 1)

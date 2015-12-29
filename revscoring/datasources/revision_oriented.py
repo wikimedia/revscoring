@@ -1,5 +1,3 @@
-import sys
-
 from ..dependencies import DependentSet
 from .datasource import Datasource
 
