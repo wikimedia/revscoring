@@ -10,7 +10,10 @@ except enchant.errors.DictNotFoundError:
                       "Consider installing 'myspell-he'.")
 
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
-
+"""
+:class:`revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "he".  Provided by `myspell-he`
+"""
 
 badword_regexes = [
     r"ה?קא?ק(י|ות|ה)",
@@ -63,6 +66,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     r"חחח+",
@@ -100,3 +107,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

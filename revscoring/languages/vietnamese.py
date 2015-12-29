@@ -10,7 +10,10 @@ except enchant.errors.DictNotFoundError:
                       "Consider installing 'hunspell-vi'.")
 
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
-
+"""
+:class:`revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "vi". Provided by `hunspell-vi`.
+"""
 
 # https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/
 # Free_Vietnamese_Dictionary_Project_Vietnamese-Vietnamese#Allwiki_.28closed.29
@@ -27,6 +30,11 @@ stopwords = set([
 ])
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`revscoring.languages.features.Stopwords` features copied from
+https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/\
+Free_Vietnamese_Dictionary_Project_Vietnamese-Vietnamese#Allwiki_.28closed.29
+"""
 
 badword_regexes = [
     # Vietnamese
@@ -35,6 +43,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     # Vietnamese
@@ -50,3 +62,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

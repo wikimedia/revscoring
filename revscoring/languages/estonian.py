@@ -2,6 +2,19 @@ from .features import Dictionary, RegexMatches, Stopwords
 
 name = "estonian"
 
+try:
+    import enchant
+    dictionary = enchant.Dict("et")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'et'.  " +
+                      "Consider installing 'myspell-et'.")
+
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "et". Provided by `myspell-et`
+"""
+
 # No stemmer
 
 # Copied from https://meta.wikimedia.org/wiki/?oldid=13987775
@@ -36,17 +49,12 @@ stopwords = [
     "välislingid", "välja", "või", "võib", "www", "ära", "ühe", "üks", "üle",
     "ülikool",
 ]
+"""
+:class:`revscoring.languages.features.Stopwords` features copied from
+"common words" in https://meta.wikimedia.org/wiki/?oldid=13987775
+"""
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
-
-try:
-    import enchant
-    dictionary = enchant.Dict("et")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'et'.  " +
-                      "Consider installing 'myspell-et'.")
-
-dictionary = Dictionary(name + ".dictionary", dictionary.check)
 
 badword_regexes = [
     r"pede",
@@ -77,6 +85,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     r"lol(l)?"
@@ -98,3 +110,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

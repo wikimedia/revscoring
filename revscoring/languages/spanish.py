@@ -10,14 +10,10 @@ except enchant.errors.DictNotFoundError:
                       "Consider installing 'myspell-es'.")
 
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
-
-try:
-    from nltk.stem.snowball import SnowballStemmer
-    stemmer = SnowballStemmer("spanish")
-except ValueError:
-    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
-
-stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "es".  Provided by `myspell-es`
+"""
 
 try:
     from nltk.corpus import stopwords as nltk_stopwords
@@ -28,6 +24,22 @@ except LookupError:
                       "corpora.  See http://www.nltk.org/data.html")
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords.words` "spanish"
+"""
+
+try:
+    from nltk.stem.snowball import SnowballStemmer
+    stemmer = SnowballStemmer("spanish")
+except ValueError:
+    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+
+stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`revscoring.languages.features.Stemmed` word features via
+:class:`nltk.stem.snowball.SnowballStemmer` "spanish"
+"""
 
 badword_regexes = [
     r"awe(onao|vo)",  # idiot
@@ -194,6 +206,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     r"agan",  # ???
@@ -284,3 +300,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

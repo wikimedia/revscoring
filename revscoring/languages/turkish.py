@@ -11,6 +11,10 @@ except LookupError:
                       "corpora.  See http://www.nltk.org/data.html")
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords.words` "turkish"
+"""
 
 badword_regexes = [
     r"ağzına sıçayım", r"ahlaksız", r"ahmak", r"am", r"amcık", r"amın oğlu",
@@ -115,6 +119,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     r"achtırma",
@@ -186,3 +194,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

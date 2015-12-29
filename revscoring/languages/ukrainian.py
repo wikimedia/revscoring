@@ -2,9 +2,19 @@ from .features import Dictionary, RegexMatches, Stopwords
 
 name = "ukrainian"
 
-# No stemmer
+try:
+    import enchant
+    dictionary = enchant.Dict("uk")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'uk'.  " +
+                      "Consider installing 'myspell-uk'.")
 
-# Copied from https://meta.wikimedia.org/wiki/?oldid=13877074
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "uk".  Provided by `myspell-uk`
+"""
+
 stopwords = [
     "або", "активних", "активності", "активні", "активність", "але",
     "алфавітом", "альтерн", "багато", "базисні", "без", "безробітних",
@@ -47,15 +57,10 @@ stopwords = [
 ]
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
-
-try:
-    import enchant
-    dictionary = enchant.Dict("uk")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'uk'.  " +
-                      "Consider installing 'myspell-uk'.")
-
-dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`revscoring.languages.features.Stopwords` features copied from
+"common words" in https://meta.wikimedia.org/wiki/?oldid=13877074
+"""
 
 badword_regexes = [
     r"бзд(і|и|юх|я)\w*",
@@ -108,6 +113,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     r"біс(а|і|и|о|у)\w*",
@@ -134,3 +143,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

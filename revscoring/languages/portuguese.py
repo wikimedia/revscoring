@@ -10,14 +10,10 @@ except enchant.errors.DictNotFoundError:
                       "Consider installing 'myspell-pt'.")
 
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
-
-try:
-    from nltk.stem.snowball import SnowballStemmer
-    stemmer = SnowballStemmer("portuguese")
-except ValueError:
-    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
-
-stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "pt". Provided by `myspell-pt`
+"""
 
 try:
     from nltk.corpus import stopwords as nltk_stopwords
@@ -28,6 +24,22 @@ except LookupError:
                       "corpora.  See http://www.nltk.org/data.html")
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords.words` "portuguese"
+"""
+
+try:
+    from nltk.stem.snowball import SnowballStemmer
+    stemmer = SnowballStemmer("portuguese")
+except ValueError:
+    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+
+stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`revscoring.languages.features.Stemmed` word features via
+:class:`nltk.stem.snowball.SnowballStemmer` "portuguese"
+"""
 
 badword_regexes = [
     r"baba[ckq](as?|ão|ões|u?i[cçs]s?e)",  # douchebag
@@ -87,6 +99,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     r"adoro",  # love
@@ -124,3 +140,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

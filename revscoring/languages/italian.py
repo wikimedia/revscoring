@@ -3,12 +3,17 @@ from .features import Dictionary, RegexMatches, Stemmed, Stopwords
 name = "italian"
 
 try:
-    from nltk.stem.snowball import SnowballStemmer
-    stemmer = SnowballStemmer("italian")
-except ValueError:
-    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+    import enchant
+    dictionary = enchant.Dict("it")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'it'.  " +
+                      "Consider installing 'myspell-it'.")
 
-stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "it". Provided by `myspell-it`
+"""
 
 try:
     from nltk.corpus import stopwords as nltk_stopwords
@@ -19,15 +24,22 @@ except LookupError:
                       "corpora.  See http://www.nltk.org/data.html")
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords.words` "italian"
+"""
 
 try:
-    import enchant
-    dictionary = enchant.Dict("it")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'it'.  " +
-                      "Consider installing 'myspell-it'.")
+    from nltk.stem.snowball import SnowballStemmer
+    stemmer = SnowballStemmer("italian")
+except ValueError:
+    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
 
-dictionary = Dictionary(name + ".dictionary", dictionary.check)
+stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`revscoring.languages.features.Stemmed` word features via
+:class:`nltk.stem.snowball.SnowballStemmer` "italian"
+"""
 
 badword_regexes = [
     r"anale",
@@ -98,6 +110,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     "(ah)+a?",
@@ -136,3 +152,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

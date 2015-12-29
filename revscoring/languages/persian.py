@@ -10,8 +10,11 @@ except enchant.errors.DictNotFoundError:
                       "Consider installing 'myspell-fa'.")
 
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "fa".  Provided by `myspell-fa`
+"""
 
-# Copy-pasted from https://meta.wikimedia.org/w/index.php?oldid=13044766
 stopwords = set([
     "آثار", "آری", "آغاز", "آمریکا",
     "آنها", "اثر", "اساس", "است", "استان",
@@ -75,6 +78,10 @@ stopwords = set([
 ])
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`revscoring.languages.features.Stopwords` features copied from
+"common words" in https://meta.wikimedia.org/wiki/?oldid=13044766
+"""
 
 badword_regexes = [
     r"(madar|nanae|zan|khahar)\s*?(ghahbeh|ghahveh|ghabe|jendeh?|be khata)",
@@ -206,6 +213,10 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
 
 informal_regexes = [
     r"آله", r"فرموده?", r"فرمودند", r"السلام", r"حضرت\b", r"\([سعص]\)",
@@ -224,3 +235,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

@@ -102,12 +102,12 @@ Example:
      (<revscoring.languages.spanish.revision.informals>, 0)]
 """
 from .datasources import Datasource
-from .dependencies import Dependent
+from .dependencies import Dependent, DependentSet
 from .extractors import Extractor
 from .features import Feature
-from .languages import Language
 from .scorer_models import ScorerModel
 
 __version__ = "0.7.11"  # Change in setup.py
 
-__all__ = [Datasource, Dependent, Extractor, Feature, Language, ScorerModel]
+__all__ = [Datasource, Dependent, DependentSet, Extractor, Feature,
+           ScorerModel]
