@@ -89,7 +89,7 @@ available for the following languages:
 :data:`~revscoring.languages.portuguese`,
 :data:`~revscoring.languages.spanish`,
 :data:`~revscoring.languages.turkish`,
-:data:`~revscoring.languages.ukranian`, and
+:data:`~revscoring.languages.ukrainian`, and
 :data:`~revscoring.languages.vietnamese`.
 See :mod:`revscoring.languages`
 

@@ -29,7 +29,7 @@ except LookupError:
 stopwords = Stopwords(name + ".stopwords", stopwords)
 """
 :class:`~revscoring.languages.features.Stopwords` features provided by
-:func:`nltk.corpus.stopwords.words` "english"
+:func:`nltk.corpus.stopwords` "english"
 """
 
 try:

@@ -26,7 +26,7 @@ except LookupError:
 stopwords = Stopwords(name + ".stopwords", stopwords)
 """
 :class:`~revscoring.languages.features.Stopwords` features provided by
-:func:`nltk.corpus.stopwords.words` "dutch"
+:func:`nltk.corpus.stopwords` "dutch"
 """
 
 try:
