@@ -107,7 +107,7 @@ from .extractors import Extractor
 from .features import Feature
 from .scorer_models import ScorerModel
 
-__version__ = "0.7.11"  # Change in setup.py
+__version__ = "1.0.0-rc1"  # Change in setup.py
 
 __all__ = [Datasource, Dependent, DependentSet, Extractor, Feature,
            ScorerModel]
