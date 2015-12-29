@@ -1,5 +1,14 @@
 """
+These meta-datasources operate on :class:`revscoring.Datasource`'s that
+return `list`'s and produce sub-lists.
 
+.. autoclass:: revscoring.datasources.meta.filters.filter
+
+.. autoclass:: revscoring.datasources.meta.filters.regex_matching
+
+.. autoclass:: revscoring.datasources.meta.filters.positive
+
+.. autoclass:: revscoring.datasources.meta.filters.negative
 """
 import re
 

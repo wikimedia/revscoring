@@ -1,4 +1,7 @@
 """
+These Meta-Features apply an aggregate function to
+:class:`~revscoring.Datasource` that return lists of values.
+
 .. autoclass revscoring.features.meta.aggregators.sum
 
 .. autoclass revscoring.features.meta.aggregators.len

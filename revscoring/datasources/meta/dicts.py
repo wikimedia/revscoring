@@ -1,3 +1,12 @@
+"""
+These meta-datasources operate on :class:`revscoring.Datasource`'s that
+return `dict`'s
+
+.. autoclass:: revscoring.datasources.meta.dicts.keys
+
+.. autoclass:: revscoring.datasources.meta.dicts.values
+
+"""
 from ..datasource import Datasource
 
 

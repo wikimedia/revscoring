@@ -1,5 +1,9 @@
 """
+
 .. autoclass:: revscoring.Dependent
+    :members:
+
+.. autoclass:: revscoring.DependentSet
     :members:
 """
 import logging
@@ -64,6 +68,14 @@ class Dependent:
 
 
 class DependentSet:
+    """
+    Represents a set of :class:`~revscoring.Dependent`.  This class behaves
+    like a :class:`set`.
+
+    :Parameters:
+        name : `str`
+            A base name for the items in the set
+    """
     def __init__(self, name, _dependents=None, _dependent_sets=None):
         self._dependents = _dependents or set()
         self._dependent_sets = _dependent_sets or set()

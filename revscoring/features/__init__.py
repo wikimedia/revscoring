@@ -29,6 +29,14 @@ Functions
 
 .. automodule:: revscoring.features.functions
 
+Meta-features
++++++++++++++
+Meta-Features are classes that extend :class:`~revscoring.Feature` and
+implement common operations on :class:`~revscoring.Datasource` like
+:class:`~revscoring.features.meta.aggregators.sum` and
+:class:`~revscoring.features.meta.bools.item_in_set`.  See
+:mod:`revscoring.features.meta` for the full list.
+
 Modifiers
 +++++++++
 Modifiers are functions that can be applied to a :class:`revscoring.Feature`

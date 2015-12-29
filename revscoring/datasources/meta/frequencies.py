@@ -1,3 +1,13 @@
+"""
+These meta-datasources operate on :class:`revscoring.Datasource`'s that
+return `list`'s of items and produce frequency tables.
+
+.. autoclass:: revscoring.datasources.meta.frequencies.table
+
+.. autoclass:: revscoring.datasources.meta.frequencies.delta
+
+.. autoclass:: revscoring.datasources.meta.frequencies.prop_delta
+"""
 from ..datasource import Datasource
 
 

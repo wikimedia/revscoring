@@ -1,3 +1,13 @@
+"""
+These meta-datasources operate on :class:`revscoring.Datasource`'s that
+return `list`'s and apply a specific function to each item.
+
+.. autoclass:: revscoring.datasources.meta.mappers.map
+
+.. autoclass:: revscoring.datasources.meta.mappers.lower_case
+
+.. autoclass:: revscoring.datasources.meta.mappers.abs
+"""
 from ..datasource import Datasource
 
 absolute_value = abs

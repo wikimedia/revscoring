@@ -4,61 +4,25 @@ This module implements a set of
 processors that represent the input data for extracting
 :class:`~revscoring.Feature` values.  Just like
 :class:`~revscoring.Feature` and other
-:class:'~revscoring.dependencies.Dependent' processors,
+:class:'~revscoring.Dependent' processors,
 :class:`~revscoring.Datasource` processors are tended to
-be :func:`~revscoring.dependencies.solve` as dependencies. The
-provided datasources are split conceptually into a set of modules:
+be :func:`~revscoring.dependencies.solve`'d as dependencies. The
+provided datasources are split conceptually into a set of modules.  Currently,
+there is one module: :mod:`~revscoring.datasources.revision_oriented`.
 
-* :mod:`revscoring.datasources.diff`
-* :mod:`revscoring.datasources.page_creation`
-* :mod:`revscoring.datasources.parent_revision`
-* :mod:`revscoring.datasources.previous_user_revision`
-* :mod:`revscoring.datasources.revision`
-* :mod:`revscoring.datasources.site`
-* :mod:`revscoring.datasources.user`
+Meta-datasources
+++++++++++++++++
+Meta-Features are classes that extend :class:`~revscoring.Datasource` and
+implement common operations on :class:`~revscoring.Datasource` like
+:class:`~revscoring.datasources.meta.filters.filter` and
+:class:`~revscoring.datasources.meta.mappers.map`.
+See :mod:`revscoring.datasources.meta` for the full list.
 
-diff
-++++
-.. automodule:: revscoring.datasources.diff
-    :members:
-
-page_creation
-+++++++++++++
-.. automodule:: revscoring.datasources.page_creation
-    :members:
-
-parent_revision
-+++++++++++++++
-.. automodule:: revscoring.datasources.parent_revision
-    :members:
-
-parent_user_revision
-++++++++++++++++++++
-.. automodule:: revscoring.datasources.previous_user_revision
-    :members:
-
-revision
-++++++++
-.. automodule:: revscoring.datasources.revision
-    :members:
-
-site
-++++
-.. automodule:: revscoring.datasources.site
-    :members:
-
-user
-++++
-.. automodule:: revscoring.datasources.user
-    :members:
-
-datasource
-++++++++++
+Base classes
+++++++++++++
 .. automodule:: revscoring.datasources.datasource
 
-types
-+++++
-.. automodule:: revscoring.datasources.types
+
 
 
 """

@@ -1,3 +1,10 @@
+"""
+These meta-datasources operate on :class:`revscoring.Datasource`'s that
+return `str`'s or `list` ( `str` ) and extract information from them.
+
+.. autoclass:: revscoring.datasources.meta.extractors.regex
+
+"""
 import re
 
 from ..datasource import Datasource

@@ -12,7 +12,7 @@ except LookupError:
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
 """
-:class:`revscoring.languages.features.Stopwords` features provided by
+:class:`~revscoring.languages.features.Stopwords` features provided by
 :func:`nltk.corpus.stopwords.words` "turkish"
 """
 
@@ -120,7 +120,7 @@ badword_regexes = [
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
 """
-:class:`revscoring.languages.features.RegexMatches` features via a list of
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
 badword detecting regexes.
 """
 
@@ -195,6 +195,6 @@ informal_regexes = [
 
 informals = RegexMatches(name + ".informals", informal_regexes)
 """
-:class:`revscoring.languages.features.RegexMatches` features via a list of
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
 informal word detecting regexes.
 """

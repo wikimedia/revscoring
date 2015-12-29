@@ -1,15 +1,20 @@
 """
-.. autoclass :: revscoring.features.Dictionary
-    :members:
+Dictionary
+++++++++++
+.. automodule :: revscoring.languages.features.dictionary
 
-.. autoclass :: revscoring.features.RegexMatches
-    :members:
+RegexMatches
+++++++++++++
+.. automodule :: revscoring.languages.features.regex_matches
 
-.. autoclass :: revscoring.features.Stopwords
-    :members:
+Stopwords
++++++++++
+.. automodule :: revscoring.languages.features.stopwords
 
-.. autoclass :: revscoring.features.Stemmed
-    :members:
+Stemmed
++++++++
+.. automodule :: revscoring.languages.features.stemmed
+
 """
 from .dictionary import Dictionary
 from .regex_matches import RegexMatches

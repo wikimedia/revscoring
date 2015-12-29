@@ -15,7 +15,7 @@ class Revision(DependentSet):
             name=name + ".stems"
         )
         """
-        A count of unique stemmed words.
+        `int` : A count of unique stemmed words.
         """
 
         self.stem_chars = aggregators.sum(
@@ -24,14 +24,22 @@ class Revision(DependentSet):
             returns=int
         )
         """
-        A count of characters in stemmed words.
+        `int` : A count of characters in stemmed words.
         """
 
         if hasattr(self.datasources, 'parent'):
             self.parent = Revision(name + ".parent", self.datasources.parent)
+            """
+            :class:`~revscoring.languages.features.stemmed.Revision` : The
+            parent revision
+            """
 
         if hasattr(self.datasources, 'diff'):
             self.diff = Diff(name + ".diff", self.datasources.diff)
+            """
+            :class:`~revscoring.languages.features.stemmed.Diff` : The
+            diff between the parent and current revision.
+            """
 
 
 class Diff(DependentSet):
@@ -44,24 +52,36 @@ class Diff(DependentSet):
             dicts.values(self.datasources.stem_delta),
             name=name + ".stem_delta_sum"
         )
+        "`int` : The sum of frequency deltas for stemmed words"
         self.stem_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.stem_delta)),
             name=name + ".stem_delta_increase"
         )
+        "`int` : The sum of frequency delta increases for stemmed words"
         self.stem_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.stem_delta)),
             name=name + ".stem_delta_decrease"
         )
+        "`int` : The sum of frequency delta decreases for stemmed words"
 
         self.stem_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.stem_prop_delta),
             name=name + ".stem_prop_delta_sum"
         )
+        "`int` : The sum of proportional frequency deltas for stemmed words"
         self.stem_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.stem_prop_delta)),
             name=name + ".stem_prop_delta_increase"
         )
+        """
+        `int` : The sum of proportional frequency delta increases for stemmed
+        words
+        """
         self.stem_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.stem_prop_delta)),
             name=name + ".stem_prop_delta_decrease"
         )
+        """
+        `int` : The sum of proportional frequency delta decreases for stemmed
+        words
+        """

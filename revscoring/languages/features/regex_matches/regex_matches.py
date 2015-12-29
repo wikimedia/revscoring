@@ -4,6 +4,13 @@ from ....features import wikitext
 
 
 class RegexMatches(DependentSet):
+    """
+    :Parameters:
+        name : `str`
+            A name for the collection
+        regexes : `list` ( `str` )
+            A list of regex patterns to match.
+    """
 
     def __init__(self, name, regexes):
         super().__init__(name)
@@ -14,3 +21,7 @@ class RegexMatches(DependentSet):
                 wikitext.revision.datasources
             )
         )
+        """
+        :class:`~revscoring.languages.features.regex_matches.Revision` :
+        The base revision feature set.
+        """

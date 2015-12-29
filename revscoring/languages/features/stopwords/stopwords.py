@@ -4,6 +4,13 @@ from ....features import wikitext
 
 
 class Stopwords(DependentSet):
+    """
+    :Parameters:
+        name : `str`
+            A name for the collection
+        stopword_set : `set` ( `str` )
+            A set of stopwords
+    """
 
     def __init__(self, name, stopword_set):
         super().__init__(name)
@@ -14,6 +21,10 @@ class Stopwords(DependentSet):
             datasources.Revision(name + ".revision", word_is_stopword,
                                  wikitext.revision.datasources)
         )
+        """
+        :class:`~revscoring.languages.features.stopwords.Revision` :
+        The base revision feature set.
+        """
 
 
 class WordIsInStopwordSet:

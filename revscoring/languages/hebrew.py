@@ -11,7 +11,7 @@ except enchant.errors.DictNotFoundError:
 
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
-:class:`revscoring.languages.features.Dictionary` features via
+:class:`~revscoring.languages.features.Dictionary` features via
 :class:`enchant.Dict` "he".  Provided by `myspell-he`
 """
 
@@ -67,7 +67,7 @@ badword_regexes = [
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
 """
-:class:`revscoring.languages.features.RegexMatches` features via a list of
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
 badword detecting regexes.
 """
 
@@ -108,6 +108,6 @@ informal_regexes = [
 
 informals = RegexMatches(name + ".informals", informal_regexes)
 """
-:class:`revscoring.languages.features.RegexMatches` features via a list of
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
 informal word detecting regexes.
 """
