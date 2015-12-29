@@ -33,5 +33,3 @@ class RF(ScikitLearnClassifier):
             rf = RandomForestClassifier(**kwargs)
 
         super().__init__(features, classifier_model=rf, version=version)
-RFModel = RF
-"Alias for backwards compatibility"
