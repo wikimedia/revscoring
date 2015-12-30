@@ -8,7 +8,7 @@ from ....dependencies import solve
 from ..revision_oriented import revision
 
 pwd = os.path.dirname(os.path.realpath(__file__))
-ALAN_TEXT = open(os.path.join(pwd, "alan_touring.json")).read()
+ALAN_TEXT = open(os.path.join(pwd, "alan_turing.json")).read()
 
 r_text = revision_oriented.revision.text
 

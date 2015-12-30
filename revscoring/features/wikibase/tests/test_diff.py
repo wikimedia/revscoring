@@ -8,8 +8,8 @@ from ....dependencies import solve
 from ..revision_oriented import revision
 
 pwd = os.path.dirname(os.path.realpath(__file__))
-ALAN_TOURING = json.load(open(os.path.join(pwd, "alan_touring.json")))
-ALAN_TOURING_OLD = json.load(open(os.path.join(pwd, "alan_touring.old.json")))
+ALAN_TOURING = json.load(open(os.path.join(pwd, "alan_turing.json")))
+ALAN_TOURING_OLD = json.load(open(os.path.join(pwd, "alan_turing.old.json")))
 
 revision_item_doc = revision.datasources.item_doc
 parent_item_doc = revision.parent.datasources.item_doc
