@@ -1,6 +1,6 @@
 import pickle
 
-from nose.tools import eq_
+from nose.tools import eq_, raises
 
 from ..dependent import Dependent, DependentSet
 
@@ -11,10 +11,21 @@ def test_dependent():
     foobar2 = Dependent("foobar", lambda: "foobar2")
 
     eq_(foobar1, foobar2)
+    assert foobar1 != "foo"
 
     eq_(hash(foobar1), hash(foobar2))
 
     assert foobar1 in {foobar2}
+
+
+@raises(TypeError)
+def test_name_type():
+    Dependent(5)  # Name can't be number
+
+
+def test_format_name():
+    foobar1 = Dependent("foobar")
+    eq_(foobar1._format_name(None, []), "Dependent()")
 
 
 def test_dependent_set():
@@ -23,6 +34,11 @@ def test_dependent_set():
     d = Dependent('d')
     e = Dependent('e')
     my_dependents.c = c
+
+    eq_(my_dependents, my_dependents)
+    assert my_dependents != "foo"
+    eq_(len(my_dependents), 1)
+    eq_(set(my_dependents), {c})
 
     assert c in my_dependents
     assert d not in my_dependents, set(my_dependents)
@@ -48,3 +64,10 @@ def test_dependent_set():
     eq_(my_dependents - {f}, {c, d})
 
     eq_(pickle.loads(pickle.dumps(my_dependents)), my_dependents)
+
+
+def test_duplicate_feature_warning():
+    my_dependents = DependentSet("my_dependents")
+    my_dependents.c = Dependent('c')  # Same!
+    my_dependents.d = Dependent('d')
+    my_dependents.e = Dependent('c')  # Same!

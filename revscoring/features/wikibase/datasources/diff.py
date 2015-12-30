@@ -121,8 +121,7 @@ class dict_diff_field(Datasource):
     """
     def __init__(self, field_name, diff_datasource, name=None):
         self.field_name = field_name
-        if name is None:
-            name = "dict_diff_field({0})".format(repr(field_name))
+        name = self._format_name(name, [field_name, diff_datasource])
         super().__init__(name, self.process, depends_on=[diff_datasource])
 
     def process(self, diff):

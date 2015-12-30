@@ -211,6 +211,43 @@ def test_claims_diff():
         diff.claims_changed)
 
 
+def test_sources_diff():
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
+
+    eq_({c.id for c in solve(diff.datasources.sources_added, cache=cache)},
+        {'P813', 'P248', 'P854', 'P143', 'P345'})
+    eq_({c.id for c in solve(diff.datasources.sources_removed, cache=cache)},
+        {'P143'})
+
+    eq_(solve(diff.sources_added, cache=cache), 26)
+    eq_(solve(diff.sources_removed, cache=cache), 1)
+    eq_(pickle.loads(pickle.dumps(diff.sources_added)),
+        diff.sources_added)
+    eq_(pickle.loads(pickle.dumps(diff.sources_removed)),
+        diff.sources_removed)
+
+
+def test_qualifiers_diff():
+    # TODO: Ladsgroup, this test seems wrong
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
+
+    eq_({c.id for c in solve(diff.datasources.qualifiers_added, cache=cache)},
+        set())
+    eq_({c.id for c in solve(diff.datasources.qualifiers_removed,
+                             cache=cache)},
+        set())
+
+    eq_(solve(diff.qualifiers_added, cache=cache), 0)
+    eq_(solve(diff.qualifiers_removed, cache=cache), 0)
+
+    eq_(pickle.loads(pickle.dumps(diff.qualifiers_added)),
+        diff.qualifiers_added)
+    eq_(pickle.loads(pickle.dumps(diff.qualifiers_removed)),
+        diff.qualifiers_removed)
+
+
 def test_badges_diff():
     cache = {revision_item_doc: ALAN_TOURING,
              parent_item_doc: ALAN_TOURING_OLD}

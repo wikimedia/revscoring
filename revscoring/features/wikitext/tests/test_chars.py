@@ -226,3 +226,8 @@ def test_longest_repeated_char_added():
 
     eq_(pickle.loads(pickle.dumps(revision.diff.longest_repeated_char_added)),
         revision.diff.longest_repeated_char_added)
+
+    cache = {p_text: "This is words.",
+             r_text: "This is words."}
+
+    eq_(solve(revision.diff.longest_repeated_char_added, cache=cache), 1)

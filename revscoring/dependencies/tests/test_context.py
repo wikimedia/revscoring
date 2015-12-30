@@ -34,3 +34,10 @@ def test_context():
     eq_(context.solve(foobar), "foobaz")
     context.update(context={bar: lambda: "buzz"})
     eq_(context.solve(foobar), "foobuzz")
+
+    eq_(set(context.expand([foobar])), {foo, bar, foobar})
+
+    context.update(context={bar: bar})
+    eq_(set(context.dig([foobar])), {foo, bar})
+
+    eq_(context.draw(foobar), " - <foobar>\n\t - <foo>\n\t - <bar>\n")

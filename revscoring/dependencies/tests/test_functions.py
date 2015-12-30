@@ -2,7 +2,7 @@ from nose.tools import eq_, raises
 
 from ...errors import DependencyError, DependencyLoop
 from ..dependent import Dependent
-from ..functions import dig, draw, expand, solve
+from ..functions import dig, draw, expand, normalize_context, solve
 
 
 def test_solve():
@@ -41,6 +41,15 @@ def test_dependency_loop():
     my_foo = Dependent("foo", depends_on=[bar])
 
     solve(bar, context={my_foo})
+
+
+@raises(DependencyError)
+def test_dependency_error():
+    def derror():
+        raise DependencyError()
+    raises_error = Dependent("foo", derror)
+
+    solve(raises_error)
 
 
 def test_expand():
@@ -102,3 +111,8 @@ def test_draw():
 def test_not_implemented_error():
     foo = Dependent("foo")
     solve(foo)
+
+
+@raises(TypeError)
+def test_normalize_context_fail():
+    normalize_context(15)

@@ -63,14 +63,6 @@ class ScorerModel:
         """
         raise NotImplementedError()
 
-    def _validate_features(self, feature_values):
-        """
-        Checks the features against provided values to confirm types,
-        ordinality, etc.
-        """
-        return [feature.validate(feature_values)
-                for feature, value in zip(self.feature, feature_values)]
-
     def _generate_stats(self, values):
         columns = zip(*values)
 

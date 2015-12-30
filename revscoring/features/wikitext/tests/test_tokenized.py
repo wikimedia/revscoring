@@ -23,6 +23,23 @@ def test_tokens():
     eq_(pickle.loads(pickle.dumps(revision.tokens)), revision.tokens)
 
 
+def test_tokens_in_types():
+    my_words = revision.datasources.tokens_in_types({"word"})
+    eq_(solve(my_words, cache={r_text: text}),
+        ['This', 'is', 'an', 'm80', 'It', 'has', 'grams', 'of', 'TNT',
+         "Here's", 'some', 'japanese', 'hats', 'I', 'can', 'use', 'and',
+         'But', 'can', 'I', 'foo', 'a', 'bar', 'I', 'guess', "we'll", 'never',
+         'know'])
+    eq_(pickle.loads(pickle.dumps(my_words)), my_words)
+
+
+def test_tokens_matching():
+    my_s_words = revision.datasources.tokens_matching(r"^s")
+    eq_(solve(my_s_words, cache={r_text: text}),
+        ['some'])
+    eq_(pickle.loads(pickle.dumps(my_s_words)), my_s_words)
+
+
 def test_numbers():
     eq_(solve(revision.datasources.numbers, cache={r_text: text}), ['50'])
     eq_(pickle.loads(pickle.dumps(revision.numbers)), revision.numbers)

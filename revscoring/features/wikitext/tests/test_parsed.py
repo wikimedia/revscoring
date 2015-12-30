@@ -6,12 +6,19 @@ from .. import revision
 from ....datasources import revision_oriented
 from ....dependencies import solve
 
+h_headings_ds = revision.datasources.heading_titles_matching(r"h")
 h_headings = revision.heading_titles_matching(r"h")
+lvl_2_headings_ds = revision.datasources.headings_by_level(2)
 lvl_2_headings = revision.headings_by_level(2)
+enwiki_wikilinks_ds = revision.datasources.wikilink_titles_matching(r"^:?en:")
 enwiki_wikilinks = revision.wikilink_titles_matching(r"^:?en:")
+wikimedia_external_links_ds = \
+    revision.datasources.external_link_urls_matching(r".*wikimedia.*")
 wikimedia_external_links = \
     revision.external_link_urls_matching(r".*wikimedia.*")
+ref_tags_ds = revision.datasources.tag_names_matching(r"ref")
 ref_tags = revision.tag_names_matching(r"ref")
+cite_templates_ds = revision.datasources.template_names_matching(r"^cite")
 cite_templates = revision.template_names_matching(r"^cite")
 
 r_text = revision_oriented.revision.text

@@ -117,20 +117,8 @@ class DependentSet:
     def __contains__(self, item):
         return item in self._dependents.union(*self._dependent_sets)
 
-    def add(self, item):
-        raise NotImplementedError()
-
-    def discard(self, item):
-        raise NotImplementedError()
-
     def __iter__(self):
         return iter(self._dependents.union(*self._dependent_sets))
-
-    def __reversed__(self):
-        return reversed(self._dependents.union(*self._dependent_sets))
-
-    def pop(self):
-        raise NotImplementedError()
 
     def __sub__(self, other):
         return self._dependents.union(*self._dependent_sets) - other

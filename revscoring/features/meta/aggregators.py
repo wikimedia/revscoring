@@ -43,7 +43,7 @@ class max(Feature):
                          returns=returns)
 
     def process(self, items):
-        if len(items) == 0:
+        if len_builtin(items) == 0:
             return self.returns()
         else:
             return self.returns(max_builtin(items))
@@ -56,7 +56,7 @@ class min(Feature):
                          returns=returns)
 
     def process(self, items):
-        if len(items) == 0:
+        if len_builtin(items) == 0:
             return self.returns()
         else:
             return self.returns(min_builtin(items))
