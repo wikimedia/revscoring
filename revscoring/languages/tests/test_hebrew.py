@@ -37,9 +37,9 @@ def test_informals():
 
 
 def test_dictionary():
-    cache = {r_text: "סוויפט גדלה בוויומיסינג, פנסילבניה, לנאשוויל"}
+    cache = {r_text: "סוויפט גדלה בוויומיסינג, לנאשוויל"}
     eq_(solve(hebrew.dictionary.revision.datasources.dict_words, cache=cache),
-        ['גדלה', 'פנסילבניה'])
+        ['גדלה'])
     eq_(solve(hebrew.dictionary.revision.datasources.non_dict_words,
               cache=cache),
         ['סוויפט', 'בוויומיסינג', 'לנאשוויל'])
