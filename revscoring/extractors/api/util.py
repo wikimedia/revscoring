@@ -5,15 +5,18 @@ REV_PROPS = {'ids', 'user', 'timestamp', 'userid', 'comment', 'size',
 USER_PROPS = {'groups', 'editcount', 'gender', 'registration'}
 
 
+def identity(v):
+    return v
+
 class key(Datasource):
 
     def __init__(self, keys, dict_datasource, name=None, if_missing=None,
                  apply=None):
         self.keys = keys
         self.if_missing = if_missing
-        self.apply = apply or (lambda v: v)
+        self.apply = apply or identity
         if name is None:
-            name = "{0}[{1}]".format(dict_datasource, repr(key))
+            name = "{0}[{1}]".format(dict_datasource, repr(keys))
 
         super().__init__(name, self.process, depends_on=[dict_datasource])
 

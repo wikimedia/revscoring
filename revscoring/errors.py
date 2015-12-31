@@ -43,9 +43,6 @@ class CaughtDependencyError(DependencyError):
         class_name = self.exception.__class__.__name__
         return "{0}: {1}".format(class_name, self.message)
 
-    def __getnewargs__(self):
-        return (self.message, self.exception, self.tb)
-
 
 class DependencyLoop(DependencyError):
     pass

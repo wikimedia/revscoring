@@ -23,9 +23,6 @@ class Extractor(Context):
     def extract(self, rev_ids, dependents, context=None, caches=None):
         raise NotImplementedError()
 
-    def extract_roots(self, rev_ids, dependents, context=None, caches=None):
-        raise NotImplementedError()
-
     @classmethod
     def from_config(cls, config, name, section_key="extractors"):
         section = config[section_key][name]
@@ -36,7 +33,7 @@ class Extractor(Context):
             return Class.from_config(config, name)
 
 
-class OfflineExtractor(Context):
+class OfflineExtractor(Extractor):
     """
     Implements a context for extracting features for a revision or a set of
     revisions that is 100% offline and will fetch no data.

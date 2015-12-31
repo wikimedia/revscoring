@@ -151,7 +151,7 @@ def _process_seconds_since_registration(id, registration, timestamp):
             # Something is weird.  Probably an old user.
             logger.info("Timestamp chronology issue {0} < {1}"
                         .format(timestamp, registration))
-            return 60 * 60 * 24 * 356  # one year
+            return 60 * 60 * 24 * 365  # one year
         else:
             return _process_seconds_since(registration, timestamp)
 

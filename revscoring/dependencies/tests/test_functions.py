@@ -98,6 +98,15 @@ def test_dig():
     eq_(len(roots), 1)
     eq_(set(roots), {foo})
 
+    def get_5():
+        return 5
+
+    myfoobar = Dependent("foobar", lambda my_5: 5 ** 2,
+                         depends_on=[get_5])
+    roots = list(dig(foobar_foobar, context={myfoobar}))
+    eq_(len(roots), 1)
+    eq_(set(roots), {get_5})
+
 
 def test_draw():
     foo = Dependent("foo", lambda: "foo")

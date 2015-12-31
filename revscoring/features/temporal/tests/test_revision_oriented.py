@@ -8,6 +8,18 @@ from ....dependencies import solve
 from ..revision_oriented import MW_REGISTRATION_EPOCH, revision
 
 
+def test_revision():
+
+    cache = {revision_oriented.revision.timestamp: Timestamp(0)}
+    eq_(solve(revision.day_of_week, cache=cache), 3)  # Thursday, Jan 1 1970
+
+    cache = {revision_oriented.revision.timestamp: Timestamp(0)}
+    eq_(solve(revision.hour_of_day, cache=cache), 0)  # Midnight
+
+    eq_(pickle.loads(pickle.dumps(revision.day_of_week)), revision.day_of_week)
+    eq_(pickle.loads(pickle.dumps(revision.hour_of_day)), revision.hour_of_day)
+
+
 def test_page_creation():
 
     cache = {
@@ -44,6 +56,15 @@ def test_user_registration():
         revision_oriented.revision.user.info.registration: None
     }
     eq_(solve(revision.user.seconds_since_registration, cache=cache), 10)
+
+    # Old user (broken registration date)
+    cache = {
+        revision_oriented.revision.timestamp: Timestamp(0),
+        revision_oriented.revision.user.id: 10,
+        revision_oriented.revision.user.info.registration: Timestamp(10)
+    }
+    eq_(solve(revision.user.seconds_since_registration, cache=cache),
+        60 * 60 * 24 * 365)  # one year
 
     eq_(pickle.loads(pickle.dumps(revision.user.seconds_since_registration)),
         revision.user.seconds_since_registration)

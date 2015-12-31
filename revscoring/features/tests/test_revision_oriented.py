@@ -27,6 +27,13 @@ def test_user_id_in_set():
     eq_(solve(is_me, cache={revision.datasources.user.id: 999}),
         False)
 
+def test_user_in_group():
+    is_bot_or_sysop = revision.user.in_group({'bot', 'sysop'})
+    eq_(solve(is_bot_or_sysop,
+              cache={revision.datasources.user.info.groups: {'bot'}}), True)
+    eq_(solve(is_bot_or_sysop,
+              cache={revision.datasources.user.info.groups: {'foo'}}), False)
+
 
 def test_page_title_matches():
     starts_with_t = revision.page.title_matches(r"^t")

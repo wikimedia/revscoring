@@ -26,3 +26,14 @@ def test_max():
     eq_(solve(pickle.loads(pickle.dumps(max_five_six_seven))), 7)
 
     eq_(str(max_five_six_seven), "<max(5, 6, 7)>")
+
+
+def test_min():
+
+    min_five_six_seven = modifiers.min(5, 6, 7)
+
+    eq_(solve(min_five_six_seven), 5)
+
+    eq_(pickle.loads(pickle.dumps(min_five_six_seven)), min_five_six_seven)
+
+    eq_(str(min_five_six_seven), "<min(5, 6, 7)>")

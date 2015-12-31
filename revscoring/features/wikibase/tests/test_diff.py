@@ -296,3 +296,16 @@ def test_proportion_of_links_added():
     eq_(round(solve(diff.proportion_of_links_added, cache=cache), 2), 0.87)
     eq_(pickle.loads(pickle.dumps(diff.proportion_of_links_added)),
         diff.proportion_of_links_added)
+
+def test_property_changed():
+    p999_changed = diff.property_changed('P999')
+    p19_changed = diff.property_changed('P19')
+
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
+
+    eq_(solve(p999_changed, cache=cache), False)
+    eq_(solve(p19_changed, cache=cache), True)
+
+    eq_(pickle.loads(pickle.dumps(p999_changed)), p999_changed)
+    eq_(pickle.loads(pickle.dumps(p19_changed)), p19_changed)

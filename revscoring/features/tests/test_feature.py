@@ -153,6 +153,9 @@ def test_not():
     not_true = not_(true)
     check_feature(not_true, False)
 
+    not_true = true.not_()
+    check_feature(not_true, False)
+
 
 def test_complex():
     five_plus_five_times_two_is_fifteen = five + five * 2 == 15
