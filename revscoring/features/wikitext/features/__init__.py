@@ -1,3 +1,3 @@
-from .revision_oriented import Revision
+from .revision_oriented import Revision, Diff
 
-__all__ = [Revision]
+__all__ = [Revision, Diff]

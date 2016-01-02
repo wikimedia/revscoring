@@ -4,8 +4,8 @@ useful for extracting features of edit and article quality.
 
 .. autodata:: revscoring.datasources.revision_oriented.revision
 
-Classes
-+++++++
+Supporting classes
+++++++++++++++++++
 
 .. autoclass:: revscoring.datasources.revision_oriented.Revision
     :members:

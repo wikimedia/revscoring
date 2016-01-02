@@ -13,48 +13,39 @@ class Revision:
             name=self._name + ".content_chars"
         )
         """
-        The number of characters of viewable content (no markup or templates)
+        `int` : The number of characters of viewable content (no markup or
+        templates
         """
 
         self.headings = aggregators.len(
             self.datasources.headings,
             name=self._name + ".headings"
         )
-        """
-        The number of headings
-        """
+        "`int` : The number of headings"
 
         self.external_links = aggregators.len(
             self.datasources.external_links,
             name=self._name + ".external_links"
         )
-        """
-        The number of external links
-        """
+        "`int` : The number of external links"
 
         self.wikilinks = aggregators.len(
             self.datasources.wikilinks,
             name=self._name + ".wikilinks"
         )
-        """
-        The number of wikilinks (internal to other pages in the wiki)
-        """
+        "`int` : The number of wikilinks (internal to other pages in the wiki)"
 
         self.tags = aggregators.len(
             self.datasources.tags,
             name=self._name + ".tags"
         )
-        """
-        The number of HTML tags
-        """
+        "`int` : The number of HTML tags"
 
         self.templates = aggregators.len(
             self.datasources.templates,
             name=self._name + ".templates"
         )
-        """
-        The number of templates
-        """
+        "`int` : The number of templates"
 
     def heading_titles_matching(self, regex, name=None):
         """

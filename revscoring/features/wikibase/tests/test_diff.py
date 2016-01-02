@@ -297,6 +297,16 @@ def test_proportion_of_links_added():
     eq_(pickle.loads(pickle.dumps(diff.proportion_of_links_added)),
         diff.proportion_of_links_added)
 
+
+def test_identifiers_changed():
+    cache = {revision_item_doc: ALAN_TOURING,
+             parent_item_doc: ALAN_TOURING_OLD}
+
+    eq_(round(solve(diff.identifiers_changed, cache=cache), 2), 1)
+    eq_(pickle.loads(pickle.dumps(diff.identifiers_changed)),
+        diff.identifiers_changed)
+
+
 def test_property_changed():
     p999_changed = diff.property_changed('P999')
     p19_changed = diff.property_changed('P19')

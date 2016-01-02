@@ -15,12 +15,20 @@ class BaseRevision(DependentSet):
                 name + ".parent",
                 self.datasources.parent
             )
+            """
+            :class:`revscoring.features.wikitext.Revision` : The
+            parent (aka "previous") revision of the page.
+            """
 
         if hasattr(self.datasources, "diff"):
             self.diff = Diff(
                 name + ".diff",
                 self.datasources.diff
             )
+            """
+            :class:`~revscoring.features.wikitext.Diff` : The
+            difference between this revision and the parent revision.
+            """
 
 
 class Revision(parsed.Revision, chars.Revision, tokenized.Revision,

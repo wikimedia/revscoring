@@ -1,3 +1,8 @@
+"""
+.. autoclass:: revscoring.features.wikibase.Diff
+    :members:
+    :member-order: bysource
+"""
 from ....datasources import Datasource
 from ....dependencies import DependentSet
 from ..util import diff_dicts

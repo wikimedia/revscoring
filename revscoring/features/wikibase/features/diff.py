@@ -14,62 +14,87 @@ class Diff(DependentSet):
         # Sitelinks
         self.sitelinks_added = \
             aggregators.len(self.datasources.sitelinks_added)
+        "`int` : The number of sitelinks added"
         self.sitelinks_removed = \
             aggregators.len(self.datasources.sitelinks_removed)
+        "`int` : The number of sitelinks removed"
         self.sitelinks_changed = \
             aggregators.len(self.datasources.sitelinks_changed)
+        "`int` : The number of sitelinks changed"
 
         # Labels
         self.labels_added = aggregators.len(self.datasources.labels_added)
+        "`int` : The number of labels added"
         self.labels_removed = aggregators.len(self.datasources.labels_removed)
+        "`int` : The number of labels removed"
         self.labels_changed = aggregators.len(self.datasources.labels_changed)
+        "`int` : The number of labels changed"
 
         # Aliases
         self.aliases_added = aggregators.len(self.datasources.aliases_added)
+        "`int` : The number of aliases added"
         self.aliases_removed = \
             aggregators.len(self.datasources.aliases_removed)
+        "`int` : The number of aliases removed"
         self.aliases_changed = \
             aggregators.len(self.datasources.aliases_changed)
+        "`int` : The number of aliases changed"
 
         # Descriptions
         self.descriptions_added = \
             aggregators.len(self.datasources.descriptions_added)
+        "`int` : The number of descriptions added"
         self.descriptions_removed = \
             aggregators.len(self.datasources.descriptions_removed)
+        "`int` : The number of descriptions removed"
         self.descriptions_changed = \
             aggregators.len(self.datasources.descriptions_changed)
+        "`int` : The number of descriptions changed"
 
         # Properties
         self.properties_added = \
             aggregators.len(self.datasources.properties_added)
+        "`int` : The number of properties added"
         self.properties_removed = \
             aggregators.len(self.datasources.properties_removed)
+        "`int` : The number of properties removed"
         self.properties_changed = \
             aggregators.len(self.datasources.properties_changed)
+        "`int` : The number of properties changed"
 
         # Claims
         self.claims_added = \
             aggregators.len(self.datasources.claims_added)
+        "`int` : The number of claims added"
         self.claims_removed = \
             aggregators.len(self.datasources.claims_removed)
+        "`int` : The number of claims removed"
         self.claims_changed = \
             aggregators.len(self.datasources.claims_changed)
+        "`int` : The number of claims changed"
 
         # Sources
         self.sources_added = aggregators.len(self.datasources.sources_added)
+        "`int` : The number of sources added"
         self.sources_removed = \
             aggregators.len(self.datasources.sources_removed)
+        "`int` : The number of sources removed"
 
         # Qualifiers
         self.qualifiers_added = \
             aggregators.len(self.datasources.qualifiers_added)
+        "`int` : The number of qualifiers added"
         self.qualifiers_removed = \
             aggregators.len(self.datasources.qualifiers_removed)
+        "`int` : The number of qualifiers removed"
 
         # Badges
         self.badges_added = aggregators.len(self.datasources.badges_added)
+        "`int` : The number of badges added"
         self.badges_removed = aggregators.len(self.datasources.badges_removed)
+        "`int` : The number of badges removed"
         self.badges_changed = aggregators.len(self.datasources.badges_changed)
+        "`int` : The number of badges changed"
 
         # AF/38
         self.proportion_of_qid_added = Feature(
@@ -78,6 +103,7 @@ class Diff(DependentSet):
             returns=float, depends_on=[self.datasources.parent_item,
                                        self.datasources.revision_item]
         )
+        "`int` : The proportion of Q# added."
 
         # AF/38
         self.proportion_of_language_added = Feature(
@@ -86,6 +112,7 @@ class Diff(DependentSet):
             returns=float, depends_on=[self.datasources.parent_item,
                                        self.datasources.revision_item]
         )
+        "`int` : The proportion of language added."
 
         self.proportion_of_links_added = Feature(
             name + ".proportion_of_links_added",
@@ -93,6 +120,14 @@ class Diff(DependentSet):
             returns=float, depends_on=[self.datasources.parent_item,
                                        self.datasources.revision_item]
         )
+        "`int` : The proportion of links added."
+
+        self.identifiers_changed = Feature(
+            name + ".identifiers_changed",
+            _process_identifiers_changed,
+            returns=int, depends_on=[self.datasources.claims_changed]
+        )
+        "`int` : The number of identifiers that were changed"
 
     def property_changed(self, property, name=None):
         """
@@ -179,3 +214,11 @@ def _process_proportion_of_links_added(parent_item, revision_item):
     parent_item_res = len(re.findall(re_qid, str(parent_item_doc)))
     return float(revision_item_res - parent_item_res) / \
         float(revision_item_res + 1)
+
+
+def _process_identifiers_changed(changed_claims):
+    counter = 0
+    for old, new in changed_claims:
+        if isinstance(old.target, str):
+            counter += 1
+    return counter

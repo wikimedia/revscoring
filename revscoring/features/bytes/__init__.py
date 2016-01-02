@@ -1,3 +1,17 @@
-from .revision_oriented import revision
+"""
+This features module provides access to features of the bytes of content in
+revisions.
 
-__all__ = [revision]
+.. autodata:: revscoring.features.bytes.revision
+
+Supporting classes
+++++++++++++++++++
+
+.. autoclass:: revscoring.features.bytes.Revision
+    :members:
+    :member-order: bysource
+
+"""
+from .revision_oriented import revision, Revision
+
+__all__ = [revision, Revision]

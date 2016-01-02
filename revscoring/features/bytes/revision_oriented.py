@@ -22,11 +22,15 @@ class Revision(DependentSet):
                 revision_datasources.parent
             )
             """
-            :class:`revscoring.features.bytes.Revision` : The length of the
-            bytes of the revision content in bytes
+            :class:`revscoring.features.bytes.Revision` : The
+            parent (aka "previous") revision of the page.
             """
 
-revision = Revision(
-    name,
-    datasources.Revision(name, revision_oriented.revision)
-)
+revision = Revision(name,
+                    datasources.Revision(name, revision_oriented.revision))
+"""
+Represents the base revision of interest.  Implements this a basic structure:
+
+* revision: :class:`~revscoring.features.bytes.Revision`
+    * parent: :class:`~revscoring.features.bytes.Revision`
+"""
