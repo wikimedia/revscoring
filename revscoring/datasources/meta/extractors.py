@@ -31,7 +31,9 @@ class regex(Datasource):
         super().__init__(name, self.process, depends_on=[text_datasource])
 
     def process(self, text_or_texts):
-        if isinstance(text_or_texts, str):
+        if text_or_texts is None:
+            return []
+        elif isinstance(text_or_texts, str):
             text = text_or_texts
             return [match.group(0) for match in self.group_re.finditer(text)]
         else:

@@ -26,7 +26,7 @@ class keys(Datasource):
                          depends_on=[dict_datasource])
 
     def process(self, d):
-        return d.keys()
+        return (d or {}).keys()
 
 
 class values(Datasource):
@@ -45,4 +45,4 @@ class values(Datasource):
                          depends_on=[dict_datasource])
 
     def process(self, d):
-        return [v for v in d.values()]
+        return [v for v in (d or {}).values()]

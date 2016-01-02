@@ -132,6 +132,16 @@ def test_diff():
     eq_(round(solve(diff.word_prop_delta_increase, cache=cache), 2), 0.33)
     eq_(round(solve(diff.word_prop_delta_decrease, cache=cache), 2), -1.0)
 
+    eq_(solve(diff.datasources.uppercase_word_delta, cache=cache),
+        {})
+    eq_(solve(diff.datasources.uppercase_word_prop_delta, cache=cache),
+        {})
+    eq_(round(solve(diff.uppercase_word_prop_delta_sum, cache=cache), 2), 0)
+    eq_(round(solve(diff.uppercase_word_prop_delta_increase, cache=cache), 2),
+        0)
+    eq_(round(solve(diff.uppercase_word_prop_delta_decrease, cache=cache), 2),
+        0)
+
     cache = {p_text: "This is 45 72 tokens 23 72.",
              r_text: "This is 45 72 hats pants 85 72 72."}
     eq_(solve(diff.datasources.number_delta, cache=cache),

@@ -406,6 +406,65 @@ class Diff:
         frequency table
         """
 
+        # UPPERCASE word
+        uppercase_word_delta_values = \
+            dicts.values(self.datasources.uppercase_word_delta)
+        self.uppercase_word_delta_sum = aggregators.sum(
+            uppercase_word_delta_values,
+            name=self._name + ".uppercase_word_delta_sum"
+        )
+        """
+        `int` : The sum of delta changes in the UPPERCASE word frequency
+        table
+        """
+
+        self.uppercase_word_delta_increase = aggregators.sum(
+            filters.positive(uppercase_word_delta_values),
+            name=self._name + ".uppercase_word_delta_increase"
+        )
+        """
+        `int` : The sum of delta increases in the UPPERCASE word frequency
+        table
+        """
+
+        self.uppercase_word_delta_decrease = aggregators.sum(
+            filters.negative(uppercase_word_delta_values),
+            name=self._name + ".uppercase_word_delta_decrease"
+        )
+        """
+        `int` : The sum of delta decreases in the UPPERCASE word frequency
+        table
+        """
+
+        uppercase_word_prop_delta_values = \
+            dicts.values(self.datasources.uppercase_word_prop_delta)
+        self.uppercase_word_prop_delta_sum = aggregators.sum(
+            uppercase_word_prop_delta_values,
+            name=self._name + ".uppercase_word_prop_delta_sum"
+        )
+        """
+        `float` : The sum of proportional delta changes in the UPPERCASE word
+        frequency table
+        """
+
+        self.uppercase_word_prop_delta_increase = aggregators.sum(
+            filters.positive(uppercase_word_prop_delta_values),
+            name=self._name + ".uppercase_word_prop_delta_increase"
+        )
+        """
+        `float` : The sum of proportional delta increases in the UPPERCASE word
+        frequency table
+        """
+
+        self.uppercase_word_prop_delta_decrease = aggregators.sum(
+            filters.negative(uppercase_word_prop_delta_values),
+            name=self._name + ".uppercase_word_prop_delta_decrease"
+        )
+        """
+        `float` : The sum of proportional delta decreases in the UPPERCASE word
+        frequency table
+        """
+
         # punctuation
         self.punctuation_delta_sum = aggregators.sum(
             dicts.values(self.datasources.punctuation_delta),

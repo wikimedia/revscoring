@@ -70,7 +70,7 @@ class RevisionPage(DependentSet):
 class Namespace(DependentSet):
     def __init__(self, namespace, extractor, rev_doc, namespace_title):
         super().__init__(namespace._name)
-        self.id = key(['page', 'ns'], rev_doc, name=namespace.id.name),
+        self.id = key(['page', 'ns'], rev_doc, name=namespace.id.name)
         self.name = Datasource(namespace.name.name, first,
                                depends_on=[namespace_title])
 

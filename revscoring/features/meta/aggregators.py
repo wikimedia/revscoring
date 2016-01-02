@@ -26,14 +26,17 @@ class sum(Feature):
                          returns=returns)
 
     def process(self, items):
-        return self.returns(sum_builtin(items))
+        return self.returns(sum_builtin(items or []))
 
 
 class len(Feature):
     def __init__(self, items_datasource, name=None):
         name = self._format_name(name, [items_datasource])
-        super().__init__(name, len_builtin, depends_on=[items_datasource],
+        super().__init__(name, self.process, depends_on=[items_datasource],
                          returns=int)
+
+    def process(self, items):
+        return len_builtin(items or [])
 
 
 class max(Feature):
@@ -43,7 +46,7 @@ class max(Feature):
                          returns=returns)
 
     def process(self, items):
-        if len_builtin(items) == 0:
+        if items is None or len_builtin(items) == 0:
             return self.returns()
         else:
             return self.returns(max_builtin(items))
@@ -56,7 +59,7 @@ class min(Feature):
                          returns=returns)
 
     def process(self, items):
-        if len_builtin(items) == 0:
+        if items is None or len_builtin(items) == 0:
             return self.returns()
         else:
             return self.returns(min_builtin(items))

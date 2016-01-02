@@ -1,17 +1,22 @@
 from .features import Dictionary, RegexMatches, Stemmed, Stopwords
+from .features.dictionary import utf16_cleanup
 
 name = "english"
 
 try:
     import enchant
-    dictionary = enchant.Dict("en")
+    enchant_dict = enchant.Dict("en")
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'en'.  " +
                       "Consider installing 'myspell-en-au', " +
                       "'myspell-en-gb', 'myspell-en-us' and/or " +
                       "'myspell-en-za'.")
 
-dictionary = Dictionary(name + ".dictionary", dictionary.check)
+
+def safe_dictionary_check(word):
+    return enchant_dict.check(utf16_cleanup(word))
+
+dictionary = Dictionary(name + ".dictionary", safe_dictionary_check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
 :class:`enchant.Dict` "en". Provided by `myspell-en-au`, `myspell-en-gb`,

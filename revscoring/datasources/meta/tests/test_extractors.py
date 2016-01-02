@@ -23,9 +23,9 @@ segment_extractor = extractors.regex(["foo bar", "bar foo"], segments,
 
 def test_text_extractor():
     cache = {text: "This is some text foo bar nope bar foo"}
-
-    eq_(solve(text_extractor, cache=cache),
-        ["foo bar", "bar foo"])
+    eq_(solve(text_extractor, cache=cache), ["foo bar", "bar foo"])
+    cache = {text: None}
+    eq_(solve(text_extractor, cache=cache), [])
 
     eq_(pickle.loads(pickle.dumps(text_extractor)), text_extractor)
 
@@ -33,7 +33,6 @@ def test_text_extractor():
 def test_segment_extractor():
     cache = {segments: ["This is some text foo bar nope bar foo", "foo bar",
                         "foo"]}
-
     eq_(solve(segment_extractor, cache=cache),
         ["foo bar", "bar foo", "foo bar"])
 

@@ -26,7 +26,7 @@ class item_in_set(Feature):
                          returns=bool)
 
     def process(self, items):
-        return self.item in items
+        return self.item in set(items or [])
 
 
 class set_contains_item(Feature):
@@ -48,4 +48,4 @@ class sets_intersect(Feature):
                          returns=bool)
 
     def process(self, items):
-        return len(items & self.items) > 0
+        return len(set(items or []) & self.items) > 0
