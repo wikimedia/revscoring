@@ -12,6 +12,13 @@ def test_comment_matches():
         False)
 
 
+def test_user_is_anon():
+    eq_(solve(revision.user.is_anon, cache={revision.datasources.user.id: 0}),
+        True)
+    eq_(solve(revision.user.is_anon, cache={revision.datasources.user.id: 1}),
+        False)
+
+
 def test_user_text_matches():
     starts_with_t = revision.user.text_matches(r"^t")
     eq_(solve(starts_with_t, cache={revision.datasources.user.text: "This"}),

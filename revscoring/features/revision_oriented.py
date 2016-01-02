@@ -21,6 +21,7 @@ import re
 
 from ..datasources import revision_oriented
 from ..dependencies import DependentSet
+from .feature import Feature
 from .meta import bools
 
 
@@ -176,9 +177,12 @@ class Namespace(DependentSet):
 
 class User(DependentSet):
 
-    def __init__(self, name, user_datasource):
+    def __init__(self, name, user_datasources):
         super().__init__(name)
-        self.datasources = user_datasource
+        self.datasources = user_datasources
+
+        self.is_anon = Feature("is_anon", _process_is_anon, returns=bool,
+                               depends_on=[self.datasources.id])
 
     def id_in_set(self, ids, name=None):
         """
@@ -235,6 +239,9 @@ class User(DependentSet):
         return bools.sets_intersect(groups, self.datasources.info.groups,
                                     name=name)
 
+
+def _process_is_anon(user_id):
+    return user_id == 0
 
 revision = Revision("revision", revision_oriented.revision)
 """
