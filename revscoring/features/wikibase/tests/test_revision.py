@@ -22,12 +22,15 @@ has_p999_foo = revision.has_property_value('P999', "Foo")
 
 def test_item_doc():
     solve(revision.datasources.item_doc, cache={r_text: ALAN_TEXT})
+    eq_(solve(revision.datasources.item_doc, cache={r_text: None}), None)
 
     eq_(pickle.loads(pickle.dumps(revision.datasources.item_doc)),
         revision.datasources.item_doc)
 
 
 def test_item():
+    eq_(solve(revision.datasources.item, cache={r_text: None}).claims, {})
+
     solve(revision.datasources.item, cache={r_text: ALAN_TEXT})
 
     eq_(pickle.loads(pickle.dumps(revision.datasources.item)),

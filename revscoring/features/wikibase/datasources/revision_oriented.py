@@ -104,12 +104,15 @@ class Revision(DependentSet):
 
 
 def _process_item_doc(text):
-    return json.loads(text or "")
+    if text is not None:
+        return json.loads(text)
+    else:
+        return None
 
 
 def _process_item(item_doc):
     item = pywikibase.ItemPage()
-    item.get(content=item_doc)
+    item.get(content=item_doc or {'aliases': {}})
     return item
 
 
