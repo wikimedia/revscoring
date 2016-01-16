@@ -14,7 +14,7 @@ class Revision(DependentSet):
             revision_datasources.bytes,
             name=name + ".length"
         )
-        "`int` : The length of the bytes of the revision content in bytes"
+        "`int` : The length of the revision content in bytes"
 
         if hasattr(revision_datasources, "parent"):
             self.parent = Revision(

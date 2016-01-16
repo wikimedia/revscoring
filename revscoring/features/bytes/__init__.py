@@ -9,7 +9,6 @@ Supporting classes
 
 .. autoclass:: revscoring.features.bytes.Revision
     :members:
-    :member-order: bysource
 
 """
 from .revision_oriented import revision, Revision
