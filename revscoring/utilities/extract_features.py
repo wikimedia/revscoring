@@ -80,7 +80,7 @@ def main(argv=None):
     if args['--extractors'] == "<cpu count>":
         extractors = cpu_count()
     else:
-        extractors = int(extractors)
+        extractors = int(args['--extractors'])
 
     verbose = args['--verbose']
     debug = args['--debug']
