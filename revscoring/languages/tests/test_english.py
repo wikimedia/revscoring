@@ -11,8 +11,7 @@ BAD = [
     "ass", "arse", "ASS", "assface", "asses", "stupidass", "fatass", "lazyass",
     "assclown", "asshat", "stupidasshat", "stupidarsehat",
     "autofellate", "autofellation", "autofellatio",
-    "bitch", "biotch", "BITCH", "bitchface", "bitches", "supidbitch",
-    "asdasdbitchasdlnasla",
+    "bitch", "biotch", "BITCH", "bitchface", "bitches",
     "blowjob", "blowme",
     "bollocks",
     "booger", "boogers", "boogereater", "boooooger"
@@ -34,7 +33,7 @@ BAD = [
     "dyke",
     "fag", "faggot", "phaggot", "faaaag", "fagface", "fags",
     "fart", "farteater", "farter", "farting",
-    "fuck", "FUCK", "fuckface", "fucker", "stupidfuck", "whatthefuck",
+    "fuck", "FUCK", "fuckface", "fucker", "stupidfuck",
     "gay", "gaaaay", "gays", "ghey",
     "gyp", "gypie", "gippo", "gyppie",
     "gook", "goook",
@@ -128,7 +127,7 @@ INFORMAL = [
     "smelly",
     "soo", "soooooo",
     "sorry",
-    "stupid", "stooopid", "stupidface", "brainstupid"
+    "stupid", "stooopid", "stupidface",
     "stink", "stinky", "stinks",
     "suck", "sucker", "sucking", "sux",
     "shouldn't", "shouldnt",
