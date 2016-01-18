@@ -38,7 +38,7 @@ class Revision(parsed.Revision, chars.Revision, tokenized.Revision,
 
 class BaseDiff(DependentSet):
 
-    def __init__(self, name, diff_datasources):
+    def __init__(self, name, diff_datasources, *args, **kwargs):
         super().__init__(name)
         self.datasources = diff_datasources
 

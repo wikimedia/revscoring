@@ -39,6 +39,8 @@ Supporting classes
             The number of punctuation characters
         **break_chars** : `int`
             The number of break characters
+        **longest_repeated_char** : `int`
+            The length of the most longest character repetition
 
     :Tokenized features:
         **tokens** : `int`
@@ -63,6 +65,10 @@ Supporting classes
             The number of punctuation tokens
         **breaks** : `int`
             The number of break tokens
+        **longest_token** : `int`
+            The length of the longest token
+        **longest_word** : `int`
+            The length of the longest word-token
 
     :Parsed features:
         **content_chars** : `int`

@@ -1,4 +1,4 @@
-from ....datasources.meta import dicts, filters
+from ....datasources.meta import dicts, filters, mappers
 from ...meta import aggregators
 
 
@@ -30,6 +30,12 @@ class Revision:
         "`int` : The number of punctuation tokens in the revision"
         self.breaks = aggregators.len(self.datasources.breaks)
         "`int` : The number of break tokens in the revision"
+        self.longest_token = aggregators.max(
+            mappers.map(len, self.datasources.tokens), returns=int)
+        "`int` : The longest single token in the revision"
+        self.longest_word = aggregators.max(
+            mappers.map(len, self.datasources.words), returns=int)
+        "`int` : The longest single word-token in the revision"
 
 
 class Diff:

@@ -110,6 +110,19 @@ def test_punctuations():
         {'.': 4, ':': 1, '?': 1, '。': 1})
 
 
+def test_longest_token():
+   eq_(solve(revision.longest_token, cache={r_text: text}), 20)
+
+   eq_(pickle.loads(pickle.dumps(revision.longest_token)),
+       revision.longest_token)
+
+def test_longest_word():
+    eq_(solve(revision.longest_word, cache={r_text: text}), 8)
+
+    eq_(pickle.loads(pickle.dumps(revision.longest_word)),
+        revision.longest_word)
+
+
 def test_diff():
     diff = revision.diff
 

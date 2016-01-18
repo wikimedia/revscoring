@@ -218,16 +218,23 @@ def test_break_chars():
         revision.diff.break_chars_removed)
 
 
-def test_longest_repeated_char_added():
+def test_longest_repeated_char():
     cache = {p_text: "This is words.",
              r_text: "This is aaaa words. kkkkkkkkkkkk"}
 
+    # Test an addition of a very long repeated char
+    eq_(solve(revision.longest_repeated_char, cache=cache), 12)
+    eq_(solve(revision.parent.longest_repeated_char, cache=cache), 1)
     eq_(solve(revision.diff.longest_repeated_char_added, cache=cache), 12)
 
-    eq_(pickle.loads(pickle.dumps(revision.diff.longest_repeated_char_added)),
-        revision.diff.longest_repeated_char_added)
-
+    # Test the no-change case
     cache = {p_text: "This is words.",
              r_text: "This is words."}
-
     eq_(solve(revision.diff.longest_repeated_char_added, cache=cache), 1)
+
+    eq_(pickle.loads(pickle.dumps(revision.longest_repeated_char)),
+        revision.longest_repeated_char)
+    eq_(pickle.loads(pickle.dumps(revision.parent.longest_repeated_char)),
+        revision.parent.longest_repeated_char)
+    eq_(pickle.loads(pickle.dumps(revision.diff.longest_repeated_char_added)),
+        revision.diff.longest_repeated_char_added)

@@ -66,6 +66,12 @@ class Revision:
         )
         "`int` : The number of break characters in the text"
 
+        self.longest_repeated_char = \
+            Feature(self._name + ".longest_repeated_char",
+                    _process_longest_repeated_char,
+                    returns=int, depends_on=[self.datasources.text])
+        "`int` : The most repeated character"
+
 
 class Diff:
 
@@ -216,5 +222,13 @@ def _process_longest_repeated_char_added(diff_segments_added):
         return max(sum(1 for _ in group)
                    for segment in diff_segments_added
                    for _, group in groupby(segment.lower()))
+    else:
+        return 1
+
+
+def _process_longest_repeated_char(text):
+    if len(text) > 0:
+        return max(sum(1 for _ in group)
+                   for _, group in groupby(text.lower()))
     else:
         return 1
