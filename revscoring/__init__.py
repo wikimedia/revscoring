@@ -77,6 +77,7 @@ support feature extraction.  In order to support this, we provide a
 collection of language feature sets that work like other features except
 that they are language-specific.  Language-specific feature sets are
 available for the following languages:
+:data:`~revscoring.languages.arabic`,
 :data:`~revscoring.languages.dutch`,
 :data:`~revscoring.languages.english`,
 :data:`~revscoring.languages.estonian`,

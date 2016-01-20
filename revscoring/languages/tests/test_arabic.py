@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import arabic
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -102,20 +102,36 @@ OTHER = [
 
 
 def test_badwords():
-    compare_extraction(arabic.revision.badwords_list, BAD, OTHER)
+    compare_extraction(arabic.badwords.revision.datasources.matches, BAD,
+                       OTHER)
+
+    eq_(arabic.badwords, pickle.loads(pickle.dumps(arabic.badwords)))
 
 
 def test_informals():
-    compare_extraction(arabic.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(arabic.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(arabic.informals, pickle.loads(pickle.dumps(arabic.informals)))
 
 
-def test_revision():
+def test_dictionary():
+    cache = {revision_oriented.revision.text: 'التي لم تكن معروفة  worngly.'}
+    eq_(solve(arabic.dictionary.revision.datasources.dict_words, cache=cache),
+        ["التي" ,"لم" ,"تكن" ,"معروفة"])
+    eq_(solve(arabic.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ["worngly"])
 
-    cache = {revision.text: "يقوم تاريخ علم الأحياء بدراسة الأحياء."}
-    eq_(solve(arabic.revision.words_list, cache=cache),
-        ["يقوم", "تاريخ", "علم", "الأحياء", "بدراسة", "الأحياء"])
+    eq_(arabic.dictionary, pickle.loads(pickle.dumps(arabic.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {revision_oriented.revision.text: 'التي لم تكن معروفة'}
+    eq_(solve(arabic.stopwords.revision.datasources.stopwords, cache=cache),
+        ['التي'])
+    eq_(solve(arabic.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ['لم' ,'تكن', 'معروفة'])
 
-    eq_(arabic, pickle.loads(pickle.dumps(arabic)))
+    eq_(arabic.stopwords, pickle.loads(pickle.dumps(arabic.stopwords)))

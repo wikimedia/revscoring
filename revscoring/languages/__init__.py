@@ -13,6 +13,11 @@ language assets are available. See :mod:`revscoring.languages.features`.
 
 dutch
 +++++
+.. automodule:: revscoring.languages.arabic
+    :members:
+
+dutch
++++++
 .. automodule:: revscoring.languages.dutch
     :members:
 
