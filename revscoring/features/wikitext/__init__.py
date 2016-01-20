@@ -82,6 +82,8 @@ Supporting classes
             The number of wikilinks (internal to other pages in the wiki)
         **tags** : `int`
             The number of HTML tags
+        **ref_tags** : `int`
+            The number of <ref> tags
         **templates** : `int`
             The number of templates
 

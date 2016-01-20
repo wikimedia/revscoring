@@ -16,8 +16,6 @@ wikimedia_external_links_ds = \
     revision.datasources.external_link_urls_matching(r".*wikimedia.*")
 wikimedia_external_links = \
     revision.external_link_urls_matching(r".*wikimedia.*")
-ref_tags_ds = revision.datasources.tag_names_matching(r"ref")
-ref_tags = revision.tag_names_matching(r"ref")
 cite_templates_ds = revision.datasources.template_names_matching(r"^cite")
 cite_templates = revision.template_names_matching(r"^cite")
 
@@ -107,12 +105,12 @@ def test_tags():
 
     eq_(solve(revision.tags, cache=cache), 2)
 
-    eq_(solve(ref_tags, cache=cache), 1)
+    eq_(solve(revision.ref_tags, cache=cache), 1)
 
     eq_(pickle.loads(pickle.dumps(revision.tags)),
         revision.tags)
-    eq_(pickle.loads(pickle.dumps(ref_tags)),
-        ref_tags)
+    eq_(pickle.loads(pickle.dumps(revision.ref_tags)),
+        revision.ref_tags)
 
 
 def test_templates():

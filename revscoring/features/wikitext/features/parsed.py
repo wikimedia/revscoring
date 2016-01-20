@@ -41,6 +41,12 @@ class Revision:
         )
         "`int` : The number of HTML tags"
 
+        self.ref_tags = aggregators.len(
+            self.datasources.tag_names_matching(r"ref"),
+            name=self._name + ".ref_tags"
+        )
+        "`int` : The number of <ref> tags"
+
         self.templates = aggregators.len(
             self.datasources.templates,
             name=self._name + ".templates"
