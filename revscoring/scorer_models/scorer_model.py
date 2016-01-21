@@ -63,14 +63,6 @@ class ScorerModel:
         """
         raise NotImplementedError()
 
-    def _validate_features(self, feature_values):
-        """
-        Checks the features against provided values to confirm types,
-        ordinality, etc.
-        """
-        return [feature.validate(feature_values)
-                for feature, value in zip(self.feature, feature_values)]
-
     def _generate_stats(self, values):
         columns = zip(*values)
 
@@ -81,7 +73,7 @@ class ScorerModel:
     def _scale_and_center(self, values, stats):
 
         for feature_values in values:
-            yield (tuple((val-mean)/max(sd, 0.01)
+            yield (tuple((val - mean) / max(sd, 0.01)
                    for (mean, sd), val in zip(stats, feature_values)))
 
     @classmethod

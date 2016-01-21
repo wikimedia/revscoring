@@ -253,4 +253,4 @@ def _cross_validate(observations, estimator, params, scoring="roc_auc",
         logger.warn("Could not cross-validate estimator {0}"
                     .format(estimator.__class__.__name__))
         logger.warn("Exception:\n" + traceback.format_exc())
-        return numpy.array([0]*folds)
+        return numpy.array([0] * folds)

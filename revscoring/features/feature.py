@@ -1,6 +1,12 @@
 """
 .. autoclass:: revscoring.Feature
     :members:
+
+.. autoclass:: revscoring.features.Modifier
+    :members:
+
+.. autoclass:: revscoring.features.Constant
+    :members:
 """
 from math import log as math_log
 
@@ -39,7 +45,7 @@ class Feature(Dependent):
             return value
 
     def __hash__(self):
-        return hash(('feature', self.name))
+        return hash('feature.' + self.name)
 
     # Binary math
     def __add__(self, summand):
@@ -99,10 +105,21 @@ class Feature(Dependent):
 
 
 class Constant(Feature):
+    """
+    A special sub-type of `revscoring.Feature` that returns a constant value.
 
-    def __init__(self, value):
+    :Parameters:
+        value : `mixed`
+            Any type of potential feature value
+        name : `str`
+            A name to give the feature
+    """
+
+    def __init__(self, value, name=None):
         self.value = value
-        super().__init__(str(value), self._process,
+        if name is None:
+            name = str(value)
+        super().__init__(name, self._process,
                          returns=type(value), depends_on=[])
 
     def _process(self):
@@ -110,6 +127,20 @@ class Constant(Feature):
 
 
 class Modifier(Feature):
+    """
+    Represents a modification of one or more predictive feature.
+
+    :Parameters:
+        name : str
+            The name of the feature
+        process : `func`
+            A function that will generate a feature value
+        return_type : `type`
+            A type to compare the return of this function to.
+        dependencies : `list`(`hashable`)
+                An ordered list of dependencies that correspond
+                to the `*args` of `process`
+    """
     pass
 
 
@@ -117,11 +148,13 @@ class BinaryOperator(Modifier):
 
     CHAR = "?"
 
-    def __init__(self, left, right, returns=None):
+    def __init__(self, left, right, returns=None, name=None):
         left = Feature.or_constant(left)
         right = Feature.or_constant(right)
 
-        name = "({0} {1} {2})".format(left.name, self.CHAR, right.name)
+        if name is None:
+            name = "({0} {1} {2})".format(left.name, self.CHAR, right.name)
+
         if returns is None:
             returns = type(self.operate(left.returns(), right.returns()))
 
@@ -176,9 +209,9 @@ class div(BinaryOperator):
 
     CHAR = "/"
 
-    def __init__(self, left, right):
+    def __init__(self, left, right, name=None):
         # Explicitly setting return type to float.
-        super().__init__(left, right, returns=float)
+        super().__init__(left, right, returns=float, name=name)
 
     def operate(self, left, right):
         return left / right
@@ -186,9 +219,9 @@ class div(BinaryOperator):
 
 class Comparison(BinaryOperator):
 
-    def __init__(self, left, right):
+    def __init__(self, left, right, name=None):
         # Explicitly setting return type to boolean.
-        super().__init__(left, right, returns=bool)
+        super().__init__(left, right, returns=bool, name=name)
 
 
 class gt(Comparison):
@@ -292,13 +325,14 @@ class max(Modifier):
     Generates a feature that represents the maximum of a set of
     :class:`revscoring.Feature` or constant values.
     """
-    def __init__(self, *args):
+    def __init__(self, *args, name=None):
         dependencies = [Feature.or_constant(arg) for arg in args]
         returns = float
         # Hardcoded even though max can return strings, it
         # shouldn't ever do that
 
-        name = "max({0})".format(", ".join(f.name for f in dependencies))
+        if name is None:
+            name = "max({0})".format(", ".join(f.name for f in dependencies))
         super().__init__(name, self._process, returns=returns,
                          depends_on=dependencies)
 
@@ -311,13 +345,14 @@ class min(Modifier):
     Generates a feature that represents the minimum of a set of
     :class:`revscoring.Feature` or constant values.
     """
-    def __init__(self, *args):
+    def __init__(self, *args, name=None):
         dependencies = [Feature.or_constant(arg) for arg in args]
         returns = float
         # Hardcoded even though max can return strings, it
         # shouldn't ever do that
 
-        name = "min({0})".format(", ".join(f.name for f in dependencies))
+        if name is None:
+            name = "min({0})".format(", ".join(f.name for f in dependencies))
         super().__init__(name, self._process, returns=returns,
                          depends_on=dependencies)
 
@@ -330,9 +365,11 @@ class log(Modifier):
     Generates a feature that represents the log of a
     :class:`revscoring.Feature`'s value.
     """
-    def __init__(self, feature):
+    def __init__(self, feature, name=None):
         feature = Feature.or_constant(feature)
-        super().__init__("log({0})".format(feature.name), self._process,
+        if name is None:
+            name = "log({0})".format(feature.name)
+        super().__init__(name, self._process,
                          returns=float, depends_on=[feature])
 
     def _process(self, feature_value):
@@ -344,9 +381,11 @@ class not_(Modifier):
     Generates a feature that represents the negation of a
     :class:`revscoring.Feature`'s value.
     """
-    def __init__(self, feature):
+    def __init__(self, feature, name=None):
         feature = Feature.or_constant(feature)
-        super().__init__("not {0}".format(feature.name), self._process,
+        if name is None:
+            name = "not {0}".format(feature.name)
+        super().__init__(name, self._process,
                          returns=bool, depends_on=[feature])
 
     def _process(self, feature_value):

@@ -1,12 +1,19 @@
-import sys
+from .features import Dictionary, RegexMatches, Stemmed, Stopwords
 
-from .space_delimited import SpaceDelimited
+name = "italian"
 
 try:
-    from nltk.stem.snowball import SnowballStemmer
-    stemmer = SnowballStemmer("italian")
-except ValueError:
-    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+    import enchant
+    dictionary = enchant.Dict("it")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'it'.  " +
+                      "Consider installing 'myspell-it'.")
+
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`~revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "it". Provided by `myspell-it`
+"""
 
 try:
     from nltk.corpus import stopwords as nltk_stopwords
@@ -16,14 +23,25 @@ except LookupError:
                       "You may need to install the nltk 'stopwords' " +
                       "corpora.  See http://www.nltk.org/data.html")
 
-try:
-    import enchant
-    dictionary = enchant.Dict("it")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'it'.  " +
-                      "Consider installing 'myspell-it'.")
+stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`~revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords` "italian"
+"""
 
-badwords = [
+try:
+    from nltk.stem.snowball import SnowballStemmer
+    stemmer = SnowballStemmer("italian")
+except ValueError:
+    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+
+stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`~revscoring.languages.features.Stemmed` word features via
+:class:`nltk.stem.snowball.SnowballStemmer` "italian"
+"""
+
+badword_regexes = [
     r"anale",
     r"ano",
     r"bastard[io]",
@@ -81,7 +99,7 @@ badwords = [
     r"stronza(t[ae])?",
     r"stronz[io]",
     r"stupido",
-    r"suca",  r"succhia",
+    r"suca", r"succhia",
     r"suka",
     r"tette",
     r"troi[ae]",
@@ -91,7 +109,13 @@ badwords = [
     r"zoccola"
 ]
 
-informals = [
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
+
+informal_regexes = [
     "(ah)+a?",
     "amo",
     "avete",
@@ -127,45 +151,8 @@ informals = [
     "volete"
 ]
 
-
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-italian
-=======
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-.. autoattribute:: revision.infonoise
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-.. autoattribute:: parent_revision.infonoise
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    dictionary=dictionary,
-    informals=informals,
-    stemmer=stemmer,
-    stopwords=stopwords
-)
+informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import vietnamese
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -59,26 +59,43 @@ OTHER = [
     """
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(vietnamese.revision.badwords_list, BAD, OTHER)
+    compare_extraction(vietnamese.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(vietnamese.badwords, pickle.loads(pickle.dumps(vietnamese.badwords)))
 
 
 def test_informals():
-    compare_extraction(vietnamese.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(vietnamese.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(vietnamese.informals, pickle.loads(pickle.dumps(vietnamese.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "Hóa thạch của: loài này được."}
-    eq_(solve(vietnamese.revision.words_list, cache=cache),
-        ["Hóa", "thạch", "của", "loài", "này", "được"])
+def test_dictionary():
+    cache = {r_text: "Hóa thạch của: loài này được."}
+    eq_(solve(vietnamese.dictionary.revision.datasources.dict_words,
+              cache=cache),
+        ['thạch', 'của', 'loài', 'này', 'được'])
+    eq_(solve(vietnamese.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ['Hóa'])
 
-    # Misspellings
-    cache = {revision.text: 'mà rất có thể được worngly. <td>'}
-    eq_(solve(vietnamese.revision.misspellings_list, cache=cache), ["worngly"])
+    eq_(vietnamese.dictionary,
+        pickle.loads(pickle.dumps(vietnamese.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {r_text: "Hóa thạch của: loài này được."}
+    eq_(solve(vietnamese.stopwords.revision.datasources.stopwords,
+              cache=cache),
+        ['của', 'này', 'được'])
+    eq_(solve(vietnamese.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ['Hóa', 'thạch', 'loài'])
 
-    eq_(vietnamese, pickle.loads(pickle.dumps(vietnamese)))
+    eq_(vietnamese.stopwords, pickle.loads(pickle.dumps(vietnamese.stopwords)))

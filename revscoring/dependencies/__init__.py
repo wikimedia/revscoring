@@ -15,6 +15,7 @@ context
 
 from .functions import solve, expand, dig, draw, normalize_context
 from .context import Context
-from .dependent import Dependent
+from .dependent import Dependent, DependentSet
 
-__all__ = [solve, expand, dig, draw, normalize_context, Context, Dependent]
+__all__ = [solve, expand, dig, draw, normalize_context, Context, Dependent,
+           DependentSet]

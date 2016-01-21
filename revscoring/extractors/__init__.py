@@ -13,6 +13,5 @@ extractor
 
 """
 from .extractor import Extractor, OfflineExtractor
-from .api import APIExtractor
 
-__all__ = [Extractor, OfflineExtractor, APIExtractor]
+__all__ = [Extractor, OfflineExtractor]

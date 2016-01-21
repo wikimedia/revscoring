@@ -1,20 +1,6 @@
-import sys
+from .features import Dictionary, RegexMatches, Stemmed, Stopwords
 
-from .space_delimited import SpaceDelimited
-
-try:
-    from nltk.stem.snowball import SnowballStemmer
-    stemmer = SnowballStemmer("german")
-except ValueError:
-    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
-
-try:
-    from nltk.corpus import stopwords as nltk_stopwords
-    stopwords = set(nltk_stopwords.words('german'))
-except LookupError:
-    raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
-                      "You may need to install the nltk 'stopwords' " +
-                      "corpora.  See http://www.nltk.org/data.html")
+name = "german"
 
 try:
     import enchant
@@ -24,7 +10,41 @@ except enchant.errors.DictNotFoundError:
                       "Consider installing 'myspell-de-de', " +
                       "'myspell-de-at', and/or 'myspell-de-ch'.")
 
-badwords = [
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`~revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "de". Provided by `myspell-de-de`, `myspell-de-at`,
+and `myspell-de-ch`.
+"""
+
+try:
+    from nltk.corpus import stopwords as nltk_stopwords
+    stopwords = set(nltk_stopwords.words('german'))
+except LookupError:
+    raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
+                      "You may need to install the nltk 'stopwords' " +
+                      "corpora.  See http://www.nltk.org/data.html")
+
+stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`~revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords` "german"
+"""
+
+try:
+    from nltk.stem.snowball import SnowballStemmer
+    stemmer = SnowballStemmer("german")
+except ValueError:
+    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+
+stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`~revscoring.languages.features.Stemmed` word features via
+:class:`nltk.stem.snowball.SnowballStemmer` "german"
+"""
+
+
+badword_regexes = [
     r"[äa]rsch\w*",
     r"assi",
     r"bescheuert",
@@ -58,7 +78,13 @@ badwords = [
     r"wix+e[rn]?"
 ]
 
-informals = [
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
+
+informal_regexes = [
     r"auserdem",
     r"bins",
     r"(bla)+",
@@ -146,45 +172,8 @@ informals = [
     r"xnxx"
 ]
 
-
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-german
-=======
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-.. autoattribute:: revision.infonoise
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-.. autoattribute:: parent_revision.infonoise
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    dictionary=dictionary,
-    informals=informals,
-    stemmer=stemmer,
-    stopwords=stopwords
-)
+informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

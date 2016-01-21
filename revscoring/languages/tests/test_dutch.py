@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import dutch
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -134,28 +134,43 @@ OTHER = [
 
 
 def test_badwords():
-    compare_extraction(dutch.revision.badwords_list, BAD, OTHER)
+    compare_extraction(dutch.badwords.revision.datasources.matches, BAD, OTHER)
+
+    eq_(dutch.badwords, pickle.loads(pickle.dumps(dutch.badwords)))
 
 
 def test_informals():
-    compare_extraction(dutch.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(dutch.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(dutch.informals, pickle.loads(pickle.dumps(dutch.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "De stemtoonhoogte is m80 van de kamertoon."}
-    eq_(solve(dutch.revision.words_list, cache=cache),
-        ["De", "stemtoonhoogte", "is", "m80", "van", "de", "kamertoon"])
+def test_dictionary():
+    cache = {revision_oriented.revision.text: 'Door middel van een worngly.'}
+    eq_(solve(dutch.dictionary.revision.datasources.dict_words, cache=cache),
+        ["Door", "middel", "van", "een"])
+    eq_(solve(dutch.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ["worngly"])
 
-    # Misspellings
-    cache = {revision.text: 'Door middel van een worngly. <td>'}
-    eq_(solve(dutch.revision.misspellings_list, cache=cache), ["worngly"])
-
-    # Infonoise
-    cache = {revision.text: "Door middel van een!"}
-    eq_(solve(dutch.revision.infonoise, cache=cache), 0.375)
+    eq_(dutch.dictionary, pickle.loads(pickle.dumps(dutch.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {revision_oriented.revision.text: 'Door middel van een!'}
+    eq_(solve(dutch.stopwords.revision.datasources.stopwords, cache=cache),
+        ["Door", "van", "een"])
+    eq_(solve(dutch.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ["middel"])
 
-    eq_(dutch, pickle.loads(pickle.dumps(dutch)))
+    eq_(dutch.stopwords, pickle.loads(pickle.dumps(dutch.stopwords)))
+
+
+def test_stemmed():
+    cache = {revision_oriented.revision.text: 'Door middel van een!'}
+    eq_(solve(dutch.stemmed.revision.datasources.stems, cache=cache),
+        ["dor", "middel", "van", "een"])
+
+    eq_(dutch.stemmed, pickle.loads(pickle.dumps(dutch.stemmed)))

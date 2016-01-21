@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import english
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -11,8 +11,7 @@ BAD = [
     "ass", "arse", "ASS", "assface", "asses", "stupidass", "fatass", "lazyass",
     "assclown", "asshat", "stupidasshat", "stupidarsehat",
     "autofellate", "autofellation", "autofellatio",
-    "bitch", "biotch", "BITCH", "bitchface", "bitches", "supidbitch",
-    "asdasdbitchasdlnasla",
+    "bitch", "biotch", "BITCH", "bitchface", "bitches",
     "blowjob", "blowme",
     "bollocks",
     "booger", "boogers", "boogereater", "boooooger"
@@ -34,7 +33,7 @@ BAD = [
     "dyke",
     "fag", "faggot", "phaggot", "faaaag", "fagface", "fags",
     "fart", "farteater", "farter", "farting",
-    "fuck", "FUCK", "fuckface", "fucker", "stupidfuck", "whatthefuck",
+    "fuck", "FUCK", "fuckface", "fucker", "stupidfuck",
     "gay", "gaaaay", "gays", "ghey",
     "gyp", "gypie", "gippo", "gyppie",
     "gook", "goook",
@@ -128,7 +127,7 @@ INFORMAL = [
     "smelly",
     "soo", "soooooo",
     "sorry",
-    "stupid", "stooopid", "stupidface", "brainstupid"
+    "stupid", "stooopid", "stupidface",
     "stink", "stinky", "stinks",
     "suck", "sucker", "sucking", "sux",
     "shouldn't", "shouldnt",
@@ -167,30 +166,48 @@ OTHER = [
     "pecker", 'suction', 'vaginal', 'titillatingly', 'test', 'edit'
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(english.revision.badwords_list, BAD, OTHER)
+    compare_extraction(english.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(english.badwords, pickle.loads(pickle.dumps(english.badwords)))
 
 
 def test_informals():
-    compare_extraction(english.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(english.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(english.informals, pickle.loads(pickle.dumps(english.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "I have an m80; and a shovel."}
-    eq_(solve(english.revision.words_list, cache=cache),
-        ["I", "have", "an", "m80", "and", "a", "shovel"])
+def test_dictionary():
+    cache = {r_text: 'This is spelled worngly. <td>'}
+    eq_(solve(english.dictionary.revision.datasources.dict_words, cache=cache),
+        ["This", "is", "spelled"])
+    eq_(solve(english.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ["worngly"])
 
-    # Misspellings
-    cache = {revision.text: 'This is spelled worngly. <td>'}
-    eq_(solve(english.revision.misspellings_list, cache=cache), ["worngly"])
-
-    # Infonoise
-    cache = {revision.text: "This is running!"}
-    eq_(solve(english.revision.infonoise, cache=cache), 3/13)
+    eq_(english.dictionary, pickle.loads(pickle.dumps(english.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {r_text: 'This is spelled worngly. <td>'}
+    eq_(solve(english.stopwords.revision.datasources.stopwords, cache=cache),
+        ["This", "is"])
+    eq_(solve(english.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ["spelled", "worngly"])
 
-    eq_(english, pickle.loads(pickle.dumps(english)))
+    eq_(english.stopwords, pickle.loads(pickle.dumps(english.stopwords)))
+
+
+def test_stemmmed():
+    cache = {r_text: 'This is spelled worngly. <td>'}
+    eq_(solve(english.stemmed.revision.datasources.stems, cache=cache),
+        ["this", "is", "spell", "worng"])
+
+    eq_(english.stemmed, pickle.loads(pickle.dumps(english.stemmed)))

@@ -28,11 +28,9 @@ class NB(ScikitLearnClassifier):
         if nb is None:
             nb = sklearn_class(**kwargs)
         super().__init__(features, classifier_model=nb, version=version)
-NBModel = NB
-"Alias for backwards compatibility"
 
 
-class GaussianNB(NBModel):
+class GaussianNB(NB):
     """
     Implements a Gaussian Naive Bayes model.
 
@@ -46,11 +44,9 @@ class GaussianNB(NBModel):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, sklearn_class=naive_bayes.GaussianNB, **kwargs)
-GaussianNBModel = GaussianNB
-"Alias for backwards compatibility"
 
 
-class MultinomialNB(NBModel):
+class MultinomialNB(NB):
     """
     Implements a Multinomial Naive Bayes model.
 
@@ -65,11 +61,9 @@ class MultinomialNB(NBModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, sklearn_class=naive_bayes.MultinomialNB,
                          **kwargs)
-MultinomialNBModel = MultinomialNB
-"Alias for backwards compatibility"
 
 
-class BernoulliNB(NBModel):
+class BernoulliNB(NB):
     """
     Implements a Bernoulli Naive Bayes model.
 
@@ -84,5 +78,3 @@ class BernoulliNB(NBModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, sklearn_class=naive_bayes.BernoulliNB,
                          **kwargs)
-BernoulliNBModel = BernoulliNB
-"Alias for backwards compatibility"

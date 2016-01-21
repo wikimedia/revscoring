@@ -1,6 +1,6 @@
-import sys
+from .features import Dictionary, RegexMatches, Stemmed, Stopwords
 
-from .space_delimited import SpaceDelimited
+name = "portuguese"
 
 try:
     import enchant
@@ -9,11 +9,11 @@ except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'pt'.  " +
                       "Consider installing 'myspell-pt'.")
 
-try:
-    from nltk.stem.snowball import SnowballStemmer
-    stemmer = SnowballStemmer("portuguese")
-except ValueError:
-    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`~revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "pt". Provided by `myspell-pt`
+"""
 
 try:
     from nltk.corpus import stopwords as nltk_stopwords
@@ -23,8 +23,25 @@ except LookupError:
                       "You may need to install the nltk 'stopwords' " +
                       "corpora.  See http://www.nltk.org/data.html")
 
+stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`~revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords` "portuguese"
+"""
 
-badwords = [
+try:
+    from nltk.stem.snowball import SnowballStemmer
+    stemmer = SnowballStemmer("portuguese")
+except ValueError:
+    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+
+stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`~revscoring.languages.features.Stemmed` word features via
+:class:`nltk.stem.snowball.SnowballStemmer` "portuguese"
+"""
+
+badword_regexes = [
     r"baba[ckq](as?|ão|ões|u?i[cçs]s?e)",  # douchebag
     r"bi(ch|x)as?",  # gay man
     r"boio(l[ai](tico)?|l[aã]o|lo(go|[gj]i[sx]ta))s?",  # gay man
@@ -81,7 +98,13 @@ badwords = [
     r"xixi"  # pee
 ]
 
-informals = [
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
+
+informal_regexes = [
     r"adoro",  # love
     r"aki",  # here
     r"amo",  # master
@@ -116,48 +139,8 @@ informals = [
     r"xau"  # bye
 ]
 
-
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-portuguese
-==========
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-.. autoattribute:: revision.infonoise
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-.. autoattribute:: parent_revision.infonoise
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    informals=informals,
-    dictionary=dictionary,
-    stemmer=stemmer,
-    stopwords=stopwords
-)
+informals = RegexMatches(name + ".informals", informal_regexes)
 """
-portuguese
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
 """

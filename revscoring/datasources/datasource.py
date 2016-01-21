@@ -25,4 +25,4 @@ class Datasource(Dependent):
         super().__init__(*args, **kwargs)
 
     def __hash__(self):
-        return hash(('datasource', self.name))
+        return hash('datasource.' + self.name)

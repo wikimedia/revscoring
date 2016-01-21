@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import turkish
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -171,22 +171,29 @@ OTHER = [
     """
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(turkish.revision.badwords_list, BAD, OTHER)
+    compare_extraction(turkish.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(turkish.badwords, pickle.loads(pickle.dumps(turkish.badwords)))
 
 
 def test_informals():
-    compare_extraction(turkish.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(turkish.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(turkish.informals, pickle.loads(pickle.dumps(turkish.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "Bir sezonda m18, takımın mücadele."}
-    eq_(solve(turkish.revision.words_list, cache=cache),
-        ["Bir", "sezonda", "m18", "takımın", "mücadele"])
+def test_stopwords():
+    cache = {r_text: 'Türkiye\'deki en üst seviye futbol ligi.'}
+    eq_(solve(turkish.stopwords.revision.datasources.stopwords, cache=cache),
+        ["en"])
+    eq_(solve(turkish.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ["Türkiye'deki", 'üst', 'seviye', 'futbol', 'ligi'])
 
-
-def test_pickling():
-
-    eq_(turkish, pickle.loads(pickle.dumps(turkish)))
+    eq_(turkish.stopwords, pickle.loads(pickle.dumps(turkish.stopwords)))

@@ -1,10 +1,20 @@
-import sys
+from .features import Dictionary, RegexMatches, Stopwords
 
-from .space_delimited import SpaceDelimited
+name = "ukrainian"
 
-# No stemmer
+try:
+    import enchant
+    dictionary = enchant.Dict("uk")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'uk'.  " +
+                      "Consider installing 'myspell-uk'.")
 
-# Copied from https://meta.wikimedia.org/wiki/?oldid=13877074
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`~revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "uk".  Provided by `myspell-uk`
+"""
+
 stopwords = [
     "або", "активних", "активності", "активні", "активність", "але",
     "алфавітом", "альтерн", "багато", "базисні", "без", "безробітних",
@@ -46,14 +56,13 @@ stopwords = [
     "її"
 ]
 
-try:
-    import enchant
-    dictionary = enchant.Dict("uk")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'uk'.  " +
-                      "Consider installing 'myspell-uk'.")
+stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`~revscoring.languages.features.Stopwords` features copied from
+"common words" in https://meta.wikimedia.org/wiki/?oldid=13877074
+"""
 
-badwords = [
+badword_regexes = [
     r"бзд(і|и|юх|я)\w*",
     r"бля",
     r"бля(д|т|х|ц)\w*",
@@ -102,7 +111,14 @@ badwords = [
     r"ч(е|ё|о)рно(жоп|пик|срак)\w*",
     r"шовб\w*"
 ]
-informals = [
+
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
+
+informal_regexes = [
     r"біс(а|і|и|о|у)\w*",
     r"бре(х|ш)\w*",
     r"в(и|ы)пенд\w*",
@@ -126,43 +142,8 @@ informals = [
     r"х(е|є)рн\w*",
 ]
 
-
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-ukrainian
-=========
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-.. autoattribute:: revision.infonoise
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    dictionary=dictionary,
-    informals=informals,
-    stopwords=stopwords
-)
+informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

@@ -1,0 +1,20 @@
+- revscoring
+  - features
+    - revision
+      - words
+  - languages
+    - english (Language, RegexBadwords, RegexInformals, Dictionary)
+      - revision
+        - badwords
+        - proportion_of_badwords = english.revision.badwords / max(revision.words, 1)
+        - informals
+        - proportion_of_informals = english.revision.informals / max(revision.words, 1)
+        - dict_words
+        - proportion_of_dictwords
+        - mispellings = revision.words - english.revision.dict_words
+        - proportion_of_misspellings = english.revision.misspellings / max(revision.words, 1)
+      - parent_revision
+      - ...
+    - french
+    - ... 
+

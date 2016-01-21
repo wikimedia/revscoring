@@ -138,9 +138,6 @@ class SVC(ScikitLearnClassifier):
         random.shuffle(new_values_labels)
         return new_values_labels
 
-SVCModel = SVC
-"Alias for backwards compatibility"
-
 
 class LinearSVC(SVC):
     """
@@ -160,9 +157,6 @@ class LinearSVC(SVC):
                             "like to use a different kernel, use SVCModel.")
         super().__init__(*args, kernel="linear", **kwargs)
 
-LinearSVCModel = LinearSVC
-"Alias for backwards compatibility"
-
 
 class RBFSVC(SVC):
     """
@@ -181,6 +175,3 @@ class RBFSVC(SVC):
             raise TypeError("'kernel' is hard-coded to 'rbf'. If you'd " +
                             "like to use a different kernel, try SVCModel.")
         super().__init__(*args, kernel="rbf", **kwargs)
-
-RBFSVCModel = RBFSVC
-"Alias for backwards compatibility"

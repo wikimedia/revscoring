@@ -1,6 +1,19 @@
-import sys
+from .features import Dictionary, RegexMatches, Stopwords
 
-from .space_delimited import SpaceDelimited
+name = "dutch"
+
+try:
+    import enchant
+    dictionary = enchant.Dict("ar")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'ar'.  " +
+                      "Consider installing 'aspell-ar'.")
+
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
+"""
+:class:`~revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "nl".  Provided by `myspell-nl`
+"""
 
 stopwords = [
     r"ابن",  # son
@@ -8,7 +21,6 @@ stopwords = [
     r"الاسم",  # the name
     r"البلد",  # the land
     r"الت",
-    r"التاريخ",  # date/history
     r"التي",
     r"الثالث",  # third
     r"الثاني",  # second (2nd)
@@ -252,9 +264,16 @@ stopwords = [
     r"يوجد",
     r"يوليو",
     r"يوم",
-    r"يونيو",
+    r"يونيو"
 ]
-badwords = [
+
+stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`~revscoring.languages.features.Stopwords` features copied from
+"common words" in https://meta.wikimedia.org/wiki/?oldid=15258449
+"""
+
+badword_regexes = [
     r"احا",
     r"عاهرا",
     r"زندقتهما",
@@ -289,7 +308,13 @@ badwords = [
     r"الشيطان",  # Satan
 ]
 
-informals = [
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
+
+informal_regexes = [
     r"كالامازوه",
     r"فغانيون",
     r"ومراف",
@@ -335,40 +360,8 @@ informals = [
     r"شيخ",  # Shikh
 ]
 
-
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-arabic
-=======
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.informals
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.informals
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    informals=informals,
-    stopwords=stopwords
-)
+informals = RegexMatches(name + ".informals", informal_regexes)
 """
-arabic
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
 """

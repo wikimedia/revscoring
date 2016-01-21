@@ -1,12 +1,27 @@
-import sys
+from .features import Dictionary, RegexMatches, Stemmed, Stopwords
+from .features.dictionary import utf16_cleanup
 
-from .space_delimited import SpaceDelimited
+name = "english"
 
 try:
-    from nltk.stem.snowball import SnowballStemmer
-    stemmer = SnowballStemmer("english")
-except ValueError:
-    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+    import enchant
+    enchant_dict = enchant.Dict("en")
+except enchant.errors.DictNotFoundError:
+    raise ImportError("No enchant-compatible dictionary found for 'en'.  " +
+                      "Consider installing 'myspell-en-au', " +
+                      "'myspell-en-gb', 'myspell-en-us' and/or " +
+                      "'myspell-en-za'.")
+
+
+def safe_dictionary_check(word):
+    return enchant_dict.check(utf16_cleanup(word))
+
+dictionary = Dictionary(name + ".dictionary", safe_dictionary_check)
+"""
+:class:`~revscoring.languages.features.Dictionary` features via
+:class:`enchant.Dict` "en". Provided by `myspell-en-au`, `myspell-en-gb`,
+`myspell-en-us`, and `myspell-en-za`.
+"""
 
 try:
     from nltk.corpus import stopwords as nltk_stopwords
@@ -16,24 +31,35 @@ except LookupError:
                       "You may need to install the nltk 'stopwords' " +
                       "corpora.  See http://www.nltk.org/data.html")
 
-try:
-    import enchant
-    dictionary = enchant.Dict("en")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'en'.  " +
-                      "Consider installing 'myspell-en-au', " +
-                      "'myspell-en-gb', 'myspell-en-us' and/or " +
-                      "'myspell-en-za'.")
+stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`~revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords` "english"
+"""
 
-badwords = [
+try:
+    from nltk.stem.snowball import SnowballStemmer
+    stemmer = SnowballStemmer("english")
+except ValueError:
+    raise ImportError("Could not load stemmer for {0}. ".format(__name__))
+
+stemmed = Stemmed(name + ".stemmed", stemmer.stem)
+"""
+:class:`~revscoring.languages.features.Stemmed` word features via
+:class:`nltk.stem.snowball.SnowballStemmer` "english"
+"""
+
+badword_regexes = [
     r"(fat|stupid|lazy)?a+[sr]+s+e*([-_ ]?butt|clown|face|hole|hat|e?s)?",
     r"autofel+at(e|io|ing|ion)s?",
-    r"\w*b+i+o?t+c+h+\w*", r"bootlip",
-    r"\w*blow(job|me)\w*",
+    r"b+i+o?t+c+h+\w*",
+    r"bootlip",
+    r"blow(job|me)\w*",
     r"bollock\w*",
-    r"\w*boo+ger\w*",
+    r"boo+ger\w*",
     r"(ass|arse)?b+u+t+t+([-_ ]?clown|face|hole|hat|es)?",
     r"bugg(er|ing)\w*",
+    r"butthead", r"buttface", r"buttsex", r"buttf+u+c*k+\w*",
     r"chlamydia",
     r"cholo",
     r"chug",
@@ -41,28 +67,28 @@ badwords = [
     r"cock\w*",
     r"coo+n\w*",
     r"[ck]racker\w*",
-    r"\w*c+u+n+t\w*",
+    r"c+u+n+t\w*",
     r"crack[-_ ]?head\w*",
     r"crooks?",
     r"defraud",
-    r"\w*dick\w*",
-    r"\w*d+i+l+d+o+\w*",
-    r"\w*dishonest\w*",
+    r"(limp)?dick\w*",
+    r"d+i+l+d+o+\w*",
+    r"dishonest\w*",
     r"dot[-_ ]?head\w*",
-    r"\w*dyk(e|ing)\w*",
+    r"dyk(e|ing)\w*",
     r"(f|ph)a+g+(ot)?\w*",
-    r"\w*fart\w*",
+    r"fart\w*",
     r"fraud",
-    r"\w*f+u+c*k+\w*",
-    r"\w*gh?[ea]+y+\w*",
+    r"f+u+c*k+\w*",
+    r"gh?[ea]+y+\w*",
     r"g[yi]p+(o|y|ie?)?", r"gyppie",
     r"goo+k",
     r"gringo",
     r"he+rpe+s",
     r"hill-?billy",
     r"hom(a|o|er)(sexual)?\w*",
-    r"\w*hooker\w*",
-    r"\w*injun\w*",
+    r"hooker\w*",
+    r"injun\w*",
     r"j+a+p+o?",
     r"k[iy]+ke",
     r"kwash(i|ee)",
@@ -77,9 +103,9 @@ badwords = [
     r"overdose[sd]",
     r"peckerwood\w*",
     r"p(a?e|æ)do((f|ph)[iy]le)?s?",
-    r"\w*peni(s)?\w*",
+    r"peni(s)?\w*",
     r"piss\w*",
-    r"\w*prostitute\w*",
+    r"prostitute\w*",
     r"pot[-_ ]?head\w*",
     r"q(w|u)ash(i|ee)",
     r"rag[-_ ]?head",
@@ -87,27 +113,35 @@ badwords = [
     r"round[-_ ]?eye",
     r"satan(ic|ism|ist)s?",
     r"scabies",
-    r"\w*s+h+[ia]+t+\w*",
+    r"s+h+[ia]+t+\w*",
     r"s+l+u+t+\w*",
     r"spi(g|c|k)+",
     r"spigotty",
     r"spik",
     r"spook",
     r"squarehead",
+    r"stupid(s+h+[ia]+t+|c+u+n+t+|f+u+c*k+|t+w+a+t+|w+h+o+r+e+)\w*",
     r"subnormal",
     r"su+c*k+(er|iest|a)",
     r"syphil+is",
     r"terror(ist|ism|i[zs](e|ing|ed))s?",
     r"thei[fv](e?s)?",
     r"tran(ny|sexual)",
-    r"\w*t+w+a+t+\w*",
+    r"t+w+a+t+\w*",
     r"ti+t+((s|ies|y)[\w]*)?",
     r"v+a+g+(i+n+a+)?", r"vajaja\w*",
-    r"wank\w*", r"wetback\w*", r"\w*w+h+o+r+(e+|ing)\w*", r"w+o+g+", r"w+o+p+",
+    r"wank\w*", r"wetback\w*", r"w+h+o+r+(e+|ing)\w*", r"w+o+g+", r"w+o+p+",
     r"yank(e+)?", r"yid",
     r"zipperhead"
 ]
-informals = [
+
+badwords = RegexMatches(name + ".badwords", badword_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+badword detecting regexes.
+"""
+
+informal_regexes = [
     r"ain'?t", "a+we?some?(r|st)?",
     r"(b+l+a+h*)+",
     r"b+o+n+e+r+",
@@ -140,9 +174,9 @@ informals = [
     r"noo+b(y|ie|s)?\w*",
     r"no+pe",
     r"o+k+(a+y+)?",
-    r"\w*o+m+g+\w*",
+    r"o+m+g+\w*",
     r"poo+p\w*",
-    r"\w*retard\w*", r"tard",
+    r"retard\w*", r"tard",
     r"r+o+f+l+(mao)?",
     r"s+e+x+y+",
     r"so+rry",
@@ -150,12 +184,12 @@ informals = [
     r"smelly",
     r"soo+",
     r"stink(s|y)?",
-    r"\w*s+t+[uo]+p+i+d+\w*",
+    r"s+t+[uo]+p+i+d+\w*",
     r"suck(s|ing|er)?", r"sux",
     r"shouldn'?t",
     r"test +edit", r"t+u+r+d+s?\w*",
     r"wasn'?t",
-    r"w+[oua]+t+", r"\w*wtf\w*", r"wh?[ua]+t?[sz]+[ua]+p",
+    r"w+[oua]+t+", r"wtf\w*", r"wh?[ua]+t?[sz]+[ua]+p",
     r"wu+z+",
     r"won'?t",
     r"w+o+o+f+",
@@ -163,45 +197,8 @@ informals = [
     r"y+o+l+o+"
 ]
 
-
-sys.modules[__name__] = SpaceDelimited(
-    __name__,
-    doc="""
-english
-=======
-
-revision
---------
-.. autoattribute:: revision.words
-.. autoattribute:: revision.content_words
-.. autoattribute:: revision.badwords
-.. autoattribute:: revision.misspellings
-.. autoattribute:: revision.informals
-.. autoattribute:: revision.infonoise
-
-parent_revision
----------------
-.. autoattribute:: parent_revision.words
-.. autoattribute:: parent_revision.content_words
-.. autoattribute:: parent_revision.badwords
-.. autoattribute:: parent_revision.misspellings
-.. autoattribute:: parent_revision.informals
-.. autoattribute:: parent_revision.infonoise
-
-diff
-----
-.. autoattribute:: diff.words_added
-.. autoattribute:: diff.words_removed
-.. autoattribute:: diff.badwords_added
-.. autoattribute:: diff.badwords_removed
-.. autoattribute:: diff.misspellings_added
-.. autoattribute:: diff.misspellings_removed
-.. autoattribute:: diff.informals_added
-.. autoattribute:: diff.informals_removed
-    """,
-    badwords=badwords,
-    dictionary=dictionary,
-    informals=informals,
-    stemmer=stemmer,
-    stopwords=stopwords
-)
+informals = RegexMatches(name + ".informals", informal_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+informal word detecting regexes.
+"""

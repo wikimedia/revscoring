@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import italian
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -127,30 +127,50 @@ OTHER = [
     """, "ha"
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(italian.revision.badwords_list, BAD, OTHER)
+    compare_extraction(italian.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(italian.badwords, pickle.loads(pickle.dumps(italian.badwords)))
 
 
 def test_informals():
-    compare_extraction(italian.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(italian.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(italian.informals, pickle.loads(pickle.dumps(italian.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "Furono progettate e m80 costruire dalla."}
-    eq_(solve(italian.revision.words_list, cache=cache),
-        ["Furono", "progettate", "e", "m80", "costruire", "dalla"])
+def test_dictionary():
+    cache = {r_text: "Furono progettate e m80 costruire dalla."}
+    eq_(solve(italian.dictionary.revision.datasources.dict_words,
+              cache=cache),
+        ['Furono', 'progettate', 'e', 'costruire', 'dalla'])
+    eq_(solve(italian.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ['m80'])
 
-    # Misspellings
-    cache = {revision.text: 'Furono progettate e dalla worngly. <td>'}
-    eq_(solve(italian.revision.misspellings_list, cache=cache), ["worngly"])
-
-    # Infonoise
-    cache = {revision.text: "Furono progettate e dalla!"}
-    eq_(solve(italian.revision.infonoise, cache=cache), 7/22)
+    eq_(italian.dictionary,
+        pickle.loads(pickle.dumps(italian.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {r_text: "Furono progettate e m80 costruire dalla."}
+    eq_(solve(italian.stopwords.revision.datasources.stopwords, cache=cache),
+        ['Furono', 'e', 'dalla'])
+    eq_(solve(italian.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ['progettate', 'm80', 'costruire'])
 
-    eq_(italian, pickle.loads(pickle.dumps(italian)))
+    eq_(italian.stopwords, pickle.loads(pickle.dumps(italian.stopwords)))
+
+
+def test_stemmmed():
+    cache = {r_text: "Furono progettate e m80 costruire dalla."}
+    eq_(solve(italian.stemmed.revision.datasources.stems, cache=cache),
+        ['fur', 'progett', 'e', 'm80', 'costru', 'dall'])
+
+    eq_(italian.stemmed, pickle.loads(pickle.dumps(italian.stemmed)))

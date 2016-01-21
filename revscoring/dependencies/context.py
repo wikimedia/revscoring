@@ -2,7 +2,7 @@
 .. autoclass:: Context
     :members:
 """
-from .functions import dig, draw, expand, solve
+from .functions import dig, draw, expand, normalize_context, solve
 
 
 class Context:
@@ -67,13 +67,13 @@ class Context:
         context, cache = self.update_context_and_cache(context, cache)
         return draw(dependent, context=context, cache=cache)
 
+    def update(self, context=None, cache=None):
+        self.context.update(normalize_context(context or {}))
+        self.cache.update(cache or {})
+
     def update_context_and_cache(self, context, cache):
-        new_context = {}  # Prepare context
-        new_context.update(self.context)  # Load extractor context
-        new_context.update(context or {})  # Load call context
-
-        new_cache = {}  # Prepare cache
-        new_cache.update(self.cache)  # Load cache for extractor
-        new_cache.update(cache or {})  # Load call cache
-
-        return new_context, new_cache
+        local_context = dict(self.context)
+        local_context.update(normalize_context(context or {}))
+        local_cache = dict(self.cache)
+        local_cache.update(cache or {})
+        return local_context, local_cache

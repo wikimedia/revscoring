@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import estonian
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -29,26 +29,41 @@ OTHER = [
     """
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(estonian.revision.badwords_list, BAD, OTHER)
+    compare_extraction(estonian.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(estonian.badwords, pickle.loads(pickle.dumps(estonian.badwords)))
 
 
 def test_informals():
-    compare_extraction(estonian.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(estonian.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(estonian.informals, pickle.loads(pickle.dumps(estonian.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "Tal olid nooremad m80, vennad Gustav."}
-    eq_(solve(estonian.revision.words_list, cache=cache),
-        ["Tal", "olid", "nooremad", "m80", "vennad", "Gustav"])
+def test_dictionary():
+    cache = {r_text: "Tal olid nooremad, vennad worngly. <td>"}
+    eq_(solve(estonian.dictionary.revision.datasources.dict_words,
+              cache=cache), ["Tal", "olid", "nooremad", "vennad"])
+    eq_(solve(estonian.dictionary.revision.datasources.non_dict_words,
+              cache=cache), ["worngly"])
 
-    # Misspellings
-    cache = {revision.text: "Tal olid nooremad, vennad, worngly. <td>"}
-    eq_(solve(estonian.revision.misspellings_list, cache=cache), ["worngly"])
+    eq_(estonian.dictionary, pickle.loads(pickle.dumps(estonian.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {revision_oriented.revision.text: "Bergi ja Gerdruta Wilhelmine " +
+                                              "von Ermesi vanima pojana."}
+    eq_(solve(estonian.stopwords.revision.datasources.stopwords, cache=cache),
+        ["von"])
+    eq_(solve(estonian.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ["Bergi", "ja", "Gerdruta", "Wilhelmine", "Ermesi", "vanima",
+         "pojana"])
 
-    eq_(estonian, pickle.loads(pickle.dumps(estonian)))
+    eq_(estonian.stopwords, pickle.loads(pickle.dumps(estonian.stopwords)))

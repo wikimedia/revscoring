@@ -24,17 +24,13 @@ Abstract classes
 
 
 """
-from .svc import SVC, SVCModel, LinearSVC, LinearSVCModel, RBFSVC, RBFSVCModel
-from .nb import (NB, NBModel, GaussianNB, GaussianNBModel, MultinomialNB,
-                 MultinomialNBModel, BernoulliNB, BernoulliNBModel)
+from .svc import SVC, LinearSVC, RBFSVC
+from .nb import NB, GaussianNB, MultinomialNB, BernoulliNB
 from .scorer_model import ScorerModel, MLScorerModel
 from .sklearn_classifier import ScikitLearnClassifier
-from .rf import RF, RFModel
+from .rf import RF
 
 __all__ = [
-    SVC, SVCModel, LinearSVC, LinearSVCModel, RBFSVC, RBFSVCModel,
-    NB, NBModel, GaussianNB, GaussianNBModel, MultinomialNB,
-    MultinomialNBModel, BernoulliNB, BernoulliNBModel,
-    ScorerModel, MLScorerModel, ScikitLearnClassifier,
-    RF, RFModel
+    SVC, LinearSVC, RBFSVC, NB, GaussianNB, MultinomialNB, BernoulliNB,
+    ScorerModel, MLScorerModel, ScikitLearnClassifier, RF
 ]

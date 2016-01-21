@@ -3,7 +3,7 @@ import pickle
 from nose.tools import eq_
 
 from .. import spanish
-from ...datasources import revision
+from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
@@ -189,30 +189,48 @@ OTHER = [
     """,
 ]
 
+r_text = revision_oriented.revision.text
+
 
 def test_badwords():
-    compare_extraction(spanish.revision.badwords_list, BAD, OTHER)
+    compare_extraction(spanish.badwords.revision.datasources.matches,
+                       BAD, OTHER)
+
+    eq_(spanish.badwords, pickle.loads(pickle.dumps(spanish.badwords)))
 
 
 def test_informals():
-    compare_extraction(spanish.revision.informals_list, INFORMAL, OTHER)
+    compare_extraction(spanish.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
+
+    eq_(spanish.informals, pickle.loads(pickle.dumps(spanish.informals)))
 
 
-def test_revision():
-    # Words
-    cache = {revision.text: "Su cuerpo es largo y estilizado, está áreas."}
-    eq_(solve(spanish.revision.words_list, cache=cache),
-        ["Su", "cuerpo", "es", "largo", "y", "estilizado", "está", "áreas"])
+def test_dictionary():
+    cache = {r_text: 'Su cuerpo es largo y worngly. <td>'}
+    eq_(solve(spanish.dictionary.revision.datasources.dict_words, cache=cache),
+        ['Su', 'cuerpo', 'es', 'largo', 'y'])
+    eq_(solve(spanish.dictionary.revision.datasources.non_dict_words,
+              cache=cache),
+        ["worngly"])
 
-    # Misspellings
-    cache = {revision.text: 'Su cuerpo es largo y worngly. <td>'}
-    eq_(solve(spanish.revision.misspellings_list, cache=cache), ["worngly"])
-
-    # Infonoise
-    cache = {revision.text: "Su cuerpo es largo!"}
-    eq_(solve(spanish.revision.infonoise, cache=cache), 9/15)
+    eq_(spanish.dictionary, pickle.loads(pickle.dumps(spanish.dictionary)))
 
 
-def test_pickling():
+def test_stopwords():
+    cache = {r_text: "Su cuerpo es largo y estilizado, está áreas."}
+    eq_(solve(spanish.stopwords.revision.datasources.stopwords, cache=cache),
+        ['Su', 'es', 'y', 'está'])
+    eq_(solve(spanish.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ['cuerpo', 'largo', 'estilizado', 'áreas'])
 
-    eq_(spanish, pickle.loads(pickle.dumps(spanish)))
+    eq_(spanish.stopwords, pickle.loads(pickle.dumps(spanish.stopwords)))
+
+
+def test_stemmmed():
+    cache = {r_text: "Su cuerpo es largo y estilizado, está áreas."}
+    eq_(solve(spanish.stemmed.revision.datasources.stems, cache=cache),
+        ['su', 'cuerp', 'es', 'larg', 'y', 'estiliz', 'esta', 'are'])
+
+    eq_(spanish.stemmed, pickle.loads(pickle.dumps(spanish.stemmed)))
