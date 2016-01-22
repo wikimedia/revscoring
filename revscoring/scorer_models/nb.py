@@ -19,7 +19,7 @@ from sklearn import naive_bayes
 
 from .sklearn_classifier import ScikitLearnClassifier
 
-logger = logging.getLogger("revscoring.scorers.nb")
+logger = logging.getLogger(__name__)
 
 
 class NB(ScikitLearnClassifier):

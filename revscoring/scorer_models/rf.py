@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 from .sklearn_classifier import ScikitLearnClassifier
 
-logger = logging.getLogger("revscoring.scorers.rf")
+logger = logging.getLogger(__name__)
 
 
 class RF(ScikitLearnClassifier):
