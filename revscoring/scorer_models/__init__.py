@@ -18,6 +18,10 @@ Random Forest
 +++++++++++++
 .. automodule:: revscoring.scorer_models.rf
 
+Gradient Boosting
++++++++++++++++++
+.. automodule:: revscoring.scorer_models.gradient_boosting
+
 Abstract classes
 ++++++++++++++++
 .. automodule:: revscoring.scorer_models.scorer_model
@@ -25,6 +29,7 @@ Abstract classes
 
 """
 from .svc import SVC, LinearSVC, RBFSVC
+from .gradient_boosting import GradientBoosting
 from .nb import NB, GaussianNB, MultinomialNB, BernoulliNB
 from .scorer_model import ScorerModel, MLScorerModel
 from .sklearn_classifier import ScikitLearnClassifier
@@ -32,5 +37,5 @@ from .rf import RF
 
 __all__ = [
     SVC, LinearSVC, RBFSVC, NB, GaussianNB, MultinomialNB, BernoulliNB,
-    ScorerModel, MLScorerModel, ScikitLearnClassifier, RF
+    ScorerModel, MLScorerModel, ScikitLearnClassifier, RF, GradientBoosting
 ]
