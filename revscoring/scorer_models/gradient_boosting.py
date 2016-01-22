@@ -11,7 +11,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 
 from .sklearn_classifier import ScikitLearnClassifier
 
-logger = logging.getLogger("revscoring.scorers.rf")
+logger = logging.getLogger(__name__)
 
 
 class GradientBoosting(ScikitLearnClassifier):
