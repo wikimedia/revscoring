@@ -9,7 +9,6 @@
     :members:
 """
 import pickle
-from statistics import mean, stdev
 
 import yamlconf
 
@@ -62,19 +61,6 @@ class ScorerModel:
         Returns a `str` containing information about the model.
         """
         raise NotImplementedError()
-
-    def _generate_stats(self, values):
-        columns = zip(*values)
-
-        stats = tuple((mean(c), stdev(c)) for c in columns)
-
-        return stats
-
-    def _scale_and_center(self, values, stats):
-
-        for feature_values in values:
-            yield (tuple((val - mean) / max(sd, 0.01)
-                   for (mean, sd), val in zip(stats, feature_values)))
 
     @classmethod
     def load(cls, f):

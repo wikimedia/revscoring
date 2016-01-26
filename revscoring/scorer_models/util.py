@@ -1,3 +1,5 @@
+import json
+
 import numpy
 
 
@@ -24,3 +26,38 @@ def normalize_json(doc):
         return [normalize_json(v) for v in doc]
     else:
         return normalize(doc)
+
+
+def format_params(doc):
+    if doc is None:
+        return None
+    else:
+        return ", ".join("{0}={1}".format(k, json.dumps(v))
+                         for k, v in doc.items())
+
+
+def balanced_weights(labels):
+    """
+    Generates a mapping of class weights that will re-weight a training set
+    in a balanced way such that weight(label) = len(obs) / freq(label in obs).
+    """
+    counts = {}
+    for l in labels:
+        counts[l] = counts.get(l, 0) + 1
+
+    return {l:(len(labels) / counts[l]) for l in counts}
+
+
+def balanced_sample_weights(labels):
+    """
+    Generates a vector of balancing weights for a vector of labels
+    """
+    weights = balanced_weights(labels)
+    return [weights[label] for label in labels]
+
+
+def round_or_none(value, ndigits):
+    if value is None:
+        return None
+    else:
+        return round(value, ndigits)

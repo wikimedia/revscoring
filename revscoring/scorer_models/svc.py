@@ -36,107 +36,20 @@ class SVC(ScikitLearnClassifier):
             Passed to :class:`sklearn.svm.SVC`
     """
     def __init__(self, features, version=None, svc=None,
-                 balance_labels=True, **kwargs):
+                 balanced_sample_weight=False, scale=False, center=False,
+                 test_statistics=None, **kwargs):
         if svc is None:
             classifier_model = svm.SVC(probability=True, **kwargs)
         else:
             classifier_model = svc
 
-        super().__init__(features, classifier_model, version=version)
+        super().__init__(features, classifier_model, version=version,
+                         balanced_sample_weight=balanced_sample_weight,
+                         scale=scale, center=center,
+                         test_statistics=test_statistics)
 
-        self.balance_labels = balance_labels
         self.feature_stats = None
         self.weights = None
-
-    def train(self, values_labels):
-        """
-
-        :Returns:
-            A dictionary with the fields:
-
-            * seconds_elapsed -- Time in seconds spent fitting the model
-        """
-        start = time.time()
-
-        # Balance labels
-        if self.balance_labels:
-            values_labels = self._balance_labels(values_labels)
-
-        # Split out feature_values
-        feature_values, labels = zip(*values_labels)
-
-        # Scale and center feature_values
-        self.feature_stats = self._generate_stats(feature_values)
-        scaled_values = self._scale_and_center(feature_values,
-                                               self.feature_stats)
-
-        # Train the classifier
-        stats = super().train(zip(scaled_values, labels))
-
-        # Overwrite seconds elapsed to account for time spent
-        # balancing and scaling
-        stats['seconds_elapsed'] = time.time() - start
-
-        return stats
-
-    def score(self, feature_values):
-        scaled_values = next(self._scale_and_center([feature_values],
-                                                    self.feature_stats))
-
-        return super().score(scaled_values)
-
-    def _balance_labels(self, values_labels):
-        """
-        Rebalances a set of a labels based on the label with the most
-        observations by sampling (with replacement[1]) from lesser labels.
-
-        For example, the following dataset has unbalanced observations:
-
-            (0.10  0.20  0.30),  True
-            (0.20  0.10  0.30),  False
-            (0.10  0.15  0.40),  True
-            (0.09  0.40  0.30),  False
-            (0.15  0.00  0.28),  True
-
-        True` occurs three times while `False` only occurs twice.  This
-        function would randomly choose one of the False observations to
-        duplicate in order to balance the labels.  For example:
-
-            (0.10  0.20  0.30),  True
-            (0.20  0.10  0.30),  False
-            (0.20  0.10  0.30),  False
-            (0.10  0.15  0.40),  True
-            (0.09  0.40  0.30),  False
-            (0.15  0.00  0.28),  True
-
-        Why would anyone want to do this?  If you don't, SVM's
-        predict_proba() will return values that don't represent it's
-        predictions.  This is a hack.  It seems to work in practice with large
-        numbers of observations[2].
-
-        1. See https://www.ma.utexas.edu/users/parker/sampling/repl.htm for a
-           discussion of "sampling with replacement".
-        2. http://nbviewer.ipython.org/github/halfak/
-            Objective-Revision-Evaluation-Service/blob/ipython/ipython/
-            Wat%20predict_proba.ipynb
-        """
-        # Group observations by label
-        groups = defaultdict(list)
-        for feature_values, label in values_labels:
-            groups[label].append(feature_values)
-
-        # Find out which label occurs most often and how often
-        max_label_n = max(len(groups[label]) for label in groups)
-
-        # Resample the max observations from each group of observations.
-        new_values_labels = []
-        for label in groups:
-            new_values_labels.extend((random.choice(groups[label]), label)
-                                     for i in range(max_label_n))
-
-        # Shuffle the observations again before returning.
-        random.shuffle(new_values_labels)
-        return new_values_labels
 
 
 class LinearSVC(SVC):
