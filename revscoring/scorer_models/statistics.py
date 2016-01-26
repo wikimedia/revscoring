@@ -57,7 +57,7 @@ class TestStatistic:
         raise NotImplementedError()
 
     def format(self, stats):
-        raise NotImplementError()
+        raise NotImplementedError()
 
     def __repr__(self):
         if len(self.kwargs) > 0:
@@ -180,24 +180,19 @@ class recall_at_fpr(ClassStatistic):
             formatted.write("Recall @ {0} false-positive rate:\n"
                             .format(self.max_fpr))
 
-            table_data = [(label,
+            table_data = [(repr(label),
                            round_or_none(stats[label]['threshold'], 3),
                            round_or_none(stats[label]['recall'], 3),
                            round_or_none(stats[label]['fpr'], 3))
-                          for label in stats]
-            formatted.write(tabulate(table_data,
-                                     headers=["label", "threshold",
-                                              "recall", "fpr"]))
+                          for label in sorted(stats.keys())]
+            table = tabulate(table_data, headers=["label", "threshold",
+                                                  "recall", "fpr"])
+            formatted.write("".join(["\t" + line + "\n" for line in
+                                     table.split("\n")]))
 
         return formatted.getvalue()
 
 TestStatistic.register("recall_at_fpr", recall_at_fpr)
-
-
-def recall_at_fpr_score(y_true, y_proba, max_fpr):
-    scorer = recall_at_fpr(max_fpr)
-    threshold, recall, fpr = scorer.score(y_true, y_proba)
-    return recall
 
 
 def fpr_score(y_true, y_pred):
@@ -267,23 +262,19 @@ class filter_rate_at_recall(ClassStatistic):
             formatted.write("Filter rate @ {0} recall:\n"
                             .format(self.min_recall))
 
-            table_data = [(label,
+            table_data = [(repr(label),
                            round_or_none(stats[label]['threshold'], 3),
                            round_or_none(stats[label]['filter_rate'], 3),
                            round_or_none(stats[label]['recall'], 3))
-                          for label in stats]
-            formatted.write(tabulate(table_data,
-                                     headers=["label", "threshold",
-                                              "filter_rate", "recall"]))
+                          for label in sorted(stats.keys())]
+            table = tabulate(table_data, headers=["label", "threshold",
+                                                  "filter_rate", "recall"])
+            formatted.write("".join(["\t" + line + "\n" for line in
+                                     table.split("\n")]))
 
         return formatted.getvalue()
 
 TestStatistic.register("filter_rate_at_recall", filter_rate_at_recall)
-
-
-def filter_rate_at_recall_score(y_true, y_proba, min_recall):
-    threshold, filter_rate, recall = recall_at_fpr(y_true, y_proba, min_recall)
-    return filter_rate
 
 
 def filter_rate_score(y_pred):
@@ -328,9 +319,10 @@ class roc(ClassStatistic):
             # multiple classes
             formatted.write("ROC-AUC:\n")
 
-            table_data = [(label, round(stats[label]['auc'], 3))
-                          for label in stats]
-            formatted.write(tabulate(table_data))
+            table_data = [(repr(label), round(stats[label]['auc'], 3))
+                          for label in sorted(stats.keys())]
+            formatted.write("".join(["\t" + line + "\n" for line in
+                                     tabulate(table_data).split("\n")]))
 
         return formatted.getvalue()
 
@@ -377,9 +369,10 @@ class pr(ClassStatistic):
             # multiple classes
             formatted.write("PR-AUC:\n")
 
-            table_data = [(label, round(stats[label]['auc'], 3))
-                          for label in stats]
-            formatted.write(tabulate(table_data))
+            table_data = [(repr(label), round(stats[label]['auc'], 3))
+                          for label in sorted(stats.keys())]
+            formatted.write("".join(["\t" + line + "\n" for line in
+                                     tabulate(table_data).split("\n")]))
 
         return formatted.getvalue()
 

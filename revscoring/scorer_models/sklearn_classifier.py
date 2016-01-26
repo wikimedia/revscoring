@@ -188,7 +188,7 @@ class ScikitLearnClassifier(MLScorerModel):
 
             for statistic, stat_doc in self.test_statistics.items():
                 formatted.write(statistic.format(stat_doc))
-                formatted.write("\n\n")
+                formatted.write("\n")
 
             return formatted.getvalue()
 
