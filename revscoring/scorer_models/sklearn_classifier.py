@@ -118,6 +118,9 @@ class ScikitLearnClassifier(MLScorerModel):
 
         scores = [self.score(feature_values) for feature_values in values]
 
+        if self.scaler is not None:
+            values = self.scaler.transform(values)
+
         self.stats = {
             'table': self._label_table(scores, labels),
             'accuracy': self.classifier_model.score(values, labels)
