@@ -4,7 +4,11 @@ This module contains a collection of models that implement a simple function:
 a subclass of :class:`revscoring.scorer_models.MLScorerModel`
 which means that they also implement
 :meth:`~revscoring.scorer_models.MLScorerModel.train` and
-:meth:`~revscoring.scorer_models.MLScorerModel.test` methods.
+:meth:`~revscoring.scorer_models.MLScorerModel.test` methods.  See
+:mod:`revscoring.scorer_models.statistics` for stats that can be applied to
+models.
+
+
 
 Support Vector Classifiers
 ++++++++++++++++++++++++++
@@ -25,7 +29,6 @@ Gradient Boosting
 Abstract classes
 ++++++++++++++++
 .. automodule:: revscoring.scorer_models.scorer_model
-
 
 """
 from .svc import SVC, LinearSVC, RBFSVC

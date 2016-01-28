@@ -2,27 +2,47 @@ import io
 import time
 from datetime import datetime
 
-from sklearn.metrics import auc, roc_curve
+from sklearn.preprocessing import RobustScaler
 from tabulate import tabulate
 
 from .scorer_model import MLScorerModel
-from .util import normalize_json
+from .statistics import pr, roc
+from .util import balanced_sample_weights, format_params, normalize_json
 
 
 class ScikitLearnClassifier(MLScorerModel):
 
-    def __init__(self, features, classifier_model, version=None):
+    def __init__(self, features, classifier_model, version=None,
+                 balanced_sample_weight=False, scale=False, center=False,
+                 test_statistics=None):
         super().__init__(features, version=version)
         self.classifier_model = classifier_model
+        self.balanced_sample_weight = balanced_sample_weight
+        if scale or center:
+            self.scaler = RobustScaler(with_centering=center,
+                                       with_scaling=scale)
+        else:
+            self.scaler = None
+
+        test_statistics = test_statistics or [pr(), roc()]
+        self.test_statistics = {ts: None for ts in test_statistics}
+
         self.stats = None
+        self.params = {
+            'balanced_sample_weight': balanced_sample_weight,
+            'scale': scale,
+            'center': center
+        }
 
     def __getattr__(self, attr):
         if attr is "stats":
             return None
+        elif attr is "params":
+            return None
         else:
             raise AttributeError(attr)
 
-    def train(self, values_labels):
+    def train(self, values_labels, **kwargs):
         """
 
         :Returns:
@@ -34,8 +54,17 @@ class ScikitLearnClassifier(MLScorerModel):
 
         values, labels = zip(*values_labels)
 
+        if self.balanced_sample_weight:
+            sample_weight = balanced_sample_weights(labels)
+        else:
+            sample_weight = None
+
+        if self.scaler is not None:
+            values = self.scaler.fit_transform(values)
+
         # Fit SVC model
-        self.classifier_model.fit(values, labels)
+        self.classifier_model.fit(values, labels, sample_weight=sample_weight,
+                                  **kwargs)
         self.trained = time.time()
 
         return {
@@ -61,6 +90,9 @@ class ScikitLearnClassifier(MLScorerModel):
                              trained on.  Generating this probability is
                              slower than a simple prediction.
         """
+        if self.scaler is not None:
+            feature_values = self.scaler.transform([feature_values])[0]
+
         prediction = self.classifier_model.predict([feature_values])[0]
         labels = self.classifier_model.classes_
         probas = self.classifier_model.predict_proba([feature_values])[0]
@@ -86,20 +118,34 @@ class ScikitLearnClassifier(MLScorerModel):
 
         scores = [self.score(feature_values) for feature_values in values]
 
+        if self.scaler is not None:
+            values = self.scaler.transform(values)
+
         self.stats = {
             'table': self._label_table(scores, labels),
-            'accuracy': self.classifier_model.score(values, labels),
-            'roc': self._roc_stats(scores, labels,
-                                   self.classifier_model.classes_)
+            'accuracy': self.classifier_model.score(values, labels)
         }
+
+        for statistic in self.test_statistics:
+            self.test_statistics[statistic] = statistic.score(scores, labels)
+
         return self.stats
 
     def info(self):
+        params = {}
+        params.update(self.params or {})
+        params.update(self.classifier_model.get_params())
+
+        stats = dict((self.stats or {}).items())
+        for statistic in self.test_statistics:
+            stats[str(statistic)] = self.test_statistics[statistic]
+
         return normalize_json({
             'type': self.__class__.__name__,
+            'params': params,
             'version': self.version,
             'trained': self.trained,
-            'stats': self.stats
+            'stats': stats
         })
 
     def format_info(self):
@@ -107,6 +153,8 @@ class ScikitLearnClassifier(MLScorerModel):
         formatted = io.StringIO()
         formatted.write("ScikitLearnClassifier\n")
         formatted.write(" - type: {0}\n".format(info.get('type')))
+        formatted.write(" - params: {0}\n"
+                        .format(format_params(info.get('params'))))
         formatted.write(" - version: {0}\n".format(info.get('version')))
         if isinstance(info['trained'], float):
             date_string = datetime.fromtimestamp(info['trained']).isoformat()
@@ -124,62 +172,28 @@ class ScikitLearnClassifier(MLScorerModel):
         else:
             formatted = io.StringIO()
             predicted_actuals = self.stats['table'].keys()
-            possible = list(set(actual for _, actual in predicted_actuals))
+            possible = list(set(actual for actual, _ in predicted_actuals))
             possible.sort()
 
-            formatted.write("Accuracy: {0}\n\n".format(self.stats['accuracy']))
-            if 'auc' in self.stats['roc']:
-                formatted.write("ROC-AUC: {0}\n\n"
-                                .format(self.stats['roc']['auc']))
-            else:
-                formatted.write("ROC-AUC:\n")
-
-                table_data = [[comparison_label,
-                               self.stats['roc'][comparison_label]['auc']]
-                              for comparison_label in possible]
-                formatted.write(tabulate(table_data))
-                formatted.write("\n\n")
-
             table_data = []
-
             for actual in possible:
                 table_data.append(
                     [(str(actual))] +
-                    [self.stats['table'].get((predicted, actual), 0)
+                    [self.stats['table'].get((actual, predicted), 0)
                      for predicted in possible]
                 )
             formatted.write(tabulate(
-                table_data,
-                headers=["~{0}".format(p) for p in possible]))
+                table_data, headers=["~{0}".format(p) for p in possible]))
+
+            formatted.write("\n\n")
+
+            formatted.write("Accuracy: {0}\n\n".format(self.stats['accuracy']))
+
+            for statistic, stat_doc in self.test_statistics.items():
+                formatted.write(statistic.format(stat_doc))
+                formatted.write("\n")
 
             return formatted.getvalue()
-
-    @classmethod
-    def _roc_stats(cls, scores, labels, possible_labels):
-
-        if len(possible_labels) <= 2:
-            # Binary classification, class choice doesn't matter.
-            comparison_label = possible_labels[0]
-            return cls._roc_single_class(scores, labels, comparison_label)
-        else:
-            roc_stats = {}
-            for comparison_label in possible_labels:
-                roc_stats[comparison_label] = \
-                    cls._roc_single_class(scores, labels, comparison_label)
-
-            return roc_stats
-
-    @classmethod
-    def _roc_single_class(cls, scores, labels, comparison_label):
-        probabilities = [s['probability'][comparison_label]
-                         for s in scores]
-
-        true_positives = [l == comparison_label for l in labels]
-        fpr, tpr, thresholds = roc_curve(true_positives, probabilities)
-
-        return {
-            'auc': auc(fpr, tpr)
-        }
 
     @staticmethod
     def _label_table(scores, labels):

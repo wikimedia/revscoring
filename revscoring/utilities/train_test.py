@@ -7,12 +7,15 @@
 
     Usage:
         train_test -h | --help
-        train_test <scorer_model> <features> [-p=<kv>]...
+        train_test <scorer_model> <features> [-p=<kv>]... [-s=<kv>]...
                    [--version=<vers>]
                    [--values-labels=<path>]
                    [--model-file=<path>]
                    [--label-type=<type>]
                    [--test-prop=<prop>]
+                   [--balance-sample-weight]
+                   [--center]
+                   [--scale]
                    [--debug]
 
     Options:
@@ -23,6 +26,8 @@
                                 constructing the model
         -p --parameter=<kv>     A key-value argument pair to use when
                                 constructing the scorer_model.
+        -s --statistic=<kv>     A test statistic argument to use to evaluate
+                                the scorer model against the test set.
         --version=<vers>        A version to associate with the model
         --values-labels=<path>  Path to a file containing feature values and
                                 labels [default: <stdin>]
@@ -32,6 +37,10 @@
                                 (int, float, str, bool) [default: str]
         --test-prop=<prop>      The proportion of data that should be withheld
                                 for testing the model. [default: 0.20]
+        --balance-sample-weight  Balance the weight of samples (increase
+                                 importance of under-represented classes)
+        --center                 Features should be centered on a common axis
+        --scale                  Features should be scaled to a common range
         --debug                 Print debug logging.
 """
 import json
@@ -42,6 +51,7 @@ import docopt
 import yamlconf
 
 from . import util
+from ..scorer_models.statistics import TestStatistic
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +74,17 @@ def main(argv=None):
         key, value = parameter.split("=")
         model_kwargs[key] = json.loads(value)
 
-    scorer_model = ScorerModel(features, version=version, **model_kwargs)
+    test_statistics = []
+    for stat_str in args['--statistic']:
+        test_statistics.append(TestStatistic.from_stat_str(stat_str))
+
+    scorer_model = ScorerModel(
+        features, version=version,
+        test_statistics=test_statistics,
+        balanced_sample_weight=args['--balance-sample-weight'],
+        center=args['--center'],
+        scale=args['--scale'],
+        **model_kwargs)
 
     if args['--values-labels'] == "<stdin>":
         observations_f = sys.stdin
