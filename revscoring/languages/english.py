@@ -189,7 +189,7 @@ informal_regexes = [
     r"shouldn'?t",
     r"test +edit", r"t+u+r+d+s?\w*",
     r"wasn'?t",
-    r"w+[oua]+t+", r"wtf\w*", r"wh?[ua]+t?[sz]+[ua]+p",
+    r"w+[oua]+t+", r"wtf\w*", r"wh?[ua]+t?[sz]+[ua]+p", "s+u+p+",
     r"wu+z+",
     r"won'?t",
     r"w+o+o+f+",
