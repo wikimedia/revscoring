@@ -1,18 +1,17 @@
 """
-``revscoring train_test -h``
+``revscoring train -h``
 ::
 
-    Trains and tests a scorer model.  This utility expects to get a file of
+    Trains a scorer model.  This utility expects to get a file of
     tab-separated feature values and labels from which to construct a model.
 
     Usage:
-        train_test -h | --help
-        train_test <scorer_model> <features> [-p=<kv>]... [-s=<kv>]...
+        train -h | --help
+        train <scorer_model> <features> [-p=<kv>]... [-s=<kv>]...
                    [--version=<vers>]
                    [--values-labels=<path>]
                    [--model-file=<path>]
                    [--label-type=<type>]
-                   [--test-prop=<prop>]
                    [--balance-sample-weight]
                    [--center]
                    [--scale]
@@ -35,8 +34,6 @@
                                 [default: <stdout>]
         --label-type=<type>     Interprets the labels as the appropriate type
                                 (int, float, str, bool) [default: str]
-        --test-prop=<prop>      The proportion of data that should be withheld
-                                for testing the model. [default: 0.20]
         --balance-sample-weight  Balance the weight of samples (increase
                                  importance of under-represented classes)
         --center                 Features should be centered on a common axis
@@ -80,8 +77,8 @@ def main(argv=None):
 
     scorer_model = ScorerModel(
         features, version=version,
-        test_statistics=test_statistics,
         balanced_sample_weight=args['--balance-sample-weight'],
+        test_statistics=test_statistics,
         center=args['--center'],
         scale=args['--scale'],
         **model_kwargs)
@@ -102,14 +99,12 @@ def main(argv=None):
                                           scorer_model.features,
                                           decode_label)
 
-    test_prop = float(args['--test-prop'])
-
-    run(observations, model_file, scorer_model, test_prop)
+    run(observations, model_file, scorer_model)
 
 
-def run(observations, model_file, scorer_model, test_prop):
+def run(observations, model_file, scorer_model):
 
-    scorer_model = _train_test(scorer_model, observations, test_prop)
+    scorer_model = _train_test(scorer_model, observations)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -118,17 +113,11 @@ def run(observations, model_file, scorer_model, test_prop):
     scorer_model.dump(model_file)
 
 
-def _train_test(scorer_model, observations, test_prop):
-    train_set, test_set = util.train_test_split(observations,
-                                                test_prop=test_prop)
+def _train_test(scorer_model, observations):
 
-    logger.debug("Test set: {0}".format(len(test_set)))
-    logger.debug("Train set: {0}".format(len(train_set)))
+    logger.debug("Train set: {0}".format(len(observations)))
 
     logger.info("Training model...")
-    scorer_model.train(train_set)
-
-    logger.info("Testing model...")
-    scorer_model.test(test_set)
+    scorer_model.train(observations)
 
     return scorer_model
