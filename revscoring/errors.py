@@ -41,7 +41,8 @@ class CaughtDependencyError(DependencyError):
 
     def __str__(self):
         class_name = self.exception.__class__.__name__
-        return "{0}: {1}".format(class_name, self.message)
+        return "{0}: {1}\n{2}".format(class_name, self.message,
+                                      self.formatted_exception)
 
 
 class DependencyLoop(DependencyError):
