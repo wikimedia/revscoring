@@ -129,7 +129,7 @@ class MLScorerModel(ScorerModel):
         """
         raise NotImplementedError()
 
-    def test(self, values_labels):
+    def test(self, values_labels, test_statistics=None, store_stats=False):
         """
         Tests the model against a labeled data.  Note that test data should be
         withheld from from train data.
@@ -139,10 +139,15 @@ class MLScorerModel(ScorerModel):
                 an iterable of labeled data Where <values_labels> is an ordered
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
+            test_statistics : `list` ( :class:`~revscoring.scorer_models.statistics.TestStatistic` )
+                a list of test statistics to apply
+            store_stats : `bool`
+                should the new test statistics overwrite the old (or
+                non-existent)
 
         :Returns:
             A dictionary of test results.
-        """
+        """  # noqa
         raise NotImplementedError()
 
     @classmethod

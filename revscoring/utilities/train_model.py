@@ -7,7 +7,7 @@
 
     Usage:
         train -h | --help
-        train <scorer_model> <features> [-p=<kv>]... [-s=<kv>]...
+        train <scorer_model> <features> [-p=<kv>]...
                    [--version=<vers>]
                    [--values-labels=<path>]
                    [--model-file=<path>]
@@ -19,14 +19,12 @@
 
     Options:
         -h --help               Prints this documentation
-        <scorer_model>          Classpath to an the MLScorerModel to construct
+        <scorer_model>          Classpath to the MLScorerModel to construct
                                 and train
         <features>              Classpath to an list of features to use when
                                 constructing the model
         -p --parameter=<kv>     A key-value argument pair to use when
                                 constructing the scorer_model.
-        -s --statistic=<kv>     A test statistic argument to use to evaluate
-                                the scorer model against the test set.
         --version=<vers>        A version to associate with the model
         --values-labels=<path>  Path to a file containing feature values and
                                 labels [default: <stdin>]
@@ -48,7 +46,6 @@ import docopt
 import yamlconf
 
 from . import util
-from ..scorer_models.statistics import TestStatistic
 
 logger = logging.getLogger(__name__)
 
@@ -71,14 +68,9 @@ def main(argv=None):
         key, value = parameter.split("=")
         model_kwargs[key] = json.loads(value)
 
-    test_statistics = []
-    for stat_str in args['--statistic']:
-        test_statistics.append(TestStatistic.from_stat_str(stat_str))
-
     scorer_model = ScorerModel(
         features, version=version,
         balanced_sample_weight=args['--balance-sample-weight'],
-        test_statistics=test_statistics,
         center=args['--center'],
         scale=args['--scale'],
         **model_kwargs)
@@ -98,13 +90,14 @@ def main(argv=None):
     observations = util.read_observations(observations_f,
                                           scorer_model.features,
                                           decode_label)
+    observations = list(observations)
 
     run(observations, model_file, scorer_model)
 
 
 def run(observations, model_file, scorer_model):
 
-    scorer_model = _train_test(scorer_model, observations)
+    scorer_model = train_model(scorer_model, observations)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -113,7 +106,7 @@ def run(observations, model_file, scorer_model):
     scorer_model.dump(model_file)
 
 
-def _train_test(scorer_model, observations):
+def train_model(scorer_model, observations):
 
     logger.debug("Train set: {0}".format(len(observations)))
 
