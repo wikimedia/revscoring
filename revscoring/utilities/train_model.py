@@ -1,18 +1,17 @@
 """
-``revscoring train_test -h``
+``revscoring train -h``
 ::
 
-    Trains and tests a scorer model.  This utility expects to get a file of
+    Trains a scorer model.  This utility expects to get a file of
     tab-separated feature values and labels from which to construct a model.
 
     Usage:
-        train_test -h | --help
-        train_test <scorer_model> <features> [-p=<kv>]... [-s=<kv>]...
+        train -h | --help
+        train <scorer_model> <features> [-p=<kv>]...
                    [--version=<vers>]
                    [--values-labels=<path>]
                    [--model-file=<path>]
                    [--label-type=<type>]
-                   [--test-prop=<prop>]
                    [--balance-sample-weight]
                    [--center]
                    [--scale]
@@ -26,8 +25,6 @@
                                 constructing the model
         -p --parameter=<kv>     A key-value argument pair to use when
                                 constructing the scorer_model.
-        -s --statistic=<kv>     A test statistic argument to use to evaluate
-                                the scorer model against the test set.
         --version=<vers>        A version to associate with the model
         --values-labels=<path>  Path to a file containing feature values and
                                 labels [default: <stdin>]
@@ -35,8 +32,6 @@
                                 [default: <stdout>]
         --label-type=<type>     Interprets the labels as the appropriate type
                                 (int, float, str, bool) [default: str]
-        --test-prop=<prop>      The proportion of data that should be withheld
-                                for testing the model. [default: 0.20]
         --balance-sample-weight  Balance the weight of samples (increase
                                  importance of under-represented classes)
         --center                 Features should be centered on a common axis
@@ -49,10 +44,8 @@ import sys
 
 import docopt
 import yamlconf
-from nose.tools import nottest
 
 from . import util
-from ..scorer_models.statistics import TestStatistic
 
 logger = logging.getLogger(__name__)
 
@@ -74,10 +67,6 @@ def main(argv=None):
     for parameter in args['--parameter']:
         key, value = parameter.split("=")
         model_kwargs[key] = json.loads(value)
-
-    test_statistics = []
-    for stat_str in args['--statistic']:
-        test_statistics.append(TestStatistic.from_stat_str(stat_str))
 
     scorer_model = ScorerModel(
         features, version=version,
@@ -101,16 +90,14 @@ def main(argv=None):
     observations = util.read_observations(observations_f,
                                           scorer_model.features,
                                           decode_label)
+    observations = list(observations)
 
-    test_prop = float(args['--test-prop'])
-
-    run(observations, model_file, scorer_model, test_statistics, test_prop)
+    run(observations, model_file, scorer_model)
 
 
-def run(observations, model_file, scorer_model, test_statistics, test_prop):
+def run(observations, model_file, scorer_model):
 
-    scorer_model = train_test(scorer_model, observations, test_statistics,
-                              test_prop)
+    scorer_model = train_model(scorer_model, observations)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -118,18 +105,12 @@ def run(observations, model_file, scorer_model, test_statistics, test_prop):
 
     scorer_model.dump(model_file)
 
-@nottest
-def train_test(scorer_model, observations, test_statistics, test_prop):
-    train_set, test_set = util.train_test_split(observations,
-                                                test_prop=test_prop)
 
-    logger.debug("Test set: {0}".format(len(test_set)))
-    logger.debug("Train set: {0}".format(len(train_set)))
+def train_model(scorer_model, observations):
+
+    logger.debug("Train set: {0}".format(len(observations)))
 
     logger.info("Training model...")
-    scorer_model.train(train_set)
-
-    logger.info("Testing model...")
-    scorer_model.test(test_set, test_statistics=test_statistics)
+    scorer_model.train(observations)
 
     return scorer_model

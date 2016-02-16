@@ -55,4 +55,4 @@ def test_exceptions_picklability():
 
     cde = CaughtDependencyError("Test", RuntimeError("Foo"))
     pickle.loads(pickle.dumps(cde))
-    eq_(str(cde), "RuntimeError: Test")
+    eq_(str(cde), "RuntimeError: Test\nNone")

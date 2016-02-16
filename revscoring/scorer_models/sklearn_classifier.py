@@ -24,8 +24,7 @@ class ScikitLearnClassifier(MLScorerModel):
         else:
             self.scaler = None
 
-        test_statistics = test_statistics or [pr(), roc()]
-        self.test_statistics = {ts: None for ts in test_statistics}
+        self.test_statistics = test_statistics
 
         self.stats = None
         self.params = {
@@ -104,32 +103,40 @@ class ScikitLearnClassifier(MLScorerModel):
         }
         return normalize_json(doc)
 
-    def test(self, values_labels):
+    def test(self, values_labels, test_statistics=None, store_stats=True):
         """
         :Returns:
             A dictionary of test statistics with the fields:
 
-            * accuracy -- The mean accuracy of classification
+            * n -- The number of observations tested against
+            * accuracy -- The accuracy of classification
             * table -- A truth table for classification
-            * roc
-                * auc -- The area under the ROC curve
+            * test_statistics -- A map of test statistic values
         """
         values, labels = zip(*values_labels)
+
+        test_statistics = test_statistics or self.test_statistics or \
+                          [pr(), roc()]
 
         scores = [self.score(feature_values) for feature_values in values]
 
         if self.scaler is not None:
             values = self.scaler.transform(values)
 
-        self.stats = {
+        stats = {
             'table': self._label_table(scores, labels),
-            'accuracy': self.classifier_model.score(values, labels)
+            'accuracy': self.classifier_model.score(values, labels),
+            'test_statistics': {}
         }
 
-        for statistic in self.test_statistics:
-            self.test_statistics[statistic] = statistic.score(scores, labels)
+        for statistic in test_statistics:
+            stats['test_statistics'][statistic] = \
+                statistic.score(scores, labels)
 
-        return self.stats
+        if store_stats:
+            self.stats = stats
+
+        return stats
 
     def info(self):
         params = {}
@@ -137,8 +144,8 @@ class ScikitLearnClassifier(MLScorerModel):
         params.update(self.classifier_model.get_params())
 
         stats = dict((self.stats or {}).items())
-        for statistic in self.test_statistics:
-            stats[str(statistic)] = self.test_statistics[statistic]
+        for statistic in stats.get('test_statistics', {}):
+            stats[str(statistic)] = stats['test_statistics'][statistic]
 
         return normalize_json({
             'type': self.__class__.__name__,
@@ -189,7 +196,7 @@ class ScikitLearnClassifier(MLScorerModel):
 
             formatted.write("Accuracy: {0}\n\n".format(self.stats['accuracy']))
 
-            for statistic, stat_doc in self.test_statistics.items():
+            for statistic, stat_doc in self.stats['test_statistics'].items():
                 formatted.write(statistic.format(stat_doc))
                 formatted.write("\n")
 
