@@ -1,5 +1,5 @@
 language: python
-sudo: false
+sudo: true
 python:
   - "3.4"
 addons:
@@ -9,7 +9,6 @@ addons:
     - gfortran
     - libblas-dev
     - liblapack-dev
-    - liblapacke-dev
     - libopenblas-dev
     - python3-dev
     - enchant
@@ -30,6 +29,7 @@ addons:
     - hunspell-vi
     - myspell-pt
     - aspell-uk
+
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - chmod +x miniconda.sh
