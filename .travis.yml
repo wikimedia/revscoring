@@ -16,6 +16,7 @@ addons:
     - aspell-de
     - aspell-nl
     - aspell-id
+    - aspell-pl
     - myspell-en-au
     - myspell-en-gb
     - myspell-en-us

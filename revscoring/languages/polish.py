@@ -7,18 +7,17 @@ try:
     dictionary = enchant.Dict("pl")
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'pl'.  " +
-                      "Consider installing 'aspell-ar'.")
+                      "Consider installing 'aspell-pl'.")
 
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "pl".  Provided by `myspell-pl`
+:class:`enchant.Dict` "pl".  Provided by `aspell-pl`
 """
 
 stopwords = [
     r"aby",
     r"ale",
-    r"align",
     r"and",
     r"artykuł",
     r"autor",
@@ -65,9 +64,6 @@ stopwords = [
     r"grudnia",
     r"głównie",
     r"historia",
-    r"htm",
-    r"html",
-    r"http",
     r"ich",
     r"ii",
     r"iii",
@@ -107,7 +103,6 @@ stopwords = [
     r"których",
     r"którym",
     r"kwietnia",
-    r"lat",
     r"lata",
     r"latach",
     r"left",
@@ -182,7 +177,6 @@ stopwords = [
     r"przy",
     r"przypisy",
     r"później",
-    r"ref",
     r"right",
     r"rodzaj",
     r"rok",
@@ -321,7 +315,7 @@ badword_regexes = [
     r"hwdp",
     r"idiota",
     r"idioto",
-    r"japierdole ",
+    r"japierdole",
     r"jebac",
     r"jebana",
     r"jebane",
