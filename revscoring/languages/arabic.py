@@ -1,6 +1,6 @@
 from .features import Dictionary, RegexMatches, Stopwords
 
-name = "dutch"
+name = "arabic"
 
 try:
     import enchant
@@ -12,7 +12,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "nl".  Provided by `myspell-nl`
+:class:`enchant.Dict` "ar".  Provided by `aspell-ar`
 """
 
 stopwords = [

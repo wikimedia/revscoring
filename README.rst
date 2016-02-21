@@ -62,8 +62,9 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.indonesian``: aspell-id
 * ``languages.italian``: myspell-it
 * ``languages.hebrew``: myspell-he
-* ``languages.portuguese``: myspell-pt
 * ``languages.persian``: myspell-fa
+* ``languages.polish``: myspell-pl
+* ``languages.portuguese``: myspell-pt
 * ``languages.spanish``: myspell-es
 * ``languages.ukrainian``: myspell-uk
 * ``languages.vietnamese``: hunspell-vi
