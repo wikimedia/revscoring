@@ -6,7 +6,7 @@ from sklearn.preprocessing import RobustScaler
 from tabulate import tabulate
 
 from .scorer_model import MLScorerModel
-from .statistics import pr, roc
+from .test_statistics import precision_recall, roc
 from .util import balanced_sample_weights, format_params, normalize_json
 
 
@@ -116,7 +116,7 @@ class ScikitLearnClassifier(MLScorerModel):
         values, labels = zip(*values_labels)
 
         test_statistics = test_statistics or self.test_statistics or \
-                          [pr(), roc()]
+                          [precision_recall(), roc()]
 
         scores = [self.score(feature_values) for feature_values in values]
 
@@ -155,7 +155,13 @@ class ScikitLearnClassifier(MLScorerModel):
             'stats': stats
         })
 
-    def format_info(self):
+    def format_info(self, format="str"):
+        if format == "str":
+            return self.format_info_str()
+        elif format == "json":
+            return self.format_info_json()
+
+    def format_info_str(self, format="str"):
         info = self.info()
         formatted = io.StringIO()
         formatted.write("ScikitLearnClassifier\n")
@@ -170,10 +176,10 @@ class ScikitLearnClassifier(MLScorerModel):
             formatted.write(" - trained: {0}\n".format(info.get('trained')))
 
         formatted.write("\n")
-        formatted.write(self.format_stats())
+        formatted.write(self.format_stats_str())
         return formatted.getvalue()
 
-    def format_stats(self):
+    def format_stats_str(self):
         if self.stats is None:
             return "No stats available"
         else:
@@ -201,6 +207,24 @@ class ScikitLearnClassifier(MLScorerModel):
                 formatted.write("\n")
 
             return formatted.getvalue()
+
+    def format_info_json(self):
+        params = {}
+        params.update(self.params or {})
+        params.update(self.classifier_model.get_params())
+
+        stats = {}
+        if self.stats is not None:
+            for test_stat, stats in self.stats['test_statistics'].items():
+                stats[str(test_stat)] = test_stat.format(stats, format="json")
+
+        return normalize_json({
+            'type': self.__class__.__name__,
+            'params': params,
+            'version': self.version,
+            'trained': self.trained,
+            'stats': stats
+        })
 
     @staticmethod
     def _label_table(scores, labels):
