@@ -3,7 +3,7 @@ import json
 import numpy
 
 
-def normalize(v, key=False):
+def normalize(v):
     if isinstance(v, numpy.bool_):
         return bool(v)
     elif isinstance(v, numpy.float):
@@ -14,12 +14,22 @@ def normalize(v, key=False):
         return v
 
 
-def normalize_json(doc):
+def key_normalize(v):
+    v = normalize(v)
+    if isinstance(v, bool) or isinstance(v, int) or isinstance(v, float) or \
+       isinstance(v, str):
+        return v
+    elif isinstance(v, list) or isinstance(v, dict):
+        return json.dumps(v)
+    else:
+        return str(v)
 
+
+def normalize_json(doc):
     if isinstance(doc, dict):
-        return {normalize(k): normalize_json(v)
+        return {key_normalize(k): normalize_json(v)
                 for k, v in doc.items()}
-    elif isinstance(doc, list):
+    elif isinstance(doc, list) or isinstance(doc, tuple):
         return [normalize_json(v) for v in doc]
     else:
         return normalize(doc)

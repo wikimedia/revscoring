@@ -51,7 +51,7 @@ def train_score(model):
 
     model.test(test_set)
 
-    assert model.info()['stats']['roc']['auc'] > 0.5
+    assert model.info()['test_stats']['roc']['auc'] > 0.5
 
 
 def pickle_and_unpickle(model):

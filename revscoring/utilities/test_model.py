@@ -35,7 +35,7 @@ from nose.tools import nottest
 
 from . import util
 from ..scorer_models import ScorerModel
-from ..scorer_models.statistics import TestStatistic
+from ..scorer_models.test_statistics import TestStatistic
 
 logger = logging.getLogger(__name__)
 

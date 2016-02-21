@@ -35,7 +35,7 @@ class recall(ClassifierStatistic):
     @classmethod
     def format_str(cls, recall_doc):
         if isinstance(recall_doc, float):
-            return "Recall: {0}".format(round(recall_doc))
+            return "Recall: {0}".format(round(recall_doc, 3))
         else:
             table_str = tabulate([[l, round(r, 3)] for l, r in
                                   recall_doc.items()])

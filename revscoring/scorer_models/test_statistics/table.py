@@ -41,7 +41,6 @@ class table(ClassifierStatistic):
                             .format(format, cls.__name__))
 
     def format_str(cls, table_counts):
-        formatted = io.StringIO()
         possible = list(table_counts.keys())
         possible.sort()
 
@@ -52,9 +51,12 @@ class table(ClassifierStatistic):
                 [table_counts[actual].get(predicted, 0)
                  for predicted in possible]
             )
-        formatted.write(tabulate(
-            table_data, headers=["~{0}".format(p) for p in possible]))
 
-        return formatted.getvalue()
+        table_str = tabulate(table_data,
+                             headers=["~{0}".format(p) for p in possible])
+
+        return "Table:\n" + \
+               "".join("\t" + line + "\n" for line in
+                       table_str.split("\n"))
 
 TestStatistic.register("table", table)
