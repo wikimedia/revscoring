@@ -63,4 +63,4 @@ def test_multiclass():
          'c': {'a': 5, 'c': 1}})
 
     print(test_statistic.format(stats))
-    eq_(len(test_statistic.format(stats).split("\n")), 5)
+    eq_(len(test_statistic.format(stats).split("\n")), 7)
