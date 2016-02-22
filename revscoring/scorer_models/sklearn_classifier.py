@@ -6,7 +6,8 @@ from sklearn.preprocessing import RobustScaler
 from tabulate import tabulate
 
 from .scorer_model import MLScorerModel
-from .statistics import pr, roc
+from .test_statistics import (accuracy, precision, precision_recall, recall,
+                              roc, table)
 from .util import balanced_sample_weights, format_params, normalize_json
 
 
@@ -26,7 +27,7 @@ class ScikitLearnClassifier(MLScorerModel):
 
         self.test_statistics = test_statistics
 
-        self.stats = None
+        self.test_stats = None
         self.params = {
             'balanced_sample_weight': balanced_sample_weight,
             'scale': scale,
@@ -116,46 +117,48 @@ class ScikitLearnClassifier(MLScorerModel):
         values, labels = zip(*values_labels)
 
         test_statistics = test_statistics or self.test_statistics or \
-                          [pr(), roc()]
+                          [table(), accuracy(), precision(), recall(),
+                           roc(), precision_recall()]
 
         scores = [self.score(feature_values) for feature_values in values]
 
         if self.scaler is not None:
             values = self.scaler.transform(values)
 
-        stats = {
-            'table': self._label_table(scores, labels),
-            'accuracy': self.classifier_model.score(values, labels),
-            'test_statistics': {}
-        }
-
+        test_stats = {}
         for statistic in test_statistics:
-            stats['test_statistics'][statistic] = \
+            test_stats[statistic] = \
                 statistic.score(scores, labels)
 
         if store_stats:
-            self.stats = stats
+            self.test_statistics = test_statistics
+            self.test_stats = test_stats
 
-        return stats
+        return test_stats
 
     def info(self):
         params = {}
         params.update(self.params or {})
         params.update(self.classifier_model.get_params())
 
-        stats = dict((self.stats or {}).items())
-        for statistic in stats.get('test_statistics', {}):
-            stats[str(statistic)] = stats['test_statistics'][statistic]
-
         return normalize_json({
             'type': self.__class__.__name__,
             'params': params,
             'version': self.version,
             'trained': self.trained,
-            'stats': stats
+            'test_stats': self.test_stats
         })
 
-    def format_info(self):
+    def format_info(self, format="str"):
+        if format == "str":
+            return self.format_info_str()
+        elif format == "json":
+            return self.format_info_json()
+        else:
+            raise TypeError("Format '{0}' not available for {1}."
+                            .format(format, self.__class__.__name__))
+
+    def format_info_str(self, format="str"):
         info = self.info()
         formatted = io.StringIO()
         formatted.write("ScikitLearnClassifier\n")
@@ -170,45 +173,32 @@ class ScikitLearnClassifier(MLScorerModel):
             formatted.write(" - trained: {0}\n".format(info.get('trained')))
 
         formatted.write("\n")
-        formatted.write(self.format_stats())
+        formatted.write(self.format_stats_str())
         return formatted.getvalue()
 
-    def format_stats(self):
-        if self.stats is None:
+    def format_stats_str(self):
+        if self.test_stats is None:
             return "No stats available"
         else:
-            formatted = io.StringIO()
-            predicted_actuals = self.stats['table'].keys()
-            possible = list(set(actual for actual, _ in predicted_actuals))
-            possible.sort()
+            return "\n".join(stat.format(self.test_stats[stat]) for stat in
+                               self.test_statistics)
 
-            table_data = []
-            for actual in possible:
-                table_data.append(
-                    [(str(actual))] +
-                    [self.stats['table'].get((actual, predicted), 0)
-                     for predicted in possible]
-                )
-            formatted.write(tabulate(
-                table_data, headers=["~{0}".format(p) for p in possible]))
+    def format_info_json(self):
+        params = {}
+        params.update(self.params or {})
+        params.update(self.classifier_model.get_params())
 
-            formatted.write("\n\n")
+        test_stats = {}
+        if self.test_stats is not None:
+            for test_stat in self.test_statistics:
+                stats = self.test_stats[test_stat]
+                test_stats[str(test_stat)] = \
+                    test_stat.format(stats, format="json")
 
-            formatted.write("Accuracy: {0}\n\n".format(self.stats['accuracy']))
-
-            for statistic, stat_doc in self.stats['test_statistics'].items():
-                formatted.write(statistic.format(stat_doc))
-                formatted.write("\n")
-
-            return formatted.getvalue()
-
-    @staticmethod
-    def _label_table(scores, labels):
-
-        predicteds = [s['prediction'] for s in scores]
-
-        table = {}
-        for pair in zip(labels, predicteds):
-            table[pair] = table.get(pair, 0) + 1
-
-        return table
+        return normalize_json({
+            'type': self.__class__.__name__,
+            'params': params,
+            'version': self.version,
+            'trained': self.trained,
+            'test_stats': test_stats
+        })

@@ -52,13 +52,13 @@ class ScorerModel:
 
     def info(self):
         """
-        Returns a `dict` containing information about the model.
+        Returns a raw `dict` containing all information about the model.
         """
         raise NotImplementedError()
 
-    def format_info(self):
+    def format_info(self, format="str"):
         """
-        Returns a `str` containing information about the model.
+        Returns formatted information about the model.
         """
         raise NotImplementedError()
 

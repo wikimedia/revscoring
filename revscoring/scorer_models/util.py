@@ -3,26 +3,33 @@ import json
 import numpy
 
 
-def normalize(v, key=False):
+def normalize(v):
     if isinstance(v, numpy.bool_):
         return bool(v)
     elif isinstance(v, numpy.float):
         return float(v)
     elif isinstance(v, tuple):
-        if key:
-            return str(v)
-        else:
-            return list(v)
+        return list(v)
     else:
         return v
 
 
-def normalize_json(doc):
+def key_normalize(v):
+    v = normalize(v)
+    if isinstance(v, bool) or isinstance(v, int) or isinstance(v, float) or \
+       isinstance(v, str):
+        return v
+    elif isinstance(v, list) or isinstance(v, dict):
+        return json.dumps(v)
+    else:
+        return str(v)
 
+
+def normalize_json(doc):
     if isinstance(doc, dict):
-        return {normalize(k, key=True): normalize_json(v)
+        return {key_normalize(k): normalize_json(v)
                 for k, v in doc.items()}
-    elif isinstance(doc, list):
+    elif isinstance(doc, list) or isinstance(doc, tuple):
         return [normalize_json(v) for v in doc]
     else:
         return normalize(doc)
@@ -54,10 +61,3 @@ def balanced_sample_weights(labels):
     """
     weights = balanced_weights(labels)
     return [weights[label] for label in labels]
-
-
-def round_or_none(value, ndigits):
-    if value is None:
-        return None
-    else:
-        return round(value, ndigits)
