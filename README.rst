@@ -53,17 +53,18 @@ some NLTK data.  The following command will get the necessary corpus.
 You'll also need to install `enchant <https://enchant.org>`_ compatible
 dictionaries of the languages you'd like to use.  We recommend the following:
 
-* ``languages.arabic``:  aspell-ar
-* ``languages.dutch``:  myspell-nl
-* ``languages.english``:  myspell-en-us myspell-en-gb myspell-en-au
-* ``languages.estonian``:  myspell-et
+* ``languages.arabic``: aspell-ar
+* ``languages.dutch``: myspell-nl
+* ``languages.english``: myspell-en-us myspell-en-gb myspell-en-au
+* ``languages.estonian``: myspell-et
 * ``languages.french``: myspell-fr
-* ``languages.german``:  myspell-de-at myspell-de-ch myspell-de-de
+* ``languages.german``: myspell-de-at myspell-de-ch myspell-de-de
 * ``languages.indonesian``: aspell-id
 * ``languages.italian``: myspell-it
 * ``languages.hebrew``: myspell-he
-* ``languages.portuguese``: myspell-pt
 * ``languages.persian``: myspell-fa
+* ``languages.polish``: aspell-pl
+* ``languages.portuguese``: myspell-pt
 * ``languages.spanish``: myspell-es
 * ``languages.ukrainian``: myspell-uk
 * ``languages.vietnamese``: hunspell-vi
