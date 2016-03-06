@@ -1,3 +1,29 @@
+"""
+A collection of statistics generators that can be applied to
+:class:`revscoring.ScorerModel`.
+
+.. autoclass:: accuracy
+
+.. autoclass:: precision
+
+.. autoclass:: recall
+
+.. autoclass:: roc
+
+.. autoclass:: precision_recall
+
+.. autoclass:: recall_at_fpr
+
+.. autoclass:: filter_rate_at_recall
+
+Abstract classes
+++++++++++++++++
+.. autoclass:: revscoring.scorer_models.test_statistics.TestStatistic
+    :members:
+
+.. autoclass:: revscoring.scorer_models.test_statistics.ClassifierStatistic
+    :members:
+"""
 from .test_statistic import TestStatistic, ClassifierStatistic
 from .accuracy import accuracy
 from .precision import precision

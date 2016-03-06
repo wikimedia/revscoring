@@ -1,27 +1,3 @@
-"""
-A collection of statistics generators that can be applied to
-:class:`revscoring.ScorerModel`.
-
-.. autoclass:: roc
-    :members:
-
-.. autoclass:: pr
-    :members:
-
-.. autoclass:: recall_at_fpr
-    :members:
-
-.. autoclass:: filter_rate_at_recall
-    :members:
-
-Abstract classes
-++++++++++++++++
-.. autoclass:: revscoring.scorer_models.statistics.TestStatistic
-    :members:
-
-.. autoclass:: revscoring.scorer_models.statistics.ClassStatistic
-    :members:
-"""
 import json
 import re
 
