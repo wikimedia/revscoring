@@ -1,18 +1,18 @@
 """
 A revision-oriented nesting of basic features.
 
-.. autodata::revscoring.features.revision_oriented.revision
+.. autodata:: revscoring.features.revision_oriented.revision
 
-.. autoclass:revscoring.features.revision_oriented.Revision
+.. autoclass:: revscoring.features.revision_oriented.Revision
     :members:
 
-.. autoclass:revscoring.features.revision_oriented.Page
+.. autoclass:: revscoring.features.revision_oriented.Page
     :members:
 
-.. autoclass:revscoring.features.revision_oriented.Namespace
+.. autoclass:: revscoring.features.revision_oriented.Namespace
     :members:
 
-.. autoclass:revscoring.features.revision_oriented.User
+.. autoclass:: revscoring.features.revision_oriented.User
     :members:
 
 """
