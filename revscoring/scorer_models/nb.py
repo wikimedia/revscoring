@@ -24,11 +24,13 @@ logger = logging.getLogger(__name__)
 
 class NB(ScikitLearnClassifier):
     def __init__(self, features, *, version=None, nb=None,
-                 sklearn_class=None, balanced_sample_weight=False,
+                 sklearn_class=None, balanced_sample=False,
+                 balanced_sample_weight=False,
                  scale=False, center=False, test_statistics=None, **kwargs):
         if nb is None:
             nb = sklearn_class(**kwargs)
         super().__init__(features, classifier_model=nb, version=version,
+                         balanced_sample=balanced_sample,
                          balanced_sample_weight=balanced_sample_weight,
                          scale=scale, center=center,
                          test_statistics=test_statistics)

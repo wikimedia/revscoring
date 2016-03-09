@@ -27,13 +27,15 @@ class GradientBoosting(ScikitLearnClassifier):
             Passed to :class:`sklearn.ensemble.GradientBoostingClassifier`
     """
     def __init__(self, features, *, version=None, gb=None,
-                 balanced_sample_weight=False, scale=False, center=False,
+                 balanced_sample=False, balanced_sample_weight=False,
+                 scale=False, center=False,
                  test_statistics=None, **kwargs):
 
         if gb is None:
             gb = GradientBoostingClassifier(**kwargs)
 
         super().__init__(features, classifier_model=gb, version=version,
-                         balanced_sample_weight=balanced_sample_weight, 
+                         balanced_sample=balanced_sample,
+                         balanced_sample_weight=balanced_sample_weight,
                          scale=scale, center=center,
                          test_statistics=test_statistics)

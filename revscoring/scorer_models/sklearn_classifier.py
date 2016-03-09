@@ -3,21 +3,22 @@ import time
 from datetime import datetime
 
 from sklearn.preprocessing import RobustScaler
-from tabulate import tabulate
 
+from . import util
 from .scorer_model import MLScorerModel
 from .test_statistics import (accuracy, precision, precision_recall, recall,
                               roc, table)
-from .util import balanced_sample_weights, format_params, normalize_json
 
 
 class ScikitLearnClassifier(MLScorerModel):
 
     def __init__(self, features, classifier_model, version=None,
-                 balanced_sample_weight=False, scale=False, center=False,
+                 balanced_sample=False, balanced_sample_weight=False,
+                 scale=False, center=False,
                  test_statistics=None):
         super().__init__(features, version=version)
         self.classifier_model = classifier_model
+        self.balanced_sample = balanced_sample
         self.balanced_sample_weight = balanced_sample_weight
         if scale or center:
             self.scaler = RobustScaler(with_centering=center,
@@ -29,6 +30,7 @@ class ScikitLearnClassifier(MLScorerModel):
 
         self.test_stats = None
         self.params = {
+            'balanced_sample': balanced_sample,
             'balanced_sample_weight': balanced_sample_weight,
             'scale': scale,
             'center': center
@@ -52,15 +54,20 @@ class ScikitLearnClassifier(MLScorerModel):
         """
         start = time.time()
 
+        if self.scaler is not None:
+            values, labels = zip(*values_labels)
+            values = self.scaler.fit_transform(values)
+            values_labels = zip(values, labels)
+
+        if self.balanced_sample:
+            values_labels = util.balance_sample(values_labels)
+
         values, labels = zip(*values_labels)
 
         if self.balanced_sample_weight:
-            sample_weight = balanced_sample_weights(labels)
+            sample_weight = util.balanced_sample_weights(labels)
         else:
             sample_weight = None
-
-        if self.scaler is not None:
-            values = self.scaler.fit_transform(values)
 
         # Fit SVC model
         self.classifier_model.fit(values, labels, sample_weight=sample_weight,
@@ -102,7 +109,7 @@ class ScikitLearnClassifier(MLScorerModel):
             'prediction': prediction,
             'probability': probability
         }
-        return normalize_json(doc)
+        return util.normalize_json(doc)
 
     def test(self, values_labels, test_statistics=None, store_stats=True):
         """
@@ -141,7 +148,7 @@ class ScikitLearnClassifier(MLScorerModel):
         params.update(self.params or {})
         params.update(self.classifier_model.get_params())
 
-        return normalize_json({
+        return util.normalize_json({
             'type': self.__class__.__name__,
             'params': params,
             'version': self.version,
@@ -164,7 +171,7 @@ class ScikitLearnClassifier(MLScorerModel):
         formatted.write("ScikitLearnClassifier\n")
         formatted.write(" - type: {0}\n".format(info.get('type')))
         formatted.write(" - params: {0}\n"
-                        .format(format_params(info.get('params'))))
+                        .format(util.format_params(info.get('params'))))
         formatted.write(" - version: {0}\n".format(info.get('version')))
         if isinstance(info['trained'], float):
             date_string = datetime.fromtimestamp(info['trained']).isoformat()
@@ -195,7 +202,7 @@ class ScikitLearnClassifier(MLScorerModel):
                 test_stats[str(test_stat)] = \
                     test_stat.format(stats, format="json")
 
-        return normalize_json({
+        return util.normalize_json({
             'type': self.__class__.__name__,
             'params': params,
             'version': self.version,
