@@ -13,6 +13,7 @@
                    [--model-file=<path>]
                    [--label-type=<type>]
                    [--test-prop=<prop>]
+                   [--balance-sample]
                    [--balance-sample-weight]
                    [--center]
                    [--scale]
@@ -37,6 +38,9 @@
                                 (int, float, str, bool) [default: str]
         --test-prop=<prop>      The proportion of data that should be withheld
                                 for testing the model. [default: 0.20]
+        --balance-sample         Balance the samples by sampling with
+                                 replacement until all classes are equally
+                                 represented
         --balance-sample-weight  Balance the weight of samples (increase
                                  importance of under-represented classes)
         --center                 Features should be centered on a common axis
@@ -81,6 +85,7 @@ def main(argv=None):
 
     scorer_model = ScorerModel(
         features, version=version,
+        balanced_sample=args['--balance-sample'],
         balanced_sample_weight=args['--balance-sample-weight'],
         center=args['--center'],
         scale=args['--scale'],

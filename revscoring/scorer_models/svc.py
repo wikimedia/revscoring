@@ -36,14 +36,15 @@ class SVC(ScikitLearnClassifier):
             Passed to :class:`sklearn.svm.SVC`
     """
     def __init__(self, features, version=None, svc=None,
-                 balanced_sample_weight=False, scale=False, center=False,
-                 test_statistics=None, **kwargs):
+                 balanced_sample=False, balanced_sample_weight=False,
+                 scale=False, center=False, test_statistics=None, **kwargs):
         if svc is None:
             classifier_model = svm.SVC(probability=True, **kwargs)
         else:
             classifier_model = svc
 
         super().__init__(features, classifier_model, version=version,
+                         balanced_sample=balanced_sample,
                          balanced_sample_weight=balanced_sample_weight,
                          scale=scale, center=center,
                          test_statistics=test_statistics)

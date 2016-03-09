@@ -11,7 +11,7 @@ def test_svc():
     pickle_and_unpickle(model)
     get_and_format_info(model)
 
-    model = SVC(FEATURES, scale=True, center=True)
+    model = SVC(FEATURES, scale=True, center=True, balanced_sample=True)
     get_and_format_info(model)
     train_score(model)
     pickle_and_unpickle(model)
