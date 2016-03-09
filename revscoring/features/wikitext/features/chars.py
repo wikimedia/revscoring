@@ -227,7 +227,7 @@ def _process_longest_repeated_char_added(diff_segments_added):
 
 
 def _process_longest_repeated_char(text):
-    if len(text) > 0:
+    if len(text or "") > 0:
         return max(sum(1 for _ in group)
                    for _, group in groupby(text.lower()))
     else:
