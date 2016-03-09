@@ -232,6 +232,10 @@ def test_longest_repeated_char():
              r_text: "This is words."}
     eq_(solve(revision.diff.longest_repeated_char_added, cache=cache), 1)
 
+    # Test no parent case
+    cache = {p_text: None}
+    eq_(solve(revision.parent.longest_repeated_char, cache=cache), 1)
+
     eq_(pickle.loads(pickle.dumps(revision.longest_repeated_char)),
         revision.longest_repeated_char)
     eq_(pickle.loads(pickle.dumps(revision.parent.longest_repeated_char)),
