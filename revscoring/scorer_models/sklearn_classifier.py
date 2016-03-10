@@ -65,7 +65,7 @@ class ScikitLearnClassifier(MLScorerModel):
         values, labels = zip(*values_labels)
 
         if self.balanced_sample_weight:
-            sample_weight = util.balanced_sample_weights(labels)
+            sample_weight = util.balance_sample_weights(labels)
         else:
             sample_weight = None
 

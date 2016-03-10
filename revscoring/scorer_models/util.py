@@ -45,7 +45,7 @@ def format_params(doc):
                          for k, v in doc.items())
 
 
-def balanced_weights(labels):
+def balance_weights(labels):
     """
     Generates a mapping of class weights that will re-weight a training set
     in a balanced way such that weight(label) = len(obs) / freq(label in obs).
@@ -57,11 +57,11 @@ def balanced_weights(labels):
     return {l:(len(labels) / counts[l]) for l in counts}
 
 
-def balanced_sample_weights(labels):
+def balance_sample_weights(labels):
     """
     Generates a vector of balancing weights for a vector of labels
     """
-    weights = balanced_weights(labels)
+    weights = balance_weights(labels)
     return [weights[label] for label in labels]
 
 
