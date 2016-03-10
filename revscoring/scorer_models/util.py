@@ -114,6 +114,5 @@ def balance_sample(values_labels):
                                   for i in range(additional_obs))
 
     # Shuffle the observations again before returning.
-    print(new_feature_values)
     random.shuffle(new_feature_values)
     return new_feature_values
