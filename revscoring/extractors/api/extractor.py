@@ -67,15 +67,16 @@ class Extractor(BaseExtractor):
         context = context or {}
 
         if hasattr(rev_ids, "__iter__"):
-            return self._extract_many(rev_ids, dependents, context)
+            return self._extract_many(rev_ids, dependents, context, cache)
         else:
             rev_id = rev_ids
             return self._extract(rev_id, dependents, context, cache)
 
-    def _extract_many(self, rev_ids, dependents, context):
+    def _extract_many(self, rev_ids, dependents, context, caches):
         all_dependents = set(expand(dependents))
 
         revision_caches = defaultdict(lambda: {})
+        revision_caches.update(caches or {})
 
         errored = {}
 
