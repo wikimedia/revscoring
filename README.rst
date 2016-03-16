@@ -77,6 +77,8 @@ Authors
         * `https://github.com/he7d3r`
     Adam Roses Wight:
         * `https://mediawiki.org/wiki/User:Adamw`
+    Amir Sarabadani:
+	* `https://github.com/Ladsgroup`
 
 .. |travis| image:: https://api.travis-ci.org/wiki-ai/revscoring.png
 .. _travis: https://travis-ci.org/wiki-ai/revscoring
