@@ -42,7 +42,7 @@ class Extractor(BaseExtractor):
     def get_last_user_rev_doc(self, user):
         return datasources.LastUserRevDoc(user, self)
 
-    def extract(self, rev_ids, dependents, context=None, cache=None):
+    def extract(self, rev_ids, dependents, context=None, caches=None):
         """
         Extracts a values for a set of
         :class:`~revscoring.dependents.dependent.Dependent` (e.g.
@@ -57,7 +57,7 @@ class Extractor(BaseExtractor):
             context : `dict` | `iterable`
                 A set of call-specific
                 :class:`~revscoring.dependents.dependent.Dependent` to inject
-            cache : `dict`
+            caches : `dict`
                 A set of call-specific pre-computed values to inject
         :Returns:
             An generator of extracted values if a single rev_id was provided or
@@ -67,9 +67,10 @@ class Extractor(BaseExtractor):
         context = context or {}
 
         if hasattr(rev_ids, "__iter__"):
-            return self._extract_many(rev_ids, dependents, context, cache)
+            return self._extract_many(rev_ids, dependents, context, caches)
         else:
             rev_id = rev_ids
+            cache = caches
             return self._extract(rev_id, dependents, context, cache)
 
     def _extract_many(self, rev_ids, dependents, context, caches):
