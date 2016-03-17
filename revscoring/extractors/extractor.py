@@ -20,7 +20,7 @@ class Extractor(Context):
     revisions.
     """
 
-    def extract(self, rev_ids, dependents, context=None, caches=None):
+    def extract(self, rev_ids, dependents, context=None, cache=None):
         raise NotImplementedError()
 
     @classmethod
@@ -43,14 +43,13 @@ class OfflineExtractor(Extractor):
         logger.warning("Loading OfflineExtractor.  You probably want an " +
                        "APIExtractor unless this is the test server.")
 
-    def extract(self, rev_ids, dependents, context=None, caches=None):
-        caches = caches or {}
+    def extract(self, rev_ids, dependents, context=None, cache=None):
+        cache = cache or {}
         if hasattr(rev_ids, "__iter__"):
             return self._extract_many(rev_ids, dependents, context=context,
-                                      caches=caches)
+                                      cache=cache)
         else:
             rev_id = rev_ids
-            cache = caches
             return self._extract(rev_id, dependents, context=context,
                                  cache=cache)
 
@@ -59,10 +58,10 @@ class OfflineExtractor(Extractor):
         cache[revision_oriented.revision.id] = rev_id
         return self.solve(features, context=context, cache=cache)
 
-    def _extract_many(self, rev_ids, features, context=None, caches=None):
+    def _extract_many(self, rev_ids, features, context=None, cache=None):
         for rev_id in rev_ids:
             yield None, self._extract(rev_id, features, context=context,
-                                      cache=caches.get(rev_id))
+                                      cache=cache.get(rev_id))
 
     @classmethod
     def from_config(cls, config, name, section_key="extractors"):

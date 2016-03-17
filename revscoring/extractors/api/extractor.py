@@ -72,15 +72,15 @@ class Extractor(BaseExtractor):
             rev_id = rev_ids
             return self._extract(rev_id, dependents, context, cache)
 
-    def _extract_many(self, rev_ids, dependents, context, caches):
+    def _extract_many(self, rev_ids, dependents, context, cache):
         all_dependents = set(expand(dependents))
 
-        revision_caches = defaultdict(lambda: {})
-        revision_caches.update(caches or {})
+        revision_cache = defaultdict(lambda: {})
+        revision_cache.update(cache or {})
 
         errored = {}
 
-        # Build up caches for data that can be queried in batch
+        # Build up cache for data that can be queried in batch
         if self.revision & all_dependents:
             rvprop = set(REV_PROPS)
             if self.revision.text in all_dependents:
@@ -92,7 +92,7 @@ class Extractor(BaseExtractor):
             rev_docs = self.get_rev_doc_map(rev_ids, rvprop=rvprop)
             for rev_id in rev_ids:
                 if rev_id in rev_docs:
-                    revision_caches[rev_id][self.revision.doc] = \
+                    revision_cache[rev_id][self.revision.doc] = \
                         rev_docs[rev_id]
                 else:
                     errored[rev_id] = RevisionNotFound(self.revision, rev_id)
@@ -111,7 +111,7 @@ class Extractor(BaseExtractor):
                     rev_doc = parent_revs[parent_id]
                     rev_id = rev_doc['revid']
                     if parent_id in parent_rev_docs:
-                        revision_caches[rev_id][self.revision.parent.doc] = \
+                        revision_cache[rev_id][self.revision.parent.doc] = \
                             parent_rev_docs[parent_id]
                     else:
                         errored[rev_id] = \
@@ -131,7 +131,7 @@ class Extractor(BaseExtractor):
                     rev_docs = user_texts[user_text]
                     for rev_doc in rev_docs:
                         rev_id = rev_doc['revid']
-                        cache = revision_caches[rev_id]
+                        cache = revision_cache[rev_id]
                         if user_text in user_info_docs:
                             cache[self.revision.user.info.doc] = \
                                 user_info_docs[user_text]
@@ -149,7 +149,7 @@ class Extractor(BaseExtractor):
                 # If no error happened, try to solve the other dependencies.
                 try:
                     values = self._extract(rev_id, dependents, context=context,
-                                           cache=revision_caches[rev_id])
+                                           cache=revision_cache[rev_id])
                     yield None, list(values)
                 except Exception as e:
                     yield e, None
