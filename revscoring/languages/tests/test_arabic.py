@@ -118,7 +118,7 @@ def test_informals():
 def test_dictionary():
     cache = {revision_oriented.revision.text: 'التي لم تكن معروفة  worngly.'}
     eq_(solve(arabic.dictionary.revision.datasources.dict_words, cache=cache),
-        ["التي" ,"لم" ,"تكن" ,"معروفة"])
+        ["التي", "لم", "تكن", "معروفة"])
     eq_(solve(arabic.dictionary.revision.datasources.non_dict_words,
               cache=cache),
         ["worngly"])
@@ -132,6 +132,6 @@ def test_stopwords():
         ['التي'])
     eq_(solve(arabic.stopwords.revision.datasources.non_stopwords,
         cache=cache),
-        ['لم' ,'تكن', 'معروفة'])
+        ['لم', 'تكن', 'معروفة'])
 
     eq_(arabic.stopwords, pickle.loads(pickle.dumps(arabic.stopwords)))

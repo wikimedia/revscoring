@@ -14,10 +14,6 @@ A collection of Support Vector Machine type classifier models.
     :member-order:
 
 """
-import random
-import time
-from collections import defaultdict
-
 from sklearn import svm
 
 from .sklearn_classifier import ScikitLearnClassifier

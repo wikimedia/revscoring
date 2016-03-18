@@ -8,6 +8,7 @@ USER_PROPS = {'groups', 'editcount', 'gender', 'registration'}
 def identity(v):
     return v
 
+
 class key(Datasource):
 
     def __init__(self, keys, dict_datasource, name=None, if_missing=None,

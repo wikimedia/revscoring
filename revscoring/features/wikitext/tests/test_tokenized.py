@@ -116,6 +116,7 @@ def test_longest_token():
    eq_(pickle.loads(pickle.dumps(revision.longest_token)),
        revision.longest_token)
 
+
 def test_longest_word():
     eq_(solve(revision.longest_word, cache={r_text: text}), 8)
 
