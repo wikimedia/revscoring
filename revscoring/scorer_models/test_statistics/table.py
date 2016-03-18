@@ -1,5 +1,3 @@
-import io
-
 from tabulate import tabulate
 
 from .test_statistic import ClassifierStatistic, TestStatistic

@@ -17,8 +17,8 @@ class Revision(DependentSet):
                 name + ".parent", regexes, revision_datasources.parent
             )
             """
-            :class:`~revscoring.languages.features.regex_matches.Revision` : The
-            parent revision
+            :class:`~revscoring.languages.features.regex_matches.Revision` :
+            The parent revision
             """
 
         if hasattr(revision_datasources, 'diff'):

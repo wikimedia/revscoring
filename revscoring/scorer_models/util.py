@@ -54,7 +54,7 @@ def balance_weights(labels):
     for l in labels:
         counts[l] = counts.get(l, 0) + 1
 
-    return {l:(len(labels) / counts[l]) for l in counts}
+    return {l: (len(labels) / counts[l]) for l in counts}
 
 
 def balance_sample_weights(labels):
