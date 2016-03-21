@@ -2,7 +2,7 @@ import pickle
 
 from nose.tools import eq_, raises
 
-from ....datasources import Datasource, revision_oriented
+from ....datasources import Datasource
 from ....dependencies import solve
 from ..util import _lookup_keys, key, key_exists, or_none
 
