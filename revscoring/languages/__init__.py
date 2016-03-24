@@ -56,6 +56,11 @@ italian
 .. automodule:: revscoring.languages.italian
     :members:
 
+japanese
++++++++
+.. automodule:: revscoring.languages.japanese
+    :members:
+
 persian
 +++++++
 .. automodule:: revscoring.languages.persian
