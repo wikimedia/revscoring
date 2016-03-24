@@ -21,11 +21,18 @@ class regex(Datasource):
             A datasource that returns a `str` or a `list` of `str`
         regex_flags : `int`
             A set of regex flags to use in matching
+        use_word_boundaries : `bool`
+            If `True`, include word boundaries in the regex.  This is useful
+            for languages that *have* word boundaries.
         name : `str`
             A name for the new datasource
     """
-    def __init__(self, regexes, text_datasource, regex_flags=re.I, name=None):
-        group_pattern = r"\b(" + r"|".join(regexes) + r")\b"
+    def __init__(self, regexes, text_datasource, regex_flags=re.I,
+                 use_word_boundaries=True, name=None):
+        if use_word_boundaries:
+            group_pattern = r"\b(" + r"|".join(regexes) + r")\b"
+        else:
+            group_pattern = r"|".join(regexes)
         self.group_re = re.compile(group_pattern, flags=regex_flags)
         name = self._format_name(name, [regexes, text_datasource])
         super().__init__(name, self.process, depends_on=[text_datasource])

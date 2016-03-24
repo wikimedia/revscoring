@@ -1,16 +1,19 @@
 from nose.tools import eq_
 
 
-def compare_extraction(extractor, examples, counter_examples):
+def compare_extraction(extractor, examples, counter_examples,
+                       lwrap="", rwrap=""):
 
     for example in examples:
-        eq_(extractor.process(example), [example])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [example])
-        eq_(extractor.process("Sentence end " + example + "."), [example])
-        eq_(extractor.process(example + " start of sentence."), [example])
+        wrapped = lwrap + example + rwrap
+        eq_(extractor.process(wrapped), [example])
+        eq_(extractor.process("Sentence " + wrapped + " sandwich."), [example])
+        eq_(extractor.process("Sentence end " + wrapped + "."), [example])
+        eq_(extractor.process(wrapped + " start of sentence."), [example])
 
     for example in counter_examples:
-        eq_(extractor.process(example), [])
-        eq_(extractor.process("Sentence " + example + " sandwich."), [])
-        eq_(extractor.process("Sentence end " + example + "."), [])
-        eq_(extractor.process(example + " start of sentence."), [])
+        wrapped = lwrap + example + rwrap
+        eq_(extractor.process(wrapped), [])
+        eq_(extractor.process("Sentence " + wrapped + " sandwich."), [])
+        eq_(extractor.process("Sentence end " + wrapped + "."), [])
+        eq_(extractor.process(wrapped + " start of sentence."), [])
