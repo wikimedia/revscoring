@@ -2,6 +2,8 @@ from .features import RegexMatches
 
 name = "japanese"
 
+# Copied from https://gist.github.com/whym/b5ac3feb2a78797c9d98
+# Yusuke Matsubara (CCO)
 badword_regexes = [
     r"死ね",
     r"しね",
@@ -36,6 +38,8 @@ badwords = RegexMatches(name + ".badwords", badword_regexes,
 badword detecting regexes.
 """
 
+# Copied from https://gist.github.com/whym/b5ac3feb2a78797c9d98
+# Yusuke Matsubara (CCO)
 informal_regexes = [
     # Words
     r"\（笑\）",
