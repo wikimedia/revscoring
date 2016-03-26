@@ -36,6 +36,12 @@ def check_feature(feature, expected):
 
 
 def test_feature():
+    f = Feature("f")
+
+    eq_(pickle.loads(pickle.dumps(f)), f)
+    eq_(solve(f, cache={f: 5}), 5)
+    eq_(solve(f, cache={"feature.f": 5}), 5)
+
     check_feature(five, 5)
 
 

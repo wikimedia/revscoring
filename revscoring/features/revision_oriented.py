@@ -181,8 +181,8 @@ class User(DependentSet):
         super().__init__(name)
         self.datasources = user_datasources
 
-        self.is_anon = Feature("is_anon", _process_is_anon, returns=bool,
-                               depends_on=[self.datasources.id])
+        self.is_anon = Feature(self._name + ".is_anon", _process_is_anon,
+                               returns=bool, depends_on=[self.datasources.id])
 
     def id_in_set(self, ids, name=None):
         """

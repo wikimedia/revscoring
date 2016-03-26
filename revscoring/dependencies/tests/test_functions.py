@@ -20,6 +20,7 @@ def test_solve():
 
     # Cache
     eq_(solve(foobar, cache={bar: "baz"}), "foobaz")
+    eq_(solve(foobar, cache={"dependent.bar": "baz"}), "foobaz")
 
     # Context
     mybar = Dependent("bar", lambda: "baz")

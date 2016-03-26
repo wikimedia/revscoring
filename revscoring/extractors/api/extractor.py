@@ -66,6 +66,10 @@ class Extractor(BaseExtractor):
         """
         context = context or {}
 
+        if caches is not None:
+            logger.debug("Extracting {0} dependents with cache {1}"
+                         .format(len(dependents), caches))
+
         if hasattr(rev_ids, "__iter__"):
             return self._extract_many(rev_ids, dependents, context, caches)
         else:
@@ -87,61 +91,87 @@ class Extractor(BaseExtractor):
             if self.revision.text in all_dependents:
                 rvprop.add('content')
 
-            # Get revision data
-            logger.info("Batch requesting {0} revision from the API"
-                        .format(len(rev_ids)))
-            rev_docs = self.get_rev_doc_map(rev_ids, rvprop=rvprop)
+            # datasource.revision.doc
+            revids_to_lookup = []
             for rev_id in rev_ids:
-                if rev_id in rev_docs:
-                    revision_caches[rev_id][self.revision.doc] = \
-                        rev_docs[rev_id]
-                else:
-                    errored[rev_id] = RevisionNotFound(self.revision, rev_id)
+                cache = revision_caches.get(rev_id, {})
+                if self.revision.doc not in cache:
+                    revids_to_lookup.append(
+                        cache.get(revision_oriented.revision.id, rev_id))
+            logger.info("Batch requesting {0} revision from the API"
+                        .format(len(revids_to_lookup)))
+            logger.debug(revids_to_lookup)
 
+            rev_docs = self.get_rev_doc_map(revids_to_lookup, rvprop=rvprop)
+
+            for rev_id in rev_ids:
+                lookup_rev_id = revision_caches[rev_id].get(
+                    revision_oriented.revision.id, rev_id)
+                if lookup_rev_id in rev_docs:
+                    revision_caches[rev_id][self.revision.doc] = \
+                        rev_docs[lookup_rev_id]
+                else:
+                    errored[rev_id] = RevisionNotFound(self.revision,
+                                                       lookup_rev_id)
+
+            # datasource.revision.parent.doc
             if self.revision.parent & all_dependents:
-                parent_revs = {r.get('parentid'): r
-                               for r in rev_docs.values()
-                               if r.get('parentid', 0) > 0}
+                parentids_to_lookup = []
+                for rev_id, cache in revision_caches.items():
+                    if self.revision.doc in cache and \
+                       self.revision.parent.doc not in cache:
+                        rev_doc = cache[self.revision.doc]
+                        parent_id = cache.get(
+                            revision_oriented.revision.parent.id,
+                            rev_doc.get('parentid'))
+                        parentids_to_lookup.append(parent_id)
 
                 logger.info("Batch requesting {0} revision.parent from the API"
-                            .format(len(parent_revs)))
-                parent_rev_docs = self.get_rev_doc_map(parent_revs.keys(),
+                            .format(len(parentids_to_lookup)))
+                parent_rev_docs = self.get_rev_doc_map(parentids_to_lookup,
                                                        rvprop=rvprop)
 
-                for parent_id in parent_revs:
-                    rev_doc = parent_revs[parent_id]
-                    rev_id = rev_doc['revid']
-                    if parent_id in parent_rev_docs:
-                        revision_caches[rev_id][self.revision.parent.doc] = \
-                            parent_rev_docs[parent_id]
-                    else:
-                        errored[rev_id] = \
-                            RevisionNotFound(self.parent.revision, parent_id)
-
-            if self.revision.user.info & all_dependents:
-                user_revs = groupby((r for r in rev_docs.values()
-                                     if r.get('userid', 0) > 0),
-                                    lambda r: r.get('user'))
-                user_texts = {ut: list(revs) for ut, revs in user_revs}
-                logger.info("Batch requesting {0} revision.user.info from "
-                            .format(len(user_texts)) + "the API")
-                user_info_docs = self.get_user_doc_map(user_texts.keys(),
-                                                       usprop=USER_PROPS)
-
-                for user_text in user_texts:
-                    rev_docs = user_texts[user_text]
-                    for rev_doc in rev_docs:
-                        rev_id = rev_doc['revid']
-                        cache = revision_caches[rev_id]
-                        if user_text in user_info_docs:
-                            cache[self.revision.user.info.doc] = \
-                                user_info_docs[user_text]
+                for rev_id, cache in revision_caches.items():
+                    if self.revision.doc in cache and \
+                       self.revision.parent.doc not in cache:
+                        parent_id = cache.get(
+                            revision_oriented.revision.parent.id,
+                            rev_doc.get('parentid'))
+                        if parent_id in parent_rev_docs:
+                            revision_caches[rev_id][self.revision.parent.doc] = \
+                                parent_rev_docs[parent_id]
                         else:
                             errored[rev_id] = \
-                                UserNotFound(self.revision.user, user_text)
+                                RevisionNotFound(self.parent.revision, parent_id)
+
+            if self.revision.user.info & all_dependents:
+                user_texts_to_lookup = set()
+                for rev_id, cache in revision_caches.items():
+                    if self.revision.doc in cache and \
+                       self.revision.user.info.doc not in cache:
+                        rev_doc = cache[self.revision.doc]
+                        if rev_doc.get('userid', 0) > 0:
+                            user_texts_to_lookup.add(rev_doc.get('user'))
+
+                logger.info("Batch requesting {0} revision.user.info from "
+                            .format(len(user_texts_to_lookup)) + "the API")
+                user_info_docs = self.get_user_doc_map(user_texts_to_lookup,
+                                                       usprop=USER_PROPS)
+
+                for rev_id, cache in revision_caches.items():
+                    if self.revision.doc in cache and \
+                       self.revision.user.info.doc not in cache:
+                        rev_doc = cache[self.revision.doc]
+                        if rev_doc.get('userid', 0) > 0:
+                            user_text = rev_doc.get('user')
+                            if user_text in user_info_docs:
+                                cache[self.revision.user.info.doc] = \
+                                    user_info_docs[user_text]
+                            else:
+                                errored[rev_id] = \
+                                    UserNotFound(self.revision.user, user_text)
 
         # Now extract dependent values one-by-one
-
         for rev_id in rev_ids:
             # If an error happened, give up hope
             if rev_id in errored:
@@ -162,6 +192,7 @@ class Extractor(BaseExtractor):
                          self.dependents: all_dependents}
         extract_cache.update(cache)
         return self.solve(dependents, context=context, cache=extract_cache)
+
 
     def get_rev_doc_map(self, rev_ids, rvprop={'ids', 'user', 'timestamp',
                                                'userid', 'comment', 'content',
