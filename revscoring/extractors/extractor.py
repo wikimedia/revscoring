@@ -54,10 +54,10 @@ class OfflineExtractor(Extractor):
             return self._extract(rev_id, dependents, context=context,
                                  cache=cache)
 
-    def _extract(self, rev_id, features, context=None, cache=None):
-        cache = cache or {}
-        cache[revision_oriented.revision.id] = rev_id
-        return self.solve(features, context=context, cache=cache)
+    def _extract(self, rev_id, dependents, context=None, cache=None):
+        solve_cache = {revision_oriented.revision.id: rev_id}
+        solve_cache.update(cache or {})
+        return self.solve(dependents, context=context, cache=solve_cache)
 
     def _extract_many(self, rev_ids, features, context=None, caches=None):
         for rev_id in rev_ids:
