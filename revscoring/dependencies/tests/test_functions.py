@@ -19,6 +19,7 @@ def test_solve():
     eq_(list(solve([foo, bar, foobar])), ["foo", "bar", "foobar"])
 
     # Cache
+    eq_(solve(foobar, cache={foobar: "foobaz"}), "foobaz")
     eq_(solve(foobar, cache={bar: "baz"}), "foobaz")
     eq_(solve(foobar, cache={"dependent.bar": "baz"}), "foobaz")
 
