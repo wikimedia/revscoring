@@ -47,19 +47,19 @@ class Diff(DependentSet):
         match_delta_values = dicts.values(self.datasources.match_delta)
         self.match_delta_sum = aggregators.sum(
             match_delta_values,
-            name=name + "match_delta_sum",
+            name=name + ".match_delta_sum",
             returns=int
         )
         "`int` : The sum of frequency delta for matched strings"
         self.match_delta_increase = aggregators.sum(
             filters.positive(match_delta_values),
-            name=name + "match_delta_increase",
+            name=name + ".match_delta_increase",
             returns=int
         )
         "`int` : The sum of frequency delta increases for matched strings"
         self.match_delta_decrease = aggregators.sum(
             filters.negative(match_delta_values),
-            name=name + "match_delta_decrease",
+            name=name + ".match_delta_decrease",
             returns=int
         )
         "`int` : The sum of frequency delta decreases for matched strings"
@@ -68,7 +68,7 @@ class Diff(DependentSet):
             dicts.values(self.datasources.match_prop_delta)
         self.match_prop_delta_sum = aggregators.sum(
             match_prop_delta_values,
-            name=name + "match_prop_delta_sum",
+            name=name + ".match_prop_delta_sum",
             returns=float
         )
         """
@@ -77,7 +77,7 @@ class Diff(DependentSet):
         """
         self.match_prop_delta_increase = aggregators.sum(
             filters.positive(match_prop_delta_values),
-            name=name + "match_prop_delta_increase",
+            name=name + ".match_prop_delta_increase",
             returns=float
         )
         """
@@ -86,7 +86,7 @@ class Diff(DependentSet):
         """
         self.match_prop_delta_decrease = aggregators.sum(
             filters.negative(match_prop_delta_values),
-            name=name + "match_prop_delta_decrease",
+            name=name + ".match_prop_delta_decrease",
             returns=float
         )
         """
