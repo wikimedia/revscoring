@@ -13,7 +13,7 @@ def requirements(fname):
 
 setup(
     name="revscoring",
-    version="1.1.7",  # change in revscoring/__init__.py
+    version="1.1.8",  # change in revscoring/__init__.py
     author="Aaron Halfaker",
     author_email="ahalfaker@wikimedia.org",
     description=("A set of utilities for generating quality scores for " + \
