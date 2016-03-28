@@ -137,12 +137,17 @@ class Extractor(BaseExtractor):
                         parent_id = cache.get(
                             revision_oriented.revision.parent.id,
                             rev_doc.get('parentid'))
+
                         if parent_id in parent_rev_docs:
-                            revision_caches[rev_id][self.revision.parent.doc] = \
+                            cache[self.revision.parent.doc] = \
                                 parent_rev_docs[parent_id]
+                        elif parent_id == 0:
+                            cache[self.revision.parent.doc] = None
                         else:
                             errored[rev_id] = \
-                                RevisionNotFound(self.parent.revision, parent_id)
+                                RevisionNotFound(self.revision.parent,
+                                                 parent_id)
+
 
             if self.revision.user.info & all_dependents:
                 user_texts_to_lookup = set()
