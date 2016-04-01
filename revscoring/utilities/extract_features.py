@@ -18,6 +18,7 @@
                                                  [--value-labels=<path>]
                                                  [--include-revid]
                                                  [--extractors=<num>]
+                                                 [--login]
                                                  [--verbose] [--debug]
 
     Options:
@@ -33,9 +34,11 @@
                                 column in the output TSV
         --extractors=<num>      The number of extractors to run in parallel
                                 [default: <cpu count>]
+        --login                 If set, prompt for username and password
         --verbose               Print dots and stuff
         --debug                 Print debug logging
 """
+import getpass
 import logging
 import sys
 from multiprocessing import Pool, cpu_count
@@ -63,6 +66,12 @@ def main(argv=None):
 
     session = mwapi.Session(args['--host'],
                             user_agent="Revscoring feature extractor utility")
+    if args['--login']:
+        sys.stderr.write("Log into " + args['--host'] + "\n")
+        sys.stderr.write("Username: ");sys.stderr.flush()
+        username = open('/dev/tty').readline().strip()
+        password = getpass.getpass("Password: ")
+        session.login(username, password)
     extractor = api.Extractor(session)
 
     if args['--rev-labels'] == "<stdin>":
