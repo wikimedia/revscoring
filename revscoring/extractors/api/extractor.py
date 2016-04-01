@@ -1,6 +1,6 @@
 import logging
 from collections import defaultdict
-from itertools import groupby, islice
+from itertools import islice
 
 import mwapi
 
@@ -42,7 +42,8 @@ class Extractor(BaseExtractor):
     def get_last_user_rev_doc(self, user):
         return datasources.LastUserRevDoc(user, self)
 
-    def extract(self, rev_ids, dependents, context=None, caches=None):
+    def extract(self, rev_ids, dependents, context=None, caches=None,
+                profile=None):
         """
         Extracts a values for a set of
         :class:`~revscoring.dependents.dependent.Dependent` (e.g.
@@ -56,9 +57,13 @@ class Extractor(BaseExtractor):
                 A set of dependents to extract values for
             context : `dict` | `iterable`
                 A set of call-specific
-                :class:`~revscoring.dependents.dependent.Dependent` to inject
+                :class:`~revscoring.Dependent` to inject
             caches : `dict`
                 A set of call-specific pre-computed values to inject
+            profile : `dict`
+                A mapping of :class:`revscoring.Dependent` to `list` of process
+                durations for generating the value.  The provided `dict` will
+                be modified in-place and new durations will be appended.
         :Returns:
             An generator of extracted values if a single rev_id was provided or
             a genetator of (error, values) pairs where error is `None` if no
@@ -71,13 +76,15 @@ class Extractor(BaseExtractor):
                          .format(len(dependents), caches))
 
         if hasattr(rev_ids, "__iter__"):
-            return self._extract_many(rev_ids, dependents, context, caches)
+            return self._extract_many(rev_ids, dependents, context, caches,
+                                      profile)
         else:
             rev_id = rev_ids
             cache = caches
-            return self._extract(rev_id, dependents, context, cache)
+            return self._extract(rev_id, dependents, context, cache,
+                                 profile)
 
-    def _extract_many(self, rev_ids, dependents, context, caches):
+    def _extract_many(self, rev_ids, dependents, context, caches, profile):
         all_dependents = set(expand(dependents))
 
         revision_caches = defaultdict(lambda: {})
@@ -148,7 +155,6 @@ class Extractor(BaseExtractor):
                                 RevisionNotFound(self.revision.parent,
                                                  parent_id)
 
-
             if self.revision.user.info & all_dependents:
                 user_texts_to_lookup = set()
                 for rev_id, cache in revision_caches.items():
@@ -185,19 +191,20 @@ class Extractor(BaseExtractor):
                 # If no error happened, try to solve the other dependencies.
                 try:
                     values = self._extract(rev_id, dependents, context=context,
-                                           cache=revision_caches[rev_id])
+                                           cache=revision_caches[rev_id],
+                                           profile=profile)
                     yield None, list(values)
                 except Exception as e:
                     yield e, None
 
-    def _extract(self, rev_id, dependents, cache, context):
+    def _extract(self, rev_id, dependents, cache, context, profile):
         all_dependents = set(expand(dependents))
 
         extract_cache = {self.revision.id: rev_id,
                          self.dependents: all_dependents}
         extract_cache.update(cache)
-        return self.solve(dependents, context=context, cache=extract_cache)
-
+        return self.solve(dependents, context=context, cache=extract_cache,
+                          profile=profile)
 
     def get_rev_doc_map(self, rev_ids, rvprop={'ids', 'user', 'timestamp',
                                                'userid', 'comment', 'content',

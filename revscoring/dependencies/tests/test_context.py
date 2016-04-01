@@ -40,4 +40,6 @@ def test_context():
     context.update(context={bar: bar})
     eq_(set(context.dig([foobar])), {foo, bar})
 
-    eq_(context.draw(foobar), " - <foobar>\n\t - <foo>\n\t - <bar>\n")
+    eq_(context.draw(foobar), " - <dependent.foobar>\n" +
+                              "\t - <dependent.foo>\n" +
+                              "\t - <dependent.bar>\n")

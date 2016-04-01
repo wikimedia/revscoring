@@ -61,10 +61,10 @@ class Dependent:
         return not self == other
 
     def __str__(self):
-        return self.__repr__()
+        return "dependent." + self.name
 
     def __repr__(self):
-        return "<" + self.name + ">"
+        return "<" + self.__str__() + ">"
 
 
 class DependentSet:

@@ -14,7 +14,7 @@ def test_log():
 
     eq_(solve(pickle.loads(pickle.dumps(log_five))), math_log(5))
 
-    eq_(str(log_five), "<log(5)>")
+    eq_(repr(log_five), "<feature.log(5)>")
 
 
 def test_max():
@@ -25,7 +25,7 @@ def test_max():
 
     eq_(solve(pickle.loads(pickle.dumps(max_five_six_seven))), 7)
 
-    eq_(str(max_five_six_seven), "<max(5, 6, 7)>")
+    eq_(repr(max_five_six_seven), "<feature.max(5, 6, 7)>")
 
 
 def test_min():
@@ -36,4 +36,4 @@ def test_min():
 
     eq_(pickle.loads(pickle.dumps(min_five_six_seven)), min_five_six_seven)
 
-    eq_(str(min_five_six_seven), "<min(5, 6, 7)>")
+    eq_(repr(min_five_six_seven), "<feature.min(5, 6, 7)>")

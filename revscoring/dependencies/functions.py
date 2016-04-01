@@ -17,6 +17,7 @@ and collections of `Dependent`.
 
 """
 import logging
+import time
 import traceback
 
 from ..errors import CaughtDependencyError, DependencyError, DependencyLoop
@@ -24,7 +25,7 @@ from ..errors import CaughtDependencyError, DependencyError, DependencyLoop
 logger = logging.getLogger(__name__)
 
 
-def solve(dependents, context=None, cache=None):
+def solve(dependents, context=None, cache=None, profile=None):
     """
     Calculates a dependent's value by solving dependencies.
 
@@ -40,6 +41,10 @@ def solve(dependents, context=None, cache=None):
         cache : `dict`
             A cache of previously solved dependencies as
             :class:`revscoring.Dependent`:`<value>` pairs
+        profile : `dict`
+            A mapping of :class:`revscoring.Dependent` to `list` of process
+            durations for generating the value.  The provided `dict` will be
+            modified in-place and new durations will be appended.
 
     :Returns:
         The result of executing the dependents with all dependencies resolved.
@@ -52,11 +57,13 @@ def solve(dependents, context=None, cache=None):
 
     if hasattr(dependents, '__iter__'):
         # Multiple values -- return a generator
-        return _solve_many(dependents, context, cache)
+        return _solve_many(dependents, context=context, cache=cache,
+                           profile=profile)
     else:
         # Singular value -- return it's solution
         dependent = dependents
-        value, cache, history = _solve(dependent, context=context, cache=cache)
+        value, _, _ = _solve(dependent, context=context, cache=cache,
+                             profile=profile)
         return value
 
 
@@ -121,12 +128,12 @@ def draw_lines(dependent, context, cache, depth):
     context = normalize_context(context)
 
     if dependent in cache:
-        yield "\t" * depth + " - " + str(dependent) + " CACHED"
+        yield "\t" * depth + " - " + repr(dependent) + " CACHED"
     else:
         if dependent in context:
             dependent = context[dependent]
 
-        yield "\t" * depth + " - " + str(dependent)
+        yield "\t" * depth + " - " + repr(dependent)
 
         # Check if we're a dependent with explicit dependencies
         if hasattr(dependent, "dependencies"):
@@ -185,7 +192,7 @@ def normalize_context(context):
                         .format(str(context)))
 
 
-def _solve(dependent, context, cache, history=None):
+def _solve(dependent, context, cache, history=None, profile=None):
     history = history or set()
 
     # Check if we've already got a value for this dependency
@@ -226,13 +233,22 @@ def _solve(dependent, context, cache, history=None):
             args = []
             for dependency in dependencies:
                 value, cache, history = _solve(dependency, context=context,
-                                               cache=cache, history=history)
+                                               cache=cache, history=history,
+                                               profile=profile)
 
                 args.append(value)
 
             # Generate value
             try:
+                start = time.time()
                 value = dependent(*args)
+                duration = time.time() - start
+                if profile is not None:
+                    if dependent in profile:
+                        print("here")
+                        profile[dependent].append(duration)
+                    else:
+                        profile[dependent] = [duration]
             except DependencyError as e:
                 raise
             except Exception as e:
@@ -247,10 +263,11 @@ def _solve(dependent, context, cache, history=None):
             return cache[dependent], cache, history
 
 
-def _solve_many(dependents, context, cache):
+def _solve_many(dependents, context, cache, profile=None):
 
     for dependent in dependents:
-        value, cache, history = _solve(dependent, context, cache)
+        value, cache, history = _solve(dependent, context=context, cache=cache,
+                                       profile=profile)
         yield value
 
 

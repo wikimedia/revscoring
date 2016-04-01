@@ -19,6 +19,7 @@
                                                  [--include-revid]
                                                  [--extractors=<num>]
                                                  [--login]
+                                                 [--profile=<path>]
                                                  [--verbose] [--debug]
 
     Options:
@@ -35,17 +36,22 @@
         --extractors=<num>      The number of extractors to run in parallel
                                 [default: <cpu count>]
         --login                 If set, prompt for username and password
+        --profile=<path>        Path to a file to write extraction profiling
+                                output
         --verbose               Print dots and stuff
         --debug                 Print debug logging
 """
 import getpass
 import logging
 import sys
+import time
 from multiprocessing import Pool, cpu_count
+from statistics import mean, median
 
 import docopt
 import mwapi
 import yamlconf
+from tabulate import tabulate
 
 from ..errors import RevisionNotFound
 from ..extractors import api
@@ -91,11 +97,16 @@ def main(argv=None):
     else:
         extractors = int(args['--extractors'])
 
+    if args['--profile'] is not None:
+        profile_f = open(args['--profile'], 'w')
+    else:
+        profile_f = None
+
     verbose = args['--verbose']
     debug = args['--debug']
 
     run(rev_labels, value_labels, features, extractor, include_revid,
-        extractors, verbose, debug)
+        extractors, profile_f, verbose, debug)
 
 
 def read_rev_labels(f):
@@ -110,7 +121,7 @@ def read_rev_labels(f):
 
 
 def run(rev_labels, value_labels, features, extractor, include_revid,
-        extractors, verbose, debug):
+        extractors, profile_f, verbose, debug):
     logging.basicConfig(
         level=logging.WARNING if not debug else logging.DEBUG,
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
@@ -119,21 +130,31 @@ def run(rev_labels, value_labels, features, extractor, include_revid,
     extractor_context = ConfiguredExtractor(extractor, features)
     extractor_pool = Pool(processes=extractors)
 
-    error_rev_label_features = extractor_pool.imap(extractor_context.extract,
-                                                   rev_labels)
+    results = extractor_pool.imap(extractor_context.extract, rev_labels)
+    combined_profile = {}
+    extraction_durations = []
 
-    for error, rev_id, label, feature_values in error_rev_label_features:
-        if isinstance(error, RevisionNotFound):
+    for e, rev_id, label, feature_values, profile, duration in results:
+        if isinstance(e, RevisionNotFound):
             if verbose:
                 sys.stderr.write("?")
                 sys.stderr.flush()
-        elif error is not None:
+        elif e is not None:
             logger.error("An error occured while processing {0}:"
                          .format(rev_id))
-            logger.error("\t{0}: {1}"
-                         .format(error.__class__.__name__,
-                                 str(error)))
+            logger.error("\t{0}: {1}".format(e.__class__.__name__, str(e)))
         else:
+            # Append extraction duraton
+            extraction_durations.append(duration)
+
+            # Update profile
+            for dependent, durations in profile.items():
+                if dependent in combined_profile:
+                    combined_profile[dependent].extend(durations)
+                else:
+                    combined_profile[dependent] = durations
+
+            # Emit feature values
             fields = list(feature_values) + [label]
 
             if include_revid:
@@ -150,6 +171,10 @@ def run(rev_labels, value_labels, features, extractor, include_revid,
     if verbose:
         sys.stderr.write("\n")
 
+    if profile_f is not None:
+        write_profile(profile_f, features, extraction_durations,
+                      combined_profile)
+
 
 class ConfiguredExtractor:
 
@@ -159,12 +184,72 @@ class ConfiguredExtractor:
 
     def extract(self, rev_label):
         rev_id, label = rev_label
+        profile = {}
         try:
-            feature_values = list(self.extractor.extract(rev_id,
-                                                         self.features))
+            start = time.time()
+            feature_values = \
+                list(self.extractor.extract(rev_id, self.features,
+                                            profile=profile))
+            duration = time.time() - start
             error = None
         except Exception as e:
             feature_values = None
+            duration = None
             error = e
 
-        return error, rev_id, label, feature_values
+        profile = {str(d): s for d, s in profile.items()}
+        return error, rev_id, label, feature_values, profile, duration
+
+
+def write_profile(profile_f, features, extraction_durations, combined_profile):
+    profile_f.write("Extracting {0} features\n\n".format(len(features)))
+    table = tabulate(
+        [('extractions', len(extraction_durations)),
+         ('total_time', round(sum(extraction_durations), 3)),
+         ('min_time', round(min(extraction_durations), 3)),
+         ('max_time', round(max(extraction_durations), 3)),
+         ('mean_time', round(mean(extraction_durations), 3)),
+         ('median_time', round(median(extraction_durations), 3))],
+        headers=["stat", "value"],
+        tablefmt="pipe"
+    )
+    profile_f.write(table + "\n")
+    profile_f.write("\n")
+
+    feature_profiles = []
+    datasource_profiles = []
+    misc_profiles = []
+    for dependent_name, durations in combined_profile.items():
+        row = (dependent_name.replace("<", "\<").replace(">", "\>"),
+               len(durations),
+               round(min(durations), 3),
+               round(max(durations), 3),
+               round(mean(durations), 3),
+               round(median(durations), 3))
+        if "feature." in dependent_name:
+            feature_profiles.append(row)
+        elif "datasource." in dependent_name:
+            datasource_profiles.append(row)
+        else:
+            misc_profiles.append(row)
+
+    profile_f.write("# Features\n")
+    write_dependent_profiles(profile_f, feature_profiles)
+
+    profile_f.write("# Datasources\n")
+    write_dependent_profiles(profile_f, datasource_profiles)
+
+    profile_f.write("# Misc\n")
+    write_dependent_profiles(profile_f, misc_profiles)
+
+
+def write_dependent_profiles(profile_f, dependent_profiles):
+    if len(dependent_profiles) > 0:
+        dependent_profiles.sort(key=lambda row: row[4], reverse=True)
+        table = tabulate(
+            dependent_profiles[1:25],
+            headers=["name", "executions", "min", "max", "mean", "median"],
+            tablefmt="pipe"
+        )
+        profile_f.write(table + "\n")
+        profile_f.write("\n")

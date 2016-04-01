@@ -28,7 +28,7 @@ class Context:
         else:  # else leave context alone
             self.context = context
 
-    def solve(self, dependents, context=None, cache=None):
+    def solve(self, dependents, context=None, cache=None, profile=None):
         """
         Solves an iterable of dependents within the context.
 
@@ -36,7 +36,7 @@ class Context:
         signature.
         """
         context, cache = self.update_context_and_cache(context, cache)
-        return solve(dependents, context=context, cache=cache)
+        return solve(dependents, context=context, cache=cache, profile=profile)
 
     def expand(self, dependents, cache=None, context=None):
         """

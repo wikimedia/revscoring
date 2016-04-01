@@ -17,7 +17,7 @@ def test_key():
     my_dict = Datasource("my_dict")
     foo = key('foo', my_dict)
     eq_(solve(foo, cache={my_dict: {'foo': "bar"}}), 'bar')
-    eq_(str(foo), "<<my_dict>['foo']>")
+    eq_(repr(foo), "<datasource.my_dict['foo']>")
 
     bar = key('bar', my_dict, apply=or_none(int))
     eq_(solve(bar, cache={my_dict: {'bar': None}}), None)
@@ -26,7 +26,7 @@ def test_key():
     foobar = key(['foo', 'bar'], my_dict)
     eq_(solve(foobar, cache={my_dict: {'bar': 1}}), None)
     eq_(solve(foobar, cache={my_dict: {'foo': {'bar': 1}}}), 1)
-    eq_(str(foobar), "<<my_dict>[['foo', 'bar']]>")
+    eq_(repr(foobar), "<datasource.my_dict[['foo', 'bar']]>")
 
     eq_(pickle.loads(pickle.dumps(foo)), foo)
     eq_(pickle.loads(pickle.dumps(bar)), bar)

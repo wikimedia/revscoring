@@ -19,6 +19,12 @@ def test_offline_extractor():
     eq_(list(extractor.extract([345678, 4634800], last_two_in_id)),
         [(None, 78), (None, 0)])
 
+    extraction_profile = {}
+    list(extractor.extract([345678, 4634800], last_two_in_id,
+         profile=extraction_profile))
+    eq_(len(extraction_profile), 1)
+    eq_(len(extraction_profile[last_two_in_id]), 2)
+
 
 def test_from_config():
     config = {

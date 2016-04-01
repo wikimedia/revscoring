@@ -30,6 +30,15 @@ def test_solve():
     eq_(solve(foobar, context={bar: mybar}), "foobaz")
     eq_(solve(foobar, context={bar: lambda: "baz"}), "foobaz")
 
+    solving_profile = {}
+    solve(foobar, profile=solving_profile)
+    # print(solving_profile)
+    eq_(set(solving_profile.keys()), {foo, bar, foobar})
+
+    list(solve([foo, bar, foobar], profile=solving_profile))
+    # print(solving_profile)
+    eq_(len(solving_profile[foobar]), 2)
+
 
 @raises(RuntimeError)
 def test_unsolveable():
