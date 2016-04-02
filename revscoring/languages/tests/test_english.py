@@ -14,7 +14,7 @@ BAD = [
     "bitch", "biotch", "BITCH", "bitchface", "bitches",
     "blowjob", "blowme",
     "bollocks",
-    "booger", "boogers", "boogereater", "boooooger"
+    "booger", "boogers", "boogereater", "boooooger",
     "bootlip",
     "bugger",
     "butt", "buttfuck", "buttclown", "assbuttclown",
@@ -24,7 +24,7 @@ BAD = [
     "cracker", "kracker",
     "crackhead",
     "crook",
-    "cunt", "CUNT", "cuntface", "cunts", "stupidcunt",
+    "cunt", "CUNT", "cuntface", "cunts", "stupidcunt", "cunthead",
     "dick", "dicks", "dicking", "dickface", "limpdick",
     "dildo",
     "dishonest",
@@ -33,8 +33,8 @@ BAD = [
     "dyke",
     "fag", "faggot", "phaggot", "faaaag", "fagface", "fags",
     "fart", "farteater", "farter", "farting",
-    "fuck", "FUCK", "fuckface", "fucker", "stupidfuck",
-    "gay", "gaaaay", "gays", "ghey",
+    "fuck", "FUCK", "fuckface", "fucker", "stupidfuck", "fuckboy", "fuckboi",
+    "gay", "gaaaay", "gays", "ghey", "gayfuck",
     "gyp", "gypie", "gippo", "gyppie",
     "gook", "goook",
     "hillbilly", "hill-billy",
@@ -44,11 +44,11 @@ BAD = [
     "jap", "jappo",
     "kike", "kyke", "kiike",
     "kwashee", "kwashi",
-    "lesbian",
+    "lesbian", "lesbo",
     "liar",
     "meth", "methhead",
     "nazi", "nazzzi",
-    "nigger", "nigga", "nig", "niglet", "nigra",
+    "nigger", "nigga", "nig", "niglet", "nigra", "niggardly",  # The decision was made that "niggardly" is almost never used in good faith
     "nonce", "noncer", "noncing",
     "overdosed",
     "peckerwood",
@@ -63,7 +63,7 @@ BAD = [
     "redskin", "red-skin",
     "roundeye", "round-eye",
     "satanic", "satanists",
-    "shit", "SHIT", "shitface", "shitting", "stupidshit", "shite", "shat",
+    "shit", "SHIT", "shitface", "shitting", "stupidshit", "shite", "shat", "shithead",
     "slut", "SLUT", "slutface", "slutty",
     "spik", "spick", "spig", "spic",
     "subnormal",
@@ -73,7 +73,7 @@ BAD = [
     "tits", "titties", "tities", "titty",
     "transexual", "tranny",
     "twat", "TWAT", "twatface", "twatting", "stupidtwat",
-    "vagina", "vajaja", "vag",
+    "vagina", "vajaja", "vag", "vajayjay",
     "wank", "wanker", "wanka", "wankface",
     "wetback", "wetbacker",
     "whore", "WHORE", "whoreface", "whoring", "stupidwhore",
@@ -162,7 +162,7 @@ OTHER = [
     omitted details about chemistry, metallurgy, and ordnance, ultimately
     giving a false impression that the Manhattan Project was all about physics.
     """,
-    'association', 'shihtzhu', 'Wafflehats', "he", "hay", "morass", "wood",
+    'association', 'shihtzhu', 'shih tzu', 'shih tzhu', 'Wafflehats', "he", "hay", "morass", "wood",
     "pecker", 'suction', 'vaginal', 'titillatingly', 'test', 'edit'
 ]
 
