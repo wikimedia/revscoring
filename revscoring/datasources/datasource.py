@@ -26,3 +26,6 @@ class Datasource(Dependent):
 
     def __hash__(self):
         return hash('datasource.' + self.name)
+
+    def __str__(self):
+        return "datasource." + self.name

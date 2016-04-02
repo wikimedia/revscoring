@@ -17,7 +17,7 @@ class key(Datasource):
         self.if_missing = if_missing
         self.apply = apply or identity
         if name is None:
-            name = "{0}[{1}]".format(dict_datasource, repr(keys))
+            name = "{0}[{1}]".format(dict_datasource.name, repr(keys))
 
         super().__init__(name, self.process, depends_on=[dict_datasource])
 
@@ -43,7 +43,7 @@ class key_exists(Datasource):
     def __init__(self, key, dict_datasource, name=None):
         self.key = key
         if name is None:
-            name = "{1} in {0}".format(dict_datasource, repr(key))
+            name = "{1} in {0}".format(dict_datasource.name, repr(key))
 
         super().__init__(name, self.process, depends_on=[dict_datasource])
 

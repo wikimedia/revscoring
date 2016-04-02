@@ -20,7 +20,8 @@ class Extractor(Context):
     revisions.
     """
 
-    def extract(self, rev_ids, dependents, context=None, caches=None):
+    def extract(self, rev_ids, dependents, context=None, caches=None,
+                profile=None):
         raise NotImplementedError()
 
     @classmethod
@@ -43,26 +44,31 @@ class OfflineExtractor(Extractor):
         logger.warning("Loading OfflineExtractor.  You probably want an " +
                        "APIExtractor unless this is the test server.")
 
-    def extract(self, rev_ids, dependents, context=None, caches=None):
+    def extract(self, rev_ids, dependents, context=None, caches=None,
+                profile=None):
         caches = caches or {}
         if hasattr(rev_ids, "__iter__"):
             return self._extract_many(rev_ids, dependents, context=context,
-                                      caches=caches)
+                                      caches=caches, profile=profile)
         else:
             rev_id = rev_ids
             cache = caches
             return self._extract(rev_id, dependents, context=context,
-                                 cache=cache)
+                                 cache=cache, profile=profile)
 
-    def _extract(self, rev_id, dependents, context=None, cache=None):
+    def _extract(self, rev_id, dependents, context=None, cache=None,
+                 profile=None):
         solve_cache = {revision_oriented.revision.id: rev_id}
         solve_cache.update(cache or {})
-        return self.solve(dependents, context=context, cache=solve_cache)
+        return self.solve(dependents, context=context, cache=solve_cache,
+                          profile=profile)
 
-    def _extract_many(self, rev_ids, features, context=None, caches=None):
+    def _extract_many(self, rev_ids, features, context=None, caches=None,
+                      profile=None):
         for rev_id in rev_ids:
             yield None, self._extract(rev_id, features, context=context,
-                                      cache=caches.get(rev_id))
+                                      cache=caches.get(rev_id),
+                                      profile=profile)
 
     @classmethod
     def from_config(cls, config, name, section_key="extractors"):
