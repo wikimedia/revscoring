@@ -66,6 +66,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.polish``: aspell-pl
 * ``languages.portuguese``: myspell-pt
 * ``languages.spanish``: myspell-es
+* ``languages.russian``: myspell-ru
 * ``languages.ukrainian``: myspell-uk
 * ``languages.vietnamese``: hunspell-vi
 

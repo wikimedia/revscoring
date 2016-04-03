@@ -29,6 +29,7 @@ addons:
     - myspell-it
     - hunspell-vi
     - myspell-pt
+    - aspell-ru
     - aspell-uk
 
 before_install:
