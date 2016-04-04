@@ -92,7 +92,7 @@ badword_regexes = [
     r"j+a+p+o?",
     r"k[iy]+ke",
     r"kwash(i|ee)",
-    r"\w*l+e+s+b+i+a+n+\w*",
+    r"\w*l+e+s+b+(o+|i+a+n+)\w*",
     r"liar",
     r"lick(er)?s?",
     r"meth",
@@ -129,7 +129,7 @@ badword_regexes = [
     r"tran(ny|sexual)",
     r"t+w+a+t+\w*",
     r"ti+t+((s|ies|y)[\w]*)?",
-    r"v+a+g+(i+n+a+)?", r"vajaja\w*",
+    r"v+a+g+(i+n+a+)?", r"vajay?jay?\w*",
     r"wank\w*", r"wetback\w*", r"w+h+o+r+(e+|ing)\w*", r"w+o+g+", r"w+o+p+",
     r"yank(e+)?", r"yid",
     r"zipperhead"
