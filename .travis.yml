@@ -14,6 +14,7 @@ addons:
     - enchant
     - aspell-ar
     - aspell-de
+    - aspell-hi
     - aspell-nl
     - aspell-id
     - aspell-pl
