@@ -28,11 +28,11 @@ class regex(Datasource):
             A name for the new datasource
     """
     def __init__(self, regexes, text_datasource, regex_flags=re.I,
-                 use_word_boundaries=True, name=None):
-        if use_word_boundaries:
-            group_pattern = r"\b(" + r"|".join(regexes) + r")\b"
-        else:
-            group_pattern = r"|".join(regexes)
+                 wrapping=(r'\b', r'\b'), name=None):
+        wrapping = wrapping or ("", "")
+        group_pattern = r"(" + wrapping[0] + r")" + \
+                        r"(" + r"|".join(regexes) + r")" + \
+                        r"(" + wrapping[1] + r")"
         self.group_re = re.compile(group_pattern, flags=regex_flags)
         name = self._format_name(name, [regexes, text_datasource])
         super().__init__(name, self.process, depends_on=[text_datasource])
@@ -42,9 +42,10 @@ class regex(Datasource):
             return []
         elif isinstance(text_or_texts, str):
             text = text_or_texts
-            return [match.group(0) for match in self.group_re.finditer(text)]
+            return [match.group(2)
+                    for match in self.group_re.finditer(text)]
         else:
             texts = text_or_texts
-            return [match.group(0)
+            return [match.group(2)
                     for text in texts
                     for match in self.group_re.finditer(text)]

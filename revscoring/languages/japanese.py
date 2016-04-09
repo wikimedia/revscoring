@@ -32,7 +32,7 @@ badword_regexes = [
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes,
-                        use_word_boundaries=False)
+                        wrapping=False)
 """
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 badword detecting regexes.
@@ -93,7 +93,7 @@ informal_regexes = [
 ]
 
 informals = RegexMatches(name + ".informals", informal_regexes,
-                         use_word_boundaries=False)
+                         wrapping=False)
 """
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 informal word detecting regexes.

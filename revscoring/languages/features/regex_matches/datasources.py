@@ -4,13 +4,13 @@ from ....dependencies import DependentSet
 
 class Revision(DependentSet):
 
-    def __init__(self, name, regexes, wikitext_revision, use_word_boundaries):
+    def __init__(self, name, regexes, wikitext_revision, wrapping):
         super().__init__(name)
 
         self.matches = extractors.regex(
             regexes, wikitext_revision.text,
             name=name + ".matches",
-            use_word_boundaries=use_word_boundaries
+            wrapping=wrapping
         )
         self.match_frequency = frequencies.table(
             mappers.lower_case(self.matches),
@@ -20,29 +20,29 @@ class Revision(DependentSet):
         if hasattr(wikitext_revision, 'parent'):
             self.parent = Revision(name + ".parent", regexes,
                                    wikitext_revision.parent,
-                                   use_word_boundaries)
+                                   wrapping=wrapping)
 
         if hasattr(wikitext_revision, 'diff'):
             self.diff = Diff(name + ".diff", regexes,
                              wikitext_revision.diff, self,
-                             use_word_boundaries)
+                             wrapping=wrapping)
 
 
 class Diff(DependentSet):
 
     def __init__(self, name, regexes, wikitext_diff,
-                 revision, use_word_boundaries):
+                 revision, wrapping):
         super().__init__(name)
 
         self.matches_added = extractors.regex(
             regexes, wikitext_diff.segments_added,
             name=name + ".matches_added",
-            use_word_boundaries=use_word_boundaries
+            wrapping=wrapping
         )
         self.matches_removed = extractors.regex(
             regexes, wikitext_diff.segments_removed,
             name=name + ".matches_removed",
-            use_word_boundaries=use_word_boundaries
+            wrapping=wrapping
         )
 
         self.match_delta = frequencies.delta(

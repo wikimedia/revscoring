@@ -70,7 +70,7 @@ def test_dictionary():
         ['معروف', 'به', 'پروین', 'زاده'])
     eq_(solve(persian.dictionary.revision.datasources.non_dict_words,
               cache=cache),
-        ['خشنده', 'اعتصامی', 'اعتصامی'])
+        ['خشندهٔ', 'اعتصامی', 'اعتصامی'])
 
     eq_(persian.dictionary,
         pickle.loads(pickle.dumps(persian.dictionary)))
@@ -81,7 +81,7 @@ def test_stopwords():
     eq_(solve(persian.stopwords.revision.datasources.stopwords, cache=cache),
         ['معروف'])
     eq_(solve(persian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['خشنده', 'اعتصامی', 'به', 'پروین', 'اعتصامی', 'زاده'])
+              cache=cache),
+        ['خشندهٔ', 'اعتصامی', 'به', 'پروین', 'اعتصامی', 'زاده'])
 
     eq_(persian.stopwords, pickle.loads(pickle.dumps(persian.stopwords)))

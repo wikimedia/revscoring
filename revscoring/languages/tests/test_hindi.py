@@ -158,9 +158,9 @@ def test_informals():
 def test_dictionary():
     cache = {revision_oriented.revision.text: 'पहनाया उनकी कविताओं worngly.'}
     eq_(solve(hindi.dictionary.revision.datasources.dict_words, cache=cache),
-        ["पहनाया", "उनकी", "कविताओं"])
+        ["पहनाया", "उनकी"])
     eq_(solve(hindi.dictionary.revision.datasources.non_dict_words,
               cache=cache),
-        ["worngly"])
+        ["कविताओं", "worngly"])
 
     eq_(hindi.dictionary, pickle.loads(pickle.dumps(hindi.dictionary)))

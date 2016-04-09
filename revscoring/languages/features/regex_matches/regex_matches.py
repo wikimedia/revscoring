@@ -14,14 +14,14 @@ class RegexMatches(DependentSet):
             If true, insert word boundary chars before and after regexes.
     """
 
-    def __init__(self, name, regexes, use_word_boundaries=True):
+    def __init__(self, name, regexes, wrapping=(r'\b', r'\b')):
         super().__init__(name)
         self.revision = features.Revision(
             name + ".revision", regexes,
             datasources.Revision(
                 name + ".revision", regexes,
                 wikitext.revision.datasources,
-                use_word_boundaries
+                wrapping=wrapping
             )
         )
         """
