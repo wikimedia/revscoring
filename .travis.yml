@@ -29,6 +29,7 @@ addons:
     - myspell-it
     - hunspell-vi
     - myspell-pt
+    - aspell-ru
     - aspell-uk
 
 before_install:
@@ -40,7 +41,7 @@ before_install:
   - conda update --yes conda
 # Install packages
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy=0.16.1
   - python --version
   - python -c "import numpy;print(numpy.__version__)"
   - python -c "import scipy;print(scipy.__version__)"
