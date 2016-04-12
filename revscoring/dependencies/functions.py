@@ -245,7 +245,6 @@ def _solve(dependent, context, cache, history=None, profile=None):
                 duration = time.time() - start
                 if profile is not None:
                     if dependent in profile:
-                        print("here")
                         profile[dependent].append(duration)
                     else:
                         profile[dependent] = [duration]
