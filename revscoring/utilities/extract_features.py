@@ -53,7 +53,7 @@ import mwapi
 import yamlconf
 from tabulate import tabulate
 
-from ..errors import RevisionNotFound
+from ..errors import CommentDeleted, RevisionNotFound, TextDeleted, UserDeleted
 from ..extractors import api
 from .util import encode
 
@@ -139,6 +139,11 @@ def run(rev_labels, value_labels, features, extractor, include_revid,
         if isinstance(e, RevisionNotFound):
             if verbose:
                 sys.stderr.write("?")
+                sys.stderr.flush()
+        elif isinstance(e, TextDeleted) or isinstance(e, UserDeleted) or \
+             isinstance(e, CommentDeleted):
+            if verbose:
+                sys.stderr.write("d")
                 sys.stderr.flush()
         elif e is not None:
             logger.error("An error occured while processing {0}:"
