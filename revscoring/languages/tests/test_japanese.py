@@ -3,7 +3,6 @@ import pickle
 from nose.tools import eq_
 
 from .. import japanese
-from ...datasources import revision_oriented
 from .util import compare_extraction
 
 BAD = [

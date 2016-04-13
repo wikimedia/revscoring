@@ -115,8 +115,9 @@ from .dependencies import Dependent, DependentSet
 from .extractors import Extractor
 from .features import Feature
 from .scorer_models import ScorerModel
+from .score_processor import ScoreProcessor
 
 __version__ = "1.2.0"  # Change in setup.py
 
 __all__ = [Datasource, Dependent, DependentSet, Extractor, Feature,
-           ScorerModel]
+           ScorerModel, ScoreProcessor]

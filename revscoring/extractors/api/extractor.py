@@ -1,5 +1,4 @@
 import logging
-from collections import defaultdict
 from itertools import islice
 
 import mwapi

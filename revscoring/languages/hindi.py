@@ -1,4 +1,4 @@
-from .features import Dictionary, RegexMatches, Stopwords
+from .features import Dictionary, RegexMatches
 
 name = "hindi"
 

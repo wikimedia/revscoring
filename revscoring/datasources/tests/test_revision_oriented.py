@@ -15,7 +15,6 @@ def test_revision():
     assert hasattr(revision, "page")
     assert hasattr(revision, "diff")
 
-
     # revision.parent
     check_datasource(revision.parent.id)
     assert hasattr(revision.parent, "user")

@@ -48,7 +48,8 @@ BAD = [
     "liar",
     "meth", "methhead",
     "nazi", "nazzzi",
-    "nigger", "nigga", "nig", "niglet", "nigra", "niggardly",  # The decision was made that "niggardly" is almost never used in good faith
+    # The decision was made that "niggardly" is almost never used in good faith
+    "nigger", "nigga", "nig", "niglet", "nigra", "niggardlyi",
     "nonce", "noncer", "noncing",
     "overdosed",
     "peckerwood",
@@ -63,7 +64,7 @@ BAD = [
     "redskin", "red-skin",
     "roundeye", "round-eye",
     "satanic", "satanists",
-    "shit", "SHIT", "shitface", "shitting", "stupidshit", "shite", "shat", "shithead",
+    "shit", "SHIT", "shitface", "shitting", "stupidshit", "shat", "shithead",
     "slut", "SLUT", "slutface", "slutty",
     "spik", "spick", "spig", "spic",
     "subnormal",
@@ -162,7 +163,8 @@ OTHER = [
     omitted details about chemistry, metallurgy, and ordnance, ultimately
     giving a false impression that the Manhattan Project was all about physics.
     """,
-    'association', 'shihtzhu', 'shih tzu', 'shih tzhu', 'Wafflehats', "he", "hay", "morass", "wood",
+    'association', 'shihtzhu', 'shih tzu', 'shih tzhu', 'Wafflehats',
+    "he", "hay", "morass", "wood",
     "pecker", 'suction', 'vaginal', 'titillatingly', 'test', 'edit'
 ]
 

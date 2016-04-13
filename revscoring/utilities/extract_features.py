@@ -74,7 +74,8 @@ def main(argv=None):
                             user_agent="Revscoring feature extractor utility")
     if args['--login']:
         sys.stderr.write("Log into " + args['--host'] + "\n")
-        sys.stderr.write("Username: ");sys.stderr.flush()
+        sys.stderr.write("Username: ")
+        sys.stderr.flush()
         username = open('/dev/tty').readline().strip()
         password = getpass.getpass("Password: ")
         session.login(username, password)
