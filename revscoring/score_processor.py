@@ -12,16 +12,32 @@ logger = logging.getLogger(__name__)
 
 class ScoreProcessor:
 
-    BASE_WORKERS = 2
+    IO_WORKER_MULTIPLIER = 0.25
+    MIN_IO_WORKERS = 2
+    MAX_IO_WORKERS = 10
 
-    def __init__(self, scorer_model, extractor, workers=None, batch_size=50):
+    def __init__(self, scorer_model, extractor, cpu_workers=None,
+                 io_workers=None, batch_size=50):
         self.scorer_model = scorer_model
         self.extractor = extractor
-        self.workers = int(workers) if workers is not None else cpu_count()
+        self.cpu_workers = \
+            int(cpu_workers) if cpu_workers is not None else cpu_count()
         self.batch_size = int(batch_size)
 
-        self.scores_ex = ThreadPoolExecutor(max_workers=self.BASE_WORKERS)
-        self.process_ex = ProcessPoolExecutor(max_workers=self.workers)
+        if io_workers is not None:
+            self.io_workers = int(io_workers)
+        else:
+            self.io_workers = max(self.MIN_IO_WORKERS,
+                                  min(self.MAX_IO_WORKERS,
+                                      int(self.cpu_workers *
+                                          self.IO_WORKER_MULTIPLIER)))
+
+        logger.info("Starting up IO thread pool with {0} workers"
+                    .format(self.io_workers))
+        self.scores_ex = ThreadPoolExecutor(max_workers=self.io_workers)
+        logger.info("Starting up CPU thread pool with {0} workers"
+                    .format(self.cpu_workers))
+        self.process_ex = ProcessPoolExecutor(max_workers=self.cpu_workers)
 
         roots = dependencies.dig(self.scorer_model.features)
         self.root_datasources = [d for d in roots if isinstance(d, Datasource)]

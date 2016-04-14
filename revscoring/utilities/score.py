@@ -8,7 +8,7 @@
         score (-h | --help)
         score <model-file> --host=<uri> [<rev_id>...]
               [--rev-ids=<path>] [--cache=<json>] [--caches=<json>]
-              [--batch-size=<num>] [--workers=<num>]
+              [--batch-size=<num>] [--io-workers=<num>] [--cpu-workers=<num>]
               [--debug] [--verbose]
 
     Options:
@@ -26,9 +26,11 @@
         --caches=<json>     A JSON blob of rev_id-->cache value pairs to use
                             during extraction
         --batch-size=<num>  The size of the revisions to batch when requesting
-                            data from the API. [default: 50]
-        --workers=<num>     The number of worker processes to use for
-                            extraction and scoring. [default: <cpu-count>]
+                            data from the API [default: 50]
+        --io-workers=<num>  The number of worker processes to use for
+                            requesting data from the API [default: <auto>]
+        --cpu-workers=<num>  The number of worker processes to use for
+                             extraction and scoring [default: <cpu-count>]
         --debug             Print debug logging
         --verbose           Print feature extraction debug logging
 """
@@ -85,17 +87,24 @@ def main(argv=None):
         cache = None
 
     batch_size = int(args['--batch-size'])
-    if args['--workers'] == "<cpu-count>":
-        workers = cpu_count()
+
+    if args['--cpu-workers'] == "<cpu-count>":
+        cpu_workers = cpu_count()
     else:
-        workers = int(args['--workers'])
+        cpu_workers = int(args['--cpu-workers'])
+
+    if args['--io-workers'] == "<auto>":
+        io_workers = None
+    else:
+        io_workers = int(args['--io-workers'])
 
     verbose = args['--verbose']
 
     debug = args['--debug']
 
     score_processor = ScoreProcessor(model, extractor, batch_size=batch_size,
-                                     workers=workers)
+                                     cpu_workers=cpu_workers,
+                                     io_workers=io_workers)
 
     run(score_processor, rev_ids, caches, cache, debug, verbose)
 
