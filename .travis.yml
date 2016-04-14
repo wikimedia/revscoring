@@ -51,7 +51,7 @@ install:
   - python -m nltk.downloader stopwords
   - pip install codecov
 script:
-  - nosetests -v --with-coverage --cover-package=revscoring
+  - nosetests -v --with-coverage --cover-package=revscoring --exclude=test_hindi.py
 after_success:
     codecov
 notifications:
