@@ -59,9 +59,10 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.estonian``: myspell-et
 * ``languages.french``: myspell-fr
 * ``languages.german``: myspell-de-at myspell-de-ch myspell-de-de
+* ``languages.hebrew``: myspell-he
+* ``languages.hungarian``: aspell-hu
 * ``languages.indonesian``: aspell-id
 * ``languages.italian``: myspell-it
-* ``languages.hebrew``: myspell-he
 * ``languages.persian``: myspell-fa
 * ``languages.polish``: aspell-pl
 * ``languages.portuguese``: myspell-pt

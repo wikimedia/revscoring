@@ -15,6 +15,7 @@ addons:
     - aspell-ar
     - aspell-de
     - aspell-hi
+    - aspell-hu
     - aspell-nl
     - aspell-id
     - aspell-pl
