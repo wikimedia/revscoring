@@ -1,0 +1,58 @@
+* Spec
+** Model Builder
+*** Input: TSV file, Output: GBC predicting model
+** predict
+*** Input any revisionid, Output: it should predict probability of is_damaging
+* Design considerations
+** I should be able to build up the model very quickly
+*** It will take a lot of time to download the Articles from wikipedia
+*** It will take a lot of time to hvtransform the articles
+** I should be able to debug with a particular revid
+*** debug model builder
+*** debug the prediction
+* Design/Pseudo Code
+process (revids[], typeofdata='training_set' | 'test_set')
+ download_and_pickle(revids) if not present in dir(typeofdata)
+ launch a thread for hv.transform
+   load data
+   extract required fields
+   transform
+   save processed data as pickle
+
+build_model()
+ read pickles and construct features matrix
+ where do I labels?
+ GBC(features_X, labels)
+
+######
+
+download(revids[])
+  //save content
+  doc.append =  download
+  return doc
+
+# download texts, save texts and labels in db
+prepare_data_set(revids=null)
+  revid, label =  read_tsv()
+  doc = download(revids[])
+  save_docs(revid, doc, label)
+
+# transform revids, saves the feature vectors in db
+transform(revids[])
+ texts  = load_texts(revids)
+ labels = load_labels(revids)
+ features = hv.transform(texts)
+ save_features(revids, features)
+
+#
+test(revids[])
+  features, labels = load_train_set()
+  build_model(features, labels)
+
+  features_t, labels_t = load_test_set()
+  score(features_t, labels_t)
+
+predict(revid)
+  features, labels = load_train_set()
+  build_model(features, labels)
+  predict()
