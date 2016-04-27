@@ -60,7 +60,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.french``: myspell-fr
 * ``languages.german``: myspell-de-at myspell-de-ch myspell-de-de
 * ``languages.hebrew``: myspell-he
-* ``languages.hungarian``: aspell-hu
+* ``languages.hungarian``: myspell-hu
 * ``languages.indonesian``: aspell-id
 * ``languages.italian``: myspell-it
 * ``languages.persian``: myspell-fa
