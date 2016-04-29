@@ -1,3 +1,4 @@
+from ....datasources import Datasource
 from ....datasources.meta import filters, frequencies, mappers
 from ....dependencies import DependentSet
 
@@ -8,13 +9,16 @@ class Revision(DependentSet):
         super().__init__(name)
         self.dictionary_check = dictionary_check
 
-        self.dict_words = filters.filter(
-            dictionary_check, mappers.map(str, wikitext_revision.words),
-            name=name + ".dict_words"
+        self.dict_split = dict_splitter(
+            name + '.dict_split', dictionary_check, wikitext_revision.words
         )
-        self.non_dict_words = filters.filter(
-            dictionary_check, mappers.map(str, wikitext_revision.words),
-            name=name + ".non_dict_words", inverse=True
+        self.dict_words = Datasource(
+            name + '.dict_words', _process_dict_words,
+            depends_on=[self.dict_split]
+        )
+        self.non_dict_words = Datasource(
+            name + '.non_dict_words', _process_non_dict_words,
+            depends_on=[self.dict_split]
         )
         self.dict_word_frequency = frequencies.table(
             mappers.lower_case(self.dict_words),
@@ -32,6 +36,33 @@ class Revision(DependentSet):
         if hasattr(wikitext_revision, 'diff'):
             self.diff = Diff(name + ".diff", dictionary_check,
                              wikitext_revision.diff, self)
+
+
+def _process_dict_words(dict_split):
+    return dict_split[0]
+
+
+def _process_non_dict_words(dict_split):
+    return dict_split[1]
+
+
+class dict_splitter(Datasource):
+
+    def __init__(self, name, dictionary_check, words_datasource):
+        name = self._format_name(name, [dictionary_check, words_datasource])
+        self.dictionary_check = dictionary_check
+        super().__init__(name, self.process, depends_on=[words_datasource])
+
+    def process(self, words):
+        dict_words = []
+        non_dict_words = []
+        for word in words:
+            if self.dictionary_check(str(word)):
+                dict_words.append(word)
+            else:
+                non_dict_words.append(word)
+
+        return dict_words, non_dict_words
 
 
 class Diff(DependentSet):
