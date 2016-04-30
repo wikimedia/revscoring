@@ -1,5 +1,3 @@
-# head -n 16000 enwiki.features_damaging.20k_2015.tsv > train.tsv
-# tail -n 3765 enwiki.features_damaging.20k_2015.tsv > test.tsv
 import csv
 import pickle
 import pprint
@@ -10,6 +8,8 @@ import sys
 import mwparserfromhell as mwparser
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.feature_extraction.text import HashingVectorizer
+from scipy.sparse import coo_matrix, vstack
+from sklearn.externals import joblib
 import sqlite3
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -44,7 +44,7 @@ def get_contents(revid):
 
     pageid = get_pageid(doc)
     parent_revid = get_parent_revid(doc)
-
+    print("Pageid, parent revid = ", (pageid, parent_revid))
 
     try:
         doc = session.get(action='query',
@@ -59,7 +59,6 @@ def get_contents(revid):
         return False
 
     pp.pprint((pageid, revid))
-    # todo - how do we know which is parent and which is current? is it ordered like I assumed?
     current_text = doc['query']['pages'][str(pageid)]['revisions'][0]['*']
     parent_text = doc['query']['pages'][str(pageid)]['revisions'][1]['*'] if parent_revid else ''
 
@@ -74,31 +73,14 @@ def read_tsv(fileobj):
     tsvin = csv.reader(fileobj, delimiter='\t')
     for row in tsvin:
         yield row
-
-def extract_features():
-    hv = HashingVectorizer(n_features=2 ** 20)
-    filename = 'train.tsv'
-
-    f = open(filename,'rt')
-
-    for observation in read_tsv(f):
-        texts, label = zip(observation)
-        text_current = texts[0]['current']
-        features_current = hv.transform(
-            (texts[0]['current'],
-             texts[0]['parent']))
-        features_parent = hv.transform((texts[0]['parent'],))
-        features_diff = features_current - features_parent
-        print(features_diff, label)
-        break
-    a = 3
-
-def open_db():
-    #sqllite
-    conn = sqlite3.connect('data.db')
+        
+def open_db(db_name = 'data.db'):
+    conn = sqlite3.connect(db_name)
+    conn.isolation_level = None;
     return conn
 
 def create_sqlite_tables():
+    # source db
     conn = open_db()
     c = conn.cursor()
 
@@ -109,7 +91,12 @@ def create_sqlite_tables():
     (revid INTEGER PRIMARY KEY, revid_parent INTEGER, content_current BLOB, content_parent BLOB)''')
 
     conn.close()
-
+    
+    # features db
+    conn = open_db('features.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS feature_vector
+    (revid INTEGER PRIMARY KEY, current BLOB, parent BLOB, diff BLOB, is_damaging INTEGER)''')
 
 def export_tsv_to_sqlite():
     create_sqlite_tables()
@@ -124,25 +111,11 @@ def export_tsv_to_sqlite():
         print(i)
         i = i + 1
         other_features = pickle.dumps(row[1:-1])
-        c.execute('''insert into observations
+        c.execute('''INSERT INTO observations
         (revid, other_features, is_damaging)
-        values (?, ?, ?)''', (row[0], other_features, row[-1]))
+        VALUES (?, ?, ?)''', (row[0], other_features, row[-1]))
     conn.commit()
-
-
     conn.close()
-
-def read_db():
-    conn = open_db()
-    c = conn.cursor()
-
-    # read from sqlite
-    ret = c.execute('''select * from observations''')
-    for row in ret:
-        features = pickle.loads(row)
-        pp.pprint(len(features))
-        break
-
 
 def download_conents():
     create_sqlite_tables()
@@ -150,11 +123,10 @@ def download_conents():
     c = conn.cursor()
 
     # read from sqlite
-    ret = c.execute('''select revid from observations where revid not in (select revid from content)''')
+    ret = c.execute('''SELECT revid FROM observations WHERE revid NOT IN (SELECT revid FROM content)''')
     i = 1
 
     ci = conn.cursor()
-    conn.isolation_level = None;
     for row in ret:
         revid = row[0]
         print(i, revid)
@@ -162,32 +134,131 @@ def download_conents():
         content = get_contents(revid)
 
         if content == False:
+            ci.execute('''INSERT INTO content(revid) VALUES (?)''', (revid,))
             continue
 
         ci.execute('''INSERT INTO
           content(revid, revid_parent, content_current, content_parent)
-          values (?, ?, ?, ?)''',
+          VALUES (?, ?, ?, ?)''',
                         (content['revid'],
                          content['revid_parent'],
                          content['current'],
                          content['parent']
                         ))
 
+    conn.close()
+
+def extract_features():
+    hv = HashingVectorizer(n_features=2 ** 20, ngram_range=(1, 3))
+    conn_source = open_db();
+    conn_features = open_db('features.db')
+    
+    cs = conn_source.cursor()
+    cf = conn_features.cursor()
+
+    ret = cs.execute('''SELECT
+     content.revid, content_current, content_parent, is_damaging
+    FROM
+     content INNER JOIN observations ON content.revid=observations.revid
+    WHERE content.revid_parent IS NOT NULL''')
+    
+    for row in ret:
+        print("inserting features for", (row[0]))
+        features = hv.transform((row[1], row[2]))
+        features_diff = features[0] - features[1]
+        ret = cf.execute('''INSERT INTO feature_vector(revid, current, parent, diff, is_damaging) VALUES (?, ?, ?, ?, ?)''' ,
+                         (
+                             row[0],
+                             pickle.dumps(features[0]),
+                             pickle.dumps(features[1]),
+                             pickle.dumps(features_diff),
+                             row[3]
+                         ))        
+    return
+
+def build_model():
+    conn_features = open_db('features.db')
+    cf = conn_features.cursor()
+
+    ret = cf.execute('''SELECT diff, is_damaging FROM feature_vector ORDER BY revid LIMIT 16000''')
+
+    print('fetching')
+    rows = ret.fetchall()
+    conn_features.close()
+    
+    print('zipping')
+    features_vector, labels = zip(*rows)
+
+    count = 0
+    print('unpickling')
+    features = coo_matrix([])
+    for i in features_vector:
+        print(count)
+        count = count + 1
+        print(count)
+        vector = pickle.loads(i)
+        if features.getnnz() == 0:
+            features = vstack([vector])
+        else:
+            features = vstack([features, vector])
+    
+    print('fitting')    
+    gbc = GradientBoostingClassifier()
+    sample_weight=[18967 / (798 + 18967) if l == 'True' else 798 / (798 + 18967) for l in labels]
+    gbc.fit(features, labels, sample_weight)
+    
+    print('saving')
+    joblib.dump(gbc, 'model_pickled/gbc.pkl')
+    return gbc
+
+def score_model():
+    conn_features = open_db('features.db')
+    cf = conn_features.cursor()
+    ret = cf.execute('''SELECT diff, is_damaging FROM feature_vector WHERE revid > 646706890 LIMIT 1000''')
+    
+    print('fetching')
+    rows = ret.fetchall()
+    conn_features.close()
+    joblib.dump(rows, 'model_pickled/rows_score.pkl')
+
+    print('zipping')
+    features_vector, labels = zip(*rows)
+
+    print('unpickling')
+    count = 0    
+    features = coo_matrix([])
+    for i in features_vector:
+        print(count)
+        count = count + 1
+        vector = pickle.loads(i)
+        if features.getnnz() == 0:
+            features = vstack([vector])
+        else:
+            features = vstack([features, vector])
+
+    del features_vector
+    joblib.dump(features, 'model_pickled/features_score.pkl')
+
+    gbc = joblib.load('model_pickled/gbc.pkl')
+    score = gbc.score(features.todense(), labels)
+    print('score', score)
+
+def example_predictions():
+    features = joblib.load('model_pickled/features_score.pkl')
+    rows = joblib.load('model_pickled/rows_score.pkl')
+    gbc = joblib.load('model_pickled/gbc.pkl')
+
+    features_vector, labels = zip(*rows)
+    del features_vector
+    for i in range(features.shape[0]):
+        print('Actual: ', labels[i], 'Prediction: ', dict(zip(gbc.classes_, 
+                                                              [int(v*100) for v in gbc.predict_proba(features.getrow(i).todense())[0]])))
+create_sqlite_tables()    
 # export_tsv_to_sqlite()
-# read_db()
-download_conents()
-
-
-###
-
+# download_conents()
 # extract_features()
+# build_model()
+# score_model()
+example_predictions()
 
-#
-# gbc = GradientBoostingClassifier()
-#
-# #labels = (True, False, True, False) #TODO - faked for at least getting two classes
-# # True (damaging): 798, False (not damaging): 18967, Total: 19765
-# gbc.fit(features, labels,
-#             sample_weight=[18967 / (798 + 18967) if l == True else 798 / (798 + 18967) for l in labels])
-
-print("Done")
+        
