@@ -263,7 +263,7 @@ def score_model_iterative():
     cf = conn_features.cursor()
 
     ret = cf.execute('''SELECT revid, diff, is_damaging FROM feature_vector
-    WHERE revid > 646706890 and is_damaging='True' LIMIT 4000''')
+    WHERE revid > 646706890 LIMIT 4000''')
 
     conn_score = open_db('score.db')
     cc = conn_score.cursor()
