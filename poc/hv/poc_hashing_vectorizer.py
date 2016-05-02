@@ -73,7 +73,7 @@ def read_tsv(fileobj):
     tsvin = csv.reader(fileobj, delimiter='\t')
     for row in tsvin:
         yield row
-        
+
 def open_db(db_name = 'data.db'):
     conn = sqlite3.connect(db_name)
     conn.isolation_level = None;
@@ -91,12 +91,21 @@ def create_sqlite_tables():
     (revid INTEGER PRIMARY KEY, revid_parent INTEGER, content_current BLOB, content_parent BLOB)''')
 
     conn.close()
-    
+
     # features db
     conn = open_db('features.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS feature_vector
     (revid INTEGER PRIMARY KEY, current BLOB, parent BLOB, diff BLOB, is_damaging INTEGER)''')
+    conn.close()
+
+    # score db
+    conn = open_db('score.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS score
+    (revid INTEGER PRIMARY KEY, is_damaging_actual INTEGER, is_damaging_prediction INTEGER)''')
+    conn.close()
+
 
 def export_tsv_to_sqlite():
     create_sqlite_tables()
@@ -152,7 +161,7 @@ def extract_features():
     hv = HashingVectorizer(n_features=2 ** 20, ngram_range=(1, 3))
     conn_source = open_db();
     conn_features = open_db('features.db')
-    
+
     cs = conn_source.cursor()
     cf = conn_features.cursor()
 
@@ -161,7 +170,7 @@ def extract_features():
     FROM
      content INNER JOIN observations ON content.revid=observations.revid
     WHERE content.revid_parent IS NOT NULL''')
-    
+
     for row in ret:
         print("inserting features for", (row[0]))
         features = hv.transform((row[1], row[2]))
@@ -173,7 +182,7 @@ def extract_features():
                              pickle.dumps(features[1]),
                              pickle.dumps(features_diff),
                              row[3]
-                         ))        
+                         ))
     return
 
 def build_model():
@@ -185,7 +194,7 @@ def build_model():
     print('fetching')
     rows = ret.fetchall()
     conn_features.close()
-    
+
     print('zipping')
     features_vector, labels = zip(*rows)
 
@@ -201,12 +210,15 @@ def build_model():
             features = vstack([vector])
         else:
             features = vstack([features, vector])
-    
-    print('fitting')    
+
+    print('saving vstacked features')
+    joblib.dump(zip(features, labels), 'model_pickled/training_data.pkl')
+
+    print('fitting')
     gbc = GradientBoostingClassifier()
     sample_weight=[18967 / (798 + 18967) if l == 'True' else 798 / (798 + 18967) for l in labels]
     gbc.fit(features, labels, sample_weight)
-    
+
     print('saving')
     joblib.dump(gbc, 'model_pickled/gbc.pkl')
     return gbc
@@ -215,7 +227,7 @@ def score_model():
     conn_features = open_db('features.db')
     cf = conn_features.cursor()
     ret = cf.execute('''SELECT diff, is_damaging FROM feature_vector WHERE revid > 646706890 LIMIT 1000''')
-    
+
     print('fetching')
     rows = ret.fetchall()
     conn_features.close()
@@ -225,7 +237,7 @@ def score_model():
     features_vector, labels = zip(*rows)
 
     print('unpickling')
-    count = 0    
+    count = 0
     features = coo_matrix([])
     for i in features_vector:
         print(count)
@@ -243,6 +255,38 @@ def score_model():
     score = gbc.score(features.todense(), labels)
     print('score', score)
 
+def score_model_iterative():
+    # could not use score method, because when i convert the sparse feature
+    # matrix to dense python throws MemoryError
+
+    conn_features = open_db('features.db')
+    cf = conn_features.cursor()
+
+    ret = cf.execute('''SELECT revid, diff, is_damaging FROM feature_vector
+    WHERE revid > 646706890 and is_damaging='True' LIMIT 4000''')
+
+    conn_score = open_db('score.db')
+    cc = conn_score.cursor()
+
+    gbc = joblib.load('model_pickled/gbc.pkl')
+    for row in ret:
+        features_vector = pickle.loads(row[1])
+        prediction = gbc.predict(features_vector.todense())[0]
+        print('revid: ', row[0], ', actual: ', row[2], ', prediction', prediction)
+
+        cc.execute('''INSERT INTO score
+                   (revid, is_damaging_actual, is_damaging_prediction)
+                   VALUES (?, ?, ?)''', (row[0], row[2], prediction))
+
+    # calculate score
+    correct_predictions =  cc.execute('''SELECT COUNT(revid) FROM score WHERE is_damaging_actual=is_damaging_prediction''').fetchone()[0]
+    total_predictions   =  cc.execute('''SELECT COUNT(revid) FROM score''').fetchone()[0]
+    score = (correct_predictions/total_predictions) * 100
+    print('Correct Predictions: ', correct_predictions, 'Total Predictions: ', total_predictions, 'Score: ', score)
+
+    conn_features.close()
+    conn_score.close()
+
 def example_predictions():
     features = joblib.load('model_pickled/features_score.pkl')
     rows = joblib.load('model_pickled/rows_score.pkl')
@@ -251,14 +295,15 @@ def example_predictions():
     features_vector, labels = zip(*rows)
     del features_vector
     for i in range(features.shape[0]):
-        print('Actual: ', labels[i], 'Prediction: ', dict(zip(gbc.classes_, 
-                                                              [int(v*100) for v in gbc.predict_proba(features.getrow(i).todense())[0]])))
-create_sqlite_tables()    
+        print('Actual: ', labels[i], 'Prediction: ', dict(zip(gbc.classes_,
+                                                              [int(v*100)
+                                                              for v in
+                                                              gbc.predict_proba(features.getrow(i).todense())[0]])))
+create_sqlite_tables()
 # export_tsv_to_sqlite()
 # download_conents()
 # extract_features()
 # build_model()
 # score_model()
-example_predictions()
-
-        
+# example_predictions()
+score_model_iterative()
