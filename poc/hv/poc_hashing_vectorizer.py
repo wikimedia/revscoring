@@ -216,7 +216,7 @@ def build_model():
 
     print('fitting')
     gbc = GradientBoostingClassifier()
-    sample_weight=[18967 / (798 + 18967) if l == 'True' else 798 / (798 + 18967) for l in labels]
+    sample_weight=[18939 / (796 + 18939) if l == 'True' else 796 / (796 + 18939) for l in labels]
     gbc.fit(features, labels, sample_weight)
 
     print('saving')
