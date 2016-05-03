@@ -49,7 +49,7 @@ badword_regexes = [
     r"boludo",  # asshole
     r"bugarr[óo]n",  # gay/bi man
     r"buseta",  # ???
-    r"caca", r"\w*cag(a|o|ar(ro)?)(n(es)?)?\w*",  # shit / shits / dirty
+    r"caca", r"cag(a|o|ar(ro)?)(n(es)?)?\w*",  # shit / shits / dirty
     r"caquita",  # shit
     r"cabr[óo]n(es)?",  # bastards
     r"cagad[ao]",  # funny / absurd
@@ -65,7 +65,7 @@ badword_regexes = [
     r"choch[oa]",  # cunt
     r"cholo",  # mixed race person
     r"chucha",  # fuck
-    r"\w*chupa(n|r|mea?|mel[ao]|medias|pollas|ban?)?s?\w*",
+    r"chupa(n|r|mea?|mel[ao]|medias|pollas|ban?)?s?\w*",
     r"chupen(la|me|mela)", r"chupo",  # variants of suck / blow me
     r"cipote",  # child (slang)
     r"cochetumadre",  # car of your mother ???
@@ -138,7 +138,7 @@ badword_regexes = [
     r"meachupan", r"meapelan",  # something 'suck me' ???
     r"me[- ]?castra[- ]?la[- ]?madre",  # 'I <something> your mother' ???
     r"me[- ]?la[- ]?pelan?s?",  # "You ain't shit" ???
-    r"\w*mi?er[dg]a+s?\w*",  # shit
+    r"mi?er[dg]a+s?\w*",  # shit
     r"mimsn",  # ???
     r"ming[ao]",  # ugly person
     r"mocos",  # boogers / mucus
@@ -176,7 +176,7 @@ badword_regexes = [
     r"polvo",  # nut (testical)
     r"poto",  # ass
     r"prostituta",  # prostitute
-    r"\w*put([ao]+|isim[oa]|iza)(s|n)?\w*",  # bitch/whore
+    r"put([ao]+|isim[oa]|iza)(s|n)?\w*",  # bitch/whore
     r"puñal",  # fag ???
     r"rabo",  # ass
     r"ramera",  # easy woman
@@ -194,7 +194,7 @@ badword_regexes = [
     r"travolo",  # ???
     r"trol(o|a)",  # faggot
     r"uta", r"utama", r"utamadre",  # short for 'puta'
-    r"\w*verg(a|uero|ud[ao])s?\w*", r"versh",  # cock
+    r"verg(a|uero|ud[ao])s?\w*", r"versh",  # cock
     r"vibrador",  # vibrator
     r"viol(o|a|e|ar)",  # violate
     r"vulva",  # vulva
@@ -223,7 +223,7 @@ informal_regexes = [
     r"asco",  # disgust
     r"asi",  # so
     r"atte?",  # short for atentamente
-    r"(b+l+a+h*)+",
+    r"(?:b+l+a+h*)+",
     r"bobada",  # ???
     r"bobos?",  # stupid / simple / fool
     r"bubis",  # ???
