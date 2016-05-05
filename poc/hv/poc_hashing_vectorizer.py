@@ -10,6 +10,9 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.feature_extraction.text import HashingVectorizer
 from scipy.sparse import coo_matrix, vstack
 from sklearn.externals import joblib
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import average_precision_score
+
 import sqlite3
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -273,6 +276,7 @@ def score_model_iterative():
     for row in ret:
         features_vector = pickle.loads(row[1])
         prediction = gbc.predict(features_vector.todense())[0]
+        #TODO - don't hardcode, calculate the index of the 'True' class
         score_positive = gbc.predict_proba(features_vector.todense())[0][1]
         classes = gbc.classes_
         print('revid: ', row[0], ', actual: ', row[2], ', prediction', prediction, 'score_positive', score_positive, 'classes', classes)
@@ -286,6 +290,16 @@ def score_model_iterative():
     total_predictions   =  cc.execute('''SELECT COUNT(revid) FROM score''').fetchone()[0]
     score = (correct_predictions/total_predictions) * 100
     print('Correct Predictions: ', correct_predictions, 'Total Predictions: ', total_predictions, 'Score: ', score)
+
+    # calculate PR-AUC
+    rows =  cc.execute('''SELECT is_damaging_actual, score_positive FROM score''').fetchall()
+    y_true, y_scores = zip(*rows)
+    y_true = [1 if i=='True' else 0 for i in y_true]
+
+    avg_pre = average_precision_score(y_true, list(y_scores))
+    roc_auc = roc_auc_score(y_true, list(y_scores))
+
+    print('average precision score: ', avg_pre, 'roc auc score: ', roc_auc)
 
     conn_features.close()
     conn_score.close()
