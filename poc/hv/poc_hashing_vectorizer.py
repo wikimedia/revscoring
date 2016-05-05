@@ -103,7 +103,7 @@ def create_sqlite_tables():
     conn = open_db('score.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS score
-    (revid INTEGER PRIMARY KEY, is_damaging_actual INTEGER, is_damaging_prediction INTEGER)''')
+    (revid INTEGER PRIMARY KEY, is_damaging_actual INTEGER, is_damaging_prediction INTEGER, score_positive REAL)''')
     conn.close()
 
 
@@ -212,7 +212,8 @@ def build_model():
             features = vstack([features, vector])
 
     print('saving vstacked features')
-    joblib.dump(zip(features, labels), 'model_pickled/training_data.pkl')
+    joblib.dump(features, 'model_pickled/training_data_features.pkl')
+    joblib.dump(labels, 'model_pickled/training_data_labels.pkl')
 
     print('fitting')
     gbc = GradientBoostingClassifier()
@@ -272,11 +273,13 @@ def score_model_iterative():
     for row in ret:
         features_vector = pickle.loads(row[1])
         prediction = gbc.predict(features_vector.todense())[0]
-        print('revid: ', row[0], ', actual: ', row[2], ', prediction', prediction)
+        score_positive = gbc.predict_proba(features_vector.todense())[0][1]
+        classes = gbc.classes_
+        print('revid: ', row[0], ', actual: ', row[2], ', prediction', prediction, 'score_positive', score_positive, 'classes', classes)
 
         cc.execute('''INSERT INTO score
-                   (revid, is_damaging_actual, is_damaging_prediction)
-                   VALUES (?, ?, ?)''', (row[0], row[2], prediction))
+                   (revid, is_damaging_actual, is_damaging_prediction, score_positive)
+                   VALUES (?, ?, ?, ?)''', (row[0], row[2], prediction, score_positive))
 
     # calculate score
     correct_predictions =  cc.execute('''SELECT COUNT(revid) FROM score WHERE is_damaging_actual=is_damaging_prediction''').fetchone()[0]
