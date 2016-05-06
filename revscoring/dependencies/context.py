@@ -18,7 +18,7 @@ class Context:
             :func:`revscoring.dependencies.solve`
     """
     def __init__(self, context=None, cache=None):
-        self.cache = cache or {}
+        self.cache = cache if cache is not None else {}
 
         # Make sure context is a dict
         if context is None:
@@ -74,6 +74,7 @@ class Context:
     def update_context_and_cache(self, context, cache):
         local_context = dict(self.context)
         local_context.update(normalize_context(context or {}))
-        local_cache = dict(self.cache)
-        local_cache.update(cache or {})
+
+        local_cache = cache if cache is not None else {}
+        local_cache.update(self.cache)
         return local_context, local_cache
