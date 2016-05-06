@@ -79,24 +79,26 @@ class Extractor(BaseExtractor):
                          .format(len(dependents), caches or cache))
 
         if hasattr(rev_ids, "__iter__"):
-            return self._extract_many(rev_ids, dependents, context, caches,
-                                      cache, profile)
+            return self._extract_many(rev_ids, dependents, context=context,
+                                      caches=caches,
+                                      cache=cache, profile=profile)
         else:
             rev_id = rev_ids
-            cache = cache or {}
+            cache = cache if cache is not None else {}
             cache.update((caches or {}).get(rev_id, {}))
-            return self._extract(rev_id, dependents, context, cache,
-                                 profile)
+            print("Cache id:", id(cache))
+            return self._extract(rev_id, dependents, cache=cache,
+                                 context=context, profile=profile)
 
     def _extract_many(self, rev_ids, dependents, context, caches, cache,
                       profile):
         all_dependents = set(expand(dependents))
 
-        ex_caches = {}
-        for rev_id in rev_ids:
-            ex_caches[rev_id] = {}
-            ex_caches[rev_id].update(cache or {})
-            ex_caches[rev_id].update((caches or {}).get(rev_id, {}))
+        caches = caches or {}
+        for rev_id, rev_cache in caches.items():
+            for dependent, value in (cache or {}).items():
+                if dependent not in rev_cache:
+                    rev_cache[dependent] = value
 
         errored = {}
 
@@ -109,10 +111,10 @@ class Extractor(BaseExtractor):
             # datasource.revision.doc
             revids_to_lookup = []
             for rev_id in rev_ids:
-                ex_cache = ex_caches[rev_id]
-                if self.revision.doc not in ex_cache:
+                rev_cache = caches[rev_id]
+                if self.revision.doc not in rev_cache:
                     revids_to_lookup.append(
-                        ex_cache.get(revision_oriented.revision.id, rev_id))
+                        rev_cache.get(revision_oriented.revision.id, rev_id))
 
             logger.info("Batch requesting {0} revision from the API"
                         .format(len(revids_to_lookup)))
@@ -120,10 +122,10 @@ class Extractor(BaseExtractor):
             rev_docs = self.get_rev_doc_map(revids_to_lookup, rvprop=rvprop)
 
             for rev_id in rev_ids:
-                lookup_rev_id = ex_caches[rev_id].get(
+                lookup_rev_id = caches[rev_id].get(
                     revision_oriented.revision.id, rev_id)
                 if lookup_rev_id in rev_docs:
-                    ex_caches[rev_id][self.revision.doc] = \
+                    caches[rev_id][self.revision.doc] = \
                         rev_docs[lookup_rev_id]
                 else:
                     errored[rev_id] = RevisionNotFound(self.revision,
@@ -132,11 +134,11 @@ class Extractor(BaseExtractor):
             # datasource.revision.parent.doc
             if self.revision.parent & all_dependents:
                 parentids_to_lookup = []
-                for rev_id, ex_cache in ex_caches.items():
-                    if self.revision.doc in ex_cache and \
-                       self.revision.parent.doc not in ex_cache:
-                        rev_doc = ex_cache[self.revision.doc]
-                        parent_id = ex_cache.get(
+                for rev_id, rev_cache in caches.items():
+                    if self.revision.doc in rev_cache and \
+                       self.revision.parent.doc not in rev_cache:
+                        rev_doc = rev_cache[self.revision.doc]
+                        parent_id = rev_cache.get(
                             revision_oriented.revision.parent.id,
                             rev_doc.get('parentid'))
                         parentids_to_lookup.append(parent_id)
@@ -146,19 +148,19 @@ class Extractor(BaseExtractor):
                 parent_rev_docs = self.get_rev_doc_map(parentids_to_lookup,
                                                        rvprop=rvprop)
 
-                for rev_id, ex_cache in ex_caches.items():
-                    if self.revision.doc in ex_cache and \
-                       self.revision.parent.doc not in ex_cache:
-                        rev_doc = ex_cache[self.revision.doc]
-                        parent_id = ex_cache.get(
+                for rev_id, rev_cache in caches.items():
+                    if self.revision.doc in rev_cache and \
+                       self.revision.parent.doc not in rev_cache:
+                        rev_doc = rev_cache[self.revision.doc]
+                        parent_id = rev_cache.get(
                             revision_oriented.revision.parent.id,
                             rev_doc.get('parentid'))
 
                         if parent_id in parent_rev_docs:
-                            ex_cache[self.revision.parent.doc] = \
+                            rev_cache[self.revision.parent.doc] = \
                                 parent_rev_docs[parent_id]
                         elif parent_id == 0:
-                            ex_cache[self.revision.parent.doc] = None
+                            rev_cache[self.revision.parent.doc] = None
                         else:
                             errored[rev_id] = \
                                 RevisionNotFound(self.revision.parent,
@@ -166,10 +168,10 @@ class Extractor(BaseExtractor):
 
             if self.revision.user.info & all_dependents:
                 user_texts_to_lookup = set()
-                for rev_id, ex_cache in ex_caches.items():
-                    if self.revision.doc in ex_cache and \
-                       self.revision.user.info.doc not in ex_cache:
-                        rev_doc = ex_cache[self.revision.doc]
+                for rev_id, rev_cache in caches.items():
+                    if self.revision.doc in rev_cache and \
+                       self.revision.user.info.doc not in rev_cache:
+                        rev_doc = rev_cache[self.revision.doc]
                         if rev_doc.get('userid', 0) > 0:
                             user_texts_to_lookup.add(rev_doc.get('user'))
 
@@ -178,14 +180,14 @@ class Extractor(BaseExtractor):
                 user_info_docs = self.get_user_doc_map(user_texts_to_lookup,
                                                        usprop=USER_PROPS)
 
-                for rev_id, ex_cache in ex_caches.items():
-                    if self.revision.doc in ex_cache and \
-                       self.revision.user.info.doc not in ex_cache:
-                        rev_doc = ex_cache[self.revision.doc]
+                for rev_id, rev_cache in caches.items():
+                    if self.revision.doc in rev_cache and \
+                       self.revision.user.info.doc not in rev_cache:
+                        rev_doc = rev_cache[self.revision.doc]
                         if rev_doc.get('userid', 0) > 0:
                             user_text = rev_doc.get('user')
                             if user_text in user_info_docs:
-                                ex_cache[self.revision.user.info.doc] = \
+                                rev_cache[self.revision.user.info.doc] = \
                                     user_info_docs[user_text]
                             else:
                                 errored[rev_id] = \
@@ -200,19 +202,18 @@ class Extractor(BaseExtractor):
                 # If no error happened, try to solve the other dependencies.
                 try:
                     values = self._extract(rev_id, dependents, context=context,
-                                           cache=ex_caches[rev_id],
+                                           cache=caches[rev_id],
                                            profile=profile)
                     yield None, list(values)
                 except Exception as e:
                     yield e, None
 
-    def _extract(self, rev_id, dependents, cache, context, profile):
+    def _extract(self, rev_id, dependents, context, cache, profile):
         all_dependents = set(expand(dependents))
 
-        extract_cache = {self.revision.id: rev_id,
-                         self.dependents: all_dependents}
-        extract_cache.update(cache)
-        return self.solve(dependents, context=context, cache=extract_cache,
+        cache.update({self.revision.id: rev_id,
+                      self.dependents: all_dependents})
+        return self.solve(dependents, context=context, cache=cache,
                           profile=profile)
 
     def get_rev_doc_map(self, rev_ids, rvprop={'ids', 'user', 'timestamp',
