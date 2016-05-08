@@ -8,7 +8,7 @@ import sys
 import mwparserfromhell as mwparser
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.feature_extraction.text import HashingVectorizer
-from scipy.sparse import coo_matrix, vstack
+from scipy.sparse import coo_matrix, vstack, hstack
 from sklearn.externals import joblib
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
@@ -16,6 +16,15 @@ from sklearn.metrics import average_precision_score
 import sqlite3
 pp = pprint.PrettyPrinter(indent=4)
 
+def fix_data_type(i):
+    if i == 'True':
+        return True
+    if i == 'False':
+        return False
+    if i.isdigit() == True:
+        return int(i)
+    else:
+        return float(i)
 def get_pageid(doc):
     pageid = doc['query']['pages'].keys()
     pageid = list(pageid)[0]
@@ -99,16 +108,35 @@ def create_sqlite_tables():
     conn = open_db('features.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS feature_vector
-    (revid INTEGER PRIMARY KEY, current BLOB, parent BLOB, diff BLOB, is_damaging INTEGER)''')
+    (revid INTEGER PRIMARY KEY, current BLOB, parent BLOB, diff BLOB, other_features BLOB, is_damaging INTEGER)''')
     conn.close()
 
     # score db
+    # TODO - verify if we are populating other_features if features.db
+    # is newly being created
     conn = open_db('score.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS score
     (revid INTEGER PRIMARY KEY, is_damaging_actual INTEGER, is_damaging_prediction INTEGER, score_positive REAL)''')
     conn.close()
 
+def copy_other_features_to_features_db():
+    conn_source = open_db();
+    conn_features = open_db('features.db')
+    cs = conn_source.cursor()
+    cf = conn_features.cursor()
+
+    ret = cs.execute('''SELECT revid, other_features FROM observations''')
+    print('hi')
+    for row in ret:
+        print("inserting other features for", (row[0]))
+        #other_features = pickle.loads(row[1])
+        ret = cf.execute('''UPDATE feature_vector SET other_features=? WHERE revid = ?''',(row[1], row[0]))
+
+    conn_source.close()
+    conn_features.close()
+
+    return
 
 def export_tsv_to_sqlite():
     create_sqlite_tables()
@@ -117,7 +145,6 @@ def export_tsv_to_sqlite():
 
     filename = 'enwiki.features_damaging.20k_2015.tsv'
     f = open(filename,'rt')
-
     i = 1
     for row in read_tsv(f):
         print(i)
@@ -169,11 +196,13 @@ def extract_features():
     cf = conn_features.cursor()
 
     ret = cs.execute('''SELECT
-     content.revid, content_current, content_parent, is_damaging
+     content.revid, content_current, content_parent, other_features, is_damaging
     FROM
      content INNER JOIN observations ON content.revid=observations.revid
     WHERE content.revid_parent IS NOT NULL''')
 
+    #TODO - here we need to insert other_features instead of
+    # copy_other_features_to_features_db
     for row in ret:
         print("inserting features for", (row[0]))
         features = hv.transform((row[1], row[2]))
@@ -184,7 +213,7 @@ def extract_features():
                              pickle.dumps(features[0]),
                              pickle.dumps(features[1]),
                              pickle.dumps(features_diff),
-                             row[3]
+                             row[4]
                          ))
     return
 
@@ -192,27 +221,31 @@ def build_model():
     conn_features = open_db('features.db')
     cf = conn_features.cursor()
 
-    ret = cf.execute('''SELECT diff, is_damaging FROM feature_vector ORDER BY revid LIMIT 16000''')
+    ret = cf.execute('''SELECT other_features, diff, is_damaging FROM feature_vector ORDER BY revid LIMIT 16000''')
 
     print('fetching')
     rows = ret.fetchall()
     conn_features.close()
 
     print('zipping')
-    features_vector, labels = zip(*rows)
+    other_features, features_vector, labels = zip(*rows)
 
     count = 0
     print('unpickling')
     features = coo_matrix([])
+
     for i in features_vector:
         print(count)
-        count = count + 1
-        print(count)
-        vector = pickle.loads(i)
+        hv_features = pickle.loads(i)
+        other_features_coo = pickle.loads(other_features[count])
+        other_features_coo = list(map(fix_data_type, other_features_coo))
+        other_features_coo = coo_matrix([other_features_coo])
+        vector = hstack([other_features_coo, hv_features])
         if features.getnnz() == 0:
             features = vstack([vector])
         else:
             features = vstack([features, vector])
+        count = count + 1
 
     print('saving vstacked features')
     joblib.dump(features, 'model_pickled/training_data_features.pkl')
@@ -320,7 +353,7 @@ create_sqlite_tables()
 # export_tsv_to_sqlite()
 # download_conents()
 # extract_features()
+copy_other_features_to_features_db()
 # build_model()
-# score_model()
+# score_model_iterative()
 # example_predictions()
-score_model_iterative()
