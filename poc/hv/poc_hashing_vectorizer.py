@@ -299,7 +299,7 @@ def score_model_iterative():
     conn_features = open_db('features.db')
     cf = conn_features.cursor()
 
-    ret = cf.execute('''SELECT revid, diff, is_damaging FROM feature_vector
+    ret = cf.execute('''SELECT revid, other_features, diff, is_damaging FROM feature_vector
     WHERE revid > 646706890 LIMIT 4000''')
 
     conn_score = open_db('score.db')
@@ -307,16 +307,21 @@ def score_model_iterative():
 
     gbc = joblib.load('model_pickled/gbc.pkl')
     for row in ret:
-        features_vector = pickle.loads(row[1])
-        prediction = gbc.predict(features_vector.todense())[0]
+        hv_features = pickle.loads(row[2])
+        other_features_coo = pickle.loads(row[1])
+        other_features_coo = list(map(fix_data_type, other_features_coo))
+        other_features_coo = coo_matrix([other_features_coo])
+        vector = hstack([other_features_coo, hv_features])
+
+        prediction = gbc.predict(vector.todense())[0]
         #TODO - don't hardcode, calculate the index of the 'True' class
-        score_positive = gbc.predict_proba(features_vector.todense())[0][1]
+        score_positive = gbc.predict_proba(vector.todense())[0][1]
         classes = gbc.classes_
-        print('revid: ', row[0], ', actual: ', row[2], ', prediction', prediction, 'score_positive', score_positive, 'classes', classes)
+        print('revid: ', row[0], ', actual: ', row[3], ', prediction', prediction, 'score_positive', score_positive, 'classes', classes)
 
         cc.execute('''INSERT INTO score
                    (revid, is_damaging_actual, is_damaging_prediction, score_positive)
-                   VALUES (?, ?, ?, ?)''', (row[0], row[2], prediction, score_positive))
+                   VALUES (?, ?, ?, ?)''', (row[0], row[3], prediction, score_positive))
 
     # calculate score
     correct_predictions =  cc.execute('''SELECT COUNT(revid) FROM score WHERE is_damaging_actual=is_damaging_prediction''').fetchone()[0]
@@ -353,7 +358,7 @@ create_sqlite_tables()
 # export_tsv_to_sqlite()
 # download_conents()
 # extract_features()
-copy_other_features_to_features_db()
+# copy_other_features_to_features_db()
 # build_model()
-# score_model_iterative()
+score_model_iterative()
 # example_predictions()
