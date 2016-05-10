@@ -217,7 +217,7 @@ def extract_features():
                          ))
     return
 
-def build_model():
+def get_features_labels_training():
     conn_features = open_db('features.db')
     cf = conn_features.cursor()
 
@@ -245,14 +245,22 @@ def build_model():
             features = vstack([vector])
         else:
             features = vstack([features, vector])
-        count = count + 1
+            count = count + 1
 
     print('saving vstacked features')
     joblib.dump(features, 'model_pickled/training_data_features.pkl')
     joblib.dump(labels, 'model_pickled/training_data_labels.pkl')
+    return features,labels
+
+def build_model():
+    try:
+        features = joblib.load('model_pickled/training_data_features.pkl')
+        labels = joblib.load('model_pickled/training_data_labels.pkl')
+    except FileNotFoundError:
+        features, labels = get_features_labels_training()
 
     print('fitting')
-    gbc = GradientBoostingClassifier()
+    gbc = GradientBoostingClassifier(n_estimators=200, learning_rate=0.05)
     sample_weight=[18939 / (796 + 18939) if l == 'True' else 796 / (796 + 18939) for l in labels]
     gbc.fit(features, labels, sample_weight)
 
