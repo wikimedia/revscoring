@@ -90,29 +90,29 @@ badword_regexes = [
     # Pussy|ass|penis|anus (open so I (suck|tear|fuck)|sister|pimp|your mother
     # |your father|sister|was fucked|is fucked|male prostitute|sucker|big|big
     # |thick|dumb|dumb|fucker|expert!|don't say|nonsense)
-    r"([qkc]+o+s+|[qkc]+o+n+|[qkc]+i+r+|m+e+g+h+a+d)\s*?((va|o)\s*?[qkc]oon" +
-    r"|lis|pareh?|k+h+a+r+|[qkc]esh|nane|nanat|babat|khah?a?r|abjit|mi ?dad" +
-    r"|mi ?dah[iy]|[qkc]on|deh|khor|goshad|gondeh" +
-    r"|[qkc]oloft|[qkc]esh|mashang" +
+    r"(?:[qkc]+o+s+|[qkc]+o+n+|[qkc]+i+r+|m+e+g+h+a+d)\s*?((?:va|o)" +
+    r"\s*?[qkc]oon|lis|pareh?|k+?h+?a+?r+?|[qkc]esh|nane|nanat|babat" +
+    r"|khah?a?r|abjit|mi ?dad|mi ?dah[iy]|[qkc]on|deh" +
+    r"|khor|goshad|gondeh|[qkc]oloft|[qkc]esh|mashang" +
     r"|khol|baz|shenas|nag[uo]o?|maghz|sh[ae]r)",
-    r"\bmameh?",  # boob
+    r"mameh?",  # boob
     r"sho+[mn]bo+l",  # dick in childern language
-    r"\brazl",  # asshole
+    r"razl",  # asshole
     r"gaei?d[ia]m",  # I fucked
-    r"\bk+i+r+i+",  # dick
-    r"\bk+o+s+o+",  # pussy
-    r"\bk+o+n+i+",  # male prostitue
-    r"j+e+n+d+e+h?",  # female prostitue
+    r"k+?i+?r+?i+?",  # dick
+    r"k+?o+?s+?o+?",  # pussy
+    r"k+?o+?n+?i+?",  # male prostitue
+    r"j+?e+?n+?d+?e+?h?",  # female prostitue
     r"[qkc]iram",  # my dick
-    r"(pedar|baba|naneh?|tokhme?) sag",  # your (father|dad|mother) is dog
+    r"(?:pedar|baba|naneh?|tokhme?) sag",  # your (father|dad|mother) is dog
     r"pedasag",  # your father is dog
-    r"bi (sho+r|shour|sharaf|namo+s)",  # asshole
+    r"bi (?:sho+?r|shour|sharaf|namo+?s)",  # asshole
     r"madareto?",  # your mother
-    r"\bamato?",  # your aunt
-    r"da[iy]o+s",  # pimp
+    r"amato?",  # your aunt
+    r"da[iy]o+?s",  # pimp
     r"goh? ?nakhor",  # literally: don't eat shit
-    r"\bashghal",  # garbage
-    r"\bavazi",  # jerk
+    r"ashghal",  # garbage
+    r"avazi",  # jerk
     r"کیرم",  # my dick
     r"کونی",  # male prostitute
     r"برووتو",  # go inside (dick in something)
@@ -150,27 +150,27 @@ badword_regexes = [
     r"کیرم",  # my dick
     r"ممه",  # boob
     # your (mother|sister|wife) is prostitute|whore
-    r"(ما\.?در|ننه|زن|خو?اه?ر) ?(خرابه|ق\.?[حه]\.?ب\.?ه|قحبه|قبه|" +
-    r"ج\.?ن\.?د\.?ه|به خطا)",
+    r"(?:ما+?در|ننه|زن|خو?اه?ر) ?(?:خرابه|ق+?[حه]+?ب+?ه|قحبه|قبه|" +
+    r"ج+?ن+?د+?ه|به خطا)",
     # (pussy|ass|dick|anus|bottom organism)
     # (and ass|sucker|torn|ass|mother|father|sister|
     # was fucked|is fucked|fucks|fucker|sucker)
-    r"([کك]+س+|[کك]+و+ن+|[کك]+[یي]+ر+|مقعد|عضو " +
-    r"?تحتانی|ما?تحت)\s*(و کون|لیسی?|پاره|خر|[کك]ش|نن[هت]\b|بابات|خو?اه?ر|" +
+    r"(?:[کك]+?س+?|[کك]+?و+?ن+?|[کك]+?[یي]+?ر+?|مقعد|عضو " +
+    r"?تحتانی|ما?تحت)\s*(?:و کون|لیسی?|پاره|خر|[کك]ش|نن[هت]\b|بابات|خو?اه?ر|" +
     r"آبجیت|هم ?شیره|می ?داد|می ?ده?ی|می ?کنی?|کن|خور)",
     # (Ass|Pussy) (donkey|open|big|pimp|torn|your mother|mother|dumb|expert
     # dont't say|dumb|nonsense|mother|sister|your sister|sister|was fucked)
-    r"[کك]+(و+ن|س)\s*(خر|گشاد|گنده|کش|مشنگ|پاره|ننت|ننه\b|خل|باز|خور\b|شناس" +
-    r"|نگو|مغز|ه؟ ؟شعر|و ?شعر|مادر|خو?اه?ر|آبجیت|هم ?شیره|داد)",
+    r"[کك]+(و+ن|س)\s*(?:خر|گشاد|گنده|کش|مشنگ|پاره|ننت|ننه\b|خل|" +
+    r"باز|خور|شناس|نگو|مغز|ه؟ ؟شعر|و ?شعر|مادر|خو?اه?ر|آبجیت|هم ?شیره|داد)",
     r"ر[زذ]ل",  # jerk
     # (ass|suck|fuck|mouth) (my)? dick
-    r"[کك]+[یي]+ر+\s*م?(ی|خر|(ب|)خور|تو[ی ]|مو |دهن)",
+    r"[کك]+?[یي]+?ر+?\s*م?(ی|خر|(ب|)خور|تو[ی ]|مو |دهن)",
     r"گا[يئی]ید[میي]",  # fucked
     r"گاهييد[نه]",  # fucking
     r"بگامت",  # I fuck you
     r"بی ?(شعور|شرف|ناموس)[یي]",  # dumb|jerk|
     r"(پدر|ننه|مادر|بابا|تخم)\s*سگ",  # son of dog
-    r"\پريودى\؟",  # you pooped
+    r"پريودى\؟",  # you are having period
     r"مادرت گا",  # your mother fuck
     r"تنت میخاره",  # you like to fight
     r"به کیرم",  # To my dick (means I don't give a shit)
@@ -192,16 +192,16 @@ badword_regexes = [
     r"[کك]س ?ده",  # female prostitute
     r"گا[یي]ش",  # To fuck
     r"ب[کك]ن ب[کك]ن",  # fuck fuck
-    r"([کك]+[یي]+ر+)ی+",  # dick
-    r"(به پشت|دمر|دمرو) بخواب",  # lie down
+    r"(?:[کك]+?[یي]+?ر+?)ی+",  # dick
+    r"(?:به پشت|دمر|دمرو) بخواب",  # lie down
     r"خایه لیس",  # balls sucker
     r"حسن کلیدساز",  # Hasan locksmith (a swaer targeting Rouhani)
     r"کره خر",  # Son of donkey
-    r"آشغال ع+و+ض+ی+",  # Jerk
+    r"آشغال ع+?و+?ض+?ی+?",  # Jerk
     r"پدسگ",  # short form of "son of dog"
     r"سا[کك] زد",  # sucked (dick)
-    r"فاک (‌فنا|یو)",  # "fuck"
-    r"برو (گ+م+ش+و|ب+م+ی+ر+)",  # go away
+    r"فاک (‌?:فنا|یو)",  # "fuck"
+    r"برو (?:گ+?م+?ش+?و|ب+?م+?ی+?ر+?)",  # go away
     r"گوه خورد",  # ate shit
     r"شاش اضافه",  # extra piss
     r"آب [کك][یي]رو?",  # semen
@@ -219,18 +219,18 @@ badword detecting regexes.
 """
 
 informal_regexes = [
-    r"آله", r"فرموده?", r"فرمودند", r"السلام", r"حضرت\b", r"\([سعص]\)",
+    r"آله", r"فرموده?", r"فرمودند", r"السلام", r"حضرت", r"\([سعص]\)",
     r"\(ره\)",
     r"\(قس\)",
-    r"\(عج\)", r"\bامام\b", r"فرمودند", r"روحی?‌? ?ا?ل?فدا",
-    r"شَ?هید\b", r"آزادهٔ? سرا?فراز",
+    r"\(عج\)", r"امام", r"فرمودند", r"روحی?‌? ?ا?ل?فدا",
+    r"شَ?هید", r"آزادهٔ? سرا?فراز",
     r"شادروان", r"جهانخوار", r"مستکبر", r"ملحد", r"ملعون",
-    r"(لعن[تة]|رحمت|صلی|صلوات|سلام)‌? ?اللہ", r"دام‌? ?(ظلّ?ه|برکات)",
+    r"(?:لعن[تة]|رحمت|صلی|صلوات|سلام)‌? ?اللہ", r"دام‌? ?(?:ظلّ?ه|برکات)",
     r"قدس‌? ?سره‌? ?شریف", r"عل[يی]ه‌? ?السلام",
     r"اسقف محترم", r"خدا[یش]? بیامرز", r"دار فانی", r"به هلاکت",
     r"سَقط شد", r"ا?علیا?‌? ?حضرت",
-    r"خادم خادمان", r"مقام معظّ?م", r"(حرم|مرقد) مطهر", r"\bمرحوم\b",
-    r"\bشهادت", r"شاهنشاه\b",
+    r"خادم خادمان", r"مقام معظّ?م", r"(?:حرم|مرقد) مطهر", r"مرحوم",
+    r"شهادت", r"شاهنشاه",
     r"علیها", r"مد ?ظله"
 ]
 
