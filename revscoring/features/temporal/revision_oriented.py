@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 
 import mwtypes
+
 from pytz import utc
 
 from ...datasources import revision_oriented
@@ -177,7 +178,7 @@ def _process_seconds_since(old_timestamp, current_timestamp):
 
 
 def _process_seconds_since_registration(id, registration, timestamp):
-    if id is None:  # User is anon
+    if id == 0:  # User is anon
         return 0
     else:
         # Handles users who registered before registration dates were

@@ -86,7 +86,6 @@ class Extractor(BaseExtractor):
             rev_id = rev_ids
             cache = cache if cache is not None else {}
             cache.update((caches or {}).get(rev_id, {}))
-            print("Cache id:", id(cache))
             return self._extract(rev_id, dependents, cache=cache,
                                  context=context, profile=profile)
 
