@@ -30,6 +30,7 @@ addons:
     - myspell-es
     - myspell-he
     - myspell-it
+    - myspell-nb
     - hunspell-vi
     - myspell-pt
     - aspell-ru
