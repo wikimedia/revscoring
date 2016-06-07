@@ -62,6 +62,7 @@ def main(argv=None):
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
 
+    sys.path.insert(0, ".")  # Search local directory first
     ScorerModel = yamlconf.import_module(args['<scorer_model>'])
     features = yamlconf.import_module(args['<features>'])
 
