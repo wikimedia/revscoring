@@ -68,6 +68,7 @@ def main(argv=None):
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
 
+    sys.path.insert(0, ".")  # Search local directory first
     features = yamlconf.import_module(args['<features>'])
 
     session = mwapi.Session(args['--host'],

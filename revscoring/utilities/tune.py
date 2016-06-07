@@ -71,6 +71,7 @@ def main(argv=None):
 
     params_config = yamlconf.load(open(args['<params-config>']))
 
+    sys.path.insert(0, ".")  # Search local directory first
     features_path = args['<features>']
     features = yamlconf.import_module(features_path)
 
