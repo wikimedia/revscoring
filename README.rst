@@ -54,6 +54,7 @@ You'll also need to install `enchant <https://enchant.org>`_ compatible
 dictionaries of the languages you'd like to use.  We recommend the following:
 
 * ``languages.arabic``: aspell-ar
+* ``languages.czech``: myspell-cs
 * ``languages.dutch``: myspell-nl
 * ``languages.english``: myspell-en-us myspell-en-gb myspell-en-au
 * ``languages.estonian``: myspell-et

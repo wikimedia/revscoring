@@ -20,6 +20,7 @@ addons:
     - aspell-id
     - aspell-pl
     - aspell-sv
+    - myspell-cs
     - myspell-en-au
     - myspell-en-gb
     - myspell-en-us
