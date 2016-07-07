@@ -52,7 +52,7 @@ def solve(dependents, context=None, cache=None, profile=None):
         collection of dependents is provided, a generator of values will be
         returned
     """
-    cache = cache or {}
+    cache = cache if cache is not None else {}
     context = normalize_context(context)
 
     if hasattr(dependents, '__iter__'):
