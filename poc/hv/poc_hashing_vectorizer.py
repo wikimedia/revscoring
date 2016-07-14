@@ -238,13 +238,14 @@ def get_features_labels_training(consider_other_features = True):
         print(count)
         hv_features = pickle.loads(i)
 
+        vector = hv_features
         other_features_coo = coo_matrix([])
         if consider_other_features == True:
             other_features_coo = pickle.loads(other_features[count])
             other_features_coo = list(map(fix_data_type, other_features_coo))
             other_features_coo = coo_matrix([other_features_coo])
+            vector = hstack([other_features_coo, hv_features])
 
-        vector = hstack([other_features_coo, hv_features])
         if features.getnnz() == 0:
             features = vstack([vector])
         else:
