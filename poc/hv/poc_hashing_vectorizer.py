@@ -368,7 +368,7 @@ def example_predictions():
                                                               for v in
                                                               gbc.predict_proba(features.getrow(i).todense())[0]])))
 create_sqlite_tables()
-export_tsv_to_sqlite()
+# export_tsv_to_sqlite()
 # download_conents()
 # extract_features()
 # copy_other_features_to_features_db()
