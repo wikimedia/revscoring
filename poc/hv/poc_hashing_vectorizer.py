@@ -217,7 +217,7 @@ def extract_features():
                          ))
     return
 
-def get_features_labels_training():
+def get_features_labels_training(consider_other_features = True):
     conn_features = open_db('features.db')
     cf = conn_features.cursor()
 
@@ -237,9 +237,13 @@ def get_features_labels_training():
     for i in features_vector:
         print(count)
         hv_features = pickle.loads(i)
-        other_features_coo = pickle.loads(other_features[count])
-        other_features_coo = list(map(fix_data_type, other_features_coo))
-        other_features_coo = coo_matrix([other_features_coo])
+
+        other_features_coo = coo_matrix([])
+        if consider_other_features == True:
+            other_features_coo = pickle.loads(other_features[count])
+            other_features_coo = list(map(fix_data_type, other_features_coo))
+            other_features_coo = coo_matrix([other_features_coo])
+
         vector = hstack([other_features_coo, hv_features])
         if features.getnnz() == 0:
             features = vstack([vector])
@@ -252,12 +256,12 @@ def get_features_labels_training():
     joblib.dump(labels, 'model_pickled/training_data_labels.pkl')
     return features,labels
 
-def build_model():
+def build_model(consider_other_features):
     try:
         features = joblib.load('model_pickled/training_data_features.pkl')
         labels = joblib.load('model_pickled/training_data_labels.pkl')
     except FileNotFoundError:
-        features, labels = get_features_labels_training()
+        features, labels = get_features_labels_training(consider_other_features)
 
     print('fitting')
     gbc = GradientBoostingClassifier(n_estimators=200, learning_rate=0.05)
@@ -363,10 +367,10 @@ def example_predictions():
                                                               for v in
                                                               gbc.predict_proba(features.getrow(i).todense())[0]])))
 create_sqlite_tables()
-# export_tsv_to_sqlite()
+export_tsv_to_sqlite()
 # download_conents()
 # extract_features()
 # copy_other_features_to_features_db()
-# build_model()
-score_model_iterative()
+build_model(consider_other_features = False)
+# score_model_iterative()
 # example_predictions()
