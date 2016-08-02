@@ -7,6 +7,10 @@ return `list`'s of items and produce frequency tables.
 .. autoclass:: revscoring.datasources.meta.frequencies.delta
 
 .. autoclass:: revscoring.datasources.meta.frequencies.prop_delta
+
+.. autoclass:: revscoring.datasources.meta.frequencies.positive
+
+.. autoclass:: revscoring.datasources.meta.frequencies.negative
 """
 from ..datasource import Datasource
 
@@ -98,3 +102,47 @@ class prop_delta(Datasource):
                 prop_delta[item] = delta / old_tf[item]
 
         return prop_delta
+
+
+class positive(Datasource):
+    """
+    Filters a table (counts, delta, prop_delta, etc.) for positive values.
+
+    :Parameters:
+        table_datasource : :class:`revscoring.Datasource`
+            A frequency table datasource
+        name : `str`
+            A name for the datasource.
+    """
+    def __init__(self, table_datasource, name=None):
+        name = self._format_name(name, [table_datasource])
+        super().__init__(name, self.process,
+                         depends_on=[table_datasource])
+
+    def process(self, table):
+        return {k: value for k, value in table.items() if value > 0}
+
+
+class negative(Datasource):
+    """
+    Filters a table (counts, delta, prop_delta, etc.) for negative values.
+
+    :Parameters:
+        table_datasource : :class:`revscoring.Datasource`
+            A frequency table datasource
+        absolute : `bool`
+            Make negative values positive
+        name : `str`
+            A name for the datasource.
+    """
+    def __init__(self, table_datasource, absolute=False, name=None):
+        name = self._format_name(name, [table_datasource])
+        super().__init__(name, self.process,
+                         depends_on=[table_datasource])
+        self.absolute = absolute
+
+    def process(self, table):
+        if self.absolute:
+            return {k: abs(value) for k, value in table.items() if value < 0}
+        else:
+            return {k: value for k, value in table.items() if value < 0}
