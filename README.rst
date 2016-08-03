@@ -43,7 +43,25 @@ Ubuntu & Debian:
 Windows:
   'TODO'
 MacOS:
-  'TODO'
+  Using Homebrew and pip, installing `revscoring` and `enchant` can be accomplished
+  as follows::
+
+      brew install aspell --with-all-languages
+      brew install enchant
+      pip install --no-binary pyenchant revscoring
+  Languages can be added to `aspell`::
+
+      cd /tmp
+      wget http://ftp.gnu.org/gnu/aspell/dict/pt/aspell-pt-0.50-2.tar.bz2
+      bzip2 -dc aspell-pt-0.50-2.tar.bz2 | tar xvf -
+      cd aspell-pt-0.50-2
+      ./configure
+      make
+      sudo make install
+  Caveats:
+    * The differences between the `aspell` and `myspell` dictionaries can cause
+      some of the tests to fail
+
 
 Finally, in order to make use of language features, you'll need to download
 some NLTK data.  The following command will get the necessary corpus.
