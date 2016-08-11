@@ -89,7 +89,7 @@ badword_regexes = [
     r"scem[aio]",
     r"schifo(s[ao])?",
     r"scopa(re|t[aeo]|va)",
-    r"scor+egg(ia|e)",
+    r"scor+?egg(ia|e)",
     r"seghe",
     r"sfigat[io]",
     r"siffredi",
@@ -104,7 +104,7 @@ badword_regexes = [
     r"tette",
     r"troi[ae]",
     r"trombare",
-    r"vaf+anculo",
+    r"vaf+?anculo",
     r"znccn[kl]",
     r"zoccola"
 ]

@@ -63,6 +63,22 @@ def test_dependency_error():
     solve(raises_error)
 
 
+def test_cache_preservation():
+    foo = Dependent("foo")
+    bar = Dependent("bar", depends_on=[foo], process=lambda foo: foo + "bar")
+    fooz = Dependent("foo", process=lambda: "fooz")
+
+    cache = {foo: "foo"}
+    values = list(solve([foo, bar], cache=cache))
+    eq_(values, ["foo", "foobar"])
+    eq_(cache[bar], "foobar")
+
+    cache = {}
+    values = list(solve([foo, bar], context={fooz}, cache=cache))
+    eq_(values, ["fooz", "foozbar"])
+    eq_(cache[bar], "foozbar")
+
+
 def test_expand():
     foo = Dependent("foo", lambda: "foo")
     bar = Dependent("bar", lambda: "bar")

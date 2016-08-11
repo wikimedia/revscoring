@@ -44,7 +44,7 @@ def test_user_registration():
     # Anon (no registration)
     cache = {
         revision_oriented.revision.timestamp: Timestamp(10),
-        revision_oriented.revision.user.id: None,
+        revision_oriented.revision.user.id: 0,
         revision_oriented.revision.user.info.registration: None
     }
     eq_(solve(revision.user.seconds_since_registration, cache=cache), 0)

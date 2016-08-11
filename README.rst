@@ -13,15 +13,15 @@ Using a scorer_model to score a revision::
 
   >>> import mwapi
   >>> from revscoring import ScorerModel
-  >>> from revscoring.extractors import APIExtractor
+  >>> from revscoring.extractors.api.extractor import Extractor
   >>>
   >>> with open("models/enwiki.damaging.linear_svc.model") as f:
   ...     scorer_model = ScorerModel.load(f)
   ...
-  >>> extractor = APIExtractor(mwapi.Session(host="https://en.wikipedia.org",
+  >>> extractor = Extractor(mwapi.Session(host="https://en.wikipedia.org",
   ...                                        user_agent="revscoring demo"))
   >>>
-  >>> feature_values = extractor.extract(123456789, scorer_model.features)
+  >>> feature_values = list(extractor.extract(123456789, scorer_model.features))
   >>>
   >>> print(scorer_model.score(feature_values))
   {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}}
@@ -43,7 +43,25 @@ Ubuntu & Debian:
 Windows:
   'TODO'
 MacOS:
-  'TODO'
+  Using Homebrew and pip, installing `revscoring` and `enchant` can be accomplished
+  as follows::
+
+      brew install aspell --with-all-languages
+      brew install enchant
+      pip install --no-binary pyenchant revscoring
+  Languages can be added to `aspell`::
+
+      cd /tmp
+      wget http://ftp.gnu.org/gnu/aspell/dict/pt/aspell-pt-0.50-2.tar.bz2
+      bzip2 -dc aspell-pt-0.50-2.tar.bz2 | tar xvf -
+      cd aspell-pt-0.50-2
+      ./configure
+      make
+      sudo make install
+  Caveats:
+    * The differences between the `aspell` and `myspell` dictionaries can cause
+      some of the tests to fail
+
 
 Finally, in order to make use of language features, you'll need to download
 some NLTK data.  The following command will get the necessary corpus.
@@ -54,6 +72,7 @@ You'll also need to install `enchant <https://enchant.org>`_ compatible
 dictionaries of the languages you'd like to use.  We recommend the following:
 
 * ``languages.arabic``: aspell-ar
+* ``languages.czech``: myspell-cs
 * ``languages.dutch``: myspell-nl
 * ``languages.english``: myspell-en-us myspell-en-gb myspell-en-au
 * ``languages.estonian``: myspell-et
@@ -63,10 +82,13 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.hungarian``: myspell-hu
 * ``languages.indonesian``: aspell-id
 * ``languages.italian``: myspell-it
+* ``languages.norwegian``: myspell-nb
 * ``languages.persian``: myspell-fa
 * ``languages.polish``: aspell-pl
 * ``languages.portuguese``: myspell-pt
 * ``languages.spanish``: myspell-es
+* ``languages.swedish``: aspell-sv
+* ``languages.tamil``: aspell-ta
 * ``languages.russian``: myspell-ru
 * ``languages.ukrainian``: myspell-uk
 * ``languages.vietnamese``: hunspell-vi

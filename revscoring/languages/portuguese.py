@@ -108,7 +108,7 @@ informal_regexes = [
     r"adoro",  # love
     r"aki",  # here
     r"amo",  # master
-    r"(b+l+a+h*)+",  # bla, blah, bbblllaaaahhhhhblah
+    r"(?:b+?l+?a+?h*)+",  # bla, blah, bbblllaaaahhhhhblah
     r"carambas?",  # OMG
     r"coco",  # coconut
     r"copie[im]",  # I copied
@@ -120,9 +120,9 @@ informal_regexes = [
     r"fixe",  # cool
     r"gajo",  # dude
     r"h[aiou](h[aeiou])*", r"h[e](h[aeiou])+",  # hi, ha, hehe, hohoho
-    r"k+",  # k, kkkkkkkkkkkkkkk
+    r"k+?",  # k, kkkkkkkkkkkkkkk
     r"lindo",  # pretty
-    r"l+([uo]+l+)+",  # lol, LOLOLOL, LLLLoOOoLLL
+    r"l+?([uo]+?l+?)+",  # lol, LOLOLOL, LLLLoOOoLLL
     r"mae",  # mom
     r"mto",  # very
     r"naum",  # no (slang)
@@ -131,7 +131,7 @@ informal_regexes = [
     r"oi+",  # hi
     r"ol[aá]",  # hello
     r"ratas?",  # "rat" -- a snitch
-    r"(rs)+",  # lol
+    r"(?:rs)+",  # lol
     r"tava",  # was / were (slang)
     r"tbm",  # also (slang)
     r"vao",  # vain
