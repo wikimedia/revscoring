@@ -56,3 +56,47 @@ predict(revid)
   features, labels = load_train_set()
   build_model(features, labels)
   predict()
+* Code explained
+SCHEMA
+observations
+    (revid INTEGER PRIMARY KEY,
+    other_features TEXT,
+    is_damaging INTEGER)
+
+content
+    (revid INTEGER PRIMARY KEY,
+    revid_parent INTEGER,
+    content_current BLOB,
+    content_parent BLOB)
+
+feature_vector
+    (revid INTEGER PRIMARY KEY,
+    current BLOB, parent BLOB,
+    diff BLOB,
+    other_features BLOB,
+    is_damaging INTEGER)
+
+score
+    (revid INTEGER PRIMARY KEY,
+    is_damaging_actual INTEGER,
+    is_damaging_prediction INTEGER,
+    score_positive REAL)
+
+STEPS
+create_sqlite_tables
+export_tsv_to_sqlite
+  read from tsv
+  insert into observations table; pickle other_features
+download_conents
+  loop for each revision from observations table
+  download content_current, content_parent
+  insert into content table
+extract_features
+  calculate hv for content_current, content_parent and diff
+  populate hv features into feature_vector table
+copy_other_features_to_features_db
+  copy other features from observations table into feature_vector table
+build_model(consider_other_features = False)
+score_model_iterative
+
+example_predictions

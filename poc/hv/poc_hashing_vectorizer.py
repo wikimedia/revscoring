@@ -305,7 +305,7 @@ def score_model():
     score = gbc.score(features.todense(), labels)
     print('score', score)
 
-def score_model_iterative():
+def score_model_iterative(consider_other_features):
     # could not use score method, because when i convert the sparse feature
     # matrix to dense python throws MemoryError
 
@@ -321,10 +321,13 @@ def score_model_iterative():
     gbc = joblib.load('model_pickled/gbc.pkl')
     for row in ret:
         hv_features = pickle.loads(row[2])
-        other_features_coo = pickle.loads(row[1])
-        other_features_coo = list(map(fix_data_type, other_features_coo))
-        other_features_coo = coo_matrix([other_features_coo])
-        vector = hstack([other_features_coo, hv_features])
+        vector = hv_features
+        other_features_coo = coo_matrix([])
+        if consider_other_features == True:
+            other_features_coo = pickle.loads(row[1])
+            other_features_coo = list(map(fix_data_type, other_features_coo))
+            other_features_coo = coo_matrix([other_features_coo])
+            vector = hstack([other_features_coo, hv_features])
 
         prediction = gbc.predict(vector.todense())[0]
         #TODO - don't hardcode, calculate the index of the 'True' class
@@ -372,6 +375,6 @@ create_sqlite_tables()
 # download_conents()
 # extract_features()
 # copy_other_features_to_features_db()
-build_model(consider_other_features = False)
-# score_model_iterative()
+# build_model(consider_other_features = False)
+score_model_iterative(consider_other_features = False)
 # example_predictions()
