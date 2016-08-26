@@ -19,6 +19,8 @@ addons:
     - aspell-nl
     - aspell-id
     - aspell-pl
+    - aspell-sv
+    - myspell-cs
     - myspell-en-au
     - myspell-en-gb
     - myspell-en-us
@@ -29,10 +31,12 @@ addons:
     - myspell-es
     - myspell-he
     - myspell-it
+    - myspell-nb
     - hunspell-vi
     - myspell-pt
     - aspell-ru
     - aspell-uk
+    - aspell-ta
 
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -52,7 +56,7 @@ install:
   - python -m nltk.downloader stopwords
   - pip install codecov
 script:
-  - nosetests -v --with-coverage --cover-package=revscoring --exclude=test_hindi.py
+  - nosetests -v --with-coverage --cover-package=revscoring --exclude="test_hindi.py|test_tamil.py"
 after_success:
     codecov
 notifications:

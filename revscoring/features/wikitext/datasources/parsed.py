@@ -20,6 +20,15 @@ class Revision:
         tree representing the structure of the page.
         """
 
+        self.node_class_map = Datasource(
+            self._name + ".node_class_map",
+            _process_node_class_map, depends_on=[self.wikicode]
+        )
+        """
+        A map of mwparserfromhell.wikicode.<class> to lists of nodes of
+        that type.
+        """
+
         self.content = execute_method(
             "strip_code", self.wikicode,
             name=self._name + ".content"
@@ -28,8 +37,9 @@ class Revision:
         The viewable content (no markup or templates) of the revision.
         """
 
-        self.headings = execute_method(
-            "filter_headings", self.wikicode,
+        self.headings = get_key(
+            mwparserfromhell.nodes.Heading, self.node_class_map,
+            default=[],
             name=self._name + ".headings"
         )
         """
@@ -44,8 +54,9 @@ class Revision:
         A list of heading titles
         """
 
-        self.external_links = execute_method(
-            "filter_external_links", self.wikicode,
+        self.external_links = get_key(
+            mwparserfromhell.nodes.ExternalLink, self.node_class_map,
+            default=[],
             name=self._name + ".external_links"
         )
         """
@@ -60,8 +71,9 @@ class Revision:
         A list of external link urls
         """
 
-        self.wikilinks = execute_method(
-            "filter_wikilinks", self.wikicode,
+        self.wikilinks = get_key(
+            mwparserfromhell.nodes.Wikilink, self.node_class_map,
+            default=[],
             name=self._name + ".wikilinks"
         )
         """
@@ -76,8 +88,9 @@ class Revision:
         Returns a list of string titles of internal links (aka "targets")
         """
 
-        self.tags = execute_method(
-            "filter_tags", self.wikicode,
+        self.tags = get_key(
+            mwparserfromhell.nodes.Tag, self.node_class_map,
+            default=[],
             name=self._name + ".tags"
         )
         """
@@ -92,8 +105,9 @@ class Revision:
         Returns a list of html tag names present in the content of the revision
         """
 
-        self.templates = execute_method(
-            "filter_templates", self.wikicode,
+        self.templates = get_key(
+            mwparserfromhell.nodes.Template, self.node_class_map,
+            default=[],
             name=self._name + ".templates"
         )
         """
@@ -196,6 +210,18 @@ def _process_wikicode(text):
     return mwparserfromhell.parse(text)
 
 
+def _process_node_class_map(wikicode):
+    node_class_map = {}
+    for node in wikicode.filter():
+        cls = node.__class__
+        if cls in node_class_map:
+            node_class_map[cls].append(node)
+        else:
+            node_class_map[cls] = [node]
+
+    return node_class_map
+
+
 def _extract_heading_title(heading):
     return str(heading.title).strip()
 
@@ -222,6 +248,17 @@ class HeadingOfLevel:
 
     def filter(self, heading):
         return heading.level == self.level
+
+
+class get_key(Datasource):
+    def __init__(self, key, dict_datasource, default=None, name=None):
+        self.key = key
+        self.default = default
+        name = self._format_name(name, [dict_datasource])
+        super().__init__(name, self.process, depends_on=[dict_datasource])
+
+    def process(self, d):
+        return d.get(self.key, self.default)
 
 
 class execute_method(Datasource):
