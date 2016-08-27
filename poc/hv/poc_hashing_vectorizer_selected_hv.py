@@ -429,8 +429,9 @@ def fetch_hv_features_with_labels(query):
             features = vstack([features, vector])
             count = count + 1
 
-    print('Saving')
+    
     uidsave = hashlib.md5(query.encode('utf-8')).hexdigest()        
+    print('Saving' + uidsave)
     joblib.dump(features, 'model_pickled/hv_features_' + uidsave + '.pkl')
     joblib.dump(labels, 'model_pickled/labels_' + uidsave + '.pkl')
     return features,labels
@@ -505,12 +506,12 @@ def process_features():
     # -- hv_features
     hv_features, labels = fetch_hv_features_with_labels(TRAINING_QUERY_HV_FEATURES)
     # -- other_features
-    other_features = fetch_other_features(TRAINING_QUERY_OTHER_FEATURES)
+    # other_features = fetch_other_features(TRAINING_QUERY_OTHER_FEATURES)
 
     # -- hv_features
     hv_features, labels = fetch_hv_features_with_labels(SCORE_QUERY_HV_FEATURES)
     # -- other_features
-    other_features = fetch_other_features(SCORE_QUERY_OTHER_FEATURES)
+    # other_features = fetch_other_features(SCORE_QUERY_OTHER_FEATURES)
 
 
 
