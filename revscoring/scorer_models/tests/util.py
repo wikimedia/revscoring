@@ -5,7 +5,7 @@ from itertools import chain
 
 from nose.tools import eq_
 
-from ...features import Feature
+from ...features import Feature, FeatureVector
 from ..scorer_model import MLScorerModel
 
 
@@ -22,16 +22,29 @@ other_float = Feature("other_float", process_other_float(),
 FEATURES = [some_float, other_float]
 
 
+def process_float_vector():
+    return [float(), float(), float()]
+other_float = FeatureVector("float_vector", process_float_vector(),
+                            depends_on=[], returns=float)
+FEATURES = [some_float, other_float]
+
+
 def train_score(model):
     deterministic = random.Random(0)
     observations = list(chain(
-        zip(((some, other) for some, other in
+        zip(((some, other, vector) for some, other, vector in
              zip((deterministic.normalvariate(1, .3) for i in range(500)),
-                 (deterministic.normalvariate(2, .5) for i in range(500)))),
+                 (deterministic.normalvariate(2, .5) for i in range(500)),
+                 ([deterministic.normalvariate(1, .5),
+                   deterministic.normalvariate(0, 2),
+                   deterministic.normalvariate(3, 5)] for i in range(500)))),
             (False for i in range(500))),
-        zip(((some, other) for some, other in
+        zip(((some, other, vector) for some, other, vector in
              zip((deterministic.normalvariate(-1, .5) for i in range(50)),
-                 (deterministic.normalvariate(-2, .3) for i in range(50)))),
+                 (deterministic.normalvariate(-2, .3) for i in range(50)),
+                 ([deterministic.normalvariate(-1, .5),
+                   deterministic.normalvariate(1, 2),
+                   deterministic.normalvariate(2.5, 5)] for i in range(50)))),
             (True for i in range(50)))
     ))
     deterministic.shuffle(observations)
@@ -41,7 +54,7 @@ def train_score(model):
     test_set = observations[mid:]
 
     model.train(train_set)
-    score_doc = model.score((-1, -2))
+    score_doc = model.score((-1, -2, [-1, 1, 2.5]))
 
     eq_(score_doc['prediction'], True)
     assert score_doc['probability'][True] > 0.5, \

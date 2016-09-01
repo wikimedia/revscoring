@@ -1,6 +1,8 @@
 """
 .. autofunction:: revscoring.features.trim
 """
+from itertools import chain
+
 from .feature import Constant, Feature, Modifier
 
 
@@ -37,3 +39,12 @@ def _trim(dependent, context, cache):
         else:
             cache.add(feature)
             yield feature
+
+
+def vectorize_values(feature_values):
+    """
+    Converts a list of feature_values that contains sub-FeatureVector
+    into a flat list of values.
+    """
+    return list(chain(*(val if hasattr(val, "__iter__") else [val]
+                        for val in feature_values)))
