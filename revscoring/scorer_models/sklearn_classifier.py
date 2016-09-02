@@ -5,6 +5,7 @@ from datetime import datetime
 from sklearn.preprocessing import RobustScaler
 
 from . import util
+from ..features import vectorize_values
 from .scorer_model import MLScorerModel
 from .test_statistics import (accuracy, precision, precision_recall, recall,
                               roc, table)
@@ -53,16 +54,19 @@ class ScikitLearnClassifier(MLScorerModel):
             * seconds_elapsed -- Time in seconds spent fitting the model
         """
         start = time.time()
+        values, labels = zip(*values_labels)
+        # Flaten feature vector
+        values = [vectorize_values(feature_values)
+                  for feature_values in values]
 
         if self.scaler is not None:
-            values, labels = zip(*values_labels)
             values = self.scaler.fit_transform(values)
             values_labels = zip(values, labels)
 
         if self.balanced_sample:
+            values_labels = zip(values, labels)
             values_labels = util.balance_sample(values_labels)
-
-        values, labels = zip(*values_labels)
+            values, labels = zip(*values_labels)
 
         if self.balanced_sample_weight:
             sample_weight = util.balance_sample_weights(labels)
@@ -97,6 +101,7 @@ class ScikitLearnClassifier(MLScorerModel):
                              trained on.  Generating this probability is
                              slower than a simple prediction.
         """
+        feature_values = vectorize_values(feature_values)
         if self.scaler is not None:
             feature_values = self.scaler.transform([feature_values])[0]
 
@@ -128,9 +133,6 @@ class ScikitLearnClassifier(MLScorerModel):
                            roc(), precision_recall()]
 
         scores = [self.score(feature_values) for feature_values in values]
-
-        if self.scaler is not None:
-            values = self.scaler.transform(values)
 
         test_stats = {}
         for statistic in test_statistics:
