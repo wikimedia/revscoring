@@ -7,7 +7,8 @@
 
     Usage:
         train_test -h | --help
-        train_test <scorer_model> <features> [-p=<kv>]... [-s=<kv>]...
+        train_test <scorer-model> <features> <label>
+                   [-p=<kv>]... [-s=<kv>]...
                    [--version=<vers>]
                    [--values-labels=<path>]
                    [--model-file=<path>]
@@ -21,21 +22,21 @@
 
     Options:
         -h --help               Prints this documentation
-        <scorer_model>          Classpath to the MLScorerModel to construct
+        <scorer-model>          Classpath to a ScorerModel to construct
                                 and train
         <features>              Classpath to an list of features to use when
                                 constructing the model
+        <label>                 The name of the field to be predicted
         -p --parameter=<kv>     A key-value argument pair to use when
-                                constructing the scorer_model.
+                                constructing the <scorer-model>.
         -s --statistic=<kv>     A test statistic argument to use to evaluate
-                                the scorer model against the test set.
+                                the <scorer-model> against a test set.
         --version=<vers>        A version to associate with the model
-        --values-labels=<path>  Path to a file containing feature values and
-                                labels [default: <stdin>]
-        --model-file=<math>     Path to write a model file to
+        --observations=<path>   Path to a file containing observations
+                                containing a 'cache' with <features> and a
+                                <label> field [default: <stdin>]
+        --model-file=<path>     Path to write a model file to
                                 [default: <stdout>]
-        --label-type=<type>     Interprets the labels as the appropriate type
-                                (int, float, str, bool) [default: str]
         --test-prop=<prop>      The proportion of data that should be withheld
                                 for testing the model. [default: 0.20]
         --balance-sample         Balance the samples by sampling with
@@ -45,7 +46,7 @@
                                  importance of under-represented classes)
         --center                 Features should be centered on a common axis
         --scale                  Features should be scaled to a common range
-        --debug                 Print debug logging.
+        --debug                  Print debug logging.
 """
 import json
 import logging
@@ -55,8 +56,9 @@ import docopt
 import yamlconf
 from nose.tools import nottest
 
-from . import util
+from ..dependencies import solve
 from ..scorer_models.test_statistics import TestStatistic
+from .util import read_observations, train_test_split
 
 logger = logging.getLogger(__name__)
 
@@ -92,30 +94,30 @@ def main(argv=None):
         scale=args['--scale'],
         **model_kwargs)
 
-    if args['--values-labels'] == "<stdin>":
-        observations_f = sys.stdin
+    if args['--observations'] == "<stdin>":
+        observations = read_observations(sys.stdin)
     else:
-        observations_f = open(args['--values-labels'], 'r')
+        observations = read_observations(open(args['--observations']))
+
+    label_name = args['<label>']
+    value_labels = \
+        [(solve(features, cache=ob['cache']), ob[label_name])
+         for ob in observations]
 
     if args['--model-file'] == "<stdout>":
         model_file = sys.stdout.buffer
     else:
         model_file = open(args['--model-file'], 'wb')
 
-    decode_label = util.DECODERS[args['--label-type']]
-
-    observations = util.read_observations(observations_f,
-                                          scorer_model.features,
-                                          decode_label)
-
     test_prop = float(args['--test-prop'])
 
-    run(observations, model_file, scorer_model, test_statistics, test_prop)
+    run(value_labels, model_file, scorer_model, test_statistics, test_prop)
 
 
-def run(observations, model_file, scorer_model, test_statistics, test_prop):
+def run(value_labels, model_file, scorer_model, test_statistics,
+        test_prop):
 
-    scorer_model = train_test(scorer_model, observations, test_statistics,
+    scorer_model = train_test(scorer_model, value_labels, test_statistics,
                               test_prop)
 
     sys.stderr.write(scorer_model.format_info())
@@ -126,9 +128,9 @@ def run(observations, model_file, scorer_model, test_statistics, test_prop):
 
 
 @nottest
-def train_test(scorer_model, observations, test_statistics, test_prop):
-    train_set, test_set = util.train_test_split(observations,
-                                                test_prop=test_prop)
+def train_test(scorer_model, value_labels, test_statistics, test_prop):
+    train_set, test_set = train_test_split(value_labels,
+                                           test_prop=test_prop)
 
     logger.debug("Test set: {0}".format(len(test_set)))
     logger.debug("Train set: {0}".format(len(train_set)))

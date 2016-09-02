@@ -7,6 +7,7 @@
     :members:
 """
 import logging
+import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,26 @@ class Dependent:
 
     def __repr__(self):
         return "<" + self.__str__() + ">"
+
+    @classmethod
+    def load(cls, f):
+        """
+        Reads serialized model information from a file.
+        """
+        if hasattr(f, 'buffer'):
+            return pickle.load(f.buffer)
+        else:
+            return pickle.load(f)
+
+    def dump(self, f):
+        """
+        Writes serialized model information to a file.
+        """
+
+        if hasattr(f, 'buffer'):
+            return pickle.dump(self, f.buffer)
+        else:
+            return pickle.dump(self, f)
 
 
 class DependentSet:

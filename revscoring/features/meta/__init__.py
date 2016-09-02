@@ -10,4 +10,8 @@ bools
 +++++
 .. automodule:: revscoring.features.meta.bools
 
+vectorizers
++++++++++++
+.. automodule:: revscoring.features.meta.vectorizers
+
 """

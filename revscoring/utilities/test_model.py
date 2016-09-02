@@ -1,30 +1,29 @@
 """
-``revscoring test -h``
+``revscoring test_model -h``
 ::
 
     Tests a scorer model.  This utility expects to get a file of
     tab-separated feature values and labels from which to test a model.
 
     Usage:
-        test -h | --help
-        test <scorer_model> [-s=<kv>]...
-             [--values-labels=<path>]
-             [--model-file=<path>]
-             [--label-type=<type>]
-             [--scale]
-             [--debug]
+        test_model -h | --help
+        test_model <scorer_model> <label>
+                   [-s=<kv>]...
+                   [--observations=<path>]
+                   [--model-file=<path>]
+                   [--debug]
 
     Options:
         -h --help               Prints this documentation
         <scorer_model>          Path to model file that already trained.
+        <label>                 The name of the field to be predicted
         -s --statistic=<kv>     A test statistic argument to use to evaluate
                                 the scorer model against the test set.
-        --values-labels=<path>  Path to a file containing feature values and
-                                labels [default: <stdin>]
+        --observations=<path>   Path to a file containing observations
+                                containing a 'cache' with <features> and a
+                                <label> field [default: <stdin>]
         --model-file=<math>     Path to write a model file to
                                 [default: <stdout>]
-        --label-type=<type>     Interprets the labels as the appropriate type
-                                (int, float, str, bool) [default: str]
         --debug                 Print debug logging.
 """
 import logging
@@ -33,9 +32,10 @@ import sys
 import docopt
 from nose.tools import nottest
 
-from . import util
+from ..dependencies import solve
 from ..scorer_models import ScorerModel
 from ..scorer_models.test_statistics import TestStatistic
+from .util import read_observations
 
 logger = logging.getLogger(__name__)
 
@@ -54,29 +54,27 @@ def main(argv=None):
     for stat_str in args['--statistic']:
         test_statistics.append(TestStatistic.from_stat_str(stat_str))
 
-    if args['--values-labels'] == "<stdin>":
-        observations_f = sys.stdin
+    if args['--observations'] == "<stdin>":
+        observations = read_observations(sys.stdin)
     else:
-        observations_f = open(args['--values-labels'], 'r')
+        observations = read_observations(open(args['--observations']))
+
+    label_name = args['<label>']
+    value_labels = \
+        [(solve(scorer_model.features, cache=ob['cache']), ob[label_name])
+         for ob in observations]
 
     if args['--model-file'] == "<stdout>":
         model_file = sys.stdout.buffer
     else:
         model_file = open(args['--model-file'], 'wb')
 
-    decode_label = util.DECODERS[args['--label-type']]
-
-    observations = util.read_observations(observations_f,
-                                          scorer_model.features,
-                                          decode_label)
-    observations = list(observations)
-
-    run(observations, model_file, scorer_model, test_statistics)
+    run(value_labels, model_file, scorer_model, test_statistics)
 
 
-def run(observations, model_file, scorer_model, test_statistics):
+def run(value_labels, model_file, scorer_model, test_statistics):
 
-    scorer_model = test_model(scorer_model, observations, test_statistics)
+    scorer_model = test_model(scorer_model, value_labels, test_statistics)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -86,11 +84,11 @@ def run(observations, model_file, scorer_model, test_statistics):
 
 
 @nottest
-def test_model(scorer_model, observations, test_statistics):
+def test_model(scorer_model, value_labels, test_statistics):
 
-    logger.debug("Test set: {0}".format(len(observations)))
+    logger.debug("Test set: {0}".format(len(value_labels)))
 
     logger.info("Testing model...")
-    scorer_model.test(observations, test_statistics=test_statistics)
+    scorer_model.test(value_labels, test_statistics=test_statistics)
 
     return scorer_model

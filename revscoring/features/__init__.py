@@ -52,6 +52,7 @@ Base classes
 """
 
 from .feature import Feature, Modifier, Constant
-from .functions import trim
+from .feature_vector import FeatureVector
+from .functions import trim, vectorize_values
 
-__all__ = [Feature, Modifier, Constant, trim]
+__all__ = [Feature, Modifier, Constant, FeatureVector, trim, vectorize_values]

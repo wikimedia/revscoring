@@ -18,7 +18,19 @@ frequencies
 +++++++++++
 .. automodule:: revscoring.datasources.meta.frequencies
 
+gramming
+++++++++
+.. automodule:: revscoring.datasources.meta.gramming
+
+hashing
++++++++
+.. automodule:: revscoring.datasources.meta.hashing
+
 mappers
 +++++++
 .. automodule:: revscoring.datasources.meta.mappers
+
+selectors
++++++++++
+.. automodule:: revscoring.datasources.meta.selectors
 """
