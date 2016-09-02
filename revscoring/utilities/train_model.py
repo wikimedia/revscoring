@@ -1,13 +1,13 @@
 """
-``revscoring train -h``
+``revscoring train_model -h``
 ::
 
     Trains a scorer model.  This utility expects to get a file of
     tab-separated feature values and labels from which to construct a model.
 
     Usage:
-        train -h | --help
-        train <scorer_model> <features> [-p=<kv>]...
+        train_model -h | --help
+        train_model <scorer_model> <features> [-p=<kv>]...
                    [--version=<vers>]
                    [--values-labels=<path>]
                    [--model-file=<path>]
@@ -24,15 +24,15 @@
                                 and train
         <features>              Classpath to an list of features to use when
                                 constructing the model
+        <label>                 The name of the field to be predicted
         -p --parameter=<kv>     A key-value argument pair to use when
                                 constructing the scorer_model.
         --version=<vers>        A version to associate with the model
-        --values-labels=<path>  Path to a file containing feature values and
-                                labels [default: <stdin>]
+        --observations=<path>   Path to a file containing observations
+                                containing a 'cache' with <features> and a
+                                <label> field [default: <stdin>]
         --model-file=<math>     Path to write a model file to
                                 [default: <stdout>]
-        --label-type=<type>     Interprets the labels as the appropriate type
-                                (int, float, str, bool) [default: str]
         --balance-sample         Balance the samples by sampling with
                                  replacement until all classes are equally
                                  represented
@@ -49,7 +49,8 @@ import sys
 import docopt
 import yamlconf
 
-from . import util
+from ..dependencies import solve
+from .util import read_observations
 
 logger = logging.getLogger(__name__)
 
@@ -81,29 +82,27 @@ def main(argv=None):
         scale=args['--scale'],
         **model_kwargs)
 
-    if args['--values-labels'] == "<stdin>":
-        observations_f = sys.stdin
+    if args['--observations'] == "<stdin>":
+        observations = read_observations(sys.stdin)
     else:
-        observations_f = open(args['--values-labels'], 'r')
+        observations = read_observations(open(args['--observations']))
+
+    label_name = args['<label>']
+    value_labels = \
+        [(solve(features, cache=ob['cache']), ob[label_name])
+         for ob in observations]
 
     if args['--model-file'] == "<stdout>":
         model_file = sys.stdout.buffer
     else:
         model_file = open(args['--model-file'], 'wb')
 
-    decode_label = util.DECODERS[args['--label-type']]
-
-    observations = util.read_observations(observations_f,
-                                          scorer_model.features,
-                                          decode_label)
-    observations = list(observations)
-
-    run(observations, model_file, scorer_model)
+    run(value_labels, model_file, scorer_model)
 
 
-def run(observations, model_file, scorer_model):
+def run(value_labels, model_file, scorer_model):
 
-    scorer_model = train_model(scorer_model, observations)
+    scorer_model = train_model(scorer_model, value_labels)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -112,11 +111,11 @@ def run(observations, model_file, scorer_model):
     scorer_model.dump(model_file)
 
 
-def train_model(scorer_model, observations):
+def train_model(scorer_model, value_labels):
 
-    logger.debug("Train set: {0}".format(len(observations)))
+    logger.debug("Train set: {0}".format(len(value_labels)))
 
     logger.info("Training model...")
-    scorer_model.train(observations)
+    scorer_model.train(value_labels)
 
     return scorer_model

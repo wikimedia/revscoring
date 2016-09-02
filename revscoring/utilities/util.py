@@ -1,17 +1,12 @@
+import base64
+import getpass
+import json
+import pickle
 import random
 import signal
+import sys
 
-
-def encode(val, none_val="NULL"):
-    if val is None:
-        return none_val
-    elif isinstance(val, bytes):
-        val = str(val, 'utf-8', "replace")
-    else:
-        val = str(val)
-
-    return val.replace("\t", "\\t").replace("\n", "\\n")
-
+from nose.tools import nottest
 
 DECODERS = {
     'int': lambda v: int(v),
@@ -21,25 +16,32 @@ DECODERS = {
 }
 
 
-def read_observations(f, features, decode_label):
+def get_user_pass(for_what):
+    sys.stderr.write("Log into " + for_what + "\n")
+    sys.stderr.write("Username: ")
+    sys.stderr.flush()
+    return open('/dev/tty').readline().strip(), getpass.getpass("Password: ")
+
+
+def read_observations(f):
     for line in f:
-        parts = line.strip().split("\t")
-        values = parts[:-1]
-        label = parts[-1]
+        observation = json.loads(line)
+        if 'cache' in observation:
+            observation['cache'] = pickle.loads(
+                base64.b85decode(bytes(observation['cache'], 'ascii')))
 
-        label = decode_label(label)
-
-        feature_values = []
-        for feature, value in zip(features, values):
-
-            if feature.returns == bool:
-                feature_values.append(value == "True")
-            else:
-                feature_values.append(feature.returns(value))
-
-        yield feature_values, label
+        yield observation
 
 
+def dump_observation(observation, f):
+    if 'cache' in observation:
+        observation['cache'] = \
+            str(base64.b85encode(pickle.dumps(observation['cache'])), 'ascii')
+
+    json.dump(observation, f)
+    f.write("\n")
+
+@nottest
 def train_test_split(observations, test_prop=0.25):
     # Split train and test set from obs.
     observations = list(observations)

@@ -28,8 +28,6 @@ Options:
                            [default: 5]
     --report=<path>        Path to a file to write the tuning report to
                            [default: <stdout>]
-    --label-type=<type>    A type describing the value to expect as a label
-                           [default: str]
     --processes=<num>      The number of parallel processes to start for
                            model building [default: <cpu-count>]
     --cv-timeout=<mins>    The number of minutes to wait for a model to
@@ -55,8 +53,10 @@ import yamlconf
 from sklearn import cross_validation, grid_search, preprocessing
 from tabulate import tabulate
 
-from . import metrics, util
+from . import metrics
 from .. import __version__
+from ..dependencies import solve
+from .util import Timeout, read_observations
 
 logger = logging.getLogger(__name__)
 
@@ -71,18 +71,17 @@ def main(argv=None):
 
     params_config = yamlconf.load(open(args['<params-config>']))
 
-    sys.path.insert(0, ".")  # Search local directory first
     features_path = args['<features>']
-    features = yamlconf.import_module(features_path)
+    features = yamlconf.import_path(features_path)
 
-    label_decoder = util.DECODERS[args['--label-type']]
     if args['--observations'] == "<stdin>":
-        observations_f = sys.stdin
+        observations = read_observations(sys.stdin)
     else:
-        observations_f = open(args['--observations'])
-
-    observations = util.read_observations(observations_f, features,
-                                          label_decoder)
+        observations = read_observations(open(args['--observations']))
+    label_name = args['<label>']
+    value_labels = \
+        [(solve(features, cache=ob['cache']), ob[label_name])
+         for ob in observations]
 
     # Get a sepecialized scorer if we have one
     scoring = metrics.SCORERS.get(args['--scoring'], args['--scoring'])
@@ -107,18 +106,17 @@ def main(argv=None):
     scale_features = args['--scale-features']
     verbose = args['--verbose']
 
-    run(params_config, features_path, observations, scoring, folds,
+    run(params_config, features_path, value_labels, scoring, folds,
         report, processes, cv_timeout, scale_features, verbose)
 
 
-def run(params_config, features_path, observations, scoring, folds,
+def run(params_config, features_path, value_labels, scoring, folds,
         report, processes, cv_timeout, scale_features, verbose):
 
-    observations = list(observations)
     if scale_features:
         logger.debug("Scaling features...")
         ss = preprocessing.StandardScaler()
-        feature_values, labels = (list(vect) for vect in zip(*observations))
+        feature_values, labels = (list(vect) for vect in zip(*value_labels))
         scaled_feature_values = ss.fit_transform(feature_values)
         observations = list(zip(scaled_feature_values, labels))
 
@@ -235,7 +233,7 @@ def _cross_validate(observations, estimator, params, scoring="roc_auc",
         logger.debug("Running cross-validation for " +
                      "{0} with timeout of {1} seconds"
                      .format(estimator.__class__.__name__, cv_timeout))
-        with util.Timeout(cv_timeout):
+        with Timeout(cv_timeout):
             scores = cross_validation.cross_val_score(
                 estimator, feature_values,
                 labels, scoring=scoring,
