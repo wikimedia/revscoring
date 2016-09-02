@@ -13,6 +13,10 @@ old_ft = frequencies.table(old_tokens, name="old_ft")
 new_ft = frequencies.table(new_tokens, name="new_ft")
 
 delta = frequencies.delta(old_ft, new_ft, name="delta")
+pos_delta = frequencies.positive(delta, name="pos_delta")
+neg_delta = frequencies.negative(delta, name="neg_delta")
+neg_abs_delta = frequencies.negative(
+    delta, absolute=True, name="neg_abs_delta")
 
 prop_delta = frequencies.prop_delta(old_ft, delta, name="prop_delta")
 
@@ -50,3 +54,22 @@ def test_prop_delta():
 
     eq_(pickle.loads(pickle.dumps(prop_delta)),
         prop_delta)
+
+
+def test_positive():
+    cache = {old_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45 + ["e"] * 2,
+             new_tokens: ["a"] * 1 + ["b"] * 5 + ["d"] * 3 + ["e"] * 3}
+    eq_(solve(pos_delta, cache=cache),
+        {'b': 3, 'd': 3, 'e': 1})
+
+
+def test_negative():
+    cache = {old_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45 + ["e"] * 2,
+             new_tokens: ["a"] * 1 + ["b"] * 5 + ["d"] * 3 + ["e"] * 3}
+    eq_(solve(neg_delta, cache=cache),
+        {'a': -2, 'c': -45})
+
+    cache = {old_tokens: ["a"] * 3 + ["b"] * 2 + ["c"] * 45 + ["e"] * 2,
+             new_tokens: ["a"] * 1 + ["b"] * 5 + ["d"] * 3 + ["e"] * 3}
+    eq_(solve(neg_abs_delta, cache=cache),
+        {'a': 2, 'c': 45})
