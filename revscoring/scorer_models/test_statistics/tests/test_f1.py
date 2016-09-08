@@ -7,7 +7,7 @@ def test_boolean():
     test_statistic = f1()
     score_labels = [
         ({'prediction': True}, {'prediction': True}, True),
-        ({'prediction': False}, {'prediction': True}, False),
+        ({'prediction': False}, {'prediction': False}, False),
         ({'prediction': True}, {'prediction': True}, True),
         ({'prediction': False}, {'prediction': True}, False),
         ({'prediction': True}, {'prediction': True}, True),
@@ -20,13 +20,13 @@ def test_boolean():
     all_right, half_right, labels = zip(*score_labels)
 
     stats = test_statistic.score(all_right, labels)
-    eq_(stats, 1.0)
+    eq_(stats[True], 1.0)
 
     stats = test_statistic.score(half_right, labels)
-    eq_(round(stats, 3), 0.667)
+    eq_(round(stats[True], 3), 0.714)
 
-    eq_(test_statistic.format(stats), "F1: 0.667")
-    eq_(test_statistic.format(stats, format="json"), 0.667)
+    eq_(test_statistic.format(stats[True]), "F1: 0.714")
+    eq_(test_statistic.format(stats[True], format="json"), 0.714)
 
 
 def test_multiclass():

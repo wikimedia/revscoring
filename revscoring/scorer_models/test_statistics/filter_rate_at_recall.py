@@ -1,4 +1,5 @@
 import io
+from collections import defaultdict
 
 from sklearn.metrics import recall_score
 from tabulate import tabulate
@@ -52,6 +53,22 @@ class filter_rate_at_recall(ClassifierStatistic):
             filtered.sort(key=lambda v: v[1], reverse=True)
             return dict(zip(['threshold', 'filter_rate', 'recall'],
                             filtered[0]))
+
+    def merge(self, stats):
+        stat_lists = defaultdict(lambda: defaultdict(list))
+
+        for stat in stats:
+            for label, l_stat in stat.items():
+                stat_lists[label]['threshold'].append(l_stat['threshold'])
+                stat_lists[label]['filter_rate'].append(l_stat['filter_rate'])
+                stat_lists[label]['recall'].append(l_stat['recall'])
+
+        merged_stats = {}
+        for label, metric_vals in stat_lists.items():
+            merged_stats[label] = {name: util.mean_or_none(vals)
+                                   for name, vals in metric_vals.items()}
+
+        return merged_stats
 
     def format(self, stats, format="str"):
         if format == "str":

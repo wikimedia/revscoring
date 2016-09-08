@@ -23,24 +23,18 @@ class precision(ClassifierStatistic):
         if format == "str":
             return cls.format_str(precision_doc)
         elif format == "json":
-            if isinstance(precision_doc, float):
-                return round(precision_doc, 3)
-            else:
-                return {label: round(precision, 3)
-                        for label, precision in precision_doc.items()}
+            return {label: round(precision, 3)
+                    for label, precision in precision_doc.items()}
         else:
             raise TypeError("Format '{0}' not available for {1}."
                             .format(format, cls.__name__))
 
     @classmethod
     def format_str(cls, precision_doc):
-        if isinstance(precision_doc, float):
-            return "Precision: {0}".format(round(precision_doc, 3))
-        else:
-            table_str = tabulate([[l, round(p, 3)] for l, p in
-                                  precision_doc.items()])
-            return "Precision:\n" + \
-                   "".join("\t" + line + "\n" for line in
-                           table_str.split("\n"))
+        table_str = tabulate([[repr(label), round(p, 3)] for label, p in
+                              precision_doc.items()])
+        return "Precision:\n" + \
+               "".join("\t" + line + "\n" for line in
+                       table_str.split("\n"))
 
 TestStatistic.register("precision", precision)

@@ -31,14 +31,20 @@ def test_boolean():
 
     stats = test_statistic.score(all_right, labels)
     eq_(test_statistic.format(stats, format="json"),
-        {'auc': 1.0})
+        {True: {'auc': 1.0},
+         False: {'auc': 1.0}})
 
     stats = test_statistic.score(half_right, labels)
     eq_(test_statistic.format(stats, format="json"),
-        {'auc': 0.680})
+        {False: {'auc': 0.76000000000000001},
+         True: {'auc': 0.68000000000000005}})
 
     eq_(test_statistic.format(stats),
-        "ROC-AUC: 0.68")
+        "ROC-AUC:\n" +
+        "\t-----  ----\n" +
+        "\tFalse  0.76\n" +
+        "\tTrue   0.68\n" +
+        "\t-----  ----\n")
 
 
 def test_multiclass():
@@ -85,10 +91,16 @@ def test_multiclass():
 
     stats = test_statistic.score(all_right, labels)
     eq_(test_statistic.format(stats, format="json"),
-        {'a': 1.0, 'c': 1.0, 'b': 1.0})
+        {'a': {'auc': 1.0}, 'c': {'auc': 1.0}, 'b': {'auc': 1.0}})
 
     stats = test_statistic.score(sometimes_right, labels)
     eq_(test_statistic.format(stats, format="json"),
-        {'b': 1.0, 'a': 1.0, 'c': 0.5})
+        {'b': {'auc': 1.0}, 'a': {'auc': 1.0}, 'c': {'auc': 0.5}})
 
     assert len(test_statistic.format(stats)) > 5
+
+    merged_stats = test_statistic.merge(
+        [test_statistic.score(all_right, labels),
+         test_statistic.score(sometimes_right, labels)])
+    eq_(test_statistic.format(merged_stats, format="json"),
+        {'a': {'auc': 0.995}, 'b': {'auc': 0.995}, 'c': {'auc': 0.753}})

@@ -63,8 +63,7 @@ def train_score(model):
     json.dumps(score_doc)  # Checks if the doc is JSONable
 
     model.test(test_set)
-
-    assert model.info()['test_stats']['roc']['auc'] > 0.5
+    assert model.info()['test_stats']['roc'][True]['auc'] > 0.5
 
 
 def pickle_and_unpickle(model):

@@ -1,7 +1,11 @@
 import io
+import logging
 import time
+from collections import defaultdict
 from datetime import datetime
+from multiprocessing import Pool, cpu_count
 
+from sklearn.cross_validation import KFold
 from sklearn.preprocessing import RobustScaler
 
 from . import util
@@ -10,15 +14,27 @@ from .scorer_model import MLScorerModel
 from .test_statistics import (accuracy, precision, precision_recall, recall,
                               roc, table)
 
+logger = logging.getLogger(__name__)
+
 
 class ScikitLearnClassifier(MLScorerModel):
+    Estimator = NotImplemented
+    Base_Params = {}
 
-    def __init__(self, features, classifier_model, version=None,
+    def __init__(self, features, version=None,
                  balanced_sample=False, balanced_sample_weight=False,
                  scale=False, center=False,
-                 test_statistics=None):
+                 test_statistics=None, estimator=None, **estimator_params):
         super().__init__(features, version=version)
-        self.classifier_model = classifier_model
+        if estimator is None:
+            _params = dict(self.Base_Params)
+            _params.update(estimator_params)
+            self.estimator_params = _params
+            self.estimator = self.Estimator(**_params)
+        else:
+            self.estimator = estimator
+            self.estimator_params = estimator.get_params()
+
         self.balanced_sample = balanced_sample
         self.balanced_sample_weight = balanced_sample_weight
         if scale or center:
@@ -36,6 +52,12 @@ class ScikitLearnClassifier(MLScorerModel):
             'scale': scale,
             'center': center
         }
+
+    def _clean_copy(self):
+        cls = self.__class__
+        return cls(self.features, version=self.version,
+                   test_statistics=self.test_statistics,
+                   **self.estimator_params, **self.params)
 
     def __getattr__(self, attr):
         if attr is "stats":
@@ -74,8 +96,8 @@ class ScikitLearnClassifier(MLScorerModel):
             sample_weight = None
 
         # Fit SVC model
-        self.classifier_model.fit(values, labels, sample_weight=sample_weight,
-                                  **kwargs)
+        self.estimator.fit(values, labels, sample_weight=sample_weight,
+                           **kwargs)
         self.trained = time.time()
 
         return {
@@ -105,9 +127,9 @@ class ScikitLearnClassifier(MLScorerModel):
         if self.scaler is not None:
             feature_values = self.scaler.transform([feature_values])[0]
 
-        prediction = self.classifier_model.predict([feature_values])[0]
-        labels = self.classifier_model.classes_
-        probas = self.classifier_model.predict_proba([feature_values])[0]
+        prediction = self.estimator.predict([feature_values])[0]
+        labels = self.estimator.classes_
+        probas = self.estimator.predict_proba([feature_values])[0]
         probability = {label: proba for label, proba in zip(labels, probas)}
 
         doc = {
@@ -145,10 +167,56 @@ class ScikitLearnClassifier(MLScorerModel):
 
         return test_stats
 
+    def cross_validate(self, values_labels, test_statistics=None, folds=10,
+                       store_stats=True):
+
+        test_statistics = test_statistics or self.test_statistics or \
+                          [table(), accuracy(), precision(), recall(),
+                           roc(), precision_recall()]
+
+        pool = Pool(processes=cpu_count())
+
+        folds_i = KFold(len(values_labels), n_folds=folds, random_state=0)
+        results = pool.map(self._generate_test_stats,
+                           ((i, [values_labels[i] for i in train_i],
+                                [values_labels[i] for i in test_i],
+                             test_statistics)
+                            for i, (train_i, test_i) in enumerate(folds_i)))
+        cross_validations = defaultdict(list)
+        for test_stats in results:
+            for test_statistic in test_statistics:
+                stat = test_stats[str(test_statistic)]
+                cross_validations[test_statistic].append(stat)
+
+        merged_stats = {}
+        for test_statistic, stats in cross_validations.items():
+            merged_stats[test_statistic] = test_statistic.merge(stats)
+
+        merged_stats['cross-validation'] = {
+            'folds': folds,
+            'observations': len(values_labels)
+        }
+
+        if store_stats:
+            self.test_statistics = test_statistics
+            self.test_stats = merged_stats
+
+        return merged_stats
+
+    def _generate_test_stats(self, i_train_test_vls_stats):
+        i, train_vls, test_vls, test_statistics = i_train_test_vls_stats
+        logger.info("Performing cross-validation {0}...".format(i + 1))
+        sm = self._clean_copy()
+        logger.debug("Training cross-validation for {0}...".format(i + 1))
+        sm.train(train_vls)
+        logger.debug("Testing cross-validation for {0}...".format(i + 1))
+        test_stats = sm.test(test_vls, test_statistics=test_statistics)
+        return {str(t): v for t, v in test_stats.items()}
+
     def info(self):
         params = {}
         params.update(self.params or {})
-        params.update(self.classifier_model.get_params())
+        params.update(self.estimator.get_params())
 
         return util.normalize_json({
             'type': self.__class__.__name__,
@@ -189,13 +257,13 @@ class ScikitLearnClassifier(MLScorerModel):
         if self.test_stats is None:
             return "No stats available"
         else:
-            return "\n".join(stat.format(self.test_stats[stat]) for stat in
-                               self.test_statistics)
+            return "\n".join(statistic.format(self.test_stats[statistic])
+                             for statistic in self.test_statistics)
 
     def format_info_json(self):
         params = {}
         params.update(self.params or {})
-        params.update(self.classifier_model.get_params())
+        params.update(self.estimator.get_params())
 
         test_stats = {}
         if self.test_stats is not None:

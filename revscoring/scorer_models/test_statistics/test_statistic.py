@@ -1,5 +1,7 @@
 import json
 import re
+from collections import defaultdict
+from statistics import mean
 
 # TODO: This regex fails when commas are used for anything but delimiting
 KWARG_STR_RE = re.compile(r"\s*([a-z_][a-z_0-9]*)" +  # 1/1 keyword
@@ -28,6 +30,9 @@ class TestStatistic:
     def format(self, stats):
         raise NotImplementedError()
 
+    def merge(self, stats):
+        raise NotImplementedError()
+
     def __repr__(self):
         if len(self.kwargs) > 0:
             args = "({0})".format(", ".join(k + "=" + repr(v) for k, v in
@@ -47,7 +52,8 @@ class TestStatistic:
     def from_stat_str(cls, param_str):
         stat_match = STAT_STR_RE.match(param_str)
         if not stat_match:
-            raise ValueError("Malformated statistic string ")
+            raise ValueError("Malformated statistic string {0}"
+                             .format(param_str))
         else:
 
             kwarg_str = stat_match.group(2) or ""
@@ -73,13 +79,22 @@ class ClassifierStatistic(TestStatistic):
     """
     Represents a test statistic for classifier models.
     """
-    def score(self, scores, labels):
-        if set(labels) == {True, False}:
-            return self._single_class_stat(scores, labels, True)
-        else:
-            score = {}
-            for comparison_label in set(labels):
-                score[comparison_label] = \
-                    self._single_class_stat(scores, labels, comparison_label)
 
-            return score
+    def merge(self, stats):
+        label_vals = defaultdict(list)
+        for stat in stats:
+            for label, val in stat.items():
+                label_vals[label].append(val)
+
+        merged_stat = {}
+        for label, vals in label_vals.items():
+            merged_stat[label] = mean(vals)
+        return merged_stat
+
+    def score(self, scores, labels):
+        stat = {}
+        for comparison_label in set(labels):
+            stat[comparison_label] = \
+                self._single_class_stat(scores, labels, comparison_label)
+
+        return stat

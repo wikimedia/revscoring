@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from tabulate import tabulate
 
 from .test_statistic import ClassifierStatistic, TestStatistic
@@ -28,12 +30,24 @@ class table(ClassifierStatistic):
 
         return table
 
-    def format(cls, table_counts, format="str"):
+    def merge(self, tables):
+        merged_table = defaultdict(lambda: defaultdict(int))
+
+        for table in tables:
+            for actual, p_table in table.items():
+                for predicted, count in p_table.items():
+                    merged_table[actual][predicted] += count
+
+        return {
+            actual: {predicted: count for predicted, count in p_table.items()}
+            for actual, p_table in merged_table.items()}
+
+    def format(cls, table, format="str"):
 
         if format == "str":
-            return cls.format_str(table_counts)
+            return cls.format_str(table)
         elif format == "json":
-            return table_counts
+            return table
         else:
             raise TypeError("Format '{0}' not available for {1}."
                             .format(format, cls.__name__))

@@ -1,9 +1,15 @@
 import io
+import logging
+from collections import defaultdict
 
+from numpy import linspace
+from scipy import interp
 from sklearn.metrics import auc, roc_curve
 from tabulate import tabulate
 
 from .test_statistic import ClassifierStatistic, TestStatistic
+
+logger = logging.getLogger(__name__)
 
 
 class roc(ClassifierStatistic):
@@ -29,21 +35,41 @@ class roc(ClassifierStatistic):
         return {
             'auc': auc(fprs, tprs),
             'fprs': fprs,
-            'tprs': tprs,
-            'thresholds': thresholds
+            'tprs': tprs
         }
 
+    def merge(self, stats):
+        individual_auc = defaultdict(list)
+        label_sum_tpr = defaultdict(float)
+        for stat in stats:
+            for label, label_stat in stat.items():
+                individual_auc[label].append(label_stat['auc'])
+                fprs, tprs = label_stat['fprs'], label_stat['tprs']
+                label_sum_tpr[label] += interp(linspace(0, 1, 100), fprs, tprs)
+
+        merged_stat = {}
+        for label, sum_tpr in label_sum_tpr.items():
+            mean_tpr = sum_tpr / len(stats)
+            mean_tpr[0], mean_tpr[1] = 0.0, 1
+            interp_auc = auc(linspace(0, 1, 100), mean_tpr)
+            logger.debug("interp_auc={0}, individual_auc={1}"
+                          .format(interp_auc, individual_auc[label]))
+
+            merged_stat[label] = {
+                'auc': interp_auc,
+                'fprs': list(linspace(0, 1, 100)),
+                'tprs': list(mean_tpr)
+            }
+
+        return merged_stat
+
     @classmethod
-    def format(cls, stats, format="str"):
+    def format(cls, stat, format="str"):
         if format == "str":
-            return cls.format_str(stats)
+            return cls.format_str(stat)
         elif format == "json":
-            if 'auc' in stats:
-                return {
-                    'auc': round(stats['auc'], 3)
-                }
-            else:
-                return {k: round(ss['auc'], 3) for k, ss in stats.items()}
+            return {label: {'auc': round(ss['auc'], 3)}
+                    for label, ss in stat.items()}
         else:
             raise TypeError("Format '{0}' not available for {1}."
                             .format(format, cls.__name__))

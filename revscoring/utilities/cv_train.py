@@ -1,24 +1,25 @@
 """
-``revscoring train_test -h``
+``revscoring cv_train -h``
 ::
 
-    Trains and tests a scorer model.  This utility expects to get a file of
-    tab-separated feature values and labels from which to construct a model.
+    Performs a cross-validation of a scorer model strategy across folds of
+    a dataset and then trains a final model on the entire set of data.
 
     Usage:
-        train_test -h | --help
-        train_test <scorer-model> <features> <label>
-                   [-p=<kv>]... [-s=<kv>]...
-                   [--version=<vers>]
-                   [--values-labels=<path>]
-                   [--model-file=<path>]
-                   [--label-type=<type>]
-                   [--test-prop=<prop>]
-                   [--balance-sample]
-                   [--balance-sample-weight]
-                   [--center]
-                   [--scale]
-                   [--debug]
+        cv_train -h | --help
+        cv_train <scorer-model> <features> <label>
+                 [-p=<kv>]... [-s=<kv>]...
+                 [--version=<vers>]
+                 [--observations=<path>]
+                 [--model-file=<path>]
+                 [--label-type=<type>]
+                 [--cross-validate=<folds>]
+                 [--folds=<num>]
+                 [--balance-sample]
+                 [--balance-sample-weight]
+                 [--center]
+                 [--scale]
+                 [--debug]
 
     Options:
         -h --help               Prints this documentation
@@ -33,12 +34,11 @@
                                 the <scorer-model> against a test set.
         --version=<vers>        A version to associate with the model
         --observations=<path>   Path to a file containing observations
-                                containing a 'cache' with <features> and a
-                                <label> field [default: <stdin>]
+                                containing a 'cache' [default: <stdin>]
         --model-file=<path>     Path to write a model file to
                                 [default: <stdout>]
-        --test-prop=<prop>      The proportion of data that should be withheld
-                                for testing the model. [default: 0.20]
+        --folds=<num>           The number of folds that should be used when
+                                cross-validating [default: 10]
         --balance-sample         Balance the samples by sampling with
                                  replacement until all classes are equally
                                  represented
@@ -58,7 +58,7 @@ from nose.tools import nottest
 
 from ..dependencies import solve
 from ..scorer_models.test_statistics import TestStatistic
-from .util import read_observations, train_test_split
+from .util import read_observations
 
 logger = logging.getLogger(__name__)
 
@@ -72,15 +72,15 @@ def main(argv=None):
     )
 
     sys.path.insert(0, ".")  # Search local directory first
-    ScorerModel = yamlconf.import_module(args['<scorer_model>'])
+    ScorerModel = yamlconf.import_module(args['<scorer-model>'])
     features = yamlconf.import_module(args['<features>'])
 
     version = args['--version']
 
-    model_kwargs = {}
+    estimator_params = {}
     for parameter in args['--parameter']:
         key, value = parameter.split("=")
-        model_kwargs[key] = json.loads(value)
+        estimator_params[key] = json.loads(value)
 
     test_statistics = []
     for stat_str in args['--statistic']:
@@ -92,7 +92,7 @@ def main(argv=None):
         balanced_sample_weight=args['--balance-sample-weight'],
         center=args['--center'],
         scale=args['--scale'],
-        **model_kwargs)
+        **estimator_params)
 
     if args['--observations'] == "<stdin>":
         observations = read_observations(sys.stdin)
@@ -101,7 +101,7 @@ def main(argv=None):
 
     label_name = args['<label>']
     value_labels = \
-        [(solve(features, cache=ob['cache']), ob[label_name])
+        [(list(solve(features, cache=ob['cache'])), ob[label_name])
          for ob in observations]
 
     if args['--model-file'] == "<stdout>":
@@ -109,16 +109,14 @@ def main(argv=None):
     else:
         model_file = open(args['--model-file'], 'wb')
 
-    test_prop = float(args['--test-prop'])
+    folds = int(args['--folds'])
 
-    run(value_labels, model_file, scorer_model, test_statistics, test_prop)
+    run(value_labels, model_file, scorer_model, test_statistics, folds)
 
 
-def run(value_labels, model_file, scorer_model, test_statistics,
-        test_prop):
+def run(value_labels, model_file, scorer_model, test_statistics, folds):
 
-    scorer_model = train_test(scorer_model, value_labels, test_statistics,
-                              test_prop)
+    scorer_model = cv_train(scorer_model, value_labels, test_statistics, folds)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -128,17 +126,14 @@ def run(value_labels, model_file, scorer_model, test_statistics,
 
 
 @nottest
-def train_test(scorer_model, value_labels, test_statistics, test_prop):
-    train_set, test_set = train_test_split(value_labels,
-                                           test_prop=test_prop)
+def cv_train(scorer_model, value_labels, test_statistics, folds):
 
-    logger.debug("Test set: {0}".format(len(test_set)))
-    logger.debug("Train set: {0}".format(len(train_set)))
+    logger.info("Cross-validating model statistics for {0} folds..."
+                .format(folds))
+    scorer_model.cross_validate(
+        value_labels, test_statistics=test_statistics, folds=folds)
 
-    logger.info("Training model...")
-    scorer_model.train(train_set)
-
-    logger.info("Testing model...")
-    scorer_model.test(test_set, test_statistics=test_statistics)
+    logger.info("Training model on all data...")
+    scorer_model.train(value_labels)
 
     return scorer_model

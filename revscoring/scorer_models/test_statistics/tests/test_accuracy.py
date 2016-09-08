@@ -20,10 +20,10 @@ def test_boolean():
     all_right, half_right, labels = zip(*score_labels)
 
     stats = test_statistic.score(all_right, labels)
-    eq_(stats, 1.0)
+    eq_(stats[True], 1.0)
 
     stats = test_statistic.score(half_right, labels)
-    eq_(stats, 0.5)
+    eq_(stats[True], 0.5)
 
     eq_(test_statistic.format(stats), "Accuracy: 0.5")
     eq_(test_statistic.format(stats, format="json"), 0.5)
