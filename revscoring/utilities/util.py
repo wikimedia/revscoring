@@ -41,6 +41,7 @@ def dump_observation(observation, f):
     json.dump(observation, f)
     f.write("\n")
 
+
 @nottest
 def train_test_split(observations, test_prop=0.25):
     # Split train and test set from obs.

@@ -7,6 +7,7 @@ from ..sklearn_classifier import ScikitLearnClassifier
 
 FakeEstimator = namedtuple("FakeEstimator", 'get_params')
 
+
 def test_sklean_classifier():
     skc = ScikitLearnClassifier(
         [Feature("foo")], estimator=FakeEstimator(lambda: {}),
