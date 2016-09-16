@@ -1,4 +1,6 @@
 import io
+from collections import defaultdict
+from statistics import mean
 
 from sklearn.metrics import recall_score
 from tabulate import tabulate
@@ -53,6 +55,23 @@ class recall_at_fpr(ClassifierStatistic):
             filtered.sort(key=lambda v: v[1], reverse=True)
             return dict(zip(['threshold', 'recall', 'fpr'], filtered[0]))
 
+    def merge(self, stats):
+        label_vals = defaultdict(lambda: defaultdict(list))
+
+        for stat in stats:
+            for label, label_stat in stat.items():
+                label_vals[label]['threshold'].append(label_stat['threshold'])
+                label_vals[label]['recall'].append(label_stat['recall'])
+                label_vals[label]['fpr'].append(label_stat['fpr'])
+
+        merged_stats = {}
+        for label, metric_vals in label_vals.items():
+            merged_stats[label] = \
+                {name: util.mean_or_none(vals)
+                 for name, vals in metric_vals.items()}
+
+        return merged_stats
+
     def format(self, stats, format="str"):
         if format == "str":
             return self.format_str(stats)
@@ -62,31 +81,20 @@ class recall_at_fpr(ClassifierStatistic):
             raise TypeError("Format '{0}' not available for {1}."
                             .format(format, self.__name__))
 
-    def format_str(self, stats):
+    def format_str(self, stat):
         formatted = io.StringIO()
+        formatted.write("Recall @ {0} false-positive rate:\n"
+                        .format(self.max_fpr))
 
-        if 'threshold' in stats and 'fpr' in stats:
-            # Single class
-            formatted.write("Recall @ {0} false-positive rate: "
-                            .format(self.max_fpr))
-            formatted.write("threshold={0}, recall={1}, fpr={2}"
-                            .format(util.round_or_none(stats['threshold'], 3),
-                                    util.round_or_none(stats['recall'], 3),
-                                    util.round_or_none(stats['fpr'], 3)))
-        else:
-            # multiple classes
-            formatted.write("Recall @ {0} false-positive rate:\n"
-                            .format(self.max_fpr))
-
-            table_data = [(repr(label),
-                           util.round_or_none(stats[label]['threshold'], 3),
-                           util.round_or_none(stats[label]['recall'], 3),
-                           util.round_or_none(stats[label]['fpr'], 3))
-                          for label in sorted(stats.keys())]
-            table = tabulate(table_data, headers=["label", "threshold",
-                                                  "recall", "fpr"])
-            formatted.write("".join(["\t" + line + "\n" for line in
-                                     table.split("\n")]))
+        table_data = [(repr(label),
+                       util.round_or_none(stat[label]['threshold'], 3),
+                       util.round_or_none(stat[label]['recall'], 3),
+                       util.round_or_none(stat[label]['fpr'], 3))
+                      for label in sorted(stat.keys())]
+        table = tabulate(
+            table_data, headers=["label", "threshold", "recall", "fpr"])
+        formatted.write("".join(["\t" + line + "\n" for line in
+                                 table.split("\n")]))
 
         return formatted.getvalue()
 

@@ -20,13 +20,19 @@ def test_boolean():
     all_right, half_right, labels = zip(*score_labels)
 
     stats = test_statistic.score(all_right, labels)
-    eq_(stats, 1.0)
+    eq_(stats, {False: 1.0, True: 1.0})
 
     stats = test_statistic.score(half_right, labels)
-    eq_(stats, 1.0)
+    eq_(stats, {False: 0.0, True: 1.0})
 
-    eq_(test_statistic.format(stats), "Recall: 1.0")
-    eq_(test_statistic.format(stats, format="json"), 1.0)
+    eq_(test_statistic.format(stats),
+        "Recall:\n" +
+        "\t-----  -\n" +
+        "\tFalse  0\n" +
+        "\tTrue   1\n" +
+        "\t-----  -\n")
+    eq_(test_statistic.format(stats, format="json"),
+        {False: 0.0, True: 1.0})
 
 
 def test_multiclass():
@@ -62,3 +68,9 @@ def test_multiclass():
         {'b': 0.167, 'a': 1.0, 'c': 0.167})
 
     assert len(test_statistic.format(stats)) > 5
+
+    merged_stats = test_statistic.merge(
+        [test_statistic.score(all_right, labels),
+         test_statistic.score(sometimes_right, labels)])
+    eq_(test_statistic.format(merged_stats, format="json"),
+        {'a': 1.0, 'b': 0.583, 'c': 0.583})

@@ -1,3 +1,5 @@
+from statistics import mean
+
 from sklearn.metrics import accuracy_score
 
 from .test_statistic import ClassifierStatistic, TestStatistic
@@ -16,9 +18,12 @@ class accuracy(ClassifierStatistic):
 
         return accuracy_score(labels, y_pred)
 
-    def format(cls, accuracy_doc, format="str"):
+    def merge(self, accuracies):
+        return mean(accuracies)
 
-        rounded_accuracy = round(accuracy_doc, 3)
+    def format(cls, accuracy, format="str"):
+
+        rounded_accuracy = round(accuracy, 3)
 
         if format == "str":
             return "Accuracy: {0}".format(rounded_accuracy)

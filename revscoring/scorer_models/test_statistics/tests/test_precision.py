@@ -8,7 +8,7 @@ def test_boolean():
     score_labels = [
         ({'prediction': True}, {'prediction': True}, True),
         ({'prediction': False}, {'prediction': True}, False),
-        ({'prediction': True}, {'prediction': True}, True),
+        ({'prediction': True}, {'prediction': False}, True),
         ({'prediction': False}, {'prediction': True}, False),
         ({'prediction': True}, {'prediction': True}, True),
         ({'prediction': False}, {'prediction': True}, False),
@@ -19,14 +19,20 @@ def test_boolean():
     ]
     all_right, half_right, labels = zip(*score_labels)
 
-    stats = test_statistic.score(all_right, labels)
-    eq_(stats, 1.0)
+    stat = test_statistic.score(all_right, labels)
+    eq_(stat, {False: 1.0, True: 1.0})
 
-    stats = test_statistic.score(half_right, labels)
-    eq_(stats, 0.5)
+    stat = test_statistic.score(half_right, labels)
+    eq_(stat, {False: 0.0, True: 0.44444444444444442})
 
-    eq_(test_statistic.format(stats), "Precision: 0.5")
-    eq_(test_statistic.format(stats, format="json"), 0.5)
+    eq_(test_statistic.format(stat),
+        "Precision:\n" +
+        "\t-----  -----\n" +
+        "\tFalse  0\n" +
+        "\tTrue   0.444\n" +
+        "\t-----  -----\n")
+    eq_(test_statistic.format(stat, format="json"),
+        {False: 0.0, True: 0.444})
 
 
 def test_multiclass():
@@ -53,12 +59,18 @@ def test_multiclass():
     ]
     all_right, sometimes_right, labels = zip(*score_labels)
 
-    stats = test_statistic.score(all_right, labels)
-    eq_(test_statistic.format(stats, format="json"),
+    stat = test_statistic.score(all_right, labels)
+    eq_(test_statistic.format(stat, format="json"),
         {'b': 1.0, 'c': 1.0, 'a': 1.0})
 
-    stats = test_statistic.score(sometimes_right, labels)
-    eq_(test_statistic.format(stats, format="json"),
+    stat = test_statistic.score(sometimes_right, labels)
+    eq_(test_statistic.format(stat, format="json"),
         {'b': 1.0, 'c': 1.0, 'a': 0.375})
 
-    assert len(test_statistic.format(stats)) > 5
+    assert len(test_statistic.format(stat)) > 5
+
+    merged_stat = test_statistic.merge(
+        [test_statistic.score(all_right, labels),
+         test_statistic.score(sometimes_right, labels)])
+    eq_(test_statistic.format(merged_stat, format="json"),
+        {'b': 1.0, 'c': 1.0, 'a': 0.68799999999999994})

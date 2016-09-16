@@ -62,5 +62,13 @@ def test_multiclass():
          'b': {'a': 5, 'b': 1},
          'c': {'a': 5, 'c': 1}})
 
-    print(test_statistic.format(stats))
+    # print(test_statistic.format(stats))
     eq_(len(test_statistic.format(stats).split("\n")), 7)
+
+    merged_stats = test_statistic.merge(
+        [test_statistic.score(all_right, labels),
+         test_statistic.score(sometimes_right, labels)])
+    eq_(test_statistic.format(merged_stats, format="json"),
+        {'a': {'a': 12},
+         'b': {'a': 5, 'b': 7},
+         'c': {'a': 5, 'c': 7}})

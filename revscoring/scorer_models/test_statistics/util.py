@@ -1,3 +1,6 @@
+from statistics import mean
+
+
 def fpr_score(y_true, y_pred):
     true_preds = sum(y_pred) or 1
     return sum(yp and not yt for yt, yp in zip(y_true, y_pred)) / true_preds
@@ -23,3 +26,11 @@ def round_floats(d, digits=0):
             value = round_floats(value, digits=digits)
         new_d[key] = value
     return new_d
+
+
+def mean_or_none(vals):
+    non_none_vals = [val for val in vals if val is not None]
+    if len(non_none_vals) > 0:
+        return mean(non_none_vals)
+    else:
+        return None

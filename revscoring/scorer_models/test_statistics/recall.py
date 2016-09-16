@@ -23,24 +23,18 @@ class recall(ClassifierStatistic):
         if format == "str":
             return cls.format_str(recall_doc)
         elif format == "json":
-            if isinstance(recall_doc, float):
-                return round(recall_doc, 3)
-            else:
-                return {label: round(recall, 3)
-                        for label, recall in recall_doc.items()}
+            return {label: round(recall, 3)
+                    for label, recall in recall_doc.items()}
         else:
             raise TypeError("Format '{0}' not available for {1}."
                             .format(format, cls.__name__))
 
     @classmethod
     def format_str(cls, recall_doc):
-        if isinstance(recall_doc, float):
-            return "Recall: {0}".format(round(recall_doc, 3))
-        else:
-            table_str = tabulate([[l, round(r, 3)] for l, r in
-                                  recall_doc.items()])
-            return "Recall:\n" + \
-                   "".join("\t" + line + "\n" for line in
-                           table_str.split("\n"))
+        table_str = tabulate([[repr(label), round(r, 3)]
+                              for label, r in recall_doc.items()])
+        return "Recall:\n" + \
+               "".join("\t" + line + "\n" for line in
+                       table_str.split("\n"))
 
 TestStatistic.register("recall", recall)

@@ -29,16 +29,21 @@ def test_boolean():
     ]
     all_right, half_right, labels = zip(*score_labels)
 
-    stats = test_statistic.score(all_right, labels)
-    eq_(test_statistic.format(stats, format="json"),
-        {'auc': 1.0})
+    stat = test_statistic.score(all_right, labels)
+    eq_(test_statistic.format(stat, format="json"),
+        {True: {'auc': 1.0},
+         False: {'auc': 1.0}})
 
-    stats = test_statistic.score(half_right, labels)
-    eq_(test_statistic.format(stats, format="json"),
+    stat = test_statistic.score(half_right, labels)
+    eq_(test_statistic.format(stat, format="json")[True],
         {'auc': 0.708})
 
-    eq_(test_statistic.format(stats),
-        "PR-AUC: 0.708")
+    eq_(test_statistic.format(stat),
+        "PR-AUC:\n" +
+        "\t-----  -----\n" +
+        "\tFalse  0.598\n" +
+        "\tTrue   0.708\n" +
+        "\t-----  -----\n")
 
 
 def test_multiclass():
@@ -83,12 +88,18 @@ def test_multiclass():
     ]
     all_right, sometimes_right, labels = zip(*score_labels)
 
-    stats = test_statistic.score(all_right, labels)
-    eq_(test_statistic.format(stats, format="json"),
-        {'a': 1.0, 'c': 1.0, 'b': 1.0})
+    stat = test_statistic.score(all_right, labels)
+    eq_(test_statistic.format(stat, format="json"),
+        {'a': {'auc': 1.0}, 'c': {'auc': 1.0}, 'b': {'auc': 1.0}})
 
-    stats = test_statistic.score(sometimes_right, labels)
-    eq_(test_statistic.format(stats, format="json"),
-        {'a': 1.0, 'b': 1.0, 'c': 0.25})
+    stat = test_statistic.score(sometimes_right, labels)
+    eq_(test_statistic.format(stat, format="json"),
+        {'a': {'auc': 1.0}, 'b': {'auc': 1.0}, 'c': {'auc': 0.25}})
 
-    assert len(test_statistic.format(stats)) > 5
+    assert len(test_statistic.format(stat)) > 5
+
+    merged_stats = test_statistic.merge(
+        [test_statistic.score(all_right, labels),
+         test_statistic.score(sometimes_right, labels)])
+    eq_(test_statistic.format(merged_stats, format="json"),
+        {'a': {'auc': 0.995}, 'b': {'auc': 0.995}, 'c': {'auc': 0.747}})

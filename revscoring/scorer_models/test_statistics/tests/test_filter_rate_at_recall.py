@@ -30,18 +30,26 @@ def test_boolean():
     all_right, half_right, labels = zip(*score_labels)
 
     stats = test_statistic.score(all_right, labels)
-    eq_(stats['threshold'], 0.83)
-    eq_(stats['filter_rate'], 0.6)
+    eq_(stats[True]['threshold'], 0.83)
+    eq_(stats[True]['filter_rate'], 0.6)
 
     stats = test_statistic.score(half_right, labels)
-    eq_(stats['threshold'], 0.75)
-    eq_(stats['filter_rate'], 0.5)
+    eq_(stats[True]['threshold'], 0.75)
+    eq_(stats[True]['filter_rate'], 0.5)
 
     eq_(test_statistic.format(stats),
-        "Filter rate @ 0.75 recall: threshold=0.75, filter_rate=0.5, " +
-        "recall=0.8")
+        "Filter rate @ 0.75 recall:\n" +
+        "\tlabel      threshold    filter_rate    recall\n" +
+        "\t-------  -----------  -------------  --------\n" +
+        "\tFalse           0.37            0.5       0.8\n" +
+        "\tTrue            0.75            0.5       0.8\n")
     eq_(test_statistic.format(stats, format="json"),
-        {'threshold': 0.75, 'recall': 0.8, 'filter_rate': 0.5})
+        {True: {'threshold': 0.75,
+                'recall': 0.80000000000000004,
+                'filter_rate': 0.5},
+         False: {'threshold': 0.37,
+                 'recall': 0.80000000000000004,
+                 'filter_rate': 0.5}, })
 
 
 def test_multiclass():
@@ -99,3 +107,11 @@ def test_multiclass():
          'c': {'threshold': 0.32, 'recall': 1.0, 'filter_rate': 0.333}})
 
     assert len(test_statistic.format(stats)) > 5
+
+    merged_stats = test_statistic.merge(
+        [test_statistic.score(all_right, labels),
+         test_statistic.score(sometimes_right, labels)])
+    eq_(test_statistic.format(merged_stats, format="json"),
+        {'a': {'recall': 1.0, 'filter_rate': 0.667, 'threshold': 0.71},
+         'b': {'recall': 1.0, 'filter_rate': 0.667, 'threshold': 0.71},
+         'c': {'recall': 1.0, 'filter_rate': 0.5, 'threshold': 0.585}})
