@@ -1,6 +1,5 @@
 import io
 from collections import defaultdict
-from statistics import mean
 
 from sklearn.metrics import recall_score
 from tabulate import tabulate
