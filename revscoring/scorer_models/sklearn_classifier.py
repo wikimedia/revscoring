@@ -232,8 +232,8 @@ class ScikitLearnClassifier(MLScorerModel):
         elif format == "json":
             return self.format_info_json()
         else:
-            raise TypeError("Format '{0}' not available for {1}."
-                            .format(format, self.__class__.__name__))
+            raise ValueError("Format '{0}' not available for {1}."
+                             .format(format, self.__class__.__name__))
 
     def format_info_str(self, format="str"):
         info = self.info()
