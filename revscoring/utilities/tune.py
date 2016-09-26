@@ -3,23 +3,24 @@ Tunes a set of models against a training set to identify the best
 model/configuration.
 
 Usage:
-    tune <params-config> <features> [--observations=<path>]
-                                    [--scoring=<type>]
-                                    [--test-prop=<prop>]
-                                    [--folds=<num>]
-                                    [--report=<path>]
-                                    [--label-type=<type>]
-                                    [--processes=<num>]
-                                    [--cv-timeout=<mins>]
-                                    [--scale-features]
-                                    [--verbose]
-                                    [--debug]
+    tune <params-config> <features> <label>
+         [--observations=<path>]
+         [--scoring=<type>]
+         [--test-prop=<prop>]
+         [--folds=<num>]
+         [--report=<path>]
+         [--label-type=<type>]
+         [--processes=<num>]
+         [--cv-timeout=<mins>]
+         [--scale-features]
+         [--verbose] [--debug]
 
 Options:
     <params-config>        The path to a YAML configuration file containing the
                            models and parameter values to search when tuning
     <features>             The classpath to a feature_list to use when
                            interpreting the feature values of the observations
+    <label>                The name of the field to be predicted
     --observations=<path>  The path to a file containing observations to train
                            and test against. [default: <stdin>]
     --scoring=<type>       The type of scoring strategy to optimize for when
@@ -78,6 +79,8 @@ def main(argv=None):
         observations = read_observations(sys.stdin)
     else:
         observations = read_observations(open(args['--observations']))
+
+    logger.info("Reading feature values & labels...")
     label_name = args['<label>']
     value_labels = \
         [(solve(features, cache=ob['cache']), ob[label_name])
