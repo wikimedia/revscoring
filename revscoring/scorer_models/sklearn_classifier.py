@@ -55,9 +55,10 @@ class ScikitLearnClassifier(MLScorerModel):
 
     def _clean_copy(self):
         cls = self.__class__
+        kwargs = dict(self.estimator_params)
+        kwargs.update(self.params)
         return cls(self.features, version=self.version,
-                   test_statistics=self.test_statistics,
-                   **self.estimator_params, **self.params)
+                   test_statistics=self.test_statistics, **kwargs)
 
     def __getattr__(self, attr):
         if attr is "stats":
