@@ -83,7 +83,7 @@ def main(argv=None):
     logger.info("Reading feature values & labels...")
     label_name = args['<label>']
     value_labels = \
-        [(solve(features, cache=ob['cache']), ob[label_name])
+        [(list(solve(features, cache=ob['cache'])), ob[label_name])
          for ob in observations]
 
     # Get a sepecialized scorer if we have one
@@ -121,7 +121,7 @@ def run(params_config, features_path, value_labels, scoring, folds,
         ss = preprocessing.StandardScaler()
         feature_values, labels = (list(vect) for vect in zip(*value_labels))
         scaled_feature_values = ss.fit_transform(feature_values)
-        observations = list(zip(scaled_feature_values, labels))
+        value_labels = list(zip(scaled_feature_values, labels))
 
     # Prepare the worker pool
     logger.debug("Starting up multiprocessing pool (processes={0})"
@@ -129,12 +129,12 @@ def run(params_config, features_path, value_labels, scoring, folds,
     pool = multiprocessing.Pool(processes=processes)
 
     # Start writing the model tuning report
-    possible_labels = set(label for _, label in observations)
+    possible_labels = set(label for _, label in value_labels)
     report.write("# Model tuning report\n")
     report.write("- Revscoring version: {0}\n".format(__version__))
     report.write("- Features: {0}\n".format(features_path))
     report.write("- Date: {0}\n".format(datetime.datetime.now().isoformat()))
-    report.write("- Observations: {0}\n".format(len(observations)))
+    report.write("- Observations: {0}\n".format(len(value_labels)))
     report.write("- Labels: {0}\n".format(json.dumps(list(possible_labels))))
     report.write("- Scoring: {0}\n".format(scoring))
     report.write("- Folds: {0}\n".format(folds))
@@ -148,7 +148,7 @@ def run(params_config, features_path, value_labels, scoring, folds,
             logger.debug("\tsubmitting {0}..."
                          .format(format_params(params)))
             result = pool.apply_async(_cross_validate,
-                                      [observations, estimator, params],
+                                      [value_labels, estimator, params],
                                       {'cv_timeout': cv_timeout,
                                        'scoring': scoring, 'folds': folds})
             cv_result_sets[name].append((params, result))
@@ -225,11 +225,11 @@ def _estimator_param_grid(params_config):
         yield name, estimator, param_grid
 
 
-def _cross_validate(observations, estimator, params, scoring="roc_auc",
+def _cross_validate(value_labels, estimator, params, scoring="roc_auc",
                     folds=5, cv_timeout=None, verbose=False):
 
     start = time.time()
-    feature_values, labels = (list(vect) for vect in zip(*observations))
+    feature_values, labels = (list(vect) for vect in zip(*value_labels))
     estimator.set_params(**params)
 
     try:
