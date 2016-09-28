@@ -153,7 +153,7 @@ def run(observations, output, dependents, extractor, extractors, batch_size,
 def extract(dependents, observations, extractor, extractors="<cpu count>",
             batch_size=50, profile=None):
 
-    extractor_context = ConfiguredExtractor(extractor, dependents)
+    extractor_context = ConfiguredExtractor(extractor, dependents, batch_size)
     extractor_pool = Pool(processes=extractors)
 
     observation_batches = batch(observations, batch_size)
@@ -193,11 +193,39 @@ def combine_profiles(profile, new_profile):
 
 class ConfiguredExtractor:
 
-    def __init__(self, extractor, dependents):
+    def __init__(self, extractor, dependents, batch_size):
         self.extractor = extractor
         self.dependents = dependents
+        self.batch_size = batch_size
 
     def extract(self, observations):
+        if self.batch_size == 1:
+            return self.__extract_single(observations)
+        else:
+            return self.__extract_many(observations)
+
+    def __extract_single(self, observations):
+        observation = observations[0]
+        profile = {}
+        rev_id = observation['rev_id']
+        cache = observations.get('cache', None)
+
+        start = time.time()
+        results = []
+        try:
+            values = list(self.extractor.extract(
+                rev_id, self.dependents, cache=cache, profile=profile))
+            for dependent, value in zip(self.dependents, values):
+                observation['cache'][str(dependent)] = value
+            results.append((None, observation))
+        except Exception as e:
+            results.append((e, observation))
+
+        duration = time.time() - start
+        profile = {str(d): s for d, s in profile.items()}
+        return results, profile, duration
+
+    def __extract_many(self, observations):
         rev_ids = [ob['rev_id'] for ob in observations]
         profile = {}
         caches = {ob['rev_id']: ob['cache'] for ob in observations
