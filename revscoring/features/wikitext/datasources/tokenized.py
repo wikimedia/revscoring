@@ -1,6 +1,7 @@
 import re
 
 from deltas import wikitext_split
+from deltas.segmenters import ParagraphsSentencesAndWhitespace
 
 from ....datasources import Datasource
 from ....datasources.meta import filters, frequencies, mappers
@@ -14,6 +15,17 @@ class Revision:
         self.tokens = tokenized(revision_datasources.text)
         """
         A list of all tokens
+        """
+
+        self.paragraphs_sentences_and_whitespace = Datasource(
+            self._name + ".paragraphs_sentences_and_whitespace",
+            paragraphs_sentences_and_whitespace.segment,
+            depends_on=[self.tokens]
+        )
+        """
+        A list of paragraphs, sentences, and whitespaces as segments.  See
+        :class:`deltas.segmenters.Segment` and
+        :class:`deltas.segmenters.MatchableSegment`.
         """
 
         self.token_frequency = frequencies.table(
@@ -435,3 +447,6 @@ def tokenized(text_datasource, name=None):
     return Datasource(
         name, _process_tokens, depends_on=[text_datasource]
     )
+
+
+paragraphs_sentences_and_whitespace = ParagraphsSentencesAndWhitespace()
