@@ -32,8 +32,10 @@ from .f1 import f1
 from .filter_rate_at_recall import filter_rate_at_recall
 from .precision_recall import precision_recall
 from .recall_at_fpr import recall_at_fpr
+from .recall_at_precision import recall_at_precision
 from .roc import roc
 from .table import table
 
 __all__ = [TestStatistic, ClassifierStatistic, accuracy, precision, recall, f1,
-           filter_rate_at_recall, precision_recall, recall_at_fpr, roc, table]
+           filter_rate_at_recall, precision_recall, recall_at_fpr,
+           recall_at_precision, roc, table]
