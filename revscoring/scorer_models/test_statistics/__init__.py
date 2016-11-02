@@ -14,6 +14,8 @@ A collection of statistics generators that can be applied to
 
 .. autoclass:: recall_at_fpr
 
+.. autoclass:: recall_at_precision
+
 .. autoclass:: filter_rate_at_recall
 
 Abstract classes
