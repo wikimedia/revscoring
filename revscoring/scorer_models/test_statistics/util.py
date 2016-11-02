@@ -2,8 +2,8 @@ from statistics import mean
 
 
 def fpr_score(y_true, y_pred):
-    true_preds = sum(y_pred) or 1
-    return sum(yp and not yt for yt, yp in zip(y_true, y_pred)) / true_preds
+    false_obs = (len(y_true) - sum(y_true)) or 1
+    return sum(yp and not yt for yt, yp in zip(y_true, y_pred)) / false_obs
 
 
 def filter_rate_score(y_pred):
