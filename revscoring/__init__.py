@@ -4,7 +4,7 @@ This library contains a set of facilities for constructing and applying
 eases the training and testing of Machine Learning-based scoring
 strategies.
 
-* See the :ref:`API reference <api-reference>` for detailed information
+* See the :ref:`API reference <api-reference>` for detailed information.
 
 Key Features
 ------------

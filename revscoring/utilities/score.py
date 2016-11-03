@@ -41,7 +41,6 @@ from multiprocessing import cpu_count
 
 import docopt
 import mwapi
-
 import mysqltsv
 
 from ..extractors import api

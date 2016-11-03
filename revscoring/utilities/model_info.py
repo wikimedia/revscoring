@@ -1,5 +1,5 @@
 """
-``revscoring score -h``
+``revscoring model_info -h``
 ::
 
     Prints formatted information about a model file.

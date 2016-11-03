@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 from nose.tools import eq_, raises
 
 from ...features import Feature

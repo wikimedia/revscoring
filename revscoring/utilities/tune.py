@@ -1,42 +1,47 @@
 """
-Tunes a set of models against a training set to identify the best
-model/configuration.
+``revscoring tune -h``
+::
 
-Usage:
-    tune <params-config> <features> <label>
-         [--observations=<path>]
-         [--scoring=<type>]
-         [--test-prop=<prop>]
-         [--folds=<num>]
-         [--report=<path>]
-         [--label-type=<type>]
-         [--processes=<num>]
-         [--cv-timeout=<mins>]
-         [--scale-features]
-         [--verbose] [--debug]
+    Tunes a set of models against a training set to identify the best
+    model/configuration.
 
-Options:
-    <params-config>        The path to a YAML configuration file containing the
-                           models and parameter values to search when tuning
-    <features>             The classpath to a feature_list to use when
-                           interpreting the feature values of the observations
-    <label>                The name of the field to be predicted
-    --observations=<path>  The path to a file containing observations to train
-                           and test against. [default: <stdin>]
-    --scoring=<type>       The type of scoring strategy to optimize for when
-                           choosing parameter sets [default: roc_auc]
-    --folds=<num>          The number of cross-validation folds to try
-                           [default: 5]
-    --report=<path>        Path to a file to write the tuning report to
-                           [default: <stdout>]
-    --processes=<num>      The number of parallel processes to start for
-                           model building [default: <cpu-count>]
-    --cv-timeout=<mins>    The number of minutes to wait for a model to
-                           cross-validate before timing out
-                           [default: <forever>]
-    --scale-features       Scales the feature values before tuning
-    --verbose              Print progress information to stderr
-    --debug                Print debug information to stderr
+    Usage:
+        tune <params-config> <features> <label>
+             [--observations=<path>]
+             [--scoring=<type>]
+             [--test-prop=<prop>]
+             [--folds=<num>]
+             [--report=<path>]
+             [--label-type=<type>]
+             [--processes=<num>]
+             [--cv-timeout=<mins>]
+             [--scale-features]
+             [--verbose] [--debug]
+
+    Options:
+        <params-config>        The path to a YAML configuration file containing
+                               the models and parameter values to search when
+                               tuning
+        <features>             The classpath to a feature_list to use when
+                               interpreting the feature values of the
+                               observations
+        <label>                The name of the field to be predicted
+        --observations=<path>  The path to a file containing observations to
+                               train and test against. [default: <stdin>]
+        --scoring=<type>       The type of scoring strategy to optimize for
+                               when choosing parameter sets [default: roc_auc]
+        --folds=<num>          The number of cross-validation folds to try
+                               [default: 5]
+        --report=<path>        Path to a file to write the tuning report to
+                               [default: <stdout>]
+        --processes=<num>      The number of parallel processes to start for
+                               model building [default: <cpu-count>]
+        --cv-timeout=<mins>    The number of minutes to wait for a model to
+                               cross-validate before timing out
+                               [default: <forever>]
+        --scale-features       Scales the feature values before tuning
+        --verbose              Print progress information to stderr
+        --debug                Print debug information to stderr
 
 """
 import datetime

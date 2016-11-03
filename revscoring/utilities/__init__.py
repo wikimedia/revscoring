@@ -5,15 +5,35 @@ command-line.  When the revscoring python package is installed, a `revscoring`
 utility should be available from the commandline.  Run `revscoring -h` for more
 information:
 
-extract_features
-++++++++++++++++
-.. automodule:: revscoring.utilities.extract_features
+cv_train
+++++++++
+.. automodule:: revscoring.utilities.cv_train
+
+extract
++++++++
+.. automodule:: revscoring.utilities.extract
+
+fit
++++
+.. automodule:: revscoring.utilities.fit
+
+model_info
+++++++++++
+.. automodule:: revscoring.utilities.model_info
 
 score
 +++++
 .. automodule:: revscoring.utilities.score
 
-train_test
+train_model
++++++++++++
+.. automodule:: revscoring.utilities.train_model
+
+test_model
 ++++++++++
-.. automodule:: revscoring.utilities.train_test
+.. automodule:: revscoring.utilities.test_model
+
+tune
+++++
+.. automodule:: revscoring.utilities.tune
 """
