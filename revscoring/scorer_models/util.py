@@ -8,6 +8,14 @@ import numpy
 def normalize(v):
     if isinstance(v, numpy.bool_):
         return bool(v)
+    elif isinstance(v, numpy.ndarray):
+        return [normalize(item) for item in v]
+    elif v == numpy.NaN:
+        return "NaN"
+    elif v == numpy.NINF:
+        return "-Infinity"
+    elif v == numpy.PINF:
+        return "Infinity"
     elif isinstance(v, numpy.float):
         return float(v)
     elif isinstance(v, tuple):
