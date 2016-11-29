@@ -26,6 +26,10 @@ hashing
 +++++++
 .. automodule:: revscoring.datasources.meta.hashing
 
+indexable
++++++++
+.. automodule:: revscoring.datasources.meta.indexable
+
 mappers
 +++++++
 .. automodule:: revscoring.datasources.meta.mappers

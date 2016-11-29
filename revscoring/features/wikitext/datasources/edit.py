@@ -18,8 +18,11 @@ class Diff:
 
         self.operations = Datasource(
             self._name + ".operations", _process_operations,
-            depends_on=[self.revision.parent.tokens,
-                        self.revision.tokens]
+            depends_on=[
+                self.revision.parent.paragraphs_sentences_and_whitespace,
+                self.revision.paragraphs_sentences_and_whitespace,
+                self.revision.parent.tokens,
+                self.revision.tokens]
         )
         """
         Returns a tuple that describes the difference between the parent
@@ -273,9 +276,9 @@ class Diff:
                               self.tokens_removed, name=name)
 
 
-def _process_operations(a, b):
+def _process_operations(a_segments, b_segments, a, b):
     start = time.time()
-    operations = [op for op in segment_matcher.diff(a, b)]
+    operations = list(segment_matcher.diff_segments(a_segments, b_segments))
     logger.debug("diff() of {0} and {1} tokens took {2} seconds."
                  .format(len(a), len(b), time.time() - start))
 

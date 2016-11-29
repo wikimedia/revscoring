@@ -1,4 +1,4 @@
-from . import edit, parsed, tokenized
+from . import edit, parsed, sentences, tokenized
 from ....dependencies import DependentSet
 
 
@@ -15,7 +15,8 @@ class BaseRevision(DependentSet):
             )
 
 
-class Revision(parsed.Revision, tokenized.Revision, BaseRevision):
+class Revision(parsed.Revision, sentences.Revision, tokenized.Revision,
+               BaseRevision):
 
     def __init__(self, name, revision_datasources):
         # Initializes all of the Revision datasources
@@ -33,5 +34,5 @@ class BaseDiff(DependentSet):
         self.revision = revision
 
 
-class Diff(edit.Diff, tokenized.Diff, BaseDiff):
+class Diff(edit.Diff, sentences.Diff, tokenized.Diff, BaseDiff):
     pass
