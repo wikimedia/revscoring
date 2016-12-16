@@ -132,7 +132,6 @@ class TextFetcher:
     def _get_live_text(self, rev_ids):
         if len(rev_ids) == 0:
             return {}
-        # https://en.wikipedia.org/w/api.php?action=query&prop=revisions&revids=67410355&rvprop=content&formatversion=2
         doc = self.session.get(
             action='query',
             prop='revisions',
@@ -150,7 +149,7 @@ class TextFetcher:
     def _get_deleted_text(self, rev_ids):
         if len(rev_ids) == 0:
             return {}
-        # https://en.wikipedia.org/w/api.php?action=query&prop=deletedrevisions&revids=674103559&drvprop=content&formatversion=2
+
         doc = self.session.get(
             action='query',
             prop='deletedrevisions',
