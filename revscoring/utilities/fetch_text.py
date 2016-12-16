@@ -138,13 +138,7 @@ class TextFetcher:
             revids=rev_ids,
             rvprop={"content", "ids"}
         )
-        text_map = {}
-        for page_doc in doc['query'].get('pages', []):
-            for rev_doc in page_doc.get('revisions', []):
-                if 'content' in rev_doc:
-                    text_map[rev_doc['revid']] = rev_doc['content']
-
-        return text_map
+        return self._build_text_map(doc)
 
     def _get_deleted_text(self, rev_ids):
         if len(rev_ids) == 0:
@@ -156,9 +150,14 @@ class TextFetcher:
             revids=rev_ids,
             drvprop={"content", "ids"}
         )
+
+        return self._build_text_map(doc, revision_key='deletedrevisions')
+
+    @staticmethod
+    def _build_text_map(doc, revision_key='revisions'):
         text_map = {}
         for page_doc in doc['query'].get('pages', []):
-            for rev_doc in page_doc.get('deletedrevisions', []):
+            for rev_doc in page_doc.get(revision_key, []):
                 if 'content' in rev_doc:
                     text_map[rev_doc['revid']] = rev_doc['content']
 
