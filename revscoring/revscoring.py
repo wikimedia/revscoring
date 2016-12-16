@@ -4,10 +4,11 @@ Provides access to a set of utilities for working with revision scorer models.
 Utilities:
 
 * score             Scores a set of revisions using a trained model
-* extract_features  Extracts a list of features for a set of revisions
+* extract           Extracts a cache of dependencies for a set of observations
+* fetch_text        Fetches text for a set of observations
 * train_model       Trains an MLScorerModel with extracted features
 * test_model        Tests an MLScorerModel with extracted features
-* train_test        Trains and tests a MLScorerModel with extracted features
+* cv_train          Cross-validates, and then trains a MLScorerModel with extracted features
 * model_info        Reads a model-file and reports metadata and testing
                     statistics
 * tune              Tunes a set of models against a training set to identify
