@@ -177,7 +177,8 @@ class ScikitLearnClassifier(MLScorerModel):
 
         pool = Pool(processes=cpu_count())
 
-        folds_i = KFold(len(values_labels), n_folds=folds, random_state=0)
+        folds_i = KFold(len(values_labels), n_folds=folds, shuffle=True,
+                        random_state=0)
         results = pool.map(self._generate_test_stats,
                            ((i, [values_labels[i] for i in train_i],
                                 [values_labels[i] for i in test_i],
