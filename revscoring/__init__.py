@@ -117,7 +117,9 @@ from .features import Feature
 from .scorer_models import ScorerModel
 from .score_processor import ScoreProcessor
 
-__version__ = "1.3.3"  # Change in setup.py
+from .about import (__author__, __author_email__, __description__, __name__,
+                    __url__, __version__)
 
 __all__ = [Datasource, Dependent, DependentSet, Extractor, Feature,
-           ScorerModel, ScoreProcessor]
+           ScorerModel, ScoreProcessor, __name__, __version__, __author__,
+           __author_email__, __description__, __url__]
