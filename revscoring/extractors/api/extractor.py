@@ -122,7 +122,7 @@ class Extractor(BaseExtractor):
 
             rev_docs = self.get_rev_doc_map(revids_to_lookup, rvprop=rvprop)
 
-            for rev_id in rev_ids:
+            for rev_id in revids_to_lookup:
                 lookup_rev_id = caches[rev_id].get(
                     revision_oriented.revision.id, rev_id)
                 if lookup_rev_id in rev_docs:
