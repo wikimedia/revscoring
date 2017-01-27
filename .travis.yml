@@ -34,6 +34,7 @@ addons:
     - myspell-nb
     - hunspell-vi
     - myspell-pt
+    - aspell-ro
     - aspell-ru
     - aspell-uk
     - aspell-ta
