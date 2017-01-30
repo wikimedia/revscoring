@@ -13,8 +13,8 @@
                  [--observations=<path>]
                  [--model-file=<path>]
                  [--label-type=<type>]
-                 [--cross-validate=<folds>]
                  [--folds=<num>]
+                 [--workers=<num>]
                  [--balance-sample]
                  [--balance-sample-weight]
                  [--center]
@@ -39,6 +39,8 @@
                                 [default: <stdout>]
         --folds=<num>           The number of folds that should be used when
                                 cross-validating [default: 10]
+        --workers=<num>         The number of workers that should be used when
+                                cross-validating
         --balance-sample         Balance the samples by sampling with
                                  replacement until all classes are equally
                                  represented
@@ -110,13 +112,17 @@ def main(argv=None):
         model_file = open(args['--model-file'], 'wb')
 
     folds = int(args['--folds'])
+    workers = int(args['--workers']) if args['--workers'] is not None else None
 
-    run(value_labels, model_file, scorer_model, test_statistics, folds)
+    run(value_labels, model_file, scorer_model, test_statistics, folds,
+        workers)
 
 
-def run(value_labels, model_file, scorer_model, test_statistics, folds):
+def run(value_labels, model_file, scorer_model, test_statistics, folds,
+        workers):
 
-    scorer_model = cv_train(scorer_model, value_labels, test_statistics, folds)
+    scorer_model = cv_train(scorer_model, value_labels, test_statistics, folds,
+                            workers)
 
     sys.stderr.write(scorer_model.format_info())
 
@@ -126,12 +132,13 @@ def run(value_labels, model_file, scorer_model, test_statistics, folds):
 
 
 @nottest
-def cv_train(scorer_model, value_labels, test_statistics, folds):
+def cv_train(scorer_model, value_labels, test_statistics, folds, workers):
 
     logger.info("Cross-validating model statistics for {0} folds..."
                 .format(folds))
     scorer_model.cross_validate(
-        value_labels, test_statistics=test_statistics, folds=folds)
+        value_labels, test_statistics=test_statistics, folds=folds,
+        processes=workers)
 
     logger.info("Training model on all data...")
     scorer_model.train(value_labels)
