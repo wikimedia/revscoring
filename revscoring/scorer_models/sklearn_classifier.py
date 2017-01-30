@@ -169,13 +169,13 @@ class ScikitLearnClassifier(MLScorerModel):
         return test_stats
 
     def cross_validate(self, values_labels, test_statistics=None, folds=10,
-                       store_stats=True):
+                       store_stats=True, processes=None):
 
         test_statistics = test_statistics or self.test_statistics or \
                           [table(), accuracy(), precision(), recall(),
                            roc(), precision_recall()]
 
-        pool = Pool(processes=cpu_count())
+        pool = Pool(processes=processes or cpu_count())
 
         folds_i = KFold(len(values_labels), n_folds=folds, shuffle=True,
                         random_state=0)
