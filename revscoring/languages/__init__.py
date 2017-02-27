@@ -31,6 +31,11 @@ estonian
 .. automodule:: revscoring.languages.estonian
     :members:
 
+finnish
+++++++++++
+.. automodule:: revscoring.languages.finnish
+    :members:
+
 french
 ++++++
 .. automodule:: revscoring.languages.french

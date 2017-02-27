@@ -76,6 +76,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.dutch``: myspell-nl
 * ``languages.english``: myspell-en-us myspell-en-gb myspell-en-au
 * ``languages.estonian``: myspell-et
+* ``languages.finnish``: voikko-fi
 * ``languages.french``: myspell-fr
 * ``languages.german``: myspell-de-at myspell-de-ch myspell-de-de
 * ``languages.hebrew``: myspell-he
