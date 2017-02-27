@@ -38,6 +38,7 @@ addons:
     - aspell-ru
     - aspell-uk
     - aspell-ta
+    - voikko-fi
 
 before_install: {}
 install:
