@@ -1,19 +1,8 @@
-from .features import Dictionary, RegexMatches, Stopwords
+from .features import RegexMatches, Stopwords
 
 name = "finnish"
 
-try:
-    import enchant
-    dictionary = enchant.Dict("fi")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'et'.  " +
-                      "Consider installing 'voikko-fi'.")
-
-dictionary = Dictionary(name + ".dictionary", dictionary.check)
-"""
-:class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "fi". Provided by `voikko-fi`
-"""
+# No dictionary
 
 # No stemmer
 
@@ -28,7 +17,7 @@ stopwords = [
     "html", "http", "hyvin", "hän", "hänen", "hänet", "ikä", "image", "index",
     "isbn", "issa", "itse", "joiden", "joissa", "joista", "joka", "jolla",
     "jolloin", "jonka", "jopa", "jos", "jossa", "josta", "jota", "jotka",
-    "jpg", "julkaisija", "julkaisu", "julkaisupaikka", "jälkeen", "kaikki",
+    "julkaisija", "julkaisu", "julkaisupaikka", "jälkeen", "kaikki",
     "kaksi", "kanssa", "katso", "kaupunki", "kautta", "kerran", "keskeiset",
     "kesäkuuta", "kieli", "kirjaviite", "koko", "kolme", "korjattava", "koska",
     "kotisivu", "kuin", "kuitenkaan", "kuitenkin", "kun", "kuolleet", "kuten",

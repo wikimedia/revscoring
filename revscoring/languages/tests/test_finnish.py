@@ -2,30 +2,71 @@ import pickle
 
 from nose.tools import eq_
 
-from .. import estonian
+from .. import finnish
 from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
 
 BAD = [
-    "homo", "homod", "jobu", "junn", "junni", "kaka", "lits", "loll",
-    "lollakas", "lollid", "munn", "munni", "munnid", "neeger", "nigga",
-    "noku", "pask", "pede", "peded", "pedekas", "pederast", "pederastid",
-    "perse", "perses", "persse", "pihku", "putsi", "sitane", "sitt", "sitta",
-    "tsmir", "türa", "tšmir", "vittu", "vitupea"
+    "homo", "homoja", "homot",
+    "hintti",
+    "homppeli",
+    "huora",
+    "idiootti",
+    "jumalauta",
+    "juntti",
+    "kakka", "kakkaa",
+    "kikkeli",
+    "kyrpä",
+    "kulli",
+    "kusi", "kusipää",
+    "läski",
+    "mamu",
+    "matu",
+    "neekeri",
+    "nussii",
+    "narttu",
+    "paska", "paskaa", "paskat", "paskin", "paskova",
+    "pelle",
+    "perse", "perseeseen", "perseessä", "perseestä", "perseenreikä",
+    "perkele",
+    "pillu", "pilluun",
+    "pippeli",
+    "pieru",
+    "retardi",
+    "runkkari",
+    "saatana", "saatanan",
+    "tyhmä",
+    "vammane", "vammanen",
+    "vittu",
+    "vitun",
+    "äpärä"
 ]
 
 INFORMAL = [
-    "haha", "hahaha", "jou", "noob", "raisk", "räme", "sakib", "suht",
-    "tegelt", "tere", "tsau"
+    "haistakaa",
+    "imekää",
+    "lol",
+    "ootte",
+    "moi",
+    "hei",
+    "sinä",
+    "sä",
+    "minä",
+    "mää",
+    "ok",
+    "joo",
+    "okei"
 ]
 
 OTHER = [
     """
-    Friedrich Wilhelm Rembert von Berg sündis Beļava ja Sangaste mõisniku
-    Friedrich Georg von Bergi ja Gerdruta Wilhelmine von Ermesi vanima pojana.
-    Tal olid nooremad vennad Gustav, Magnus ja Alexander. Friedrich Wilhelmi ja
-    tema vendade koduõpetaja oli hilisem tuntud astronoom Wilhelm Struve.
+    Gunnar Nordström (12. maaliskuuta 1881 Helsinki – 24. joulukuuta 1923
+    Helsinki) oli suomalainen fyysikko ja avaruustähtitieteilijä. Hänet
+    tunnetaan erityisesti painovoimateoriastaan, joka oli yleistä
+    suhteellisuusteoriaa edeltävä kilpaileva teoria. Nordström on saanut
+    melko paljon huomiota ulkomailla, mutta kotimaassaan hän on melko
+    tuntematon henkilö.
     """
 ]
 
@@ -33,37 +74,26 @@ r_text = revision_oriented.revision.text
 
 
 def test_badwords():
-    compare_extraction(estonian.badwords.revision.datasources.matches,
+    compare_extraction(finnish.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(estonian.badwords, pickle.loads(pickle.dumps(estonian.badwords)))
+    eq_(finnish.badwords, pickle.loads(pickle.dumps(finnish.badwords)))
 
 
 def test_informals():
-    compare_extraction(estonian.informals.revision.datasources.matches,
+    compare_extraction(finnish.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(estonian.informals, pickle.loads(pickle.dumps(estonian.informals)))
-
-
-def test_dictionary():
-    cache = {r_text: "Tal olid nooremad, vennad worngly. <td>"}
-    eq_(solve(estonian.dictionary.revision.datasources.dict_words,
-              cache=cache), ["Tal", "olid", "nooremad", "vennad"])
-    eq_(solve(estonian.dictionary.revision.datasources.non_dict_words,
-              cache=cache), ["worngly"])
-
-    eq_(estonian.dictionary, pickle.loads(pickle.dumps(estonian.dictionary)))
+    eq_(finnish.informals, pickle.loads(pickle.dumps(finnish.informals)))
 
 
 def test_stopwords():
-    cache = {revision_oriented.revision.text: "Bergi ja Gerdruta Wilhelmine " +
-                                              "von Ermesi vanima pojana."}
-    eq_(solve(estonian.stopwords.revision.datasources.stopwords, cache=cache),
-        ["von"])
-    eq_(solve(estonian.stopwords.revision.datasources.non_stopwords,
+    cache = {revision_oriented.revision.text: "Nordström on saanut melko " +
+                                              "paljon huomiota ulkomailla"}
+    eq_(solve(finnish.stopwords.revision.datasources.stopwords, cache=cache),
+        ["saanut", "paljon"])
+    eq_(solve(finnish.stopwords.revision.datasources.non_stopwords,
         cache=cache),
-        ["Bergi", "ja", "Gerdruta", "Wilhelmine", "Ermesi", "vanima",
-         "pojana"])
+        ["Nordström", "on", "melko", "huomiota", "ulkomailla"])
 
-    eq_(estonian.stopwords, pickle.loads(pickle.dumps(estonian.stopwords)))
+    eq_(finnish.stopwords, pickle.loads(pickle.dumps(finnish.stopwords)))
