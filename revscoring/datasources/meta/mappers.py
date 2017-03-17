@@ -6,8 +6,12 @@ return `list`'s and apply a specific function to each item.
 
 .. autoclass:: revscoring.datasources.meta.mappers.lower_case
 
+.. autoclass:: revscoring.datasources.meta.mappers.derepeat
+
 .. autoclass:: revscoring.datasources.meta.mappers.abs
 """
+from itertools import groupby
+
 from ..datasource import Datasource
 
 absolute_value = abs
@@ -52,6 +56,25 @@ class lower_case(map):
 
     def lower(self, s):
         return s.lower()
+
+
+class derepeat(map):
+    """
+    Returns a :class:`revscoring.Datasource` that prevents a list of `str` from
+    having repeated characters (e.g. "foo" --> "fo").
+
+    :Parameters:
+        strs_datasource : :class:`revscoring.Datasource`
+            A datasource that generates a list of `str`
+        name : `str`
+            A name for the datasource.
+    """
+    def __init__(self, strs_datasource, name=None):
+        name = self._format_name(name, [strs_datasource])
+        super().__init__(self.no_repeat, strs_datasource, name=name)
+
+    def no_repeat(self, s):
+        return ''.join(char for char, group in groupby(s))
 
 
 class abs(map):

@@ -17,6 +17,8 @@ first_char = mappers.map(extract_first_char, tokens, name="first_char")
 
 lower_case_tokens = mappers.lower_case(tokens, name="lower_case_tokens")
 
+derepeat_tokens = mappers.derepeat(tokens, name="derepeat_tokens")
+
 abs_ints = mappers.abs(my_ints)
 
 
@@ -34,6 +36,14 @@ def test_lower_case():
         ["foo", "bar", "foo"])
 
     eq_(pickle.loads(pickle.dumps(lower_case_tokens)), lower_case_tokens)
+
+
+def test_derepeat():
+    cache = {tokens: ["foo", "Bar", "FOO"]}
+    eq_(solve(derepeat_tokens, cache=cache),
+        ["fo", "Bar", "FO"])
+
+    eq_(pickle.loads(pickle.dumps(derepeat_tokens)), derepeat_tokens)
 
 
 def test_abs():
