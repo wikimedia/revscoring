@@ -19,6 +19,8 @@ lower_case_tokens = mappers.lower_case(tokens, name="lower_case_tokens")
 
 derepeat_tokens = mappers.derepeat(tokens, name="derepeat_tokens")
 
+de1337_tokens = mappers.de1337(tokens, name="de1337_tokens")
+
 abs_ints = mappers.abs(my_ints)
 
 
@@ -44,6 +46,14 @@ def test_derepeat():
         ["fo", "Bar", "FO"])
 
     eq_(pickle.loads(pickle.dumps(derepeat_tokens)), derepeat_tokens)
+
+
+def test_de1337():
+    cache = {tokens: ["1337", "W4ff1e"]}
+    eq_(solve(de1337_tokens, cache=cache),
+        ["leet", "Waffle"])
+
+    eq_(pickle.loads(pickle.dumps(de1337_tokens)), de1337_tokens)
 
 
 def test_abs():

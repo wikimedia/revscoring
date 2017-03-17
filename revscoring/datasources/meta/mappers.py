@@ -77,6 +77,29 @@ class derepeat(map):
         return ''.join(char for char, group in groupby(s))
 
 
+class de1337(map):
+    """
+    Returns a :class:`revscoring.Datasource` that converts numbers in the
+    middle of words into the characters they are often used
+    to represent (e.g. "he7d3r" --> "hetder").
+
+    :Parameters:
+        strs_datasource : :class:`revscoring.Datasource`
+            A datasource that generates a list of `str`
+        name : `str`
+            A name for the datasource.
+    """
+    MAP = {'1': "l", '3': "e", '4': "a", '5': "s",
+           '6': "g", '7': "t", '0': "o", "#": "h", "(": "c"}
+
+    def __init__(self, strs_datasource, name=None):
+        name = self._format_name(name, [strs_datasource])
+        super().__init__(self.no_1337, strs_datasource, name=name)
+
+    def no_1337(self, s):
+        return ''.join(self.MAP.get(c, c) for c in s)
+
+
 class abs(map):
     """
     Returns a :class:`revscoring.Datasource` that converts a list of numeric
