@@ -35,6 +35,6 @@ def gram_tokens(items, grams=[(0,)]):
     for i in range(len(items)):
         for gram in grams:
             if gram == (0,):
-                yield items[i]
+                yield (items[i], )
             elif len(items) > i + max(gram):
                 yield tuple(items[i + offset] for offset in gram)
