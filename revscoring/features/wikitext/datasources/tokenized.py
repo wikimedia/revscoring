@@ -209,7 +209,7 @@ class Revision:
             regex = re.compile(regex, regex_flags)
 
         if name is None:
-            name = "{0}({1})"\
+            name = "{0}({1})" \
                    .format(self._name + ".tokens_matching", regex.pattern)
 
         return filters.regex_matching(regex, self.tokens,
