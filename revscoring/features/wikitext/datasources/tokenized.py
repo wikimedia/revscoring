@@ -195,7 +195,7 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format("tokens_in_types", types)
+                   .format(self._name + ".tokens_in_types", types)
 
         return filters.filter(token_is_in_types.filter,
                               self.tokens, name=name)
@@ -209,7 +209,8 @@ class Revision:
             regex = re.compile(regex, regex_flags)
 
         if name is None:
-            name = "{0}({1})".format("tokens_matching", regex.pattern)
+            name = "{0}({1})"\
+                   .format(self._name + ".tokens_matching", regex.pattern)
 
         return filters.regex_matching(regex, self.tokens,
                                       name=name)
