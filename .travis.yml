@@ -13,14 +13,9 @@ addons:
     - python3-dev
     - enchant
     - aspell-ar
-    - aspell-de
-    - aspell-hi
-    - aspell-hu
-    - aspell-nl
-    - aspell-id
-    - aspell-pl
-    - aspell-sv
     - myspell-cs
+    - aspell-de
+    - myspell-es
     - myspell-en-au
     - myspell-en-gb
     - myspell-en-us
@@ -28,16 +23,21 @@ addons:
     - aspell-et
     - myspell-fa
     - myspell-fr
-    - myspell-es
     - myspell-he
+    - aspell-hi
+    - aspell-hu
+    - aspell-id
     - myspell-it
     - myspell-nb
-    - hunspell-vi
+    - aspell-nl
+    - aspell-pl
+    - aspell-sv
     - myspell-pt
     - aspell-ro
     - aspell-ru
-    - aspell-uk
     - aspell-ta
+    - aspell-uk
+    - hunspell-vi
 
 before_install: {}
 install:
