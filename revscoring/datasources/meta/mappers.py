@@ -55,7 +55,7 @@ class lower_case(map):
         super().__init__(self.lower, strs_datasource, name=name)
 
     def lower(self, s):
-        return s.lower()
+        return s.replace(u'İ', 'i').lower()
 
 
 class derepeat(map):
