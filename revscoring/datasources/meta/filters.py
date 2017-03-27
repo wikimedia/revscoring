@@ -30,7 +30,7 @@ class filter(Datasource):
     def __init__(self, include, items_datasource, inverse=False, name=None):
         self.include = include
         self.inverse = inverse
-        name = self._format_name(name, [items_datasource])
+        name = self._format_name(name, [include, items_datasource, inverse])
         super().__init__(name, self.process, depends_on=[items_datasource])
 
     def process(self, items):
@@ -73,6 +73,7 @@ class positive(filter):
             A name for the datasource.
     """
     def __init__(self, numbers_datasource, name=None):
+        name = self._format_name(name, [numbers_datasource])
         super().__init__(self.is_positive, numbers_datasource, name=name)
 
     def is_positive(self, v):
@@ -90,6 +91,7 @@ class negative(filter):
             A name for the datasource.
     """
     def __init__(self, numbers_datasource, name=None):
+        name = self._format_name(name, [numbers_datasource])
         super().__init__(self.is_negative, numbers_datasource, name=name)
 
     def is_negative(self, v):
