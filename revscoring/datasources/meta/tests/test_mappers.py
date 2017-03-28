@@ -33,9 +33,9 @@ def test_item_mapper():
 
 
 def test_lower_case():
-    cache = {tokens: ["foo", "Bar", "FOO"]}
+    cache = {tokens: ["foo", "Bar", "FOO", "İ"]}
     eq_(solve(lower_case_tokens, cache=cache),
-        ["foo", "bar", "foo"])
+        ["foo", "bar", "foo", "i"])
 
     eq_(pickle.loads(pickle.dumps(lower_case_tokens)), lower_case_tokens)
 
