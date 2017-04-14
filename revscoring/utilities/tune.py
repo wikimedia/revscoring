@@ -169,6 +169,7 @@ def run(params_config, features_path, value_labels, scoring, folds,
 
     # Write the rest of the report!  First, print the top 10 combinations
     report.write("# Top scoring configurations\n")
+    logger.info("# Top scoring configurations\n")
     grid_scores.sort(key=lambda gs: gs[2], reverse=True)
     table = tabulate(
         ((name, round(mean_score, 3), round(std_score, 3),
@@ -180,6 +181,7 @@ def run(params_config, features_path, value_labels, scoring, folds,
     )
     report.write(table + "\n")
     report.write("\n")
+    logger.info(table + "\n\n")
 
     # Now print out scores for each model.
     report.write("# Models\n")
