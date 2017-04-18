@@ -11,18 +11,18 @@ Key Features
 
 Scorer Models
 +++++++++++++
-:class:`~revscoring.ScorerModel` are the core of
+:class:`~revscoring.Model`s are the core of
 the `revscoring` system.  Provide a simple interface with complex
-internals.  Most commonly, a :class:`revscoring.scorer_models.MLScorerModel`
+internals.  Most commonly, a :class:`revscoring.scoring.LearnedModel`
 (Machine Learned) is
-:meth:`~revscoring.scorer_models.MLScorerModel.train`'d and
-:meth:`~revscoring.scorer_models.MLScorerModel.test`'d on
+:meth:`~revscoring.scoring.LearnedModel.train`'d and
+:meth:`~revscoring.Model.test`'d on
 labeled data to provide a basis for scoring.
 We currently support
-:mod:`Support Vector Classifier <revscoring.scorer_models.svc>`,
-:mod:`Random Forest <revscoring.scorer_models.rf>`, and
-:mod:`Naive Bayes <revscoring.scorer_models.nb>`
-type models. See :mod:`revscoring.scorer_models`
+:mod:`Support Vector Classifier <revscoring.scoring.models.svc>`,
+:mod:`Random Forest <revscoring.scoring.models.svc>`, and
+:mod:`Naive Bayes <revscoring.scoring.models.svc>`
+type models. See :mod:`revscoring.scoring`
 
 Example:
     >>> import mwapi
@@ -78,17 +78,28 @@ collection of language feature sets that work like other features except
 that they are language-specific.  Language-specific feature sets are
 available for the following languages:
 :data:`~revscoring.languages.arabic`,
+:data:`~revscoring.languages.czech`,
 :data:`~revscoring.languages.dutch`,
 :data:`~revscoring.languages.english`,
 :data:`~revscoring.languages.estonian`,
 :data:`~revscoring.languages.french`,
 :data:`~revscoring.languages.german`,
 :data:`~revscoring.languages.hebrew`,
+:data:`~revscoring.languages.hindi`,
+:data:`~revscoring.languages.hungarian`,
 :data:`~revscoring.languages.indonesian`,
 :data:`~revscoring.languages.italian`,
+:data:`~revscoring.languages.japanese`,
+:data:`~revscoring.languages.korean`,
+:data:`~revscoring.languages.norwegian`,
 :data:`~revscoring.languages.persian`,
+:data:`~revscoring.languages.polish`,
 :data:`~revscoring.languages.portuguese`,
+:data:`~revscoring.languages.romanian`,
+:data:`~revscoring.languages.russian`,
 :data:`~revscoring.languages.spanish`,
+:data:`~revscoring.languages.swedish`,
+:data:`~revscoring.languages.tamil`,
 :data:`~revscoring.languages.turkish`,
 :data:`~revscoring.languages.ukrainian`, and
 :data:`~revscoring.languages.vietnamese`.
@@ -114,12 +125,12 @@ from .datasources import Datasource
 from .dependencies import Dependent, DependentSet
 from .extractors import Extractor
 from .features import Feature
-from .scorer_models import ScorerModel
+from .scoring import Model
 from .score_processor import ScoreProcessor
 
 from .about import (__author__, __author_email__, __description__, __name__,
                     __url__, __version__)
 
 __all__ = [Datasource, Dependent, DependentSet, Extractor, Feature,
-           ScorerModel, ScoreProcessor, __name__, __version__, __author__,
+           Model, ScoreProcessor, __name__, __version__, __author__,
            __author_email__, __description__, __url__]

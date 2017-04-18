@@ -1,0 +1,65 @@
+"stats": {
+    "counts": {
+        "n": 26208,
+        "labels": {
+            "A": {"n": 11424, "predicted": {"A": 7242, "B": 2133, "C": 992}},
+            "B": {"n": 14234, "predicted": {"A": 4242, "B": 9002, "C": 902}},
+            "C": {"n": 10005, "predicted": {"A": 1020, "B": 1020, "C": 7940}}
+        }
+    },
+    "maximum filter_rate @ recall >= 0.9": {
+        "micro": 0.532,
+        "macro": 0.422,
+        "labels": {"A": 0.303, "B": 0.454, "C": 0.678}
+    },
+    "accuracy": {
+        "micro": 0.895,
+        "macro": 0.912,
+        "labels": {"A": 0.950, "B": 0.854, "C": 0.902}
+    },
+    "f1": {
+        "micro": 0.895,
+        "macro": 0.912,
+        "labels": {"A": 0.950, "B": 0.854, "C": 0.902}
+    },
+    "precision": {
+        "micro": 0.895,
+        "macro": 0.912,
+        "labels": {"A": 0.950, "B": 0.854, "C": 0.902}
+    },
+    "recall": {
+        "micro": 0.895,
+        "macro": 0.912,
+        "labels": {"A": 0.950, "B": 0.854, "C": 0.902}
+    },
+    "roc-auc": {
+        "micro": 0.895,
+        "macro": 0.912,
+        "labels": {"A": 0.950, "B": 0.854, "C": 0.902}
+    },
+    "pr-auc": {
+        "micro": 0.895,
+        "macro": 0.912,
+        "labels": {"A": 0.950, "B": 0.854, "C": 0.902}
+    }
+},
+"thresholds": {
+    "A": [
+        {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
+        {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
+        {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
+        ...
+    ],
+    "B": [
+        {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
+        {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
+        {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
+        ...
+    ],
+    "C": [
+        {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
+        {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
+        {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
+        ...
+    ]
+}
