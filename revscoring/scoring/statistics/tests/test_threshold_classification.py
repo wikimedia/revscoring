@@ -1,4 +1,5 @@
-from ..threshold_classification import ThresholdClassification
+from ..threshold_classification import (ThresholdClassification,
+                                        ThresholdOptimization)
 
 LABELS = [True, False]
 pool = \
@@ -20,20 +21,34 @@ balanced_score_labels = \
 
 
 def test_thresholds():
+    recall_at_precision_90 = ThresholdOptimization.from_string(
+        "maximum recall @ precision >= 0.9")
+    match_rate_at_recall_90 = ThresholdOptimization.from_string(
+        "minimum match_rate @ recall >= 0.9")
     natural_thresholds = ThresholdClassification(
         labels=LABELS, population_rates={True: 0.05, False: 0.95},
-        max_thresholds=10)
+        max_thresholds=10,
+        threshold_optimizations=[recall_at_precision_90,
+                                 match_rate_at_recall_90])
     natural_thresholds.fit(score_labels)
     print(natural_thresholds.format(
-        ['accuracy', 'pr_auc', 'roc_auc', 'thresholds'],
+        ['accuracy', 'pr_auc', 'roc_auc',
+         'maximum recall @ precision >= 0.9',
+         'minimum match_rate @ recall >= 0.9',
+         'thresholds'],
         formatting="str"))
 
     scaled_thresholds = ThresholdClassification(
         labels=LABELS, population_rates={True: 0.05, False: 0.95},
-        max_thresholds=10)
+        max_thresholds=10,
+        threshold_optimizations=[recall_at_precision_90,
+                                 match_rate_at_recall_90])
     scaled_thresholds.fit(balanced_score_labels)
     print(scaled_thresholds.format(
-        ['accuracy', 'pr_auc', 'roc_auc', 'thresholds'],
+        ['accuracy', 'pr_auc', 'roc_auc',
+         'maximum recall @ precision >= 0.9',
+         'minimum match_rate @ recall >= 0.9',
+         'thresholds'],
         formatting="str"))
 
     count = 0

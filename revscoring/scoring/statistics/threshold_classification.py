@@ -30,7 +30,8 @@ class ThresholdClassification(Classification):
         super().__init__(*args, **kwargs)
         self.decision_key = decision_key
         self.max_thresholds = max_thresholds
-        self.threshold_optimizations = threshold_optimizations or []
+        self.threshold_optimizations = {
+            str(to): to for to in (threshold_optimizations or [])}
 
     def fit(self, score_labels):
         super().fit(score_labels)
@@ -45,14 +46,19 @@ class ThresholdClassification(Classification):
 
         for stat_name in ThresholdStatistics.FIELDS:
             self[stat_name] = MicroMacroStat(stat_name, threshold_stats)
+
+        for op_name in self.threshold_optimizations:
+            self[op_name] = MicroMacroStat(op_name, threshold_stats)
+
         self['thresholds'] = {
             label: ThresholdStatList(tstats, self.max_thresholds)
             for label, tstats in threshold_stats.items()}
 
     def format_str(self, fields=None, ndigits=3):
-        formatted = super().format_str(fields=fields, ndigits=ndigits)
         fields = fields or (Classification.FIELDS +
-                            ThresholdClassification.FIELDS)
+                            ThresholdClassification.FIELDS +
+                            list(self.threshold_optimizations.keys()))
+        formatted = super().format_str(fields=fields, ndigits=ndigits)
         for field in fields:
             if field == "thresholds":
                 formatted += "thresholds:\n"
@@ -62,7 +68,8 @@ class ThresholdClassification(Classification):
                                 .format_str(ndigits=ndigits)
                     formatted += util.tab_it_in(table_str, 2)
                 formatted += "\n"
-            elif field in ThresholdClassification.FIELDS:
+            elif field in ThresholdClassification.FIELDS or \
+                 field in self.threshold_optimizations:
                 formatted += self[field].format_str(
                     self.labels, ndigits=ndigits)
                 formatted += "\n"
@@ -70,7 +77,8 @@ class ThresholdClassification(Classification):
 
     def format_json(self, fields=None, ndigits=3):
         fields = fields or (Classification.FIELDS +
-                            ThresholdClassification.FIELDS)
+                            ThresholdClassification.FIELDS +
+                            list(self.threshold_optimizations.keys()))
         stats_doc = super().format_json(fields=fields, ndigits=ndigits)
 
         for field in fields:
@@ -86,9 +94,9 @@ class ThresholdClassification(Classification):
 
 class ThresholdOptimization(dict):
     STRING_PATTERN = re.compile(
-        r"(maximize|minimize) "
-        r"([^\W\d][w]+) @ "  # target_stat
-        r"([^\W\d][w]+) "  # cond_stat
+        r"(maximum|minimum) "
+        r"([^\W\d][\w]*) @ "  # target_stat
+        r"([^\W\d][\w]*) "  # cond_stat
         r"(>=|<=) "  # greater
         r"([-+]?([0-9]*\.[0-9]+|[0-9]+))")  # cond_value
 
@@ -118,16 +126,21 @@ class ThresholdOptimization(dict):
                         if lstats.get_stat(self.cond_stat) <= self.cond_value]
 
         if self.maximize:
-            return max(filtered)
+            return max(filtered)[0]
         else:
-            return min(filtered)
+            return min(filtered)[0]
 
     @classmethod
     def from_string(cls, string):
         match = cls.STRING_PATTERN.match(string.strip().lower())
-        maximize, target_stat, cond_stat, greater, cond_value = match.groups()
-        return cls(maximize == "maximize",
-                   target_stat, cond_stat,
+        if match is None:
+            raise ValueError('{0!r} does not match optimization pattern: '
+                             .format(string) +
+                             '"(maximum|minimum) <target> @ ' +
+                             '<cond> (>=|<=) [float]"')
+        maximize, target, cond, greater, cond_value, _ = match.groups()
+        return cls(maximize == "maximum",
+                   target, cond,
                    greater == ">=",
                    float(cond_value))
 
@@ -139,9 +152,7 @@ class ThresholdStatistics(list):
                  threshold_optimizations=None):
         super().__init__()
         self.n = sum(y_trues)
-        self.threshold_optimizations = {
-            str(optimization): optimization
-            for optimization in (threshold_optimizations or [])}
+        self.threshold_optimizations = threshold_optimizations or {}
         unique_thresholds = sorted(set(y_decisions))
 
         for threshold in unique_thresholds:

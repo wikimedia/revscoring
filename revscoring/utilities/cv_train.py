@@ -8,7 +8,7 @@
     Usage:
         cv_train -h | --help
         cv_train <scoring-model> <features> <label>
-                 [--label-order=<labels>]
+                 [--labels=<labels>]
                  [-p=<kv>]... [-s=<kv>]...
                  [-r=<lp>]...
                  [--version=<vers>]
@@ -29,14 +29,15 @@
         <features>              Classpath to an list of features to use when
                                 constructing the model
         <label>                 The name of the field to be predicted
-        --label-order=<labels>  A comma-separated sequence of labels that will
+        --labels=<labels>       A comma-separated sequence of labels that will
                                 be used for ordering labels statistics and
                                 other presentations of the model.
-        -p --parameter=<kv>     A key-value argument pair to use when
-                                constructing the <scorer-model>.
         -r --pop-rate=<lp>      A label-proportion pair that rescales metrics
                                 based on the rate that the label appears in the
-                                population.
+                                population.  If not provided, sample rates will
+                                be assumed to reflect population rates.
+        -p --parameter=<kv>     A key-value argument pair to use when
+                                constructing the <scoring-model>.
         --version=<vers>        A version to associate with the model
         --observations=<path>   Path to a file containing observations
                                 containing a 'cache' [default: <stdin>]
