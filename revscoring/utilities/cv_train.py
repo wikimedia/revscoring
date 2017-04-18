@@ -12,7 +12,6 @@
                  [--version=<vers>]
                  [--observations=<path>]
                  [--model-file=<path>]
-                 [--label-type=<type>]
                  [--folds=<num>]
                  [--workers=<num>]
                  [--balance-sample]
