@@ -33,8 +33,7 @@ import docopt
 from nose.tools import nottest
 
 from ..dependencies import solve
-from ..scorer_models import ScorerModel
-from ..scorer_models.test_statistics import TestStatistic
+from ..scoring import Model
 from .util import read_observations
 
 logger = logging.getLogger(__name__)
