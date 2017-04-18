@@ -54,10 +54,8 @@ class Environment(dict):
 
     def format_str(self, fields=None):
         fields = fields or self.FIELDS
-        formatted = "Environment:\n"
-        for field in fields:
-            formatted += " - {0}: {1!r}\n".format(field, self[field])
-        return formatted
+        return "".join(" - {0}: {1!r}\n".format(field, self[field])
+                       for field in fields)
 
 
 def _build_warning(name, old, new):

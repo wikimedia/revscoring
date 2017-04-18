@@ -2,6 +2,7 @@ import logging
 import re
 
 import tabulate
+from numpy import all, diff, interp, linspace
 from sklearn.metrics import auc
 
 from . import util
@@ -68,6 +69,8 @@ class ThresholdClassification(Classification):
         return formatted
 
     def format_json(self, fields=None, ndigits=3):
+        fields = fields or (Classification.FIELDS +
+                            ThresholdClassification.FIELDS)
         stats_doc = super().format_json(fields=fields, ndigits=ndigits)
 
         for field in fields:
@@ -77,6 +80,8 @@ class ThresholdClassification(Classification):
                     for label, ltstats in self['thresholds'].items()}
             elif field in ThresholdClassification.FIELDS:
                 stats_doc[field] = self[field].format_json(ndigits=ndigits)
+
+        return stats_doc
 
 
 class ThresholdOptimization(dict):
@@ -146,12 +151,12 @@ class ThresholdStatistics(list):
             )
 
     def roc_auc(self):
-        return auc([stat.fpr() for t, stat in self],
-                   [stat.recall() for t, stat in self])
+        return zero_to_one_auc([stat.fpr() for t, stat in self],
+                               [stat.recall() for t, stat in self])
 
     def pr_auc(self):
-        return auc([stat.recall() for t, stat in self],
-                   [stat.precision() for t, stat in self])
+        return zero_to_one_auc([stat.recall() for t, stat in self],
+                               [stat.precision() for t, stat in self])
 
     def get_stat(self, stat_name):
         if not hasattr(self, stat_name):
@@ -178,6 +183,16 @@ class ThresholdStatistics(list):
             return lstats.get_stat(stat_name)
 
 
+def zero_to_one_auc(x_vals, y_vals):
+    x_space = linspace(0, 1, 50)
+    if all(diff(x_vals) > 0):
+        y_interp = interp(x_space, x_vals, y_vals)
+    else:
+        y_interp = interp(
+            x_space, list(reversed(x_vals)), list(reversed(y_vals)))
+    return auc(x_space, y_interp)
+
+
 class ThresholdStatList(list):
 
     def __init__(self, threshold_stats, max_thresholds):
@@ -196,7 +211,7 @@ class ThresholdStatList(list):
 
     def format_str(self, fields=None, ndigits=3):
         fields = fields or LabelStatistics.FIELDS
-        table_data = [[threshold] +
+        table_data = [[util.round(threshold, ndigits)] +
                       [util.round(tstats.get_stat(field), ndigits)
                        for field in fields]
                       for threshold, tstats in self]

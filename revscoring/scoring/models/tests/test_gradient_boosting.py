@@ -4,7 +4,7 @@ from .util import FEATURES, format_info, pickle_and_unpickle, train_test
 
 
 def test_gradient_boosting():
-    model = GradientBoosting(FEATURES)
+    model = GradientBoosting(FEATURES, max_thresholds=5)
     format_info(model)
     train_test(model)
     pickle_and_unpickle(model)

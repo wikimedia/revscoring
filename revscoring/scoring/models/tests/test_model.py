@@ -29,9 +29,9 @@ def test_learned_model():
 
 def test_classifier():
     model = Classifier([Feature("foo")])
-    assert model.stats is not None
+    assert model.statistics is not NotImplemented
 
 
 def test_threshold_classifier():
     model = ThresholdClassifier([Feature("foo")])
-    assert model.stats is not None
+    assert model.statistics is not NotImplemented

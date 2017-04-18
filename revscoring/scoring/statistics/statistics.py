@@ -6,10 +6,10 @@ logger = logging.getLogger(__name__)
 class Statistics(dict):
 
     def __init__(self):
-        raise NotImplementedError()
+        self.fitted = False
 
     def fit(self, score_labels):
-        raise NotImplementedError()
+        self.fitted = True
 
     def format_str(self, ndigits=3):
         raise NotImplementedError()

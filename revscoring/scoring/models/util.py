@@ -49,3 +49,7 @@ def format_params(doc):
     else:
         return ", ".join("{0}={1}".format(k, json.dumps(v))
                          for k, v in doc.items())
+
+def tab_it_in(string, tabs=1):
+    return "".join("\t" * tabs + "{0}\n".format(line)
+                   for line in string.split("\n"))
