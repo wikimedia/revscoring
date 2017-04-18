@@ -11,6 +11,7 @@
                  [--labels=<labels>]
                  [-p=<kv>]... [-s=<kv>]...
                  [-r=<lp>]...
+                 [--optimization=<pattern>]...
                  [--version=<vers>]
                  [--observations=<path>]
                  [--model-file=<path>]
@@ -36,6 +37,10 @@
                                 based on the rate that the label appears in the
                                 population.  If not provided, sample rates will
                                 be assumed to reflect population rates.
+        --optimization=<pattern>  Adds an optimization metric to the set of
+                                  statistics that are generated.  <pattern>
+                                  takes the form of:
+                                  (maximize|minimize) target @ cond (>=|<=) val
         -p --parameter=<kv>     A key-value argument pair to use when
                                 constructing the <scoring-model>.
         --version=<vers>        A version to associate with the model
@@ -60,6 +65,7 @@ import yamlconf
 from nose.tools import nottest
 
 from ..dependencies import solve
+from ..scoring.statistics import ThresholdOptimization
 from .util import read_labels_and_population_rates, read_observations
 
 logger = logging.getLogger(__name__)
@@ -85,9 +91,15 @@ def main(argv=None):
     labels, population_rates = read_labels_and_population_rates(
         args['--labels'], args['--pop-rate'])
 
+    threshold_optimizations = []
+    for pattern in args['--optimizations']:
+        threshold_optimizations.append(
+            ThresholdOptimization.from_string(pattern))
+
     model = ScoringModel(
         features, version=version,
         labels=labels, population_rates=population_rates,
+        threshold_optimizations=threshold_optimizations,
         center=args['--center'],
         scale=args['--scale'],
         **estimator_params)
