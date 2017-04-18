@@ -97,7 +97,7 @@ class MicroMacroStat(dict):
                           for label, lstats in label_stats.items()}
 
     def format_str(self, labels, ndigits=3):
-        formatted = "{0}(micro={1}, macro={2}):\n" \
+        formatted = "{0} (micro={1}, macro={2}):\n" \
                      .format(self.stat_name,
                              util.round(self['micro'], ndigits=ndigits),
                              util.round(self['macro'], ndigits=ndigits))
