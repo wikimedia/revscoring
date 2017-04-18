@@ -37,6 +37,8 @@ class Model(model.LearnedModel):
             self.estimator = estimator
             self.estimator_params = estimator.get_params()
 
+        self.params.update(self.estimator.get_params())
+
     def _clean_copy(self):
         cls = self.__class__
         kwargs = dict(self.estimator.get_params())
@@ -75,10 +77,6 @@ class Classifier(Model, model.Classifier):
         }
     }
     PREDICTION_KEY = "prediction"
-
-    def __init__(self, *args, labels=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.params['labels'] = labels
 
     def score(self, feature_values):
         """

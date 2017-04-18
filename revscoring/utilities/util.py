@@ -42,6 +42,26 @@ def dump_observation(observation, f):
     f.write("\n")
 
 
+def read_labels_and_population_rates(labels_str, pop_rates_strs):
+    if labels_str is not None:
+        labels = [json.loads(l) for l in labels_str.strip().split(",")]
+    else:
+        labels = None
+
+    if pop_rates_strs is None:
+        population_rates = None
+    else:
+        population_rates = {}
+        if labels is None:
+            labels = []
+        for label_rate_str in pop_rates_strs:
+            label, rate = (json.loads(s) for s in label_rate_str.split("=", 1))
+            population_rates[label] = rate
+            labels.append(label)
+
+    return labels, population_rates
+
+
 @nottest
 def train_test_split(observations, test_prop=0.25):
     # Split train and test set from obs.

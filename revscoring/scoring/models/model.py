@@ -45,7 +45,7 @@ class Model:
         self.features = tuple(features)
         self.version = version
         self.environment = Environment()
-        self.statistics = None
+        self.statistics = NotImplemented
 
         self.params = {}
 
@@ -87,9 +87,9 @@ class Model:
                         for values, label in values_labels]
 
         # Fit builtin statistics engine
-        self.stats.fit(score_labels)
+        self.statistics.fit(score_labels)
 
-        return self.stats
+        return self.statistics
 
     def format(self, *args, formatting="str", **kwargs):
         """
@@ -107,23 +107,28 @@ class Model:
         formatted += '\n'
         formatted += self.format_environment_str()
         formatted += '\n'
-        formatted = self.format_stats_str(ndigits=ndigits)
+        formatted += self.format_stats_str(ndigits=ndigits)
         return formatted
 
     def format_basic_info_str(self):
-        formatted = "{0}:\n".format(self.__class__.__name__)
+        formatted = "{0}({1}):\n".format(
+            self.__class__.__name__, util.format_params(self.params))
         formatted += " - version: {0}\n".format(self.version)
-        formatted += " - params: {0}\n".format(util.format_params(self.params))
         return formatted
 
     def format_environment_str(self):
-        return self.environment.format_str()
+        formatted = "Enviornment:\n"
+        formatted += util.tab_it_in(self.environment.format_str())
+        return formatted
 
     def format_stats_str(self, ndigits=3):
-        if self.statistics is None:
+        if not self.statistics.fitted:
             return "No stats available\n"
         else:
-            return self.stats.format_str(ndigits=ndigits)
+            formatted = "Statistics:\n"
+            formatted += util.tab_it_in(
+                self.statistics.format_str(ndigits=ndigits))
+            return formatted
 
     def format_json(self, ndigits=3):
         return {
@@ -135,7 +140,7 @@ class Model:
         }
 
     def format_stats_json(self, ndigits=3):
-        if self.statistics is None:
+        if not self.statistics.fitted:
             return None
         else:
             return self.statistics.format_json(ndigits=ndigits)
@@ -188,7 +193,6 @@ class LearnedModel(Model):
         """
         super().__init__(*args, **kwargs)
         self.trained = None
-        self.stats = NotImplemented
         if scale or center:
             self.scaler = RobustScaler(with_centering=center,
                                        with_scaling=scale)
@@ -214,18 +218,12 @@ class LearnedModel(Model):
 
         return feature_values
 
-    def __getattr__(self, attr):
-        if attr is "trained":
-            return None
-        else:
-            raise AttributeError(attr)
-
     def _clean_copy(self):
         raise NotImplementedError()
 
     def train(self, values_labels):
         """
-        Trains the model on labeled data.
+        Fits the model to labeled data.
 
         :Parameters:
             values_scores : `iterable` (( `<feature_values>`, `<label>` ))
@@ -263,9 +261,9 @@ class LearnedModel(Model):
         for score_labels in results:
             agg_score_labels.extend(score_labels)
 
-        self.stats.fit(agg_score_labels)
+        self.statistics.fit(agg_score_labels)
 
-        return self.stats
+        return self.statistics
 
     def _cross_score(self, i_train_test):
         i, train_set, test_set = i_train_test
@@ -278,7 +276,7 @@ class LearnedModel(Model):
                 for feature_values, label in test_set]
 
     @classmethod
-    def from_config(cls, config, name, section_key="scorer_models"):
+    def from_config(cls, config, name, section_key="scoring_models"):
         """
         Constructs a model from configuration.
         """
@@ -298,7 +296,17 @@ class Classifier(LearnedModel):
         self.labels = labels
         self.population_rates = population_rates
 
-        self.stats = self.__init_stats__()
+        self.statistics = self.__init_stats__()
+
+    def format_basic_info_str(self):
+        formatted = super().format_basic_info_str()
+        if self.labels is not None:
+            formatted += " - labels: {0}\n".format(self.labels)
+        if self.population_rates is not None:
+            formatted += " - population_rates: ({0})" \
+                         .format(", ".join("{0}={1}"
+                                           for l, r, in self.population_rates))
+        return formatted
 
     def __init_stats__(self):
         return self.Statistics(
@@ -310,8 +318,12 @@ class ThresholdClassifier(Classifier):
     Statistics = statistics.ThresholdClassification
     DECISION_KEY = NotImplemented
 
+    def __init__(self, *args, max_thresholds=None, **kwargs):
+        self.max_thresholds = max_thresholds
+        super().__init__(*args, **kwargs)
+
     def __init_stats__(self):
         return self.Statistics(
             prediction_key=self.PREDICTION_KEY, labels=self.labels,
-            decision_key=self.DECISION_KEY,
+            decision_key=self.DECISION_KEY, max_thresholds=self.max_thresholds,
             population_rates=self.population_rates)

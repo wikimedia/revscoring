@@ -2,6 +2,7 @@ import json
 import random
 from io import BytesIO
 from itertools import chain
+from pprint import pprint
 
 from nose.tools import eq_, nottest
 
@@ -84,6 +85,7 @@ def pickle_and_unpickle(model):
 
 
 def format_info(model):
+    pprint(model.format(formatting="json"))
     print(model.format(formatting="str"))
     assert model.format(formatting="json") is not None
     assert model.format(formatting="str") is not None

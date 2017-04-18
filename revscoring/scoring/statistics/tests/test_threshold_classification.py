@@ -1,9 +1,4 @@
-from statistics import mean
-
-from nose.tools import eq_
-
-from ..threshold_classification import (ThresholdClassification,
-                                        ThresholdStatList)
+from ..threshold_classification import ThresholdClassification
 
 LABELS = [True, False]
 pool = \
@@ -39,7 +34,7 @@ def test_thresholds():
     scaled_thresholds.fit(balanced_score_labels)
     print(scaled_thresholds.format(
         ['accuracy', 'pr_auc', 'roc_auc', 'thresholds'],
-        formatting="json"))
+        formatting="str"))
 
     count = 0
     squared_error = 0

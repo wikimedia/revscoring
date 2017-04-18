@@ -15,11 +15,13 @@ class Classification(Statistics):
 
     def __init__(self, *args, prediction_key="prediction",
                  labels=None, population_rates=None, **kwargs):
+        super().__init__()
         self.prediction_key = prediction_key
         self.labels = labels
         self.population_rates = population_rates or {}
 
     def fit(self, score_labels):
+        super().fit(score_labels)
         if self.labels is None:
             self.labels = sorted(set(l for s, l in score_labels))
 
@@ -334,7 +336,8 @@ class Counts(dict):
         formatted = "counts (n={0}):\n".format(self['n'])
         table_data = [
             [repr(label), self['labels'][label], '-->'] +
-            [self['predictions'][label][pred] for pred in labels]
+            [self['predictions'].get(label, {}).get(pred, 0)
+             for pred in labels]
             for label in labels]
         table_str = tabulate.tabulate(
             table_data, headers=['label', 'n', ''] +
