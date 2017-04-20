@@ -85,14 +85,26 @@ class MicroMacroStat(dict):
 
     def __init__(self, stat_name, label_stats):
         self.stat_name = stat_name
-        self['micro'] = (
-                sum(lstats.get_stat(stat_name) * lstats.n
+        try:
+            self['micro'] = (
+                sum(lstats.get_stat(stat_name) * lstats.trues
                     for lstats in label_stats.values()) /
-                sum(lstats.n for lstats in label_stats.values()))
-        self['macro'] = (
+                sum(lstats.trues for lstats in label_stats.values()))
+        except Exception as e:
+            logging.warn("Could not generate micro-average of {0}: {1}"
+                         .format(stat_name, str(e)))
+            self['micro'] = None
+
+        try:
+            self['macro'] = (
                 sum(lstats.get_stat(stat_name)
                     for lstats in label_stats.values()) /
                 len(label_stats))
+        except Exception as e:
+            logging.warn("Could not generate macro-average of {0}: {1}"
+                         .format(stat_name, str(e)))
+            self['macro'] = None
+
         self['labels'] = {label: lstats.get_stat(stat_name)
                           for label, lstats in label_stats.items()}
 
@@ -360,7 +372,7 @@ class Rates(dict):
     def format_str(self, labels, ndigits=3):
         formatted = "rates:\n"
         table_data = [
-            [group] + [util.round(self[group][label], ndigits)
+            [group] + [util.round(self[group].get(label), ndigits)
                        for label in labels]
             for group in self]
 
@@ -370,6 +382,6 @@ class Rates(dict):
         return formatted
 
     def format_json(self, ndigits=3):
-        return {group: {label: util.round(rate)
+        return {group: {label: util.round(rate, ndigits)
                         for label, rate in lrates.items()}
                 for group, lrates in self.items()}

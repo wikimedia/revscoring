@@ -42,18 +42,19 @@ class Model:
             version : `str`
                 A string describing the version of the model.
         """
+        logger.debug("Initializing Model with {0}")
         self.features = tuple(features)
         self.version = version
         self.environment = Environment()
-        self.statistics = NotImplemented
+        self.statistics = self.__init_stats__()
 
         self.params = {}
 
-    def pre_process_vector(self, feature_values):
-        # Flaten feature vector
-        feature_values = vectorize_values(feature_values)
-
-        return feature_values
+    def __init_stats__(self):
+        if self.Statistics is NotImplemented:
+            return NotImplemented
+        else:
+            return self.Statistics()
 
     def score(self, feature_values):
         """
@@ -122,7 +123,9 @@ class Model:
         return formatted
 
     def format_stats_str(self, ndigits=3):
-        if not self.statistics.fitted:
+        if self.statistics is NotImplemented:
+            return ""
+        elif not self.statistics.fitted:
             return "No stats available\n"
         else:
             formatted = "Statistics:\n"
@@ -131,13 +134,13 @@ class Model:
             return formatted
 
     def format_json(self, ndigits=3):
-        return {
+        return util.json_normalize({
             'type': self.__class__.__name__,
             'version': self.version,
             'params': self.params,
             'environment': self.environment.format_json(),
             'statistics': self.format_stats_json(ndigits)
-        }
+        })
 
     def format_stats_json(self, ndigits=3):
         if not self.statistics.fitted:
@@ -177,12 +180,14 @@ class Model:
         elif 'class' in section:
             class_path = section['class']
             Class = yamlconf.import_module(class_path)
-            assert cls != Class
+            if 'model_file' in section:
+                return Class.load(open(section['model_file'], 'rb'))
+            else:
+                return Class(**{k: v for k, v in section.items()
+                                if k != "class"})
 
-            return Class.from_config(config, name, section_key=section_key)
 
-
-class LearnedModel(Model):
+class Learned:
 
     def __init__(self, *args, scale=False, center=False, **kwargs):
         """
@@ -204,26 +209,9 @@ class LearnedModel(Model):
             'center': center
         })
 
-    def pre_process_vector(self, feature_values):
-        # Flaten feature vector
-        feature_values = super().pre_process_vector(feature_values)
-
-        # If we're scaling, do that
-        if self.scaler is not None:
-            if not hasattr(self.scaler, "center_") and \
-               not hasattr(self.scaler, "scale_"):
-                raise RuntimeError("Cannot pre-process scaled vector before " +
-                                   "training the model")
-            feature_values = self.scaler.transform([feature_values])[0]
-
-        return feature_values
-
-    def _clean_copy(self):
-        raise NotImplementedError()
-
-    def train(self, values_labels):
+    def fit_scaler_and_transform(self, fv_vectors):
         """
-        Fits the model to labeled data.
+        Fits the internal scale to labeled data.
 
         :Parameters:
             values_scores : `iterable` (( `<feature_values>`, `<label>` ))
@@ -234,10 +222,23 @@ class LearnedModel(Model):
         :Returns:
             A dictionary of model statistics.
         """
-        sppv = super().pre_process_vector
-        if self.scaler:
-            self.scaler.fit([sppv(feature_values)
-                             for feature_values, l in values_labels])
+        if self.scaler is not None:
+            return self.scaler.fit_and_transform(fv_vectors)
+        else:
+            return fv_vectors
+
+    def apply_scaling(self, fv_vector):
+        if self.scaler is not None:
+            if not hasattr(self.scaler, "center_") and \
+               not hasattr(self.scaler, "scale_"):
+                raise RuntimeError("Cannot scale a vector before " +
+                                   "training the scaler")
+            fv_vector = self.scaler.transform([fv_vector])[0]
+
+        return fv_vector
+
+    def _clean_copy(self):
+        raise NotImplementedError()
 
     def format_basic_info_str(self):
         formatted = super().format_basic_info_str()
@@ -247,6 +248,11 @@ class LearnedModel(Model):
             date_string = "n/a"
         formatted += " - trained: {0}\n".format(date_string)
         return formatted
+
+    def format_json(self, ndigits=3):
+        doc = super().format_json()
+        doc['params']['trained'] = self.trained
+        return doc
 
     def cross_validate(self, values_labels, folds=10, processes=None):
         pool = Pool(processes=processes or cpu_count())
@@ -275,38 +281,36 @@ class LearnedModel(Model):
         return [(model.score(feature_values), label)
                 for feature_values, label in test_set]
 
-    @classmethod
-    def from_config(cls, config, name, section_key="scoring_models"):
-        """
-        Constructs a model from configuration.
-        """
-        section = config[section_key][name]
-        if 'model_file' in section:
-            return cls.load(open(section['model_file'], 'rb'))
-        else:
-            return cls(**{k: v for k, v in section.items() if k != "class"})
 
-
-class Classifier(LearnedModel):
+class Classifier(Learned):
     Statistics = statistics.Classification
     PREDICTION_KEY = NotImplemented
 
     def __init__(self, *args, labels=None, population_rates=None, **kwargs):
-        super().__init__(*args, **kwargs)
         self.labels = labels
         self.population_rates = population_rates
+        super().__init__(*args, **kwargs)
 
-        self.statistics = self.__init_stats__()
+        self.params.update({
+            'labels': labels,
+            'population_rates': population_rates
+        })
 
     def format_basic_info_str(self):
         formatted = super().format_basic_info_str()
         if self.labels is not None:
             formatted += " - labels: {0}\n".format(self.labels)
         if self.population_rates is not None:
-            formatted += " - population_rates: ({0})" \
-                         .format(", ".join("{0}={1}"
-                                           for l, r, in self.population_rates))
+            pop_rates = ", ".join("{0}={1}".format(l, r)
+                                  for l, r in self.population_rates.items())
+            formatted += " - population_rates: ({0})\n".format(pop_rates)
         return formatted
+
+    def format_json(self, ndigits=3):
+        doc = super().format_json()
+        doc['params']['labels'] = self.labels
+        doc['params']['population_rates'] = self.population_rates
+        return doc
 
     def __init_stats__(self):
         return self.Statistics(
@@ -316,14 +320,22 @@ class Classifier(LearnedModel):
 
 class ThresholdClassifier(Classifier):
     Statistics = statistics.ThresholdClassification
+    PREDICTION_KEY = NotImplemented
     DECISION_KEY = NotImplemented
 
-    def __init__(self, *args, max_thresholds=None, **kwargs):
+    def __init__(self, *args, max_thresholds=200,
+                 threshold_optimizations=None, **kwargs):
         self.max_thresholds = max_thresholds
+        self.threshold_optimizations = threshold_optimizations
         super().__init__(*args, **kwargs)
+
+        self.params.update({
+            'max_thresholds': max_thresholds,
+            'threshold_optimizations': threshold_optimizations
+        })
 
     def __init_stats__(self):
         return self.Statistics(
-            prediction_key=self.PREDICTION_KEY, labels=self.labels,
-            decision_key=self.DECISION_KEY, max_thresholds=self.max_thresholds,
-            population_rates=self.population_rates)
+            prediction_key=self.PREDICTION_KEY, decision_key=self.DECISION_KEY,
+            labels=self.labels, population_rates=self.population_rates,
+            max_thresholds=self.max_thresholds)

@@ -10,8 +10,8 @@
         cv_train <scoring-model> <features> <label>
                  [--labels=<labels>]
                  [-p=<kv>]... [-s=<kv>]...
-                 [-r=<lp>]...
-                 [--optimization=<pattern>]...
+                 [-w=<lw>]... [-r=<lp>]...
+                 [-o=<p>]...
                  [--version=<vers>]
                  [--observations=<path>]
                  [--model-file=<path>]
@@ -33,14 +33,17 @@
         --labels=<labels>       A comma-separated sequence of labels that will
                                 be used for ordering labels statistics and
                                 other presentations of the model.
+        -w --label-weight=<lw>  A label-weight pair that rescales adjusts the
+                                cost of getting a specific label prediction
+                                wrong.
         -r --pop-rate=<lp>      A label-proportion pair that rescales metrics
                                 based on the rate that the label appears in the
                                 population.  If not provided, sample rates will
                                 be assumed to reflect population rates.
-        --optimization=<pattern>  Adds an optimization metric to the set of
-                                  statistics that are generated.  <pattern>
-                                  takes the form of:
-                                  (maximize|minimize) target @ cond (>=|<=) val
+        -o --optimization=<p>   Adds an optimization metric to the set of
+                                statistics that are generated.  <p> is a
+                                pattern takes the form of:
+                                "(maximize|minimize) target @ cond (>=|<=) val"
         -p --parameter=<kv>     A key-value argument pair to use when
                                 constructing the <scoring-model>.
         --version=<vers>        A version to associate with the model
@@ -55,7 +58,7 @@
         --center                Features should be centered on a common axis
         --scale                 Features should be scaled to a common range
         --debug                 Print debug logging.
-"""
+"""  # noqa
 import json
 import logging
 import sys
@@ -88,17 +91,18 @@ def main(argv=None):
         key, value = parameter.split("=", 1)
         estimator_params[key] = json.loads(value)
 
-    labels, population_rates = read_labels_and_population_rates(
-        args['--labels'], args['--pop-rate'])
+    labels, label_weights, population_rates = read_labels_and_population_rates(
+        args['--labels'], args['--label-weight'], args['--pop-rate'])
 
     threshold_optimizations = []
-    for pattern in args['--optimizations']:
+    for pattern in args['--optimization']:
         threshold_optimizations.append(
             ThresholdOptimization.from_string(pattern))
 
     model = ScoringModel(
         features, version=version,
-        labels=labels, population_rates=population_rates,
+        labels=labels, label_weights=label_weights,
+        population_rates=population_rates,
         threshold_optimizations=threshold_optimizations,
         center=args['--center'],
         scale=args['--scale'],

@@ -50,6 +50,27 @@ def format_params(doc):
         return ", ".join("{0}={1}".format(k, json.dumps(v))
                          for k, v in doc.items())
 
+
 def tab_it_in(string, tabs=1):
     return "".join("\t" * tabs + "{0}\n".format(line)
                    for line in string.split("\n"))
+
+
+def balance_weights(labels):
+    """
+    Generates a mapping of class weights that will re-weight a training set
+    in a balanced way such that weight(label) = len(obs) / freq(label in obs).
+    """
+    counts = {}
+    for l in labels:
+        counts[l] = counts.get(l, 0) + 1
+
+    return {l: (len(labels) / counts[l]) for l in counts}
+
+
+def balance_sample_weights(labels):
+    """
+    Generates a vector of balancing weights for a vector of labels
+    """
+    weights = balance_weights(labels)
+    return [weights[label] for label in labels]

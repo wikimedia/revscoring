@@ -29,14 +29,14 @@ Abstract classes
 .. automodule:: revscoring.scoring.models.model
 
 """
-from .model import LearnedModel, Classifier, ThresholdClassifier
+from .model import Learned, Classifier, ThresholdClassifier
 from .svc import SVC, LinearSVC, RBFSVC
 from .gradient_boosting import GradientBoosting
 from .naive_bayes import NaiveBayes, GaussianNB, MultinomialNB, BernoulliNB
 from .random_forest import RandomForest
 
 __all__ = [
-    LearnedModel, Classifier, ThresholdClassifier,
+    Learned, Classifier, ThresholdClassifier,
     SVC, LinearSVC, RBFSVC, NaiveBayes, GaussianNB, MultinomialNB, BernoulliNB,
     RandomForest, GradientBoosting
 ]

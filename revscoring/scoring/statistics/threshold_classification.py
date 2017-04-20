@@ -56,8 +56,8 @@ class ThresholdClassification(Classification):
 
     def format_str(self, fields=None, ndigits=3):
         fields = fields or (Classification.FIELDS +
-                            ThresholdClassification.FIELDS +
-                            list(self.threshold_optimizations.keys()))
+                            list(self.threshold_optimizations.keys()) +
+                            ThresholdClassification.FIELDS)
         formatted = super().format_str(fields=fields, ndigits=ndigits)
         for field in fields:
             if field == "thresholds":
@@ -151,7 +151,12 @@ class ThresholdStatistics(list):
     def __init__(self, y_decisions, y_trues, population_rate=None,
                  threshold_optimizations=None):
         super().__init__()
-        self.n = sum(y_trues)
+        if population_rate is None:
+            self.trues = sum(y_trues)
+        else:
+            n_true = sum(y_trues)
+            observed_rate = n_true / len(y_trues)
+            self.trues = sum(y_trues) * (population_rate / observed_rate)
         self.threshold_optimizations = threshold_optimizations or {}
         unique_thresholds = sorted(set(y_decisions))
 
@@ -222,7 +227,7 @@ class ThresholdStatList(list):
 
     def format_str(self, fields=None, ndigits=3):
         fields = fields or LabelStatistics.FIELDS
-        table_data = [[util.round(threshold, ndigits)] +
+        table_data = [[util.round(threshold, ndigits + 2)] +
                       [util.round(tstats.get_stat(field), ndigits)
                        for field in fields]
                       for threshold, tstats in self]
