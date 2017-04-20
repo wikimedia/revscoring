@@ -42,11 +42,21 @@ def dump_observation(observation, f):
     f.write("\n")
 
 
-def read_labels_and_population_rates(labels_str, pop_rates_strs):
+def read_labels_and_population_rates(labels_str, label_weights_strs,
+                                     pop_rates_strs):
     if labels_str is not None:
         labels = [json.loads(l) for l in labels_str.strip().split(",")]
     else:
         labels = None
+
+    if label_weights_strs is not None:
+        label_weights = {}
+        for label_weights_str in label_weights_strs:
+            label, weight = (
+                json.loads(s) for s in label_weights_str.split("=", 1))
+            label_weights[label] = weight
+    else:
+        label_weights = {}
 
     if pop_rates_strs is None:
         population_rates = None
@@ -59,7 +69,7 @@ def read_labels_and_population_rates(labels_str, pop_rates_strs):
             population_rates[label] = rate
             labels.append(label)
 
-    return labels, population_rates
+    return labels, label_weights, population_rates
 
 
 @nottest

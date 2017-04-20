@@ -1,7 +1,7 @@
 from nose.tools import eq_
 
 from ....features import Feature
-from ..model import Classifier, LearnedModel, Model, ThresholdClassifier
+from ..model import Classifier, LearnedModel, Model
 
 
 def test_model():

@@ -18,12 +18,12 @@ import json
 
 import docopt
 
-from ..scorer_models import ScorerModel
+from ..scoring import Model
 
 
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
-    scorer_model = ScorerModel.load(open(args['<model-file>'], 'rb'))
+    scorer_model = Model.load(open(args['<model-file>'], 'rb'))
     as_json = args['--as-json']
 
     run(scorer_model, as_json)
@@ -31,6 +31,6 @@ def main(argv=None):
 
 def run(scorer_model, as_json):
     if not as_json:
-        print(scorer_model.format_info())
+        print(scorer_model.format())
     else:
         print(json.dumps(scorer_model.info()))
