@@ -6,13 +6,10 @@
     model/configuration.
 
     Usage:
-        tune <params-config> <features> <label>
+        tune <params-config> <features> <label> <statistic>
              [--observations=<path>]
-             [--scoring=<type>]
-             [--test-prop=<prop>]
              [--folds=<num>]
              [--report=<path>]
-             [--label-type=<type>]
              [--processes=<num>]
              [--cv-timeout=<mins>]
              [--scale-features]
@@ -26,6 +23,7 @@
                                interpreting the feature values of the
                                observations
         <label>                The name of the field to be predicted
+        <statistic>            The statistic to tune for.  Stated as a
         --observations=<path>  The path to a file containing observations to
                                train and test against. [default: <stdin>]
         --scoring=<type>       The type of scoring strategy to optimize for
@@ -59,8 +57,8 @@ import yamlconf
 from sklearn import cross_validation, grid_search, preprocessing
 from tabulate import tabulate
 
-from . import metrics
-from .. import __version__
+from . import util
+from ..about import __version__
 from ..dependencies import solve
 from .util import Timeout, read_observations
 

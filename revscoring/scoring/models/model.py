@@ -134,7 +134,7 @@ class Model:
             return formatted
 
     def format_json(self, ndigits=3):
-        return util.json_normalize({
+        return util.normalize_json({
             'type': self.__class__.__name__,
             'version': self.version,
             'params': self.params,

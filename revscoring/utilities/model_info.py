@@ -33,4 +33,4 @@ def run(scorer_model, as_json):
     if not as_json:
         print(scorer_model.format())
     else:
-        print(json.dumps(scorer_model.info()))
+        print(json.dumps(scorer_model.format(formatting="json")))
