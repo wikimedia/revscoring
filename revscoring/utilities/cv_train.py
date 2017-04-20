@@ -52,7 +52,9 @@
         --model-file=<path>     Path to write a model file to
                                 [default: <stdout>]
         --folds=<num>           The number of folds that should be used when
-                                cross-validating [default: 10]
+                                cross-validating. If set to 1, testing will be
+                                skipped and a model will just be trained on
+                                all observations [default: 10]
         --workers=<num>         The number of workers that should be used when
                                 cross-validating
         --center                Features should be centered on a common axis
@@ -138,9 +140,10 @@ def run(value_labels, model_file, model, folds, workers):
 
 @nottest
 def cv_train(model, value_labels, folds, workers):
-    logger.info("Cross-validating model statistics for {0} folds..."
-                .format(folds))
-    model.cross_validate(value_labels, folds=folds, processes=workers)
+    if folds > 1:
+        logger.info("Cross-validating model statistics for {0} folds..."
+                    .format(folds))
+        model.cross_validate(value_labels, folds=folds, processes=workers)
 
     logger.info("Training model on all data...")
     model.train(value_labels)

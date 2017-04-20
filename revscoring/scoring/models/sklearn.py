@@ -72,7 +72,8 @@ class Classifier(model.Classifier, model.Model):
 
             * seconds_elapsed -- Time in seconds spent fitting the model
         """
-
+        logger.info("Training {0} with {1} observations"
+                    .format(self.__class__.__name__, len(values_labels)))
         start = time.time()
         values, labels = zip(*values_labels)
         fv_vectors = [vectorize_values(fv) for fv in values]
@@ -104,7 +105,7 @@ class Classifier(model.Classifier, model.Model):
     def format_json(self, ndigits=3):
         doc = super().format_json()
         doc['params']['label_weights'] = self.label_weights
-        return util.json_normalize(doc)
+        return util.normalize_json(doc)
 
     def score(self, feature_values):
         """
@@ -130,8 +131,7 @@ class Classifier(model.Classifier, model.Model):
         return util.normalize_json(doc)
 
 
-class ProbabilityClassifier(Classifier, model.ThresholdClassifier,
-                            model.Model):
+class ProbabilityClassifier(model.ThresholdClassifier, Classifier):
     SCORE_SCHEMA = {
         'title': "Scikit learn-based classifier score with probability",
         'type': "object",
@@ -152,18 +152,8 @@ class ProbabilityClassifier(Classifier, model.ThresholdClassifier,
         }
     }
     DECISION_KEY = "probability"
+    PREDICTION_KEY = "prediction"
     Statistics = statistics.ThresholdClassification
-
-    def __init__(self, *args, threshold_optimizations=None,
-                 max_thresholds=200, **kwargs):
-        self.max_thresholds = max_thresholds
-        self.threshold_optimizations = threshold_optimizations
-        super().__init__(*args, **kwargs)
-
-        self.params.update({
-            'max_thresholds': max_thresholds,
-            'threshold_optimizations': threshold_optimizations
-        })
 
     def __init_stats__(self):
         return self.Statistics(

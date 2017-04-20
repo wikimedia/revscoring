@@ -45,7 +45,7 @@ import mysqltsv
 
 from ..extractors import api
 from ..score_processor import ScoreProcessor
-from ..scorer_models import MLScorerModel
+from ..scoring import Model
 
 
 def main(argv=None):
@@ -58,7 +58,7 @@ def main(argv=None):
     logging.getLogger('revscoring.dependencies.dependent') \
            .setLevel(logging.WARNING)
 
-    model = MLScorerModel.load(open(args['<model-file>'], 'rb'))
+    model = Model.load(open(args['<model-file>'], 'rb'))
 
     session = mwapi.Session(
         args['--host'],

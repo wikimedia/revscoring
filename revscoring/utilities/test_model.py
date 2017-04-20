@@ -8,22 +8,17 @@
     Usage:
         test_model -h | --help
         test_model <scorer_model> <label>
-                   [-s=<kv>]...
                    [--observations=<path>]
                    [--model-file=<path>]
                    [--debug]
 
     Options:
         -h --help               Prints this documentation
-        <scorer_model>          Path to model file that already trained.
+        <scoring-model>         Path to model file that already trained.
         <label>                 The name of the field to be predicted
-        -s --statistic=<kv>     A test statistic argument to use to evaluate
-                                the scorer model against the test set.
         --observations=<path>   Path to a file containing observations
-                                containing a 'cache' with <features> and a
-                                <label> field [default: <stdin>]
+                                containing a 'cache' [default: <stdin>]
         --model-file=<math>     Path to write a model file to
-                                [default: <stdout>]
         --debug                 Print debug logging.
 """
 import logging
@@ -47,11 +42,7 @@ def main(argv=None):
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
 
-    scorer_model = ScorerModel.load(open(args['<scorer_model>'], 'rb'))
-
-    test_statistics = []
-    for stat_str in args['--statistic']:
-        test_statistics.append(TestStatistic.from_stat_str(stat_str))
+    model = Model.load(open(args['<scorer_model>'], 'rb'))
 
     if args['--observations'] == "<stdin>":
         observations = read_observations(sys.stdin)
@@ -60,34 +51,33 @@ def main(argv=None):
 
     label_name = args['<label>']
     value_labels = \
-        [(solve(scorer_model.features, cache=ob['cache']), ob[label_name])
+        [(solve(model.features, cache=ob['cache']), ob[label_name])
          for ob in observations]
 
-    if args['--model-file'] == "<stdout>":
-        model_file = sys.stdout.buffer
+    if args['--model-file'] is None:
+        model_file = None
     else:
         model_file = open(args['--model-file'], 'wb')
 
-    run(value_labels, model_file, scorer_model, test_statistics)
+    run(model, value_labels, model_file)
 
 
-def run(value_labels, model_file, scorer_model, test_statistics):
+def run(model, value_labels, model_file):
 
-    scorer_model = test_model(scorer_model, value_labels, test_statistics)
-
-    sys.stderr.write(scorer_model.format_info())
-
+    model = test_model(model, value_labels)
+    sys.stderr.write(model.format())
     sys.stderr.write("\n\n")
 
-    scorer_model.dump(model_file)
+    if model_file is not None:
+        model.dump(model_file)
 
 
 @nottest
-def test_model(scorer_model, value_labels, test_statistics):
+def test_model(model, value_labels):
 
     logger.debug("Test set: {0}".format(len(value_labels)))
 
     logger.info("Testing model...")
-    scorer_model.test(value_labels, test_statistics=test_statistics)
+    model.test(value_labels)
 
-    return scorer_model
+    return model
