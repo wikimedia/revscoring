@@ -2,7 +2,7 @@
 .. autoclass:: revscoring.Model
     :members:
 
-.. autoclass:: revscoring.scoring.LearnedModel
+.. autoclass:: revscoring.scoring.Learned
     :members:
 
 .. autoclass:: revscoring.scoring.Classifier
@@ -187,7 +187,7 @@ class Model:
                                 if k != "class"})
 
 
-class Learned:
+class Learned(Model):
 
     def __init__(self, *args, scale=False, center=False, **kwargs):
         """
@@ -223,7 +223,7 @@ class Learned:
             A dictionary of model statistics.
         """
         if self.scaler is not None:
-            return self.scaler.fit_and_transform(fv_vectors)
+            return self.scaler.fit_transform(fv_vectors)
         else:
             return fv_vectors
 
@@ -254,15 +254,19 @@ class Learned:
         doc['params']['trained'] = self.trained
         return doc
 
-    def cross_validate(self, values_labels, folds=10, processes=None):
-        pool = Pool(processes=processes or cpu_count())
+    def cross_validate(self, values_labels, folds=10, processes=1):
 
         folds_i = KFold(len(values_labels), n_folds=folds, shuffle=True,
                         random_state=0)
-        results = pool.map(self._cross_score,
-                           ((i, [values_labels[i] for i in train_i],
-                                [values_labels[i] for i in test_i])
-                            for i, (train_i, test_i) in enumerate(folds_i)))
+        if processes == 1:
+            mapper = map
+        else:
+            pool = Pool(processes=processes or cpu_count())
+            mapper = pool.map
+        results = mapper(self._cross_score,
+                         ((i, [values_labels[i] for i in train_i],
+                              [values_labels[i] for i in test_i])
+                          for i, (train_i, test_i) in enumerate(folds_i)))
         agg_score_labels = []
         for score_labels in results:
             agg_score_labels.extend(score_labels)

@@ -7,12 +7,13 @@
 
     Usage:
         tune <params-config> <features> <label> <statistic>
+             [-w=<lw>]... [-r=<lp>]...
+             [--minimize]
              [--observations=<path>]
              [--folds=<num>]
              [--report=<path>]
              [--processes=<num>]
              [--cv-timeout=<mins>]
-             [--scale-features]
              [--verbose] [--debug]
 
     Options:
@@ -23,7 +24,18 @@
                                interpreting the feature values of the
                                observations
         <label>                The name of the field to be predicted
-        <statistic>            The statistic to tune for.  Stated as a
+        <statistic>            The statistic to tune for.  Stated as a path
+                               within the statistics tree of the model --
+                               e.g. "roc_auc.micro" or "recall.labels.true"
+       -w --label-weight=<lw>  A label-weight pair that rescales adjusts the
+                               cost of getting a specific label prediction
+                               wrong.
+       -r --pop-rate=<lp>      A label-proportion pair that rescales metrics
+                               based on the rate that the label appears in the
+                               population.  If not provided, sample rates will
+                               be assumed to reflect population rates.
+        --minimize             If set, assume the best score is the smallest
+                               value.
         --observations=<path>  The path to a file containing observations to
                                train and test against. [default: <stdin>]
         --scoring=<type>       The type of scoring strategy to optimize for
@@ -37,7 +49,6 @@
         --cv-timeout=<mins>    The number of minutes to wait for a model to
                                cross-validate before timing out
                                [default: <forever>]
-        --scale-features       Scales the feature values before tuning
         --verbose              Print progress information to stderr
         --debug                Print debug information to stderr
 
@@ -52,14 +63,15 @@ import traceback
 from collections import defaultdict
 
 import docopt
-import numpy
 import yamlconf
-from sklearn import cross_validation, grid_search, preprocessing
+from sklearn import grid_search
 from tabulate import tabulate
 
 from . import util
 from ..about import __version__
 from ..dependencies import solve
+from ..scoring.models import util as model_util
+from ..scoring.statistics import ThresholdOptimization
 from .util import Timeout, read_observations
 
 logger = logging.getLogger(__name__)
@@ -72,6 +84,7 @@ def main(argv=None):
         level=logging.INFO if not args['--debug'] else logging.DEBUG,
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
+    logging.getLogger("revscoring.scoring.models").setLevel(logging.WARNING)
 
     params_config = yamlconf.load(open(args['<params-config>']))
 
@@ -89,8 +102,23 @@ def main(argv=None):
         [(list(solve(features, cache=ob['cache'])), ob[label_name])
          for ob in observations]
 
-    # Get a sepecialized scorer if we have one
-    scoring = metrics.SCORERS.get(args['--scoring'], args['--scoring'])
+    stat_keys = util.parse_statistic_path_string(args['<statistic>'])
+    additional_params = {}
+    try:
+        additional_params['threshold_optimizations'] = \
+            [ThresholdOptimization.from_string(stat_keys[0])]
+    except ValueError:
+        pass
+
+    labels, label_weights, population_rates = \
+        util.read_labels_and_population_rates(
+            None, args['--label-weight'], args['--pop-rate'])
+    if label_weights is not None:
+        additional_params['label_weights'] = label_weights
+    if population_rates is not None:
+        additional_params['population_rates'] = population_rates
+
+    maximize = not args['--minimize']
 
     folds = int(args['--folds'])
 
@@ -109,22 +137,18 @@ def main(argv=None):
     else:
         cv_timeout = float(args['--cv-timeout']) * 60  # Convert to seconds
 
-    scale_features = args['--scale-features']
     verbose = args['--verbose']
 
-    run(params_config, features_path, value_labels, scoring, folds,
-        report, processes, cv_timeout, scale_features, verbose)
+    run(params_config, features, features_path, value_labels, stat_keys,
+        additional_params, maximize, folds, report, processes, cv_timeout,
+        verbose)
 
 
-def run(params_config, features_path, value_labels, scoring, folds,
-        report, processes, cv_timeout, scale_features, verbose):
+def run(params_config, features, features_path, value_labels, stat_keys,
+        additional_params, maximize, folds, report, processes, cv_timeout,
+        verbose):
 
-    if scale_features:
-        logger.debug("Scaling features...")
-        ss = preprocessing.StandardScaler()
-        feature_values, labels = (list(vect) for vect in zip(*value_labels))
-        scaled_feature_values = ss.fit_transform(feature_values)
-        value_labels = list(zip(scaled_feature_values, labels))
+    feature_values, labels = (list(vect) for vect in zip(*value_labels))
 
     # Prepare the worker pool
     logger.debug("Starting up multiprocessing pool (processes={0})"
@@ -139,21 +163,27 @@ def run(params_config, features_path, value_labels, scoring, folds,
     report.write("- Date: {0}\n".format(datetime.datetime.now().isoformat()))
     report.write("- Observations: {0}\n".format(len(value_labels)))
     report.write("- Labels: {0}\n".format(json.dumps(list(possible_labels))))
-    report.write("- Scoring: {0}\n".format(scoring))
+    report.write("- Statistic: {0} ({1})\n"
+                 .format('.'.join(repr(s) if " " in s else s
+                                  for s in stat_keys),
+                         "maximize" if maximize else "minimize"))
     report.write("- Folds: {0}\n".format(folds))
     report.write("\n")
 
-    # For each estimator and paramset, submit the job.
+    # For each estimator and paramset, submit the cross_validate method
+    # with only 1 process.  We'll do our own parallelization.
     cv_result_sets = defaultdict(lambda: [])
-    for name, estimator, param_grid in _estimator_param_grid(params_config):
+    for name, Model, param_grid in _model_param_grid(params_config):
         logger.debug("Submitting jobs for {0}:".format(name))
         for params in param_grid:
             logger.debug("\tsubmitting {0}..."
-                         .format(format_params(params)))
-            result = pool.apply_async(_cross_validate,
-                                      [value_labels, estimator, params],
-                                      {'cv_timeout': cv_timeout,
-                                       'scoring': scoring, 'folds': folds})
+                         .format(model_util.format_params(params)))
+
+            result = pool.apply_async(
+                _cross_validate,
+                [features, value_labels, Model, params, additional_params],
+                {'cv_timeout': cv_timeout, 'stat_keys': stat_keys,
+                 'folds': folds})
             cv_result_sets[name].append((params, result))
 
     # Barrier synchronization
@@ -162,40 +192,37 @@ def run(params_config, features_path, value_labels, scoring, folds,
     grid_scores = []
     for name, param_results in cv_result_sets.items():
         for params, result in param_results:
-            scores = result.get()  # This is a line that blocks
-            grid_scores.append((name, params, scores.mean(), scores.std()))
+            statistic = result.get()  # This is a line that blocks
+            grid_scores.append((name, params, statistic))
 
     # Write the rest of the report!  First, print the top 10 combinations
     report.write("# Top scoring configurations\n")
-    logger.info("# Top scoring configurations\n")
-    grid_scores.sort(key=lambda gs: gs[2], reverse=True)
+    logger.info("# Top scoring configurations")
+    grid_scores.sort(key=lambda gs: gs[2], reverse=maximize)
     table = tabulate(
-        ((name, round(mean_score, 3), round(std_score, 3),
-          format_params(params))
-         for name, params, mean_score, std_score in
-         grid_scores[:10]),
-        headers=["model", "mean(scores)", "std(scores)", "params"],
+        ((name, round(statistic, 4),
+          model_util.format_params(params))
+         for name, params, statistic in grid_scores[:10]
+         if statistic is not None),
+        headers=["model", "statistic", "params"],
         tablefmt="pipe"
     )
-    report.write(table + "\n")
-    report.write("\n")
-    logger.info(table + "\n\n")
+    report.write(table + "\n\n")
+    logger.info("\n" + table)
 
     # Now print out scores for each model.
     report.write("# Models\n")
     for name, param_results in cv_result_sets.items():
         report.write("## {0}\n".format(name))
 
-        param_scores = ((p, r.get()) for p, r in param_results)
-        param_stats = [(p, s.mean(), s.std()) for p, s in param_scores]
-        param_stats.sort(key=lambda v: v[1], reverse=True)
+        param_statistics = [(p, r.get()) for p, r in param_results]
+        param_statistics.sort(key=lambda v: v[1], reverse=maximize)
 
         table = tabulate(
-            ((round(mean_score, 3), round(std_score, 3),
-              format_params(params))
-             for params, mean_score, std_score in
-             param_stats),
-            headers=["mean(scores)", "std(scores)", "params"],
+            ((round(statistic, 4), model_util.format_params(params))
+             for params, statistic in param_statistics
+             if statistic is not None),
+            headers=["statistic", "params"],
             tablefmt="pipe"
         )
         report.write(table + "\n")
@@ -204,60 +231,62 @@ def run(params_config, features_path, value_labels, scoring, folds,
     report.close()
 
 
-def format_params(doc):
-    return ", ".join("{0}={1}".format(k, json.dumps(v))
-                     for k, v in doc.items())
-
-
-def _estimator_param_grid(params_config):
+def _model_param_grid(params_config):
     for name, config in params_config.items():
         try:
-            EstimatorClass = yamlconf.import_module(config['class'])
-            estimator = EstimatorClass()
+            Model = yamlconf.import_module(config['class'])
         except Exception:
-            logger.warn("Could not load estimator {0}"
+            logger.warn("Could not load model {0}"
                         .format(config['class']))
             logger.warn("Exception:\n" + traceback.format_exc())
             continue
 
-        if not hasattr(estimator, "fit"):
-            logger.warn("Estimator {0} does not have a fit() method."
+        if not hasattr(Model, "train"):
+            logger.warn("Model {0} does not have a train() method."
                         .format(config['class']))
             continue
 
         param_grid = grid_search.ParameterGrid(config['params'])
 
-        yield name, estimator, param_grid
+        yield name, Model, param_grid
 
 
-def _cross_validate(value_labels, estimator, params, scoring="roc_auc",
+def _cross_validate(features, value_labels, Model, params, additional_params,
+                    stat_keys=['roc_auc', 'micro'],
                     folds=5, cv_timeout=None, verbose=False):
 
     start = time.time()
-    feature_values, labels = (list(vect) for vect in zip(*value_labels))
-    estimator.set_params(**params)
 
     try:
-        logger.debug("Running cross-validation for " +
-                     "{0} with timeout of {1} seconds"
-                     .format(estimator.__class__.__name__, cv_timeout))
-        with Timeout(cv_timeout):
-            scores = cross_validation.cross_val_score(
-                estimator, feature_values,
-                labels, scoring=scoring,
-                cv=folds)
+        logger.debug("Running cross-validation for {0}"
+                     .format(Model.__name__) +
+                     " with timeout of {1} seconds".format(cv_timeout)
+                     if cv_timeout is not None else "")
+        model_params = dict(additional_params)
+        model_params.update(params)
+        model = Model(features, version=None, **model_params)
+        if cv_timeout is not None:
+            with Timeout(cv_timeout):
+                stats = model.cross_validate(
+                    value_labels, processes=1, folds=folds)
+        else:
+            stats = model.cross_validate(
+                value_labels, processes=1, folds=folds)
+
+        statistic = util.stat_lookup(stats, stat_keys)
 
         duration = time.time() - start
-        logger.debug("Cross-validated {0} with {1} in {2} minutes: {3} ({4})"
-                     .format(estimator.__class__.__name__,
-                             format_params(params),
+        logger.debug("Cross-validated {0} with {1} in {2} minutes: {3}={4}"
+                     .format(Model.__name__,
+                             model_util.format_params(params),
                              round(duration / 60, 3),
-                             round(scores.mean(), 3),
-                             round(scores.std(), 3)))
-        return scores
+                             '.'.join(repr(s) if " " in s else s
+                                      for s in stat_keys),
+                             round(statistic, 4)))
+        return statistic
 
     except Exception:
         logger.warn("Could not cross-validate estimator {0}"
-                    .format(estimator.__class__.__name__))
+                    .format(Model.__name__))
         logger.warn("Exception:\n" + traceback.format_exc())
-        return numpy.array([0] * folds)
+        return None

@@ -1,6 +1,5 @@
-
 LogisticRegression:
-  class: sklearn.linear_model.LogisticRegression
+  class: revscoring.scoring.models.LogisticRegression
   params:
     penalty: ["l1", "l2"]
     C: [0.1, 1, 10]

@@ -1,7 +1,7 @@
 """
 A collection of Random Forest type classifier models.
 
-.. autoclass:: revscoring.scorer_models.RF
+.. autoclass:: revscoring.scoring.models.RandomForest
     :members:
     :member-order:
 """

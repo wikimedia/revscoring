@@ -1,7 +1,7 @@
 """
 A collection of Gradient Boosting type classifier models.
 
-.. autoclass:: revscoring.scorer_models.GradientBoosting
+.. autoclass:: revscoring.scoring.models.GradientBoosting
     :members:
     :member-order:
 """
