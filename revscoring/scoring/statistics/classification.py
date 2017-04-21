@@ -91,8 +91,8 @@ class MicroMacroStat(dict):
                     for lstats in label_stats.values()) /
                 sum(lstats.trues for lstats in label_stats.values()))
         except Exception as e:
-            logging.warn("Could not generate micro-average of {0}: {1}"
-                         .format(stat_name, str(e)))
+            logger.warn("Could not generate micro-average of {0}: {1}"
+                        .format(stat_name, str(e)))
             self['micro'] = None
 
         try:
@@ -101,8 +101,8 @@ class MicroMacroStat(dict):
                     for lstats in label_stats.values()) /
                 len(label_stats))
         except Exception as e:
-            logging.warn("Could not generate macro-average of {0}: {1}"
-                         .format(stat_name, str(e)))
+            logger.warn("Could not generate macro-average of {0}: {1}"
+                        .format(stat_name, str(e)))
             self['macro'] = None
 
         self['labels'] = {label: lstats.get_stat(stat_name)

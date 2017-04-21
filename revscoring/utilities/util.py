@@ -1,12 +1,15 @@
 import base64
 import getpass
 import json
+import logging
 import pickle
 import random
 import signal
 import sys
 
 from nose.tools import nottest
+
+logger = logging.getLogger(__name__)
 
 DECODERS = {
     'int': lambda v: int(v),
@@ -56,7 +59,7 @@ def read_labels_and_population_rates(labels_str, label_weights_strs,
                 json.loads(s) for s in label_weights_str.split("=", 1))
             label_weights[label] = weight
     else:
-        label_weights = {}
+        label_weights = None
 
     if pop_rates_strs is None:
         population_rates = None
@@ -86,9 +89,18 @@ def train_test_split(observations, test_prop=0.25):
     return train_set, test_set
 
 
-def dict_lookup(d, keys):
+def stat_lookup(d, keys):
     for key in keys:
-        d = d[key]
+        try:
+            d = d[key]
+        except KeyError as e:
+            if key in ("true", "false"):
+                d = d[key == 'true']
+            else:
+                try:
+                    d = d[int(key)]
+                except ValueError:
+                    raise e
     return d
 
 
@@ -101,20 +113,22 @@ def _parse_statistic_path_string(string):
     buf = []
     for part in parts:
         if buf:
-            if part[-1] in ('"', "'") and part[-1] == buff[0][0]:
-                    yield (''.join(buff + [part])).strip("'\"")
-                    buf = []
+            if part[-1] in ('"', "'") and part[-1] == buf[0][0]:
+                yield (''.join(buf + [part])).strip("'\"")
+                buf = []
             else:
-                buf.append(part)
+                buf.append(part + ".")
         elif part[0] in ('"', "'"):
             if part[-1] in ('"', "'") and part[0] == part[-1]:
                 yield part.strip("'\"")
             else:
-                buf.append(part)
+                buf.append(part + ".")
+        else:
+            yield part
 
     if buf:
         raise ValueError("Parsing error unmatching quotes {0}"
-                         .format(''.join(buf))
+                         .format(''.join(buf)))
 
 
 class Timeout:

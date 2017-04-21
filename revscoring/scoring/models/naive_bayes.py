@@ -1,15 +1,15 @@
 """
 A collection of Naive Bayes type classifier models.
 
-.. autoclass:: revscoring.scorer_models.GaussianNB
+.. autoclass:: revscoring.scoring.models.GaussianNB
     :members:
     :member-order:
 
-.. autoclass:: revscoring.scorer_models.MultinomialNB
+.. autoclass:: revscoring.scoring.models.MultinomialNB
     :members:
     :member-order:
 
-.. autoclass:: revscoring.scorer_models.BernoulliNB
+.. autoclass:: revscoring.scoring.models.BernoulliNB
     :members:
     :member-order:
 """

@@ -1,7 +1,7 @@
 from nose.tools import eq_
 
 from ....features import Feature
-from ..model import Classifier, LearnedModel, Model
+from ..model import Classifier, Learned, Model, ThresholdClassifier
 
 
 def test_model():
@@ -23,7 +23,7 @@ def test_from_config():
 
 
 def test_learned_model():
-    model = LearnedModel([Feature("foo")])
+    model = Learned([Feature("foo")])
     eq_(model.trained, None)
 
 

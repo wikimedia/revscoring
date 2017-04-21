@@ -1,14 +1,8 @@
 """
-.. autoclass:: revscoring.Model
+.. autoclass:: revscoring.scoring.models.sklearn.Classifier
     :members:
 
-.. autoclass:: revscoring.scoring.LearnedModel
-    :members:
-
-.. autoclass:: revscoring.scoring.Classifier
-    :members:
-
-.. autoclass:: revscoring.scoring.ThresholdClassifier
+.. autoclass:: revscoring.scoring.models.sklearn.ThresholdClassifier
     :members:
 """
 import logging
@@ -84,14 +78,13 @@ class Classifier(model.Classifier, model.Model):
             raise ValueError("Only one label present in the training set {0}"
                              .format(unique_labels))
 
-        if self.label_weights is not None:
-            sample_weight = [self.label_weights.get(l, 1) for l in labels]
-        else:
-            sample_weight = None
+        fit_kwargs = {}
+        if self.label_weights:
+            fit_kwargs['sample_weight'] = [
+                self.label_weights.get(l, 1) for l in labels]
 
         # fit the esitimator
-        self.estimator.fit(scaled_fv_vectors, labels,
-                           sample_weight=sample_weight)
+        self.estimator.fit(scaled_fv_vectors, labels, **fit_kwargs)
         self.trained = time.time()
 
         return {'seconds_elapsed': time.time() - start}

@@ -125,6 +125,9 @@ class ThresholdOptimization(dict):
                         for t, lstats in threshold_statistics
                         if lstats.get_stat(self.cond_stat) <= self.cond_value]
 
+        if not filtered:
+            return None
+
         if self.maximize:
             return max(filtered)[0]
         else:
