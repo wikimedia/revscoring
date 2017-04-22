@@ -14,6 +14,10 @@ Naive Bayes
 +++++++++++
 .. automodule:: revscoring.scoring.models.naive_bayes
 
+Linear Regression
++++++++++++++++++
+.. automodule:: revscoring.scoring.models.linear
+
 Support Vector
 ++++++++++++++
 .. automodule:: revscoring.scoring.models.svc
