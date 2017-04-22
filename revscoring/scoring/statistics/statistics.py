@@ -2,6 +2,8 @@
 .. autoclass:: revscoring.scoring.Statistics
     :members:
     :member-order:
+
+.. autofunc:: revscoring.scoring.statistics.parse_pattern
 """
 
 import logging
@@ -93,6 +95,9 @@ class Statistics(dict):
 
 
 def parse_pattern(string):
+    """
+    Parse a statistic lookup pattern
+    """
     return list(_parse_pattern(string))
 
 
