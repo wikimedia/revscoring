@@ -9,28 +9,30 @@ strategies.
 Key Features
 ------------
 
-Scorer Models
-+++++++++++++
-:class:`~revscoring.Model`s are the core of
+Scoring Models
+++++++++++++++
+Scoring :class:`~revscoring.Model` are the core of
 the `revscoring` system.  Provide a simple interface with complex
-internals.  Most commonly, a :class:`revscoring.scoring.LearnedModel`
+internals.  Most commonly, a :class:`~revscoring.scoring.models.Learned`
 (Machine Learned) is
-:meth:`~revscoring.scoring.LearnedModel.train`'d and
+:meth:`~revscoring.scoring.models.Learned.train`'d and
 :meth:`~revscoring.Model.test`'d on
 labeled data to provide a basis for scoring.
 We currently support
-:mod:`Support Vector Classifier <revscoring.scoring.models.svc>`,
-:mod:`Random Forest <revscoring.scoring.models.svc>`, and
-:mod:`Naive Bayes <revscoring.scoring.models.svc>`
+:mod:`Gradient Boosting <revscoring.scoring.models.gradient_boosting>`,
+:mod:`Random Forest <revscoring.scoring.models.random_forest>`,
+:mod:`Linear Regression <revscoring.scoring.models.linear>`,
+:mod:`Support Vector Classifier <revscoring.scoring.models.svc>`, and
+:mod:`Naive Bayes <revscoring.scoring.models.naive_bayes>`
 type models. See :mod:`revscoring.scoring`
 
 Example:
     >>> import mwapi
-    >>> from revscoring import ScorerModel
+    >>> from revscoring import Model
     >>> from revscoring.extractors import api
     >>>
     >>> with open("models/enwiki.damaging.linear_svc.model") as f:
-    ...     model = ScorerModel.load(f)
+    ...     model = Model.load(f)
     ...
     >>> extractor = api.Extractor(mwapi.Session(host="https://en.wikipedia.org",
     ...                                         user_agent="revscoring demo"))

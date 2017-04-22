@@ -2,7 +2,7 @@
 These meta-datasources operate on :class:`revscoring.Datasource`'s that
 return `list`'s and `tuple`'s
 
-.. autoclass:: revscoring.datasources.meta.index
+.. autoclass:: revscoring.datasources.meta.indexable.index
 
 """
 from ..datasource import Datasource

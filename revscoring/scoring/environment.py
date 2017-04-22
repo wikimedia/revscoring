@@ -13,6 +13,9 @@ class Environment(dict):
               'python_version', 'release']
 
     def __init__(self):
+        """
+        Construct an environment snapshot.
+        """
         self['revscoring_version'] = __version__
         self['platform'] = platform.platform()
         self['machine'] = platform.machine()
@@ -28,6 +31,15 @@ class Environment(dict):
         self['release'] = platform.release()
 
     def check(self, raise_exception=False):
+        """
+        Compare the current environment with the snapshot and log warnings
+        for issues.
+
+        :Parameters:
+            raise_exception : `bool`
+                If True, raise and exception if the environment has any
+                mismatch
+        """
         warnings = []
         if self['revscoring_version'] != __version__:
             warnings.append(_build_warning(
@@ -39,13 +51,13 @@ class Environment(dict):
                     field, self[field], getattr(platform, field)()))
 
         if len(warnings) > 0:
-            message = ("Differences between the environment used to " +
-                       "train the ScorerModel and the current " +
-                       "environment were detected:" +
-                       "\n".join(" - {0}".format(w for w in warnings)))
-            logger.warn(message)
-
-            if raise_exception:
+            message = ("Differences between the current environment " +
+                       "and the environment in which the model was " +
+                       "constructed environment were detected:\n" +
+                       "\n".join(" - {0}".format(w) for w in warnings))
+            if not raise_exception:
+                logger.warn(message)
+            else:
                 raise RuntimeError(message)
 
     def format_json(self, fields=None):
@@ -59,5 +71,5 @@ class Environment(dict):
 
 
 def _build_warning(name, old, new):
-    return "{0} {1!r} mismatch with training environment {2!r}" \
+    return "{0} {1!r} mismatch with original environment {2!r}" \
            .format(name, old, new)

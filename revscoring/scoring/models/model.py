@@ -1,14 +1,17 @@
 """
+All scoring models are an implementation of :class:`revscoring.Model`.
+
+
 .. autoclass:: revscoring.Model
     :members:
 
-.. autoclass:: revscoring.scoring.Learned
+.. autoclass:: revscoring.scoring.models.Learned
     :members:
 
-.. autoclass:: revscoring.scoring.Classifier
+.. autoclass:: revscoring.scoring.models.Classifier
     :members:
 
-.. autoclass:: revscoring.scoring.ThresholdClassifier
+.. autoclass:: revscoring.scoring.models.ThresholdClassifier
     :members:
 """
 import logging
@@ -94,7 +97,18 @@ class Model:
 
     def format(self, *args, formatting="str", **kwargs):
         """
-        Returns formatted information about the model.
+        Formats a representation of the information about a model
+        including information about the environment in which it was constructed
+        and statistics (if available) about its fitness.
+
+        :Parameters:
+            formatting : "json" or "str"
+                Which output formatting do you want?  "str" returns something
+                nice to show on the command-line.  "json" returns something
+                that will pass through :func:`json.dump` without error.
+            ndigits : int
+                How many digits should statistics and other information be
+                rounded to.
         """
         if formatting == "str":
             return self.format_str(*args, **kwargs)
@@ -103,26 +117,26 @@ class Model:
         else:
             raise ValueError("Unknown formatting {0!r}".format(formatting))
 
-    def format_str(self, ndigits=3):
-        formatted = self.format_basic_info_str()
+    def format_str(self, *args, **kwargs):
+        formatted = self.format_basic_info_str(*args, **kwargs)
         formatted += '\n'
-        formatted += self.format_environment_str()
+        formatted += self.format_environment_str(*args, **kwargs)
         formatted += '\n'
-        formatted += self.format_stats_str(ndigits=ndigits)
+        formatted += self.format_stats_str(*args, **kwargs)
         return formatted
 
-    def format_basic_info_str(self):
+    def format_basic_info_str(self, *args, **kwargs):
         formatted = "{0}({1}):\n".format(
             self.__class__.__name__, util.format_params(self.params))
         formatted += " - version: {0}\n".format(self.version)
         return formatted
 
-    def format_environment_str(self):
+    def format_environment_str(self, *args, **kwargs):
         formatted = "Enviornment:\n"
         formatted += util.tab_it_in(self.environment.format_str())
         return formatted
 
-    def format_stats_str(self, ndigits=3):
+    def format_stats_str(self, *args, ndigits=3, **kwargs):
         if self.statistics is NotImplemented:
             return ""
         elif not self.statistics.fitted:
@@ -130,23 +144,23 @@ class Model:
         else:
             formatted = "Statistics:\n"
             formatted += util.tab_it_in(
-                self.statistics.format_str(ndigits=ndigits))
+                self.statistics.format_str(*args, **kwargs))
             return formatted
 
-    def format_json(self, ndigits=3):
+    def format_json(self, *args, **kwargs):
         return util.normalize_json({
             'type': self.__class__.__name__,
             'version': self.version,
             'params': self.params,
             'environment': self.environment.format_json(),
-            'statistics': self.format_stats_json(ndigits)
+            'statistics': self.format_stats_json(*args, **kwargs)
         })
 
-    def format_stats_json(self, ndigits=3):
+    def format_stats_json(self, *args, **kwargs):
         if not self.statistics.fitted:
             return None
         else:
-            return self.statistics.format_json(ndigits=ndigits)
+            return self.statistics.format_json(*args, **kwargs)
 
     @classmethod
     def load(cls, f, error_on_env_check=False):
@@ -191,10 +205,10 @@ class Learned(Model):
 
     def __init__(self, *args, scale=False, center=False, **kwargs):
         """
-        A machine learned model used to score a revision based on a set of
-        features.
-
-        Machine learned models are trained and tested against labeled data.
+        A machine learned model.  Beyond :class:`revscoring.Model`, this
+        "Learned" models implement
+        :func:`~revscoring.scoring.models.Learned.fit` and
+        :func:`~revscoring.scoring.models.Learned.cross_validate`.
         """
         super().__init__(*args, **kwargs)
         self.trained = None
@@ -209,12 +223,24 @@ class Learned(Model):
             'center': center
         })
 
+    def train(self, values_labels):
+        """
+        Fits the model using labeled data by learning its shape.
+
+        :Parameters:
+            values_labels : [( `<feature_values>`, `<label>` )]
+                an iterable of labeled data Where <values_labels> is an ordered
+                collection of predictive values that correspond to the
+                :class:`revscoring.Feature` s provided to the constructor
+        """
+        raise NotImplementedError()
+
     def fit_scaler_and_transform(self, fv_vectors):
         """
         Fits the internal scale to labeled data.
 
         :Parameters:
-            values_scores : `iterable` (( `<feature_values>`, `<label>` ))
+            fv_vectors : `iterable` (( `<feature_values>`, `<label>` ))
                 an iterable of labeled data Where <values_labels> is an ordered
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
@@ -255,7 +281,22 @@ class Learned(Model):
         return doc
 
     def cross_validate(self, values_labels, folds=10, processes=1):
+        """
+        Trains and tests the model agaists folds of labeled data.
 
+        :Parameters:
+            values_labels : [( `<feature_values>`, `<label>` )]
+                an iterable of labeled data Where <values_labels> is an ordered
+                collection of predictive values that correspond to the
+                `Feature` s provided to the constructor
+            folds : `int`
+                Number of folds to train/test with.  Folds must be >= 2
+            processes : `int`
+                The number of parallel processes to run in cross-validation.
+                When set to 1, cross-validation will run in the parent thread.
+                When set to 2 or greater, a :class:`multiprocessing.Pool` will
+                be greated.
+        """
         folds_i = KFold(len(values_labels), n_folds=folds, shuffle=True,
                         random_state=0)
         if processes == 1:

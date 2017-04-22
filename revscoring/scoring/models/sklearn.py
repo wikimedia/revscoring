@@ -1,8 +1,10 @@
 """
+Implements the basics of all sklearn based models.
+
 .. autoclass:: revscoring.scoring.models.sklearn.Classifier
     :members:
 
-.. autoclass:: revscoring.scoring.models.sklearn.ThresholdClassifier
+.. autoclass:: revscoring.scoring.models.sklearn.ProbabilityClassifier
     :members:
 """
 import logging

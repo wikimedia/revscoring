@@ -41,25 +41,25 @@
         "micro": 0.895,
         "macro": 0.912,
         "labels": {"A": 0.950, "B": 0.854, "C": 0.902}
-    }
-},
-"thresholds": {
-    "A": [
-        {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
-        {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
-        {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
-        ...
-    ],
-    "B": [
-        {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
-        {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
-        {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
-        ...
-    ],
-    "C": [
-        {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
-        {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
-        {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
-        ...
-    ]
+    },
+  "thresholds": {
+      "A": [
+          {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
+          {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
+          {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
+          ...
+      ],
+      "B": [
+          {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
+          {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
+          {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
+          ...
+      ],
+      "C": [
+          {"threshold": 0.00, "precision": ..., "recall": ..., "f1": ...},
+          {"threshold": 0.05, "precision": ..., "recall": ..., "f1": ...},
+          {"threshold": 0.10, "precision": ..., "recall": ..., "f1": ...},
+          ...
+      ]
+  }
 }

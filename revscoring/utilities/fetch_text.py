@@ -1,28 +1,31 @@
 """
-Gets the text for a set of observations.  Will create a new field called "text"
-with the content corresponding to the "rev_id".
+``revscoring extract -h``
+::
 
-Usage:
-    fetch_text --host=<url>
-               [--deleted-1st]
-               [--input=<path>] [--output=<path>]
-               [--threads=<num>]
-               [--verbose] [--debug]
+    Gets the text for a set of observations.  Will create a new field called "text"
+    with the content corresponding to the "rev_id".
 
-Options:
-    -h --help        Print this documentation
-    --host=<url>     The host URL of a MediaWiki installation to extract
-                     text from
-    --deleted-1st    Try to look up text in "deletedrevisions" first.  This is
-                     more performant when looking up text that will be (mostly)
-                     deleted, but it will have no effect on output.
-    --input=<path>   Path to a file containing observations [default: <stdin>]
-    --output=<path>  Path to a file to write extended observations
-                     [default: <stdout>]
-    --threads=<num>  The number of parallel requests to submit to the MW api
-                     [default: <cpu-count>]
-    --verbose        Print dots and stuff to note progress
-    --debug          Print debug logging
+    Usage:
+        fetch_text --host=<url>
+                   [--deleted-1st]
+                   [--input=<path>] [--output=<path>]
+                   [--threads=<num>]
+                   [--verbose] [--debug]
+
+    Options:
+        -h --help        Print this documentation
+        --host=<url>     The host URL of a MediaWiki installation to extract
+                         text from
+        --deleted-1st    Try to look up text in "deletedrevisions" first.  This is
+                         more performant when looking up text that will be (mostly)
+                         deleted, but it will have no effect on output.
+        --input=<path>   Path to a file containing observations [default: <stdin>]
+        --output=<path>  Path to a file to write extended observations
+                         [default: <stdout>]
+        --threads=<num>  The number of parallel requests to submit to the MW api
+                         [default: <cpu-count>]
+        --verbose        Print dots and stuff to note progress
+        --debug          Print debug logging
 """
 import logging
 import sys
