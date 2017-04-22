@@ -1,3 +1,24 @@
+"""
+Classification statistics can be generated for "Classifiers" -- models
+that produce factors (aka levels) as an ouput.  E.g. True and False or
+"A", "B", or "C".
+
+.. autoclass:: revscoring.scoring.statistics.Classification
+    :members:
+    :member-order:
+
+.. autoclass:: revscoring.scoring.statistics.classification.MicroMacroStat
+    :members:
+    :member-order:
+
+.. autoclass:: revscoring.scoring.statistics.classification.LabelStatistics
+    :members:
+    :member-order:
+
+.. autoclass:: revscoring.scoring.statistics.classification.ScaledClassificationMatrix
+    :members:
+    :member-order:
+"""  # noqa
 import logging
 from collections import defaultdict
 
@@ -15,12 +36,38 @@ class Classification(Statistics):
 
     def __init__(self, *args, prediction_key="prediction",
                  labels=None, population_rates=None, **kwargs):
+        """
+        Constructs a set of classification statistics
+
+        :Parameters:
+            prediction_key : `str`
+                A key into a score doc under which a scalar decision value
+                can be found for each potential class.
+            labels : [ `mixed` ]
+                A sequence of labels that are in-order.  Order is used when
+                formatting statistical outputs.
+            population_rates : `dict`
+                A mapping of label classes with float representing the rate
+                that each class occurs in the target population.  Rates
+                observed in the sample will be scaled to match the population
+                rates.  This is useful when training a model with different
+                sample rates than the target population rates.
+        """
         super().__init__()
         self.prediction_key = prediction_key
         self.labels = labels
         self.population_rates = population_rates or {}
 
     def fit(self, score_labels):
+        """
+        Fit to scores and labels.
+
+        :Parameters:
+            score_labels : [( `dict`, `mixed` )]
+                A collection of scores-label pairs generated using
+                :class:`revscoring.Model.score`.  Note that fitting is usually
+                done using data withheld during model training
+        """
         super().fit(score_labels)
         if self.labels is None:
             self.labels = sorted(set(l for s, l in score_labels))
@@ -42,7 +89,7 @@ class Classification(Statistics):
                 continue
             self[stat_name] = MicroMacroStat(stat_name, label_stats)
 
-    def format_str(self, fields=None, ndigits=3):
+    def format_str(self, fields=None, ndigits=3, **kwargs):
         """
         Formats `fields` into a table and rounding to at most `ndigits`.
         """
@@ -64,7 +111,7 @@ class Classification(Statistics):
 
         return formatted
 
-    def format_json(self, fields=None, ndigits=3):
+    def format_json(self, fields=None, ndigits=3, **kwargs):
         """
         Formats a json-able dictionary including `fields` and rounding to
         at most `ndigits`.
@@ -84,6 +131,21 @@ class Classification(Statistics):
 class MicroMacroStat(dict):
 
     def __init__(self, stat_name, label_stats):
+        """
+        Constructs a micro-average and macro-average for a specific statistic
+        based on the name.  Works like a dictionary with fields
+
+         * micro : the micro-average
+         * macro : the macro-average
+         * labels : a mapping of labels to their individual statistics
+
+        :Parameters:
+            stat_name : `str`
+                The name of a "field" to generate statistics for
+            label_stats : { `mixed`: :class:`~revscoring.scoring.statistics.statistics.LabelStatistics` }
+                A mapping between labels and statistics generated for that
+                label.
+        """  # noqa
         self.stat_name = stat_name
         try:
             self['micro'] = (
@@ -108,7 +170,7 @@ class MicroMacroStat(dict):
         self['labels'] = {label: lstats.get_stat(stat_name)
                           for label, lstats in label_stats.items()}
 
-    def format_str(self, labels, ndigits=3):
+    def format_str(self, labels, ndigits=3, **kwargs):
         formatted = "{0} (micro={1}, macro={2}):\n" \
                      .format(self.stat_name,
                              util.round(self['micro'], ndigits=ndigits),
@@ -134,6 +196,18 @@ class ScaledClassificationMatrix:
         """
         Constructs a classification matrix and scales the values based on a
         population rate.
+
+        :Parameters:
+            y_preds : [ `bool` ]
+                A sequence of boolean values representing whether or not the
+                target label was predicted
+            y_trues : [ `bool` ]
+                A sequence of boolean values representing whether or not the
+                traget label was the supervised label provided
+            population_rate : `float`
+                The rate at which this label occurs in the population.  If
+                not provided, the sample rate will be assumed to reflect the
+                population rate.
         """
         self.population_rate = population_rate
 
@@ -190,16 +264,20 @@ class LabelStatistics(ScaledClassificationMatrix):
               'recall', '!recall',
               'accuracy', 'fpr',
               'f1', '!f1']
+    """
+    The set of available fields that can be requested via
+    :func:`~revscoring.scoring.statistics.classification.LabelStatistics.get_stat`.
+    """  # noqa
 
     def __init__(self, y_pred, y_trues, population_rate=None):
         """
-        Constructs a basic set of statistics about a classification matrix.
+        Construct a basic set of statistics about a classification matrix.
 
         :Parameters:
-            y_pred : `iterable` ( `bool` )
+            y_pred : [ `bool` ]
                 A sequence of predictions where `True` represents a matched
                 observation for a specific label.
-            y_trues : `iterable` ( `bool` )
+            y_trues : [ `bool` ]
                 A sequence of labels where `True` represents a positive
                 observation.
             population_rate : `float`
@@ -210,6 +288,9 @@ class LabelStatistics(ScaledClassificationMatrix):
         super().__init__(y_pred, y_trues, population_rate=population_rate)
 
     def format(self, *args, formatting="str", **kwargs):
+        """
+        Format the set of statistics in a useful way.
+        """
         if formatting == "str":
             return self.format_str(*args, **kwargs)
         elif formatting == "json":
@@ -217,17 +298,21 @@ class LabelStatistics(ScaledClassificationMatrix):
         else:
             raise ValueError("Unknown formatting {0!r}".format(formatting))
 
-    def format_json(self, fields=None, ndigits=3):
+    def format_json(self, fields=None, ndigits=3, **kwargs):
         fields = fields or self.FIELDS
         return {f: util.round(self.get_stat(f), ndigits)
                 for f in fields}
 
-    def format_str(self, fields=None, ndigits=3):
+    def format_str(self, fields=None, ndigits=3, **kwargs):
         fields = fields or self.FIELDS
         table_data = [[util.round(self.get_stat(f), ndigits) for f in fields]]
         return tabulate.tabulate(table_data, headers=fields)
 
     def get_stat(self, stat_name):
+        """
+        Gets a statistic based on a name.  E.g. "!recall" will call the right
+        method.
+        """
         method_name = stat_name.replace("!", "_")
 
         if not hasattr(self, method_name):
@@ -344,7 +429,7 @@ class Counts(dict):
         self['predictions'] = {label: dict(pred)
                                for label, pred in predictions.items()}
 
-    def format_str(self, labels):
+    def format_str(self, labels, **kwargs):
         formatted = "counts (n={0}):\n".format(self['n'])
         table_data = [
             [repr(label), self['labels'][label], '-->'] +
@@ -357,7 +442,7 @@ class Counts(dict):
         formatted += util.tab_it_in(table_str)
         return formatted
 
-    def format_json(self):
+    def format_json(self, *args, **kwargs):
         return self
 
 
@@ -369,7 +454,7 @@ class Rates(dict):
         if population_rates:
             self['population'] = population_rates
 
-    def format_str(self, labels, ndigits=3):
+    def format_str(self, labels, ndigits=3, **kwargs):
         formatted = "rates:\n"
         table_data = [
             [group] + [util.round(self[group].get(label), ndigits)
@@ -381,7 +466,7 @@ class Rates(dict):
         formatted += util.tab_it_in(table_str)
         return formatted
 
-    def format_json(self, ndigits=3):
+    def format_json(self, ndigits=3, **kwargs):
         return {group: {label: util.round(rate, ndigits)
                         for label, rate in lrates.items()}
                 for group, lrates in self.items()}
