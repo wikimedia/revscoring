@@ -18,8 +18,10 @@ Abstract base class
 .. automodule:: revscoring.scoring.statistics.statistics
 
 """
+from .statistics import parse_pattern
 from .classification import Classification
 from .threshold_classification import (ThresholdClassification,
                                        ThresholdOptimization)
 
-__all__ = [Classification, ThresholdClassification, ThresholdOptimization]
+__all__ = [parse_pattern, Classification,
+           ThresholdClassification, ThresholdOptimization]

@@ -71,7 +71,7 @@ from . import util
 from ..about import __version__
 from ..dependencies import solve
 from ..scoring.models import util as model_util
-from ..scoring.statistics import ThresholdOptimization
+from ..scoring.statistics import ThresholdOptimization, parse_pattern
 from .util import Timeout, read_observations
 
 logger = logging.getLogger(__name__)
@@ -102,11 +102,11 @@ def main(argv=None):
         [(list(solve(features, cache=ob['cache'])), ob[label_name])
          for ob in observations]
 
-    stat_keys = util.parse_statistic_path_string(args['<statistic>'])
+    statistic_pattern = args['<statistic>']
     additional_params = {}
     try:
         additional_params['threshold_optimizations'] = \
-            [ThresholdOptimization.from_string(stat_keys[0])]
+            [ThresholdOptimization.parse(parse_pattern(statistic_pattern)[0])]
     except ValueError:
         pass
 
@@ -139,14 +139,14 @@ def main(argv=None):
 
     verbose = args['--verbose']
 
-    run(params_config, features, features_path, value_labels, stat_keys,
-        additional_params, maximize, folds, report, processes, cv_timeout,
-        verbose)
+    run(params_config, features, features_path, value_labels,
+            statistic_pattern, additional_params, maximize, folds, report,
+            processes, cv_timeout, verbose)
 
 
-def run(params_config, features, features_path, value_labels, stat_keys,
-        additional_params, maximize, folds, report, processes, cv_timeout,
-        verbose):
+def run(params_config, features, features_path, value_labels,
+        statistic_pattern, additional_params, maximize, folds, report,
+        processes, cv_timeout, verbose):
 
     feature_values, labels = (list(vect) for vect in zip(*value_labels))
 
@@ -164,8 +164,7 @@ def run(params_config, features, features_path, value_labels, stat_keys,
     report.write("- Observations: {0}\n".format(len(value_labels)))
     report.write("- Labels: {0}\n".format(json.dumps(list(possible_labels))))
     report.write("- Statistic: {0} ({1})\n"
-                 .format('.'.join(repr(s) if " " in s else s
-                                  for s in stat_keys),
+                 .format(statistic_pattern,
                          "maximize" if maximize else "minimize"))
     report.write("- Folds: {0}\n".format(folds))
     report.write("\n")
@@ -182,7 +181,8 @@ def run(params_config, features, features_path, value_labels, stat_keys,
             result = pool.apply_async(
                 _cross_validate,
                 [features, value_labels, Model, params, additional_params],
-                {'cv_timeout': cv_timeout, 'stat_keys': stat_keys,
+                {'cv_timeout': cv_timeout,
+                 'statistic_pattern': statistic_pattern,
                  'folds': folds})
             cv_result_sets[name].append((params, result))
 
@@ -252,8 +252,8 @@ def _model_param_grid(params_config):
 
 
 def _cross_validate(features, value_labels, Model, params, additional_params,
-                    stat_keys=['roc_auc', 'micro'],
-                    folds=5, cv_timeout=None, verbose=False):
+                    statistic_pattern, folds=5, cv_timeout=None,
+                    verbose=False):
 
     start = time.time()
 
@@ -273,15 +273,14 @@ def _cross_validate(features, value_labels, Model, params, additional_params,
             stats = model.cross_validate(
                 value_labels, processes=1, folds=folds)
 
-        statistic = util.stat_lookup(stats, stat_keys)
+        statistic = stats.lookup(statistic_pattern)
 
         duration = time.time() - start
         logger.debug("Cross-validated {0} with {1} in {2} minutes: {3}={4}"
                      .format(Model.__name__,
                              model_util.format_params(params),
                              round(duration / 60, 3),
-                             '.'.join(repr(s) if " " in s else s
-                                      for s in stat_keys),
+                             statistic_pattern,
                              round(statistic, 4)))
         return statistic
 

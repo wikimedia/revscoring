@@ -89,48 +89,6 @@ def train_test_split(observations, test_prop=0.25):
     return train_set, test_set
 
 
-def stat_lookup(d, keys):
-    for key in keys:
-        try:
-            d = d[key]
-        except KeyError as e:
-            if key in ("true", "false"):
-                d = d[key == 'true']
-            else:
-                try:
-                    d = d[int(key)]
-                except ValueError:
-                    raise e
-    return d
-
-
-def parse_statistic_path_string(string):
-    return list(_parse_statistic_path_string(string))
-
-
-def _parse_statistic_path_string(string):
-    parts = string.split(".")
-    buf = []
-    for part in parts:
-        if buf:
-            if part[-1] in ('"', "'") and part[-1] == buf[0][0]:
-                yield (''.join(buf + [part])).strip("'\"")
-                buf = []
-            else:
-                buf.append(part + ".")
-        elif part[0] in ('"', "'"):
-            if part[-1] in ('"', "'") and part[0] == part[-1]:
-                yield part.strip("'\"")
-            else:
-                buf.append(part + ".")
-        else:
-            yield part
-
-    if buf:
-        raise ValueError("Parsing error unmatching quotes {0}"
-                         .format(''.join(buf)))
-
-
 class Timeout:
     """
     A context for performing a timeout.
