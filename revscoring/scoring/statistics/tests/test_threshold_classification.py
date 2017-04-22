@@ -21,9 +21,9 @@ balanced_score_labels = \
 
 
 def test_thresholds():
-    recall_at_precision_90 = ThresholdOptimization.from_string(
+    recall_at_precision_90 = ThresholdOptimization.parse(
         "maximum recall @ precision >= 0.9")
-    match_rate_at_recall_90 = ThresholdOptimization.from_string(
+    match_rate_at_recall_90 = ThresholdOptimization.parse(
         "minimum match_rate @ recall >= 0.9")
     natural_thresholds = ThresholdClassification(
         labels=LABELS, population_rates={True: 0.05, False: 0.95},
