@@ -99,7 +99,7 @@ def main(argv=None):
     threshold_optimizations = []
     for pattern in args['--optimization']:
         threshold_optimizations.append(
-            ThresholdOptimization.from_string(pattern))
+            ThresholdOptimization.parse(pattern))
 
     model = ScoringModel(
         features, version=version,
