@@ -6,6 +6,7 @@ def compare_extraction(extractor, examples, counter_examples,
 
     for example in examples:
         wrapped = lwrap + example + rwrap
+        print(extractor.process(wrapped))
         eq_(extractor.process(wrapped), [example])
         eq_(extractor.process("Sentence " + wrapped + " sandwich."), [example])
         eq_(extractor.process("Sentence end " + wrapped + "."), [example])

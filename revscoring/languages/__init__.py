@@ -11,6 +11,11 @@ Languages implement a subset of feature collections (e.g.
 :class:`~revscoring.languages.features.RegexMatches`) based on what
 language assets are available. See :mod:`revscoring.languages.features`.
 
+bengali
+++++++++++
+.. automodule:: revscoring.languages.bengali
+    :members:
+
 dutch
 +++++
 .. automodule:: revscoring.languages.arabic

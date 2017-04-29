@@ -13,6 +13,7 @@ addons:
     - python3-dev
     - enchant
     - aspell-ar
+    - aspell-bn
     - myspell-cs
     - aspell-de
     - myspell-es
