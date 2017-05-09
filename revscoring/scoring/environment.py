@@ -1,16 +1,14 @@
 import logging
 import platform
+from collections import OrderedDict
 
 from ..about import __version__
+from .model_info import ModelInfo
 
 logger = logging.getLogger(__name__)
 
 
-class Environment(dict):
-    FIELDS = ['platform', 'machine', 'version', 'system', 'processor',
-              'python_build', 'python_compiler', 'python_branch',
-              'python_implementation', 'python_revision',
-              'python_version', 'release']
+class Environment(ModelInfo):
 
     def __init__(self):
         """
@@ -60,13 +58,24 @@ class Environment(dict):
             else:
                 raise RuntimeError(message)
 
-    def format_json(self, fields=None):
-        fields = fields or self.FIELDS
-        return {f: self[f] for f in fields}
+    def lookup(self, path):
+        if len(path) == 0:
+            return self
+        else:
+            value = self[path[0]]
+            if len(path) > 1:
+                raise KeyError(path[1])
+            else:
+                return value
 
-    def format_str(self, fields=None):
-        fields = fields or self.FIELDS
-        return "".join(" - {0}: {1!r}\n".format(field, self[field])
+    def format_json(self, path_tree, **kwargs):
+        fields = path_tree.keys() or self.keys()
+        return OrderedDict((f, self[f]) for f in fields)
+
+    def format_str(self, path_tree, **kwargs):
+        fields = path_tree.keys() or self.keys()
+        return "Environment:\n" + \
+               "".join(" - {0}: {1!r}\n".format(field, self[field])
                        for field in fields)
 
 

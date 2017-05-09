@@ -1,23 +1,7 @@
 from ..threshold_classification import (ThresholdClassification,
                                         ThresholdOptimization)
 
-LABELS = [True, False]
-pool = \
-    [({'prediction': i / 100 >= 0.5,
-       'probability': {True: i / 100, False: 1 - (i / 100)}},
-      (False if (i < 50 and i % 10 != 3) or i % 10 == 5 else True))
-     for i in range(0, 101)] + \
-    [({'prediction': i / 100 >= 0.5,
-       'probability': {True: i / 100, False: 1 - (i / 100)}}, False)
-     for i in range(0, 51)] * 39
 
-score_labels = \
-    [(s, l) for (s, l) in pool if l][:51] + \
-    [(s, l) for (s, l) in pool if not l][:1999]
-
-balanced_score_labels = \
-    ([(s, l) for (s, l) in pool if l] * 20)[:1000] + \
-    [(s, l) for (s, l) in pool if not l][:1000]
 
 
 def test_thresholds():

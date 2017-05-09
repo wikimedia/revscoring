@@ -24,8 +24,6 @@ from sklearn.cross_validation import KFold
 from sklearn.preprocessing import RobustScaler
 
 from . import util
-from .. import statistics
-from ...features import vectorize_values
 from ..environment import Environment
 
 logger = logging.getLogger(__name__)
@@ -35,7 +33,8 @@ class Model:
     Statistics = NotImplemented
     SCORE_SCHEMA = NotImplemented
 
-    def __init__(self, features, version=None):
+    def __init__(self, features, version=None, environment=None,
+                 statistics=None):
         """
         A model used to score things
 
@@ -48,16 +47,10 @@ class Model:
         logger.debug("Initializing Model with {0}")
         self.features = tuple(features)
         self.version = version
-        self.environment = Environment()
-        self.statistics = self.__init_stats__()
+        self.environment = environment or Environment()
+        self.statistics = statistics
 
         self.params = {}
-
-    def __init_stats__(self):
-        if self.Statistics is NotImplemented:
-            return NotImplemented
-        else:
-            return self.Statistics()
 
     def score(self, feature_values):
         """
@@ -137,7 +130,7 @@ class Model:
         return formatted
 
     def format_stats_str(self, *args, ndigits=3, **kwargs):
-        if self.statistics is NotImplemented:
+        if self.statistics is None:
             return ""
         elif not self.statistics.fitted:
             return "No stats available\n"
@@ -157,7 +150,7 @@ class Model:
         })
 
     def format_stats_json(self, *args, **kwargs):
-        if not self.statistics.fitted:
+        if self.statistics is None or not self.statistics.fitted:
             return None
         else:
             return self.statistics.format_json(*args, **kwargs)
@@ -328,8 +321,6 @@ class Learned(Model):
 
 
 class Classifier(Learned):
-    Statistics = statistics.Classification
-    PREDICTION_KEY = NotImplemented
 
     def __init__(self, *args, labels=None, population_rates=None, **kwargs):
         self.labels = labels
@@ -356,31 +347,3 @@ class Classifier(Learned):
         doc['params']['labels'] = self.labels
         doc['params']['population_rates'] = self.population_rates
         return doc
-
-    def __init_stats__(self):
-        return self.Statistics(
-            prediction_key=self.PREDICTION_KEY, labels=self.labels,
-            population_rates=self.population_rates)
-
-
-class ThresholdClassifier(Classifier):
-    Statistics = statistics.ThresholdClassification
-    PREDICTION_KEY = NotImplemented
-    DECISION_KEY = NotImplemented
-
-    def __init__(self, *args, max_thresholds=200,
-                 threshold_optimizations=None, **kwargs):
-        self.max_thresholds = max_thresholds
-        self.threshold_optimizations = threshold_optimizations
-        super().__init__(*args, **kwargs)
-
-        self.params.update({
-            'max_thresholds': max_thresholds,
-            'threshold_optimizations': threshold_optimizations
-        })
-
-    def __init_stats__(self):
-        return self.Statistics(
-            prediction_key=self.PREDICTION_KEY, decision_key=self.DECISION_KEY,
-            labels=self.labels, population_rates=self.population_rates,
-            max_thresholds=self.max_thresholds)
