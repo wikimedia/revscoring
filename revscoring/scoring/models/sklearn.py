@@ -11,8 +11,8 @@ import logging
 import time
 
 from . import model, util
-from .. import statistics
 from ...features import vectorize_values
+from ..statistics import Classification
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +35,14 @@ class Classifier(model.Classifier, model.Model):
 
     def __init__(self, features, version=None,
                  labels=None, label_weights=None, population_rates=None,
-                 scale=False, center=False,
+                 scale=False, center=False, statistics=None,
                  estimator=None, **estimator_params):
+        statistics = statistics or Classification(
+            "prediction", labels=labels, population_rates=population_rates)
         super().__init__(
             features, version=version, labels=labels,
-            population_rates=population_rates, scale=scale, center=center)
+            population_rates=population_rates, scale=scale, center=center,
+            statistics=statistics)
         self.label_weights = label_weights
 
         if estimator is None:
@@ -126,7 +129,7 @@ class Classifier(model.Classifier, model.Model):
         return util.normalize_json(doc)
 
 
-class ProbabilityClassifier(model.ThresholdClassifier, Classifier):
+class ProbabilityClassifier(Classifier):
     SCORE_SCHEMA = {
         'title': "Scikit learn-based classifier score with probability",
         'type': "object",
@@ -146,16 +149,13 @@ class ProbabilityClassifier(model.ThresholdClassifier, Classifier):
             }
         }
     }
-    DECISION_KEY = "probability"
-    PREDICTION_KEY = "prediction"
-    Statistics = statistics.ThresholdClassification
 
-    def __init_stats__(self):
-        return self.Statistics(
-            prediction_key=self.PREDICTION_KEY, labels=self.labels,
-            decision_key=self.DECISION_KEY, max_thresholds=self.max_thresholds,
-            threshold_optimizations=self.threshold_optimizations,
-            population_rates=self.population_rates)
+    def __init__(self, *args, statistics=None,
+                 labels=None, population_rates=None, **kwargs):
+        statistics = statistics or Classification(
+            "prediction", decision_key="probability",
+            labels=labels, population_rates=population_rates)
+        super.__init__(self, *args, statistics=statistics, **kwargs)
 
     def score(self, feature_values):
         """

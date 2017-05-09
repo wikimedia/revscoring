@@ -51,11 +51,6 @@ def format_params(doc):
                          for k, v in doc.items())
 
 
-def tab_it_in(string, tabs=1):
-    return "".join("\t" * tabs + "{0}\n".format(line)
-                   for line in string.split("\n"))
-
-
 def balance_weights(labels):
     """
     Generates a mapping of class weights that will re-weight a training set
