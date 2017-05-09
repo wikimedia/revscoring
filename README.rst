@@ -72,6 +72,7 @@ You'll also need to install `enchant <https://en.wikipedia.org/wiki/Enchant_(sof
 dictionaries of the languages you'd like to use.  We recommend the following:
 
 * ``languages.arabic``: aspell-ar
+* ``languages.bengali``: aspell-bn
 * ``languages.czech``: myspell-cs
 * ``languages.dutch``: myspell-nl
 * ``languages.english``: myspell-en-us myspell-en-gb myspell-en-au

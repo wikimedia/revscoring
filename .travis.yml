@@ -13,6 +13,7 @@ addons:
     - python3-dev
     - enchant
     - aspell-ar
+    - aspell-bn
     - myspell-cs
     - aspell-de
     - myspell-es
@@ -48,7 +49,7 @@ install:
   - python -m nltk.downloader stopwords
   - pip install codecov
 script:
-  - nosetests -v --with-coverage --cover-package=revscoring --exclude="test_hindi.py|test_tamil.py"
+  - nosetests -v --with-coverage --cover-package=revscoring --exclude="test_hindi.py|test_tamil.py|test_bengali.py"
 after_success:
     codecov
 notifications:
