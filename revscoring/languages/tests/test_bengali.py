@@ -61,17 +61,15 @@ r_text = revision_oriented.revision.text
 
 
 def test_badwords():
-    # Until we find a solution
-    # compare_extraction(bengali.badwords.revision.datasources.matches,
-    #                    BAD, OTHER)
+    compare_extraction(bengali.badwords.revision.datasources.matches,
+                       BAD, OTHER)
 
     eq_(bengali.badwords, pickle.loads(pickle.dumps(bengali.badwords)))
 
 
 def test_informals():
-    # Until we find a solution
-    # compare_extraction(bengali.informals.revision.datasources.matches,
-    #                    INFORMAL, OTHER)
+    compare_extraction(bengali.informals.revision.datasources.matches,
+                       INFORMAL, OTHER)
 
     eq_(bengali.informals, pickle.loads(pickle.dumps(bengali.informals)))
 
@@ -80,7 +78,7 @@ def test_dictionary():
     cache = {r_text: "দেখার পর তিনি worngly."}
     eq_(solve(bengali.dictionary.revision.datasources.dict_words,
               cache=cache),
-       ['দেখার', 'পর', 'তিনি'])
+        ['দেখার', 'পর', 'তিনি'])
     eq_(solve(bengali.dictionary.revision.datasources.non_dict_words,
         cache=cache),
         ["worngly"])

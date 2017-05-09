@@ -175,7 +175,9 @@ badword_regexes = [
     r"চু(দি|দী)",
 ]
 
-badwords = RegexMatches(name + ".badwords", badword_regexes)
+badwords = RegexMatches(name + ".badwords", badword_regexes,
+                        wrapping=(r'^|[^\w\u0980-\u09FF]',
+                                  r'$|[^\w\u0980-\u09FF]'))
 """
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 badword detecting regexes.
@@ -201,7 +203,9 @@ informal_regexes = [
     r"পেত্নী",
 ]
 
-informals = RegexMatches(name + ".informals", informal_regexes)
+informals = RegexMatches(name + ".informals", informal_regexes,
+                         wrapping=(r'^|[^\w\u0980-\u09FF]',
+                                   r'$|[^\w\u0980-\u09FF]'))
 """
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 informal word detecting regexes.
