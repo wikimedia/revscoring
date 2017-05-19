@@ -43,6 +43,7 @@ addons:
 before_install: {}
 install:
   - python --version
+  - pip install 'numpy >= 1.8.2, < 1.10.999'
   - travis_wait pip install -r requirements.txt || date
   - python -c "import numpy;print(numpy.__version__)"
   - python -c "import scipy;print(scipy.__version__)"
