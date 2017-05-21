@@ -22,6 +22,7 @@ addons:
     - myspell-en-us
     - myspell-en-za
     - aspell-et
+    - aspell-el
     - myspell-fa
     - myspell-fr
     - myspell-he
