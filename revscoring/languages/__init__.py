@@ -51,6 +51,11 @@ german
 .. automodule:: revscoring.languages.german
     :members:
 
+greek
++++++++
+.. automodule:: revscoring.languages.greek
+    :members:
+
 hebrew
 ++++++
 .. automodule:: revscoring.languages.hebrew

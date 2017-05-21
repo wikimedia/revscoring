@@ -80,6 +80,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.finnish``: voikko-fi
 * ``languages.french``: myspell-fr
 * ``languages.german``: myspell-de-at myspell-de-ch myspell-de-de
+* ``languages.greek``: aspell-el
 * ``languages.hebrew``: myspell-he
 * ``languages.hungarian``: myspell-hu
 * ``languages.indonesian``: aspell-id
