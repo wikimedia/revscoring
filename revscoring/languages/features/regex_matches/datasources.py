@@ -4,12 +4,13 @@ from ....dependencies import DependentSet
 
 class Revision(DependentSet):
 
-    def __init__(self, name, regexes, wikitext_revision, wrapping):
+    def __init__(self, name, regexes, wikitext_revision, exclusions, wrapping):
         super().__init__(name)
 
         self.matches = extractors.regex(
             regexes, wikitext_revision.text,
             name=name + ".matches",
+            exclusions=exclusions,
             wrapping=wrapping
         )
         self.match_frequency = frequencies.table(
@@ -20,28 +21,32 @@ class Revision(DependentSet):
         if hasattr(wikitext_revision, 'parent'):
             self.parent = Revision(name + ".parent", regexes,
                                    wikitext_revision.parent,
+                                   exclusions=exclusions,
                                    wrapping=wrapping)
 
         if hasattr(wikitext_revision, 'diff'):
             self.diff = Diff(name + ".diff", regexes,
                              wikitext_revision.diff, self,
+                             exclusions=exclusions,
                              wrapping=wrapping)
 
 
 class Diff(DependentSet):
 
     def __init__(self, name, regexes, wikitext_diff,
-                 revision, wrapping):
+                 revision, exclusions, wrapping):
         super().__init__(name)
 
         self.matches_added = extractors.regex(
             regexes, wikitext_diff.segments_added,
             name=name + ".matches_added",
+            exclusions=exclusions,
             wrapping=wrapping
         )
         self.matches_removed = extractors.regex(
             regexes, wikitext_diff.segments_removed,
             name=name + ".matches_removed",
+            exclusions=exclusions,
             wrapping=wrapping
         )
 
