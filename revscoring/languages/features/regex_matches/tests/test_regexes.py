@@ -9,14 +9,17 @@ from ..regex_matches import RegexMatches
 badwords = RegexMatches(
     "english.badwords",
     [r'\w*bad\w*', r'butts'],
-
+    exclusions=['notabadword']
 )
 r_text = revision_oriented.revision.text
 p_text = revision_oriented.revision.parent.text
 
+badwords_notbad = badwords.excluding(
+    [r'notbad'], name=badwords._name + "_notbad")
+
 
 def test_regexes():
-    cache = {p_text: "This is good.  There're bad words butts already.",
+    cache = {p_text: "This is notabadword.  There're bad words butts already.",
              r_text: "This is bad superbadword. There're bad words already."}
 
     eq_(solve(badwords.revision.datasources.matches, cache=cache),
@@ -44,6 +47,10 @@ def test_regexes():
 
     eq_(round(solve(diff.match_delta_sum, cache=cache), 2), 1)
     eq_(round(solve(diff.match_prop_delta_sum, cache=cache), 2), 0.50)
+
+    cache = {r_text: "This is bad but also notbad."}
+    eq_(solve(badwords_notbad.revision.datasources.matches, cache=cache),
+        ['bad'])
 
 
 def test_pickling():

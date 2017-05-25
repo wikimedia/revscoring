@@ -10,12 +10,17 @@ from ...datasource import Datasource
 def return_foo():
     return "foo"
 
+
 segments = Datasource("segments")
 
 text = Datasource("text")
 
 text_extractor = extractors.regex(["foo bar", "bar foo"], text,
                                   name="text_extractor")
+
+exclusion_text_extractor = extractors.regex(["foo+"], text,
+                                            name="text_extractor",
+                                            exclusions=['foooo'])
 
 segment_extractor = extractors.regex(["foo bar", "bar foo"], segments,
                                      name="text_extractor")
@@ -28,6 +33,14 @@ def test_text_extractor():
     eq_(solve(text_extractor, cache=cache), [])
 
     eq_(pickle.loads(pickle.dumps(text_extractor)), text_extractor)
+
+
+def test_exclusion_text_extractor():
+    cache = {text: "This is some text foooo bar nope bar foo fooo"}
+    eq_(solve(exclusion_text_extractor, cache=cache), ["foo", "fooo"])
+
+    eq_(pickle.loads(pickle.dumps(exclusion_text_extractor)),
+        exclusion_text_extractor)
 
 
 def test_segment_extractor():
