@@ -85,7 +85,7 @@ def pickle_and_unpickle(model):
 
 
 def format_info(model):
-    pprint(model.format(formatting="json"))
-    print(model.format(formatting="str"))
-    assert model.format(formatting="json") is not None
-    assert model.format(formatting="str") is not None
+    print(json.dumps(model.info.format(formatting="json"), indent=2))
+    print(model.info.format(formatting="str"))
+    assert model.info.format(formatting="json") is not None
+    assert model.info.format(formatting="str") is not None

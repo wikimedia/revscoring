@@ -69,8 +69,8 @@ class ModelInfo(OrderedDict):
 
         if formatting == "str":
             return self.format_str(path_tree, **kwargs)
-        elif formatting == "str":
-            return self.format_str(path_tree, **kwargs)
+        elif formatting == "json":
+            return self.format_json(path_tree, **kwargs)
         else:
             raise ValueError("Formatting {0} is not available for {1}."
                              .format(formatting, self.__class__.__name__))
@@ -78,14 +78,23 @@ class ModelInfo(OrderedDict):
     def format_str(self, path_tree, **kwargs):
         formatted = "Model Information:\n"
         for key in path_tree or self.keys():
-            sub_tree = path_tree.get(key, {})
-            formatted += util.tab_it_in(
-                self[key].format_str(sub_tree, **kwargs))
+            if hasattr(self[key], "format_str"):
+                sub_tree = path_tree.get(key, {})
+                formatted += util.tab_it_in(
+                    self[key].format_str(sub_tree, **kwargs))
+            else:
+                formatted += util.tab_it_in(" - {0}: {1}"
+                                            .format(key, self[key]))
+
+        return formatted
 
     def format_json(self, path_tree, **kwargs):
-        d = {}
+        d = OrderedDict()
         for key in path_tree or self.keys():
-            sub_tree = path_tree.get(key, {})
-            d[key] = self[key].format_json(sub_tree, **kwargs)
+            if hasattr(self[key], "format_json"):
+                sub_tree = path_tree.get(key, {})
+                d[key] = self[key].format_json(sub_tree, **kwargs)
+            else:
+                d[key] = self[key]
 
         return d

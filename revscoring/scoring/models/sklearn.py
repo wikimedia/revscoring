@@ -31,7 +31,6 @@ class Classifier(model.Classifier, model.Model):
             }
         }
     }
-    PREDICTION_KEY = "prediction"
 
     def __init__(self, features, version=None,
                  labels=None, label_weights=None, population_rates=None,
@@ -155,7 +154,7 @@ class ProbabilityClassifier(Classifier):
         statistics = statistics or Classification(
             "prediction", decision_key="probability",
             labels=labels, population_rates=population_rates)
-        super.__init__(self, *args, statistics=statistics, **kwargs)
+        super().__init__(*args, statistics=statistics, **kwargs)
 
     def score(self, feature_values):
         """
