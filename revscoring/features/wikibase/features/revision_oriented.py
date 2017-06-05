@@ -3,7 +3,6 @@ from ...feature import Feature
 from ...meta import aggregators, bools
 from .diff import Diff
 
-
 class Revision(DependentSet):
 
     def __init__(self, name, revision_datasources):
@@ -24,11 +23,21 @@ class Revision(DependentSet):
         self.claims = aggregators.len(self.datasources.claims)
         "`int` : A count of claims in the revision"
         self.sources = aggregators.len(self.datasources.sources)
-        "`int` : A count of sources in the revision"
+        "`int` : A count of claims that contain sources in the revision"
         self.qualifiers = aggregators.len(self.datasources.qualifiers)
         "`int` : A count of qualifiers in the revision"
         self.badges = aggregators.len(self.datasources.badges)
         "`int` : A count of badges in the revision"
+        self.external_sources_ratio = self.datasources.external_sources_ratio 
+        "`float` : A ratio/division between number of external references and number of claims that have references in the revision"
+        self.unique_sources = aggregators.len(self.datasources.unique_sources)  
+        "`int` : A count of unique sources in the revision" 
+        self.complete_translations = aggregators.len(self.datasources.complete_translations)
+        "`int` :A count of completed translations (a pair of completed label and description) in the revision" 
+        self.complete_important_translations = self.datasources.complete_important_translations 
+        "`float` : A ratio of completed important translations (a pair of completed label and description) in the revision"
+        self.image_quality = self.datasources.image_quality 
+        "`float` : Megapixels of the image in the revision"
 
         if hasattr(self.datasources, "parent"):
             self.parent = Revision(name + ".parent", self.datasources.parent)
