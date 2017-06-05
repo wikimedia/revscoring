@@ -23,8 +23,8 @@ import yamlconf
 from sklearn.cross_validation import KFold
 from sklearn.preprocessing import RobustScaler
 
-from . import util
 from ..environment import Environment
+from ..model_info import ModelInfo
 
 logger = logging.getLogger(__name__)
 
@@ -46,11 +46,15 @@ class Model:
         """
         logger.debug("Initializing Model with {0}")
         self.features = tuple(features)
-        self.version = version
-        self.environment = environment or Environment()
-        self.statistics = statistics
-
         self.params = {}
+
+        self.info = ModelInfo()
+        self.info['type'] = self.__class__.__name__
+        self.info['version'] = version
+        self.info['params'] = self.params
+        self.info['environment'] = environment or Environment()
+        if statistics is not None:
+            self.info['statistics'] = statistics
 
     def score(self, feature_values):
         """
@@ -84,76 +88,9 @@ class Model:
                         for values, label in values_labels]
 
         # Fit builtin statistics engine
-        self.statistics.fit(score_labels)
+        self.info['statistics'].fit(score_labels)
 
-        return self.statistics
-
-    def format(self, *args, formatting="str", **kwargs):
-        """
-        Formats a representation of the information about a model
-        including information about the environment in which it was constructed
-        and statistics (if available) about its fitness.
-
-        :Parameters:
-            formatting : "json" or "str"
-                Which output formatting do you want?  "str" returns something
-                nice to show on the command-line.  "json" returns something
-                that will pass through :func:`json.dump` without error.
-            ndigits : int
-                How many digits should statistics and other information be
-                rounded to.
-        """
-        if formatting == "str":
-            return self.format_str(*args, **kwargs)
-        elif formatting == "json":
-            return self.format_json(*args, **kwargs)
-        else:
-            raise ValueError("Unknown formatting {0!r}".format(formatting))
-
-    def format_str(self, *args, **kwargs):
-        formatted = self.format_basic_info_str(*args, **kwargs)
-        formatted += '\n'
-        formatted += self.format_environment_str(*args, **kwargs)
-        formatted += '\n'
-        formatted += self.format_stats_str(*args, **kwargs)
-        return formatted
-
-    def format_basic_info_str(self, *args, **kwargs):
-        formatted = "{0}({1}):\n".format(
-            self.__class__.__name__, util.format_params(self.params))
-        formatted += " - version: {0}\n".format(self.version)
-        return formatted
-
-    def format_environment_str(self, *args, **kwargs):
-        formatted = "Enviornment:\n"
-        formatted += util.tab_it_in(self.environment.format_str())
-        return formatted
-
-    def format_stats_str(self, *args, ndigits=3, **kwargs):
-        if self.statistics is None:
-            return ""
-        elif not self.statistics.fitted:
-            return "No stats available\n"
-        else:
-            formatted = "Statistics:\n"
-            formatted += util.tab_it_in(
-                self.statistics.format_str(*args, **kwargs))
-            return formatted
-
-    def format_json(self, *args, **kwargs):
-        return util.normalize_json({
-            'type': self.__class__.__name__,
-            'version': self.version,
-            'params': self.params,
-            'environment': self.environment.format_json(),
-            'statistics': self.format_stats_json(*args, **kwargs)
-        })
-
-    def format_stats_json(self, *args, **kwargs):
-        if self.statistics is None or not self.statistics.fitted:
-            return None
-        else:
-            return self.statistics.format_json(*args, **kwargs)
+        return self.info['statistics']
 
     @classmethod
     def load(cls, f, error_on_env_check=False):

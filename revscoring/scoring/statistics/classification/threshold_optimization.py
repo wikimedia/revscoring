@@ -52,9 +52,9 @@ class ThresholdOptimization:
         for a the best threshold that matches the conditional criteria. This
         function returns the value of the optimized target statistic (or None).
         """  # noqa
-        tstats = self.get_optimal(threshold_statistics)
-        if tstats is not None:
-            return tstats[self.target_stat]
+        val_tstats = self.get_optimal(threshold_statistics)
+        if val_tstats is not None:
+            return val_tstats[0]
         else:
             return None
 

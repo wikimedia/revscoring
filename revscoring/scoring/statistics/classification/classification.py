@@ -1,6 +1,7 @@
 import logging
 from collections import OrderedDict
 
+from ... import util
 from ..statistics import Statistics
 from .counts import Counts
 from .micro_macro_stats import MicroMacroStats
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class Classification(Statistics):
 
-    def __init__(self, prediction_key, decision_key="probability",
+    def __init__(self, prediction_key="prediction", decision_key="probability",
                  labels=None, population_rates=None, **kwargs):
         """
         Constructs a set of classification statistics
@@ -111,6 +112,8 @@ class Classification(Statistics):
             raise KeyError(key)
 
     def lookup(self, path):
+        if isinstance(path, str):
+            path = util.parse_pattern(path)
         key = path[0]
         return self[key].lookup(path[1:])
 

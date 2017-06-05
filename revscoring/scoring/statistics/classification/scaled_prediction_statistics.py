@@ -36,6 +36,9 @@ class ScaledPredictionStatistics(ScaledClassificationMatrix):
     def keys(self):
         return self.FIELDS
 
+    def __iter__(self):
+        return iter(self.keys())
+
     def match_rate(self):
         """
         The proportion of observations that are matched in prediction.
