@@ -76,7 +76,7 @@ class Revision(DependentSet):
             name + ".sources", _process_sources, depends_on=[self.item]
         )
         """
-        A `set` of claim which contains sources in the revision
+        A `set` of unique sources in the revision
         """
 
         self.qualifiers = Datasource(
