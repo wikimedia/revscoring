@@ -97,8 +97,8 @@ class Revision(DependentSet):
 			name + ".external_sources_ratio", _process_external_sources_ratio, depends_on=[self.item]
 		)
         """
-		A `float` of the ratio between number of external references and number of claims that have references in the revision
-		"""
+	A `float` of the ratio between number of external references and number of claims that have references in the revision
+	"""
 		
         self.unique_sources = Datasource(
 	        name + ".unique_sources", _process_unique_sources, depends_on=[self.item]
@@ -131,7 +131,31 @@ class Revision(DependentSet):
         """
         A `float` of the image megapixels in the revision
         """
+	
+	self.all_sources = Datasource(
+	        name + ".all_sources", _process_all_sources, depends_on=[self.item]
+        )
+
+        """
+        A `list` of all sources in the revision
+        """
 		
+        self.all_wikimedia_sources = Datasource(
+	        name + ".all_wikimedia_sources", _process_wikimedia_sources, depends_on=[self.item]
+        )
+
+        """
+        A `list` of all sources which come from Wikimedia projects in the revision
+        """
+		
+        self.all_external_sources = Datasource(
+	        name + ".all_external_sources", _process_external_sources, depends_on=[self.item]
+        )
+
+        """
+        A `list` of all sources which do not come from Wikimedia projects in the revision
+        """
+	
         if hasattr(revision_datasources, "parent") and \
            hasattr(revision_datasources.parent, "text"):
             self.parent = Revision(
@@ -181,52 +205,101 @@ def _process_sources(item):
 		
 	)
 
-def _process_external_sources_ratio(item):
+def _process_all_sources(item):
 
-	splitted_input_string = []
 	list_sources_in_JSON = []
 	
-	for property in item.claims:
-		list_of_properties = property
-		for claim in item.claims[list_of_properties]:
-			list_of_claims = claim
-			for i, source in enumerate(list_of_claims.sources):
-				for index_list_1, index_list_2 in source.items(): 
-					sources_in_JSON = index_list_2[0].toJSON()
-					list_sources_in_JSON.append(sources_in_JSON['datavalue']['value'])
-	
-	count_external_sources = len(list_sources_in_JSON)
-	
-	wdir_path = os.path.dirname(os.path.realpath(__file__)) #get the current working directory path
-	csv_path = os.path.join(wdir_path, 'excluded_qids.csv')
-	
-	with open(csv_path) as file_handler: #excluded QID contains the qid of Wikimedia projects and DBpedia
-		for line in read_file(file_handler):
-			input_string = line.strip() 
-			splitted_input_string = input_string.split(',')
-			
-			for list_sources_in_JSON_content in list_sources_in_JSON:
-				#if a source comes from Wikimedia projects and DBpedia (i.e. DBpedia collects data from Wikipedia), decrease the count of external sources
-				try:
-					if(list_sources_in_JSON_content['numeric-id'] == int(splitted_input_string[0])):
-						count_external_sources -=1
-						break
-				except (KeyboardInterrupt, SystemExit):
-					raise
-				except:
-					continue
-                    
-	#error handling if an item does not have any sources
 	try:
-		claims_with_sources = set(
-			(property, _claim_to_str(claim), i) 
-			for property in item.claims 
-			for claim in item.claims[property] 
-			for i, source in enumerate(claim.sources) 
-		)
-		return count_external_sources/len(claims_with_sources)
+		for property in item.claims:
+			list_of_properties = property
+			for claim in item.claims[list_of_properties]:
+				list_of_claims = claim
+				for i, source in enumerate(list_of_claims.sources):
+					for index_list_1, index_list_2 in source.items(): 
+						sources_in_JSON = index_list_2[0].toJSON()
+						list_sources_in_JSON.append(sources_in_JSON['datavalue']['value'])
+		
+		return list_sources_in_JSON
 	except:
-		return 0.0
+		return 0 #if the revision does not contain any sources, return 0
+
+def _process_wikimedia_sources(item):
+
+	list_sources_in_JSON = []
+	list_wikimedia_sources = []
+	
+	try:
+		for property in item.claims:
+			list_of_properties = property
+			for claim in item.claims[list_of_properties]:
+				list_of_claims = claim
+				for i, source in enumerate(list_of_claims.sources):
+					for index_list_1, index_list_2 in source.items(): 
+						sources_in_JSON = index_list_2[0].toJSON()
+						list_sources_in_JSON.append(sources_in_JSON['datavalue']['value'])
+		
+		wdir_path = os.path.dirname(os.path.realpath(__file__)) #get the current working directory path
+		csv_path = os.path.join(wdir_path, 'excluded_qids.csv')
+		
+		for list_sources_in_JSON_content in list_sources_in_JSON: 
+			with open(csv_path) as csvfile:
+				readCSV = csv.reader(csvfile, delimiter=',')
+				for line in readCSV:				
+					try:
+						if(list_sources_in_JSON_content['numeric-id'] == int(line[0])): #if a source comes from Wikimedia projects and DBpedia (i.e. DBpedia collects data from Wikipedia), append that source to the list
+							list_wikimedia_sources.append(list_sources_in_JSON_content)
+							break
+					except:
+						continue
+		return list_wikimedia_sources
+	except:
+		return 0 #if the revision does not contain any wikimedia projects sources, return 0
+
+def _process_external_sources(item):
+
+	list_sources_in_JSON = []
+	list_external_sources = []
+	
+	try:
+		for property in item.claims:
+			list_of_properties = property
+			for claim in item.claims[list_of_properties]:
+				list_of_claims = claim
+				for i, source in enumerate(list_of_claims.sources):
+					for index_list_1, index_list_2 in source.items(): 
+						sources_in_JSON = index_list_2[0].toJSON()
+						list_sources_in_JSON.append(sources_in_JSON['datavalue']['value'])
+		
+		wdir_path = os.path.dirname(os.path.realpath(__file__)) #get the current working directory path
+		csv_path = os.path.join(wdir_path, 'excluded_qids.csv')
+		
+		
+		for list_sources_in_JSON_content in list_sources_in_JSON: 
+			flag = True
+			with open(csv_path) as csvfile:
+				readCSV = csv.reader(csvfile, delimiter=',')
+				for line in readCSV:
+					try:
+						if(list_sources_in_JSON_content['numeric-id'] == int(line[0])): #if a source comes from Wikimedia projects and DBpedia (i.e. DBpedia collects data from Wikipedia), set the flag into 'False'
+							flag = False
+							break
+					except:
+						continue
+			if(flag == True):
+				list_external_sources.append(list_sources_in_JSON_content)
+		
+		return list_external_sources
+	except:
+		return 0 #if the revision does not contain any external sources, return 0
+
+def _process_external_sources_ratio(item):
+	
+	try:
+		count_external_sources = len(_process_external_sources(item))
+		count_claims_with_sources = len(_process_sources(item))
+		return count_external_sources/count_claims_with_sources
+	except:
+		return 0.0 #if the revision does not contain any sources, return 0
 	
 def _process_unique_sources(item):
 	
