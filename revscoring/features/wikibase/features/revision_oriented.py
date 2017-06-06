@@ -42,7 +42,7 @@ class Revision(DependentSet):
         "`int` : A count of all sources in the revision" 
         self.all_wikimedia_sources = aggregators.len(self.datasources.all_wikimedia_sources)
         "`int` : A count of all sources which come from Wikimedia projects in the revision" 
-        self.all_external_sources = aggregators.len(self.datasources.all_external_sources)
+        self.all_external_sources = self.datasources.all_external_sources
         "`int` : A count of all sources which do not come from Wikimedia projects in the revision" 
 
         if hasattr(self.datasources, "parent"):
