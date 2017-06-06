@@ -153,7 +153,7 @@ class Revision(DependentSet):
         )
 
         """
-        A `list` of all sources which do not come from Wikimedia projects in the revision
+        A count of all sources which do not come from Wikimedia projects in the revision
         """
 	
         if hasattr(revision_datasources, "parent") and \
@@ -256,39 +256,10 @@ def _process_wikimedia_sources(item):
 		return 0 #if the revision does not contain any wikimedia projects sources, return 0
 
 def _process_external_sources(item):
-
-	list_sources_in_JSON = []
-	list_external_sources = []
-	
 	try:
-		for property in item.claims:
-			list_of_properties = property
-			for claim in item.claims[list_of_properties]:
-				list_of_claims = claim
-				for i, source in enumerate(list_of_claims.sources):
-					for index_list_1, index_list_2 in source.items(): 
-						sources_in_JSON = index_list_2[0].toJSON()
-						list_sources_in_JSON.append(sources_in_JSON['datavalue']['value'])
-		
-		wdir_path = os.path.dirname(os.path.realpath(__file__)) #get the current working directory path
-		csv_path = os.path.join(wdir_path, 'excluded_qids.csv')
-		
-		
-		for list_sources_in_JSON_content in list_sources_in_JSON: 
-			flag = True
-			with open(csv_path) as csvfile:
-				readCSV = csv.reader(csvfile, delimiter=',')
-				for line in readCSV:
-					try:
-						if(list_sources_in_JSON_content['numeric-id'] == int(line[0])): #if a source comes from Wikimedia projects and DBpedia (i.e. DBpedia collects data from Wikipedia), set the flag into 'False'
-							flag = False
-							break
-					except:
-						continue
-			if(flag == True):
-				list_external_sources.append(list_sources_in_JSON_content)
-		
-		return list_external_sources
+		count_all_sources = len(_process_all_sources(item))
+		count_wiki_sources = len(_process_wikimedia_sources(item))
+		return count_all_sources - count_wiki_sources
 	except:
 		return 0 #if the revision does not contain any external sources, return 0
 
