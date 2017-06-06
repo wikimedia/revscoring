@@ -38,6 +38,12 @@ class Revision(DependentSet):
         "`float` : A ratio of completed important translations (a pair of completed label and description) in the revision"
         self.image_quality = self.datasources.image_quality 
         "`float` : Megapixels of the image in the revision"
+        self.all_sources = aggregators.len(self.datasources.all_sources)
+        "`int` : A count of all sources in the revision" 
+        self.all_wikimedia_sources = aggregators.len(self.datasources.all_wikimedia_sources)
+        "`int` : A count of all sources which come from Wikimedia projects in the revision" 
+        self.all_external_sources = aggregators.len(self.datasources.all_external_sources)
+        "`int` : A count of all sources which do not come from Wikimedia projects in the revision" 
 
         if hasattr(self.datasources, "parent"):
             self.parent = Revision(name + ".parent", self.datasources.parent)
