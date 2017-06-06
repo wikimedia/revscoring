@@ -151,9 +151,9 @@ def _process_item_doc(text):
 
 
 def _process_item(item_doc):
-	item = pywikibase.ItemPage()
-	item.get(content=item_doc or {'aliases': {}})
-	return item
+    item = pywikibase.ItemPage()
+    item.get(content=item_doc or {'aliases': {}}) #cek itempage.py di folder package pywikibase utk tau "get" method
+    return item
 
 
 def _process_properties(item):
