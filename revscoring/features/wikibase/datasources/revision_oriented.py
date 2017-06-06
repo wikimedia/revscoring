@@ -430,10 +430,3 @@ def _claim_to_str(claim):
     else:
         return str(claim.target)
 
-#read CSV, line by line
-def read_file(file_object):
-	while True:
-		data = file_object.readline()
-		if not data:
-			break
-		yield data
