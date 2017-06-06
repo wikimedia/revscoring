@@ -144,10 +144,10 @@ class Revision(DependentSet):
 
 
 def _process_item_doc(text):
-	if text is not None:
-		return json.loads(text)
-	else:
-		return None
+    if text is not None:
+        return json.loads(text)
+    else:
+        return None
 
 
 def _process_item(item_doc):
