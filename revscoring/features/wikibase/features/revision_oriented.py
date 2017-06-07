@@ -29,7 +29,7 @@ class Revision(DependentSet):
         self.badges = aggregators.len(self.datasources.badges)
         "`int` : A count of badges in the revision"
         self.external_sources_ratio = self.datasources.external_sources_ratio 
-        "`float` : A ratio/division between number of external references and number of claims that have references in the revision"
+        "`float` : A ratio/division between number of external references and number of claims that have reference(s) in the revision"
         self.unique_sources = aggregators.len(self.datasources.unique_sources)  
         "`int` : A count of unique sources in the revision" 
         self.complete_translations = aggregators.len(self.datasources.complete_translations)
