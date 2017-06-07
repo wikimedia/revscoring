@@ -97,7 +97,7 @@ class Revision(DependentSet):
 			name + ".external_sources_ratio", _process_external_sources_ratio, depends_on=[self.item]
 		)
         """
-	A `float` of the ratio between number of external references and number of claims that have references in the revision
+	A `float` of the ratio between number of external references and number of claims that have reference(s) in the revision
 	"""
 		
         self.unique_sources = Datasource(
