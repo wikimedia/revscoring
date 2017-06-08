@@ -1,5 +1,8 @@
+os: linux
+dist: trusty
+group: stable
 language: python
-sudo: true
+sudo: required
 python:
   - "3.5"
 addons:
