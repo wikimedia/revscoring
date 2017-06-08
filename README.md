@@ -1,13 +1,13 @@
 |travis|_ |codecov|_
 
-Revision Scoring
-================
+# Revision Scoring
+
 A generic, machine learning-based revision scoring system designed to be used
 to automatically differentiate damage from productive contributory behavior on
 Wikipedia.
 
-Example
-========
+## Example
+
 
 Using a scorer_model to score a revision::
 
@@ -27,8 +27,8 @@ Using a scorer_model to score a revision::
   {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}}
 
 
-Installation
-============
+# Installation
+
 The easiest way to install `revscoring` is via the Python package installer
 (pip).
 
@@ -38,12 +38,12 @@ You may find that some of `revscorings` dependencies fail to compile (namely
 `scipy`, `numpy` and `sklearn`).  In that case, you'll need to install some
 dependencies in your operating system.
 
-Ubuntu & Debian:
+### Ubuntu & Debian:
   Run ``sudo apt-get install python3-dev g++ gfortran liblapack-dev libopenblas-dev``
   Run ``apt-get install aspell-ar aspell-bn myspell-cs myspell-nl myspell-en-us myspell-en-gb myspell-en-au myspell-et voikko-fi myspell-fr myspell-de-at myspell-de-ch myspell-de-de myspell-he myspell-hu aspell-id myspell-it myspell-nb myspell-fa aspell-pl myspell-pt myspell-es aspell-sv aspell-ta myspell-ru myspell-uk hunspell-vi``
-Windows:
+### Windows:
   'TODO'
-MacOS:
+### MacOS:
   Using Homebrew and pip, installing `revscoring` and `enchant` can be accomplished
   as follows::
 
@@ -97,8 +97,8 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * ``languages.ukrainian``: myspell-uk
 * ``languages.vietnamese``: hunspell-vi
 
-Authors
-=======
+# Authors
+
     Aaron Halfaker:
         * `http://halfaker.info`
     Helder:
