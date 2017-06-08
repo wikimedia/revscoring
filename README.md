@@ -1,4 +1,4 @@
-|travis|_ |codecov|_
+[![Build Status](https://travis-ci.org/wiki-ai/revscoring.svg?branch=master)](https://travis-ci.org/wiki-ai/revscoring)
 
 # Revision Scoring
 
@@ -11,20 +11,20 @@ Wikipedia.
 
 Using a scorer_model to score a revision::
 
-  >>> import mwapi
-  >>> from revscoring import ScorerModel
-  >>> from revscoring.extractors.api.extractor import Extractor
-  >>>
-  >>> with open("models/enwiki.damaging.linear_svc.model") as f:
-  ...     scorer_model = ScorerModel.load(f)
-  ...
-  >>> extractor = Extractor(mwapi.Session(host="https://en.wikipedia.org",
-  ...                                        user_agent="revscoring demo"))
-  >>>
-  >>> feature_values = list(extractor.extract(123456789, scorer_model.features))
-  >>>
-  >>> print(scorer_model.score(feature_values))
-  {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}}
+  import mwapi
+   from revscoring import ScorerModel
+  from revscoring.extractors.api.extractor import Extractor
+ 
+   with open("models/enwiki.damaging.linear_svc.model") as f:
+       scorer_model = ScorerModel.load(f)
+  
+  extractor = Extractor(mwapi.Session(host="https://en.wikipedia.org",
+                                          user_agent="revscoring demo"))
+  
+   feature_values = list(extractor.extract(123456789, scorer_model.features))
+  
+   print(scorer_model.score(feature_values))
+  {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}} 
 
 
 # Installation
@@ -59,9 +59,9 @@ dependencies in your operating system.
       ./configure
       make
       sudo make install
-  Caveats:
-    * The differences between the `aspell` and `myspell` dictionaries can cause
-      some of the tests to fail
+  Caveats: <br>
+    <b><u> The differences between the `aspell` and `myspell` dictionaries can cause
+    <b> <u>some of the tests to fail 
 
 
 Finally, in order to make use of language features, you'll need to download
@@ -99,16 +99,13 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 
 # Authors
 
-    Aaron Halfaker:
-        * `http://halfaker.info`
-    Helder:
-        * `https://github.com/he7d3r`
-    Adam Roses Wight:
-        * `https://mediawiki.org/wiki/User:Adamw`
-    Amir Sarabadani:
-	* `https://github.com/Ladsgroup`
-
-.. |travis| image:: https://api.travis-ci.org/wiki-ai/revscoring.png
-.. _travis: https://travis-ci.org/wiki-ai/revscoring
-.. |codecov| image:: https://codecov.io/github/wiki-ai/revscoring/revscoring.svg
-.. _codecov: https://codecov.io/github/wiki-ai/revscoring
+  *   [Aaron Halfaker](http://halfaker.info)
+    
+    
+  *   [Helder](https://github.com/he7d3r)
+    
+    
+  *   [Adam Roses Wight](https://mediawiki.org/wiki/User:Adamw)
+    
+    
+  *   [Amir Sarabadani](https://github.com/Ladsgroup)
