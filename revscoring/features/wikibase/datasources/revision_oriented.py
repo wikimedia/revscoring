@@ -266,7 +266,7 @@ def _process_external_sources(item):
 def _process_external_sources_ratio(item):
 	
 	try:
-		count_external_sources = len(_process_external_sources(item))
+		count_external_sources = _process_external_sources(item)
 		count_claims_with_sources = len(_process_sources(item))
 		return count_external_sources/count_claims_with_sources
 	except:
