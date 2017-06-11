@@ -10,8 +10,8 @@ Wikipedia.
 
 
 Using a scorer_model to score a revision::
-
-  <code>import mwapi
+```
+  import mwapi
    from revscoring import ScorerModel
   from revscoring.extractors.api.extractor import Extractor
  
@@ -24,7 +24,8 @@ Using a scorer_model to score a revision::
    feature_values = list(extractor.extract(123456789, scorer_model.features))
   
    print(scorer_model.score(feature_values))
-  {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}} </code> 
+  {'prediction': True, 'probability': {False: 0.4694409344514984, True: 0.5305590655485017}} 
+  ```
 
 
 # Installation
@@ -41,8 +42,8 @@ dependencies in your operating system.
 ### Ubuntu & Debian:
   *  Run ``sudo apt-get install python3-dev g++ gfortran liblapack-dev libopenblas-dev``
   *  Run ``apt-get install aspell-ar aspell-bn myspell-cs myspell-nl myspell-en-us myspell-en-gb myspell-en-au myspell-et voikko-fi myspell-fr myspell-de-at myspell-de-ch myspell-de-de myspell-he myspell-hu aspell-id myspell-it myspell-nb myspell-fa aspell-pl myspell-pt myspell-es aspell-sv aspell-ta myspell-ru myspell-uk hunspell-vi``
-<!-- ### Windows:  commented out until it is documented (why have a section that just says todo? -->
-
+### Windows:
+<i>TODO</i> 
 ### MacOS:
   Using Homebrew and pip, installing `revscoring` and `enchant` can be accomplished
   as follows::
