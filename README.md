@@ -52,8 +52,8 @@ dependencies in your operating system.
 * brew install enchant
 * pip install --no-binary pyenchant revscoring
 
-## Adding languages in aspell
-
+#### Adding languages in aspell (MacOS only)
+```
 cd /tmp
 wget http://ftp.gnu.org/gnu/aspell/dict/pt/aspell-pt-0.50-2.tar.bz2
 bzip2 -dc aspell-pt-0.50-2.tar.bz2 | tar xvf -
@@ -61,9 +61,10 @@ cd aspell-pt-0.50-2
 ./configure
 make
 sudo make install
-  Caveats: <br>
-    <b><u> The differences between the `aspell` and `myspell` dictionaries can cause
-    <b> <u>some of the tests to fail 
+ ```
+ Caveats: <br>
+  <b><u> The differences between the `aspell` and `myspell` dictionaries can cause </b>
+    <b> <u>some of the tests to fail </b>
 
 
 Finally, in order to make use of language features, you'll need to download
