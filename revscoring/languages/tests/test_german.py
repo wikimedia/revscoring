@@ -14,6 +14,7 @@ BAD = [
     "bescheuert",
     "deppen",
     "dumm",
+    "du hurensohn",
     "fettsack",
     "ficker",
     "fotze", "fotzen",
