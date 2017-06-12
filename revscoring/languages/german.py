@@ -75,7 +75,8 @@ badword_regexes = [
     r"verfickte",
     r"vollidiot",
     r"wichser",
-    r"wix+e[rn]?"
+    r"wix+e[rn]?",
+    r"du hurensohn"
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
