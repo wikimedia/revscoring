@@ -50,6 +50,7 @@ badword_regexes = [
     r"bescheuert",
     r"deppen",
     r"dumm",
+    r"du hurensohn",
     r"fettsack",
     r"ficker",
     r"fotzen?",
