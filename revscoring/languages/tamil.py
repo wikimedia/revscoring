@@ -16,49 +16,49 @@ dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 
 badword_regexes = [
-    r"ஆபாசச்சொல்"
-    r"ஊம்ப"
-    r"ஊம்பு"
-    r"ஒக்காளி"
-    r"ஒத்தா"
-    r"ஒம்மால"
-    r"ஓ(ல்|ழ்)மாரி"
-    r"ஓ(ல்|ழ்|லு|ழு|ழி)"
-    r"ஓத்தவன்"
-    r"ஓத்தா?"
-    r"ஓப்பான்"
-    r"ஓலு"
-    r"ஓல்"
-    r"கிழி"
-    r"கூதி"
-    r"கை அடிச்சு"
-    r"கைஅடி"
-    r"சுண்ணி"
-    r"சுன்னி"
-    r"சூத்த"
-    r"சூத்து"
-    r"செக்ஸ்கதைகள்"
-    r"செக்ஸ்படம்"
-    r"தாயோளி"
-    r"தே(வ|வு)டியா(ள்)"
-    r"பாலச்கரம்"
-    r"புண்(ட|டை)"
-    r"புண்ட"
-    r"புண்டநக்கி"
-    r"புண்டை"
-    r"புழுத்தி"
-    r"பூ(ல்|லு)"
-    r"பெண்குறி"
-    r"பொச்சு"
-    r"மயிருபிடுங்கி"
-    r"மயிர்"
-    r"முட்டாள்"
-    r"முண்(டை|ட)"
-    r"முலை"
-    r"யோனி"
-    r"வல்லுறவு"
-    r"வாய்அடி"
-    r"விந்து"
+    r"ஆபாசச்சொல்",
+    r"ஊம்ப",
+    r"ஊம்பு",
+    r"ஒக்காளி",
+    r"ஒத்தா",
+    r"ஒம்மால",
+    r"ஓ(ல்|ழ்)மாரி",
+    r"ஓ(ல்|ழ்|லு|ழு|ழி)",
+    r"ஓத்தவன்",
+    r"ஓத்தா?",
+    r"ஓப்பான்",
+    r"ஓலு",
+    r"ஓல்",
+    r"கிழி",
+    r"கூதி",
+    r"கை அடிச்சு",
+    r"கைஅடி",
+    r"சுண்ணி",
+    r"சுன்னி",
+    r"சூத்த",
+    r"சூத்து",
+    r"செக்ஸ்கதைகள்",
+    r"செக்ஸ்படம்",
+    r"தாயோளி",
+    r"தே(வ|வு)டியா(ள்)",
+    r"பாலச்கரம்",
+    r"புண்(ட|டை)",
+    r"புண்ட",
+    r"புண்டநக்கி",
+    r"புண்டை",
+    r"புழுத்தி",
+    r"பூ(ல்|லு)",
+    r"பெண்குறி",
+    r"பொச்சு",
+    r"மயிருபிடுங்கி",
+    r"மயிர்",
+    r"முட்டாள்",
+    r"முண்(டை|ட)",
+    r"முலை",
+    r"யோனி",
+    r"வல்லுறவு",
+    r"வாய்அடி",
+    r"விந்து",
     r"aayava ootha alla sunni",  # granny fucking cock
     r"akkula thukki kami di",  # lift your hand and show
     r"alugina papali",  # rotten pussy
@@ -76,9 +76,7 @@ badword_regexes = [
     r"erumbu",  # tits
     r"gajak kol",  # big cock
     r"hakka kudi",  # your sisters cunt
-    r"kaai",  # boob
-    r"kaai adithal",  # caressing boobs
-    r"kaai amuki",  # one who presses the breast
+    r"kaai( (adithal|amuki))?",  # boob, caressing boobs, presses the breast
     r"kadiki",  # one who bites the penis
     r"kala viridi",  # wide open the legs
     r"kaluthae",  # donkey
@@ -88,10 +86,7 @@ badword_regexes = [
     r"keeshan appa",  # a discrimination to human
     r"kena punda",  # stupid cunt
     r"ki adi",  # masturbate
-    r"koodhi",  # cunt; pussy
-    r"koodhi payale",  # cunt-face
-    r"koothi mayir",  # cunt hair
-    r"koothi nuckie",  # cunt sucker
+    r"koo(dhi|thi)( (payale|mayir|nuckie))?",  # cunt; pussy, -face, -hair, -sucker
     r"kudiya baadu",  # cunt boob fucker
     r"kundi",  # ass
     r"kunji payalae",  # cock heaf
@@ -124,8 +119,7 @@ badword_regexes = [
     r"oli the bengali",  # fuck of the bengal
     r"olmaari",  # fucking gigalo
     r"olutha pundai",  # cunt which is oozing out cum
-    r"ommala",  # your mom
-    r"ommala okka",  # fuck your mom
+    r"ommala( okka)?",  # your mom
     r"ongaka pundek",  # your sisters cunt
     r"ongappan pundai",  # the cunt which belongs to ur dad
     r"oogili",  # raping immortal stalker
@@ -152,15 +146,12 @@ badword_regexes = [
     r"pisasu",  # devil/ also a swear
     r"pochchu",  # pussy
     r"pool payya",  # stupid dick
-    r"poolu",  # dick
-    r"poolu aruntha punda mavan",  # penins detached son of bitch
+    r"poolu( aruntha punda mavan)?",  # dick
     r"pottachi bonthule okkuria",  # fuck in her pussy
     r"praana kudi",  # nerd , geek , jackass ,
     r"preshaan",  # gay boy with vagina
     r"pullu sappi",  # cock sucker
-    r"puluthi",  # cunt sucker
-    r"puluthi kami",  # pull the skin down and show
-    r"puluthi vudu di",  # pull the skin of penis
+    r"puluthi( (kami|vudu di))?",  # pull the skin down and show
     r"puluthina poola umbudi",  # suck the peel off dick
     r"punda mavale",  # daughter of cunt
     r"punda mavanae",  # a guy having vagina
@@ -181,9 +172,7 @@ badword_regexes = [
     r"soora koodhi",  # disgraced cunt
     r"soothu",  # ass
     r"soru thunriya illa pee thunriya",  # eating food or dung
-    r"sunni",  # penis
-    r"sunni oombi aaya koodi",  # cock suckin grannu cunt
-    r"sunni umbi",  # person who sucks dick
+    r"sunni( (oombi aaya koodi|umbi))?",  # penis, -suckin cunt, -sucks dick
     r"sunniya oombu",  # suck the dick
     r"sunniya uruvudi thevdia",  # pull the dick you prostitute
     r"suthu kolutha thatuvani",  # prostitute having a big ass
