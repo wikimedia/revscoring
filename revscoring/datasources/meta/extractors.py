@@ -52,12 +52,14 @@ class regex(Datasource):
             text = text_or_texts
             return [match.group(2)
                     for match in self.group_re.finditer(text)
-                    if self.exclude_re is None or
+                    if not hasattr(self, 'exclude_re') or
+                       self.exclude_re is None or
                        not self.exclude_re.match(match.group(2))]
         else:
             texts = text_or_texts
             return [match.group(2)
                     for text in texts
                     for match in self.group_re.finditer(text)
-                    if self.exclude_re is None or
+                    if not hasattr(self, 'exclude_re') or
+                       self.exclude_re is None or
                        not self.exclude_re.match(match.group(2))]
