@@ -245,7 +245,7 @@ informal_regexes = [
     r"ho+lis?",  # ???
     r"ijos",  # ???
     r"inserta",  # inserts
-    r"j+[eaiou]+(j+[aeiou]*)*",  # jaja jeje jojojo
+    r"j+[eaiou]+(j[aeiou]*)*",  # jaja jeje jojojo
     r"ke",  # short for 'que'
     r"kie(n|ro)",  # I want
     r"komo",  # ???
