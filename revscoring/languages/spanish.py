@@ -245,14 +245,14 @@ informal_regexes = [
     r"ho+lis?",  # ???
     r"ijos",  # ???
     r"inserta",  # inserts
-    r"j+[eaiou]+(j+[aeiou]*)*",  # jaja jeje jojojo
+    r"j+[eaiou]+(j[aeiou]*)*",  # jaja jeje jojojo
     r"ke",  # short for 'que'
     r"kie(n|ro)",  # I want
     r"komo",  # ???
     r"lean",  # ???
     r"lees",  # ???
     r"lo[ck]os?",  # crazy
-    r"(l+[uo]+l+)([uo]+l+)*",  # lol lollloololol lulllololul
+    r"l+[uo]+[uol]*l",  # lol lollloololol lulllololul
     r"madrazo",  # a crash (slang)
     r"malparida",  # miscaried
     r"mcfinnigan",  # ???
