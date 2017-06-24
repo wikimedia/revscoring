@@ -5,6 +5,7 @@ more-itertools == 2.2
 mwapi >= 0.5.0, < 0.5.999
 mwtypes >= 0.2.0, < 0.2.999
 mwparserfromhell >= 0.3.3, < 0.4.999
+mysqltsv >= 0.0.7, < 0.0.999
 nltk >= 3.0.0, < 3.0.999
 nose >= 1.3.4, < 1.3.999
 numpy >= 1.8.2, < 1.10.999
