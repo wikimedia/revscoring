@@ -122,7 +122,7 @@ informal_regexes = [
     r"h[aiou](h[aeiou])*", r"h[e](h[aeiou])+",  # hi, ha, hehe, hohoho
     r"k+?",  # k, kkkkkkkkkkkkkkk
     r"lindo",  # pretty
-    r"l+?([uo]+?l+?)+",  # lol, LOLOLOL, LLLLoOOoLLL
+    r"l+[uo][uol]*l",   # lol, LOLOLOL, LLLLoOOoLLL
     r"mae",  # mom
     r"mto",  # very
     r"naum",  # no (slang)

@@ -168,7 +168,7 @@ informal_regexes = [
     r"i", r"i+?d+?i+?o+?t+?",
     r"(la)+",
     r"loser",
-    r"l+[uo]+[uol]*l",
+    r"l+[uo][uol]*l",
     r"l+?m+?a+?o+?",
     r"l[ou]+?ve?",
     r"m+?e+?o+?w+?",

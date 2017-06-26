@@ -252,7 +252,7 @@ informal_regexes = [
     r"lean",  # ???
     r"lees",  # ???
     r"lo[ck]os?",  # crazy
-    r"l+[uo]+[uol]*l",  # lol lollloololol lulllololul
+    r"l+[uo][uol]*l",  # lol lollloololol lulllololul
     r"madrazo",  # a crash (slang)
     r"malparida",  # miscaried
     r"mcfinnigan",  # ???
