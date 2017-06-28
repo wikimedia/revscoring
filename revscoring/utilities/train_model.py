@@ -7,8 +7,9 @@
 
     Usage:
         train_model -h | --help
-        train_model <scorer_model> <features> [-p=<kv>]...
+        train_model <scorer_model> <features> <label> [-p=<kv>]...
                    [--version=<vers>]
+                   [--observations=<path>]
                    [--values-labels=<path>]
                    [--model-file=<path>]
                    [--label-type=<type>]
