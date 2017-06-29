@@ -2,7 +2,7 @@ GaussianNB:
   class: sklearn.naive_bayes.GaussianNB
   params: {}
 BernoulliNB:
-  class: sklearn.naive_bayes.BernouliNB
+  class: sklearn.naive_bayes.BernoulliNB
   params: {}
 MultinomialNB:
   class: sklearn.naive_bayes.MultinomialNB
