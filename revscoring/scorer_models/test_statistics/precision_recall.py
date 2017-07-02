@@ -96,5 +96,6 @@ class precision_recall(ClassifierStatistic):
 
         return formatted.getvalue()
 
+
 TestStatistic.register("precision_recall", precision_recall)
 TestStatistic.register("pr", precision_recall)  # Backwards compatible

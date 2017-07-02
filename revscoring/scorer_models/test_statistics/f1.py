@@ -43,4 +43,5 @@ class f1(ClassifierStatistic):
                    "".join("\t" + line + "\n" for line in
                            table_str.split("\n"))
 
+
 TestStatistic.register("f1", f1)

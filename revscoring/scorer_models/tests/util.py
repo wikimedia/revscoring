@@ -11,12 +11,16 @@ from ..scorer_model import MLScorerModel
 
 def process_float():
     return float()
+
+
 some_float = Feature("some_float", process_float(),
                      depends_on=[], returns=float)
 
 
 def process_other_float():
     return float()
+
+
 other_float = Feature("other_float", process_other_float(),
                       depends_on=[], returns=float)
 FEATURES = [some_float, other_float]
@@ -24,6 +28,8 @@ FEATURES = [some_float, other_float]
 
 def process_float_vector():
     return [float(), float(), float()]
+
+
 other_float = FeatureVector("float_vector", process_float_vector(),
                             depends_on=[], returns=float)
 FEATURES = [some_float, other_float]

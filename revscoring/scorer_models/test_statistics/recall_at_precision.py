@@ -96,4 +96,5 @@ class recall_at_precision(ClassifierStatistic):
 
         return formatted.getvalue()
 
+
 TestStatistic.register("recall_at_precision", recall_at_precision)

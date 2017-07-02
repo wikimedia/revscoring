@@ -1,4 +1,4 @@
-from .features import Dictionary, RegexMatches, Stemmed, Stopwords
+from .features import RegexMatches
 
 name = "korean"
 

@@ -243,6 +243,7 @@ class User(DependentSet):
 def _process_is_anon(user_id):
     return user_id == 0
 
+
 revision = Revision("revision", revision_oriented.revision)
 """
 :class:`~revscoring.features.revision_oriented.Revision` features.

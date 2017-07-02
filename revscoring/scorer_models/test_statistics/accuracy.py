@@ -33,4 +33,5 @@ class accuracy(ClassifierStatistic):
             raise TypeError("Format '{0}' not available for {1}."
                             .format(format, cls.__name__))
 
+
 TestStatistic.register("accuracy", accuracy)

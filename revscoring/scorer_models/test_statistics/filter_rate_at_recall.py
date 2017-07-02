@@ -108,4 +108,5 @@ class filter_rate_at_recall(ClassifierStatistic):
 
         return formatted.getvalue()
 
+
 TestStatistic.register("filter_rate_at_recall", filter_rate_at_recall)

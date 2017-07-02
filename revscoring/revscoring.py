@@ -8,7 +8,8 @@ Utilities:
 * fetch_text        Fetches text for a set of observations
 * train_model       Trains an MLScorerModel with extracted features
 * test_model        Tests an MLScorerModel with extracted features
-* cv_train          Cross-validates, and then trains a MLScorerModel with extracted features
+* cv_train          Cross-validates, and then trains a MLScorerModel with
+                    extracted features
 * model_info        Reads a model-file and reports metadata and testing
                     statistics
 * tune              Tunes a set of models against a training set to identify
@@ -30,7 +31,6 @@ USAGE = """Usage:
 
 
 def main():
-
     if len(sys.argv) < 2:
         sys.stderr.write(USAGE)
         sys.exit(1)
@@ -51,6 +51,7 @@ def main():
         sys.exit(1)
 
     module.main(sys.argv[2:])
+
 
 if __name__ == "__main__":
     main()

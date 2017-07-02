@@ -10,6 +10,7 @@ from ..stemmed import Stemmed
 def stem_word(w):
     return w[0].lower()
 
+
 stemmed = Stemmed("english.stemmed", stem_word)
 
 r_text = revision_oriented.revision.text

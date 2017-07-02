@@ -13,6 +13,7 @@ my_ints = Datasource("my_ints")
 def extract_first_char(token):
     return token[:1]
 
+
 first_char = mappers.map(extract_first_char, tokens, name="first_char")
 
 lower_case_tokens = mappers.lower_case(tokens, name="lower_case_tokens")
