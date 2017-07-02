@@ -1,4 +1,5 @@
 import json
+import pickle
 
 from nose.tools import eq_
 
@@ -93,3 +94,6 @@ def test_classification():
         '"maximum recall @ precision >= 0.9".labels.true')
     assert abs(optimized - 0.51) < 0.025, \
            str(optimized - 0.51)
+
+    print(vars(skewed_stats))
+    pickle.loads(pickle.dumps(skewed_stats))

@@ -14,6 +14,7 @@ class Environment(ModelInfo):
         """
         Construct an environment snapshot.
         """
+        super().__init__()
         self['revscoring_version'] = __version__
         self['platform'] = platform.platform()
         self['machine'] = platform.machine()
@@ -38,15 +39,13 @@ class Environment(ModelInfo):
                 If True, raise and exception if the environment has any
                 mismatch
         """
-        warnings = []
-        if self['revscoring_version'] != __version__:
-            warnings.append(_build_warning(
-                'revscoring version', self['revscoring_version'], __version__))
+        current_environment = self.__class__()
 
-        for field in self.FIELDS:
-            if self[field] != getattr(platform, field)():
+        warnings = []
+        for field in (self.keys() & current_environment.keys()):
+            if self.get(field) != current_environment.get(field):
                 warnings.append(_build_warning(
-                    field, self[field], getattr(platform, field)()))
+                    field, self.get(field), current_environment.get(field)))
 
         if len(warnings) > 0:
             message = ("Differences between the current environment " +

@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 class Rates(ModelInfo):
 
     def __init__(self, counts, population_rates=None):
+        super().__init__()
         self['sample'] = OrderedDict(
             (label, lcount / counts['n'])
             for label, lcount in counts['labels'].items())

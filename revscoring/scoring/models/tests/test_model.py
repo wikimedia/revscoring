@@ -1,13 +1,13 @@
 from nose.tools import eq_
 
 from ....features import Feature
-from ..model import Classifier, Learned, Model, ThresholdClassifier
+from ..model import Classifier, Learned, Model
 
 
 def test_model():
     m = Model([Feature("foo")], version="0.0.1")
 
-    eq_(m.version, "0.0.1")
+    eq_(m.info.lookup('version'), "0.0.1")
 
 
 def test_from_config():
@@ -29,9 +29,4 @@ def test_learned_model():
 
 def test_classifier():
     model = Classifier([Feature("foo")])
-    assert model.statistics is not NotImplemented
-
-
-def test_threshold_classifier():
-    model = ThresholdClassifier([Feature("foo")])
-    assert model.statistics is not NotImplemented
+    assert 'statustics' not in model.info
