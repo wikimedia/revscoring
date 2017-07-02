@@ -24,8 +24,8 @@ def test_sts():
         *zip(*SKEWED), population_rate=0.05)
     balanced_sts = ScaledThresholdStatistics(
         *zip(*BALANCED), population_rate=0.05)
-    print(skewed_sts.format_str({}, threshold_ndigits=1))
-    print(balanced_sts.format_str({}, threshold_ndigits=1))
+    print(skewed_sts.format_str({}, threshold_ndigits=3))
+    print(balanced_sts.format_str({}, threshold_ndigits=3))
     print(skewed_sts.format_str({'maximum recall @ precision >= 0.9': {}}))
     print(json.dumps(skewed_sts.format_json(
         {'maximum recall @ precision >= 0.9': {},
@@ -48,8 +48,8 @@ def test_sts():
     print("Error", me)
     assert rmse < 0.20, rmse
 
-    assert abs(balanced_sts.roc_auc() - skewed_sts.roc_auc()) < 0.05, \
+    assert abs(balanced_sts.roc_auc() - skewed_sts.roc_auc()) < 0.10, \
            abs(balanced_sts.roc_auc() - skewed_sts.roc_auc())
 
-    assert abs(balanced_sts.pr_auc() - skewed_sts.pr_auc()) < 0.05, \
+    assert abs(balanced_sts.pr_auc() - skewed_sts.pr_auc()) < 0.10, \
            abs(balanced_sts.pr_auc() - skewed_sts.pr_auc())

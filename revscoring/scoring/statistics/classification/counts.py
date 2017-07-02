@@ -41,4 +41,4 @@ class Counts(ModelInfo):
         return formatted
 
     def format_json(self, path_tree, **kwargs):
-        return util.dict_lookup(self, path_tree)
+        return util.dict_lookup(self._data, path_tree)

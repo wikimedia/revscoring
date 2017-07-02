@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class Classification(Statistics):
 
-    def __init__(self, prediction_key="prediction", decision_key="probability",
+    def __init__(self, prediction_key="prediction", decision_key=None,
                  labels=None, population_rates=None, **kwargs):
         """
         Constructs a set of classification statistics

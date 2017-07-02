@@ -21,6 +21,7 @@ class MicroMacroStats(ModelInfo):
 
         :Parameters:
         """  # noqa
+        super().__init__()
         self.field = field
         try:
             self['micro'] = (

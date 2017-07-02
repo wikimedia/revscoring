@@ -71,7 +71,6 @@ from . import util
 from ..about import __version__
 from ..dependencies import solve
 from ..scoring.models import util as model_util
-from ..scoring.statistics import ThresholdOptimization, parse_pattern
 from .util import Timeout, read_observations
 
 logger = logging.getLogger(__name__)
@@ -102,13 +101,8 @@ def main(argv=None):
         [(list(solve(features, cache=ob['cache'])), ob[label_name])
          for ob in observations]
 
-    statistic_pattern = args['<statistic>']
+    statistic_path = args['<statistic>']
     additional_params = {}
-    try:
-        additional_params['threshold_optimizations'] = \
-            [ThresholdOptimization.parse(parse_pattern(statistic_pattern)[0])]
-    except ValueError:
-        pass
 
     labels, label_weights, population_rates = \
         util.read_labels_and_population_rates(
@@ -140,12 +134,12 @@ def main(argv=None):
     verbose = args['--verbose']
 
     run(params_config, features, features_path, value_labels,
-            statistic_pattern, additional_params, maximize, folds, report,
+            statistic_path, additional_params, maximize, folds, report,
             processes, cv_timeout, verbose)
 
 
 def run(params_config, features, features_path, value_labels,
-        statistic_pattern, additional_params, maximize, folds, report,
+        statistic_path, additional_params, maximize, folds, report,
         processes, cv_timeout, verbose):
 
     feature_values, labels = (list(vect) for vect in zip(*value_labels))
@@ -164,7 +158,7 @@ def run(params_config, features, features_path, value_labels,
     report.write("- Observations: {0}\n".format(len(value_labels)))
     report.write("- Labels: {0}\n".format(json.dumps(list(possible_labels))))
     report.write("- Statistic: {0} ({1})\n"
-                 .format(statistic_pattern,
+                 .format(statistic_path,
                          "maximize" if maximize else "minimize"))
     report.write("- Folds: {0}\n".format(folds))
     report.write("\n")
@@ -182,7 +176,7 @@ def run(params_config, features, features_path, value_labels,
                 _cross_validate,
                 [features, value_labels, Model, params, additional_params],
                 {'cv_timeout': cv_timeout,
-                 'statistic_pattern': statistic_pattern,
+                 'statistic_path': statistic_path,
                  'folds': folds})
             cv_result_sets[name].append((params, result))
 
@@ -204,7 +198,7 @@ def run(params_config, features, features_path, value_labels,
           model_util.format_params(params))
          for name, params, statistic in grid_scores[:10]
          if statistic is not None),
-        headers=["model", "statistic", "params"],
+        headers=["model", statistic_path, "params"],
         tablefmt="pipe"
     )
     report.write(table + "\n\n")
@@ -222,7 +216,7 @@ def run(params_config, features, features_path, value_labels,
             ((round(statistic, 4), model_util.format_params(params))
              for params, statistic in param_statistics
              if statistic is not None),
-            headers=["statistic", "params"],
+            headers=[statistic_path, "params"],
             tablefmt="pipe"
         )
         report.write(table + "\n")
@@ -252,7 +246,7 @@ def _model_param_grid(params_config):
 
 
 def _cross_validate(features, value_labels, Model, params, additional_params,
-                    statistic_pattern, folds=5, cv_timeout=None,
+                    statistic_path, folds=5, cv_timeout=None,
                     verbose=False):
 
     start = time.time()
@@ -273,14 +267,14 @@ def _cross_validate(features, value_labels, Model, params, additional_params,
             stats = model.cross_validate(
                 value_labels, processes=1, folds=folds)
 
-        statistic = stats.lookup(statistic_pattern)
+        statistic = stats.lookup(statistic_path)
 
         duration = time.time() - start
         logger.debug("Cross-validated {0} with {1} in {2} minutes: {3}={4}"
                      .format(Model.__name__,
                              model_util.format_params(params),
                              round(duration / 60, 3),
-                             statistic_pattern,
+                             statistic_path,
                              round(statistic, 4)))
         return statistic
 

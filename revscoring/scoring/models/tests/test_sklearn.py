@@ -48,12 +48,12 @@ def test_sklean_classifier():
 
     stats = skc.cross_validate(cv_feature_values, folds=2)
     eq_(stats['counts']['predictions'],
-        {True: {True: 5},
-         False: {False: 5}})
+        {True: {False: 0, True: 5},
+         False: {False: 5, True: 0}})
 
 
 @raises(ValueError)
 def test_sklearn_format_error():
     skc = FakeIdentityClassifier(
         [Feature("foo")], version="0.0.1")
-    skc.format(formatting="foo")
+    skc.info.format(formatting="foo")

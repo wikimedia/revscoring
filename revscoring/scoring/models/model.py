@@ -16,7 +16,6 @@ All scoring models are an implementation of :class:`revscoring.Model`.
 """
 import logging
 import pickle
-from datetime import datetime
 from multiprocessing import Pool, cpu_count
 
 import yamlconf
@@ -30,7 +29,6 @@ logger = logging.getLogger(__name__)
 
 
 class Model:
-    Statistics = NotImplemented
     SCORE_SCHEMA = NotImplemented
 
     def __init__(self, features, version=None, environment=None,
@@ -44,9 +42,10 @@ class Model:
             version : `str`
                 A string describing the version of the model.
         """
-        logger.debug("Initializing Model with {0}")
+        logger.debug("Initializing Model with {0}".format(features))
         self.features = tuple(features)
         self.params = {}
+        self.version = version
 
         self.info = ModelInfo()
         self.info['type'] = self.__class__.__name__
@@ -102,7 +101,7 @@ class Model:
         else:
             model = pickle.load(f)
 
-        model.environment.check(raise_exception=error_on_env_check)
+        model.info['environment'].check(raise_exception=error_on_env_check)
         return model
 
     def dump(self, f):
@@ -196,20 +195,6 @@ class Learned(Model):
     def _clean_copy(self):
         raise NotImplementedError()
 
-    def format_basic_info_str(self):
-        formatted = super().format_basic_info_str()
-        if self.trained is not None:
-            date_string = datetime.fromtimestamp(self.trained).isoformat()
-        else:
-            date_string = "n/a"
-        formatted += " - trained: {0}\n".format(date_string)
-        return formatted
-
-    def format_json(self, ndigits=3):
-        doc = super().format_json()
-        doc['params']['trained'] = self.trained
-        return doc
-
     def cross_validate(self, values_labels, folds=10, processes=1):
         """
         Trains and tests the model agaists folds of labeled data.
@@ -242,9 +227,9 @@ class Learned(Model):
         for score_labels in results:
             agg_score_labels.extend(score_labels)
 
-        self.statistics.fit(agg_score_labels)
+        self.info['statistics'].fit(agg_score_labels)
 
-        return self.statistics
+        return self.info['statistics']
 
     def _cross_score(self, i_train_test):
         i, train_set, test_set = i_train_test
@@ -268,19 +253,3 @@ class Classifier(Learned):
             'labels': labels,
             'population_rates': population_rates
         })
-
-    def format_basic_info_str(self):
-        formatted = super().format_basic_info_str()
-        if self.labels is not None:
-            formatted += " - labels: {0}\n".format(self.labels)
-        if self.population_rates is not None:
-            pop_rates = ", ".join("{0}={1}".format(l, r)
-                                  for l, r in self.population_rates.items())
-            formatted += " - population_rates: ({0})\n".format(pop_rates)
-        return formatted
-
-    def format_json(self, ndigits=3):
-        doc = super().format_json()
-        doc['params']['labels'] = self.labels
-        doc['params']['population_rates'] = self.population_rates
-        return doc

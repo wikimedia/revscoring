@@ -27,7 +27,7 @@ class Classifier(model.Classifier, model.Model):
             'prediction': {
                 'description': "The most likely label predicted by the " +
                                "estimator",
-                'type': ['string', 'boolean']
+                'type': ['string', 'boolean', 'number']
             }
         }
     }
@@ -93,12 +93,6 @@ class Classifier(model.Classifier, model.Model):
 
         return {'seconds_elapsed': time.time() - start}
 
-    def format_basic_info_str(self):
-        formatted = super().format_basic_info_str()
-        if self.label_weights is not None:
-            formatted += " - label_weights: {0}\n".format(self.label_weights)
-        return formatted
-
     def format_json(self, ndigits=3):
         doc = super().format_json()
         doc['params']['label_weights'] = self.label_weights
@@ -136,7 +130,7 @@ class ProbabilityClassifier(Classifier):
             'prediction': {
                 'description': "The most likely label predicted by the " +
                                "estimator",
-                'type': ['string', 'boolean']
+                'type': ['string', 'boolean', 'number']
             },
             'probability': {
                 'description': "A mapping of probabilities onto each of the " +
