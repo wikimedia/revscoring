@@ -16,6 +16,7 @@ except enchant.errors.DictNotFoundError:
 def safe_dictionary_check(word):
     return enchant_dict.check(utf16_cleanup(word))
 
+
 dictionary = Dictionary(name + ".dictionary", safe_dictionary_check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via

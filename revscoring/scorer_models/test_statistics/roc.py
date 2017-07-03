@@ -92,4 +92,5 @@ class roc(ClassifierStatistic):
 
         return formatted.getvalue()
 
+
 TestStatistic.register("roc", roc)

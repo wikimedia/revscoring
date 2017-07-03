@@ -97,4 +97,5 @@ class recall_at_fpr(ClassifierStatistic):
 
         return formatted.getvalue()
 
+
 TestStatistic.register("recall_at_fpr", recall_at_fpr)

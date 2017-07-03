@@ -13,6 +13,7 @@ calvins_words = {"yakka", "foob", "mog", "gurg", "pubbawup", "zink", "watoom",
 def dictionary_check(word):
     return word.lower() in calvins_words
 
+
 my_dict = Dictionary("calvin.dictionary", dictionary_check)
 
 r_text = revision_oriented.revision.text

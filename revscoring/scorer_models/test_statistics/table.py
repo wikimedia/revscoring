@@ -71,4 +71,5 @@ class table(ClassifierStatistic):
                "".join("\t" + line + "\n" for line in
                        table_str.split("\n"))
 
+
 TestStatistic.register("table", table)

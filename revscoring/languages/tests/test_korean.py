@@ -4,7 +4,6 @@ from nose.tools import eq_
 
 from .. import korean
 from ...datasources import revision_oriented
-from ...dependencies import solve
 from .util import compare_extraction
 
 BAD = [

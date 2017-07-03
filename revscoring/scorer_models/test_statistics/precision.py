@@ -37,4 +37,5 @@ class precision(ClassifierStatistic):
                "".join("\t" + line + "\n" for line in
                        table_str.split("\n"))
 
+
 TestStatistic.register("precision", precision)

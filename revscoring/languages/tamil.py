@@ -86,7 +86,8 @@ badword_regexes = [
     r"keeshan appa",  # a discrimination to human
     r"kena punda",  # stupid cunt
     r"ki adi",  # masturbate
-    r"koo(dhi|thi)( (payale|mayir|nuckie))?",  # cunt; pussy, -face, -hair, -sucker
+    # cunt; pussy, -face, -hair, -sucker
+    r"koo(dhi|thi)( (payale|mayir|nuckie))?",
     r"kudiya baadu",  # cunt boob fucker
     r"kundi",  # ass
     r"kunji payalae",  # cock heaf

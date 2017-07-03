@@ -10,17 +10,21 @@ from ..modifiers import not_
 def return_five():
     return 5
 
+
 five = Feature("five", return_five, returns=int, depends_on=[])
 
 
 def return_true():
     return True
 
+
 true = Feature("true", return_true, returns=bool, depends_on=[])
 
 
 def identity_process(value):
     return value
+
+
 int_identity = Feature("int_identity", identity_process,
                        returns=int, depends_on=["value"])
 
