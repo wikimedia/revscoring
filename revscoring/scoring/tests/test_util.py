@@ -1,5 +1,3 @@
-import json
-
 from nose.tools import eq_
 
 from .. import util
