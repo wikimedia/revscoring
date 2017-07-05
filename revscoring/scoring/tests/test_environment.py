@@ -14,6 +14,7 @@ def test_environment():
     eq_(env.lookup(['revscoring_version']), __version__)
     env.check(raise_exception=True)
 
+
 @raises(RuntimeError)
 def test_env_error():
     env = Environment()
