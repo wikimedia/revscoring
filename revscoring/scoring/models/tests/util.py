@@ -2,7 +2,6 @@ import json
 import random
 from io import BytesIO
 from itertools import chain
-from pprint import pprint
 
 from nose.tools import eq_, nottest
 
