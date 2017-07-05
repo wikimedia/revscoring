@@ -24,7 +24,9 @@ Subpackages
     revscoring.features.wikitext
     revscoring.languages
     revscoring.languages.features
-    revscoring.scorer_models
+    revscoring.scoring
+    revscoring.scoring.models
+    revscoring.scoring.statistics
     revscoring.utilities
 
 Submodules

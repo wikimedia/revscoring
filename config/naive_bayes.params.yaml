@@ -1,10 +1,10 @@
 GaussianNB:
-  class: sklearn.naive_bayes.GaussianNB
+  class: revscoring.scoring.models.GaussianNB
   params: {}
 BernoulliNB:
-  class: sklearn.naive_bayes.BernoulliNB
+  class: revscoring.scoring.models.BernoulliNB
   params: {}
 MultinomialNB:
-  class: sklearn.naive_bayes.MultinomialNB
+  class: revscoring.scoring.models.MultinomialNB
   params:
   alpha: [0.1, 1, 10]

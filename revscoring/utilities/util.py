@@ -1,12 +1,15 @@
 import base64
 import getpass
 import json
+import logging
 import pickle
 import random
 import signal
 import sys
 
 from nose.tools import nottest
+
+logger = logging.getLogger(__name__)
 
 DECODERS = {
     'int': lambda v: int(v),
@@ -40,6 +43,36 @@ def dump_observation(observation, f):
 
     json.dump(observation, f)
     f.write("\n")
+
+
+def read_labels_and_population_rates(labels_str, label_weights_strs,
+                                     pop_rates_strs):
+    if labels_str is not None:
+        labels = [json.loads(l) for l in labels_str.strip().split(",")]
+    else:
+        labels = None
+
+    if label_weights_strs is not None:
+        label_weights = {}
+        for label_weights_str in label_weights_strs:
+            label, weight = (
+                json.loads(s) for s in label_weights_str.split("=", 1))
+            label_weights[label] = weight
+    else:
+        label_weights = None
+
+    if pop_rates_strs is None:
+        population_rates = None
+    else:
+        population_rates = {}
+        if labels is None:
+            labels = []
+        for label_rate_str in pop_rates_strs:
+            label, rate = (json.loads(s) for s in label_rate_str.split("=", 1))
+            population_rates[label] = rate
+            labels.append(label)
+
+    return labels, label_weights, population_rates
 
 
 @nottest

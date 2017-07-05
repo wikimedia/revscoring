@@ -1,6 +1,7 @@
 """
-``revscoring fit -h``
+``revscoring extract -h``
 ::
+
     Fits a dependent (an extractable value like a Datasource or Feature) to
     observed data.  These are often used along with bag-of-words
     methods to reduce the feature space prior to training and testing a model
@@ -23,7 +24,7 @@
         --datasource-file=<math>  Path to a file for writing out the trained
                                   datasource [default: <stdout>]
         --debug                   Print debug logging.
-"""
+"""  # noqa
 import logging
 import sys
 
