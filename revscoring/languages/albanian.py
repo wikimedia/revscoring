@@ -38,7 +38,6 @@ stopwords = [
 ]
 """
 :class:`~revscoring.languages.features.Stopwords` features copied from
-"common words" in https://meta.wikimedia.org/wiki/?oldid=16354094
 """
 
 stopwords = Stopwords(name + ".stopwords", stopwords)
