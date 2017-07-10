@@ -74,3 +74,15 @@ def test_informals():
                        INFORMAL, OTHER)
 
     eq_(albanian.informals, pickle.loads(pickle.dumps(albanian.informals)))
+
+def test_stopwords():
+    cache = {revision_oriented.revision.text: "Ai ishte qyteti më i vjetër dhe më " +
+                                              "pesë qytetet greke në rajon"}
+    eq_(solve(albanian.stopwords.revision.datasources.stopwords, cache=cache),
+        ["ishte", "dhe"])
+    eq_(solve(albanian.stopwords.revision.datasources.non_stopwords,
+        cache=cache),
+        ["Ai", "qyteti", "më", "i", "vjetër", "më", "pesë",
+         "qytetet", "greke", "në", "rajon"])
+
+    eq_(albanian.stopwords, pickle.loads(pickle.dumps(albanian.stopwords)))
