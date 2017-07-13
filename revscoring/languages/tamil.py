@@ -1,7 +1,8 @@
-from .features import Dictionary, RegexMatches
+from .features import RegexMatches
 
 name = "tamil"
 
+'''
 try:
     import enchant
     dictionary = enchant.Dict("ta")
@@ -14,6 +15,7 @@ dictionary = Dictionary(name + ".dictionary", dictionary.check)
 :class:`~revscoring.languages.features.Dictionary` features via
 :class:`enchant.Dict` "ta". Provided by `aspell-ta`.
 """
+'''
 
 badword_regexes = [
     r"ஆபாசச்சொல்",
