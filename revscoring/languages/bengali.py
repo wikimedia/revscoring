@@ -2,6 +2,7 @@ from .features import Dictionary, RegexMatches, Stopwords
 
 name = "bengali"
 
+'''
 try:
     import enchant
     dictionary = enchant.Dict("bn")
@@ -9,11 +10,13 @@ except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'bn'.  " +
                       "Consider installing 'aspell-bn'.")
 
+
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
 :class:`enchant.Dict` "bn".  Provided by `aspell-bn`
 """
+'''
 
 stopwords = [
     r"অক",
