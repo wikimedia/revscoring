@@ -70,7 +70,7 @@ import yamlconf
 from nose.tools import nottest
 
 from ..dependencies import solve
-from ..scoring.statistics import ThresholdOptimization
+from ..scoring.statistics.classification import ThresholdOptimization
 from .util import read_labels_and_population_rates, read_observations
 
 logger = logging.getLogger(__name__)
