@@ -76,9 +76,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Revision Scoring'
-copyright = u'2015, Revision Scoring team'
-author = u'Revision Scoring team'
+project = u'Revscoring'
+copyright = u'2017, Scoring Platform team'
+author = u'Aaron Halfaker'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
