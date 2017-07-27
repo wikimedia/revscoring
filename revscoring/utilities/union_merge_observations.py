@@ -33,6 +33,8 @@ from .util import read_observations, dump_observation
 
 
 def main(argv=None):
+    """Parse commandline parameters, read files and write merged data.
+    """
     args = docopt.docopt(__doc__, argv=argv)
 
     if args['--output'] == "<stdout>":
@@ -52,11 +54,15 @@ def main(argv=None):
 
 
 def union_merge(observations, id_column):
-
+    """Merge all observations, returning the output as a list.
+    """
     id_map = collections.defaultdict(dict)
     for ob in observations:
         # Get the id value.
         ob_id = ob[id_column]
+
+        # Merge the contents, with later entries taking precedence when keys
+        # match.
         id_map[ob_id].update(ob)
 
     return id_map.values()

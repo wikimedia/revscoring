@@ -2,10 +2,29 @@ import json
 import os.path
 import tempfile
 
-import revscoring.utilities.union_merge_observations
+from revscoring.utilities.union_merge_observations import main, union_merge
 
 
-def test_union():
+def test_union_merge():
+    """Merge and inspect results.
+    """
+    observations = [
+        {"rev_id": 101, "goodfaith": False, "damaging": True},
+        {"rev_id": 101, "goodfaith": True, "damaging": True},
+        {"rev_id": 102, "goodfaith": False, "damaging": False},
+    ]
+    expected = [
+        {"rev_id": 101, "goodfaith": True, "damaging": True},
+        {"rev_id": 102, "goodfaith": False, "damaging": False},
+    ]
+    result = union_merge(observations, "rev_id")
+    assert expected == list(result)
+
+
+def test_union_cli():
+    """Integration test to parse and run from a commandline.  This tests file
+    loading.
+    """
     # Get test fixtures.
     data_dir = os.path.dirname(__file__) + "/data"
     in_files = [
@@ -18,10 +37,14 @@ def test_union():
 
     # Do the union.
     argv = in_files + ["--output", out_file]
-    revscoring.utilities.union_merge_observations.main(argv)
+    main(argv)
 
+    # Get results.
     with open(out_file, "r") as f:
         out_text = f.read()
+
+    # Clean up test file :(  It would be better if a context manager could
+    # ensure we don't abort before cleaning up.
     os.unlink(out_file)
 
     # Split result into lines.
