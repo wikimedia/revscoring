@@ -314,7 +314,7 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None,
+intersphinx_mapping = {'https://docs.python.org/3/': None,
                        'https://pythonhosted.org/mwtypes': None,
                        'https://pythonhosted.org/mwapi': None,
                        'https://pythonhosted.org/deltas': None,
