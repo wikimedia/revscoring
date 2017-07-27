@@ -1,5 +1,5 @@
 """
-``revscoring extract -h``
+``revscoring fetch_text -h``
 ::
 
     Gets the text for a set of observations.  Will create a new field called

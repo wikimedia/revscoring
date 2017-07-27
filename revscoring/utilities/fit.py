@@ -1,5 +1,5 @@
 """
-``revscoring extract -h``
+``revscoring fit -h``
 ::
 
     Fits a dependent (an extractable value like a Datasource or Feature) to
