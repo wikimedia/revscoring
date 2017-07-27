@@ -27,14 +27,13 @@
 
 import collections
 import docopt
-import json
 import sys
 
 from .util import read_observations, dump_observation
 
 
-def main(argv = None):
-    args = docopt.docopt(__doc__, argv = argv)
+def main(argv=None):
+    args = docopt.docopt(__doc__, argv=argv)
 
     if args['--output'] == "<stdout>":
         out_file = sys.stdout
@@ -46,10 +45,13 @@ def main(argv = None):
         with open(path, "r") as in_file:
             observations.extend(read_observations(in_file))
 
-    union_merge(observations, out_file, id_column = args['--id-column'])
+    merged_observations = union_merge(observations,
+                                        id_column=args['--id-column'])
+    for ob in merged_observations:
+        dump_observation(ob, out_file)
 
 
-def union_merge(observations, out_file, id_column):
+def union_merge(observations, id_column):
 
     id_map = collections.defaultdict(dict)
     for ob in observations:
@@ -57,5 +59,4 @@ def union_merge(observations, out_file, id_column):
         ob_id = ob[id_column]
         id_map[ob_id].update(ob)
 
-    for ob in id_map.values():
-        dump_observation(ob, out_file)
+    return id_map.values()

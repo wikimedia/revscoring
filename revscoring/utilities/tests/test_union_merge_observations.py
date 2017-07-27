@@ -1,4 +1,3 @@
-import io
 import json
 import os.path
 import tempfile
@@ -39,9 +38,11 @@ def test_union():
     for line in lines:
         obj = json.loads(line)
         if obj["rev_id"] == "16124458":
-            assert obj == {"damaging": 0, "goodfaith": 1, "approved": 1, "rev_id": "16124458"}
+            assert obj == {"damaging": 0, "goodfaith": 1, "approved": 1,
+                            "rev_id": "16124458"}
         if obj["rev_id"] == "16124390":
-            assert obj == {"damaging": 0, "approved": 1, "goodfaith": 0, "foo": 1, "rev_id": "16124390"}
+            assert obj == {"damaging": 0, "approved": 1, "goodfaith": 0,
+                            "foo": 1, "rev_id": "16124390"}
             count_merged += 1
 
     assert count_merged == 1
