@@ -17,7 +17,7 @@ from ..statistics import Classification
 logger = logging.getLogger(__name__)
 
 
-class Classifier(model.Classifier, model.Model):
+class Classifier(model.Classifier):
     Estimator = NotImplemented
     BASE_PARAMS = {}
     SCORE_SCHEMA = {
@@ -65,6 +65,8 @@ class Classifier(model.Classifier, model.Model):
 
     def train(self, values_labels, **kwargs):
         """
+        Fits the internal model to the provided `values_labels`.
+
         :Returns:
             A dictionary with the fields:
 
@@ -93,8 +95,8 @@ class Classifier(model.Classifier, model.Model):
 
         return {'seconds_elapsed': time.time() - start}
 
-    def format_json(self, ndigits=3):
-        doc = super().format_json()
+    def format_json(self, **kwargs):
+        doc = super().format_json(**kwargs)
         doc['params']['label_weights'] = self.label_weights
         return util.normalize_json(doc)
 

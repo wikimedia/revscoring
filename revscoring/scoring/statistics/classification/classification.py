@@ -8,6 +8,7 @@ from .micro_macro_stats import MicroMacroStats
 from .rates import Rates
 from .scaled_prediction_statistics import ScaledPredictionStatistics
 from .scaled_threshold_statistics import ScaledThresholdStatistics
+from .threshold_optimization import ThresholdOptimization
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +108,14 @@ class Classification(Statistics):
             return super().__getitem__(key)
         elif hasattr(self, "label_thresholds"):
             #  This handles the case where a 'key' is a threshold optimization
-            return MicroMacroStats(self.label_thresholds, key)
+            try:
+                optimization = ThresholdOptimization.parse(key)
+            except ValueError:
+                raise KeyError(
+                    ("{0} not found, and does not match pattern " +
+                     "for threshold optimizations: {1}").format(
+                        key, ThresholdOptimization.STRING_PATTERN.pattern))
+            return MicroMacroStats(self.label_thresholds, optimization)
         else:
             raise KeyError(key)
 
