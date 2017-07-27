@@ -22,9 +22,10 @@
         --output=<path>   Path to write out the merged observations
                           [default: <stdout>]
         --id-column=<str> Name of the id column for deduplication.
-                          [default: "rev_id"]
+                          [default: rev_id]
 """
 
+import collections
 import docopt
 import json
 import sys
@@ -40,36 +41,21 @@ def main(argv = None):
     else:
         out_file = open(args['--output'], "w")
 
-    transformation = DataUnion(id_column = args['--id-column'])
-    transformation.union(args['<input>'], out_file)
+    observations = []
+    for path in args['<input>']:
+        with open(path, "r") as in_file:
+            observations.extend(read_observations(in_file))
+
+    union_merge(observations, out_file, id_column = args['--id-column'])
 
 
-class DataUnion(object):
+def union_merge(observations, out_file, id_column):
 
-    # FIXME: This doubled default is annoying.
-    def __init__(self, id_column = "rev_id"):
-        self.id_column = id_column
+    id_map = collections.defaultdict(dict)
+    for ob in observations:
+        # Get the id value.
+        ob_id = ob[id_column]
+        id_map[ob_id].update(ob)
 
-        self.rev_objs = {}
-
-    def read_file(self, in_file):
-        lines = read_observations(in_file)
-        for obj in lines:
-            obj_id = obj[self.id_column]
-            if obj_id not in self.rev_objs:
-                self.rev_objs[obj_id] = []
-            self.rev_objs[obj_id].append(obj)
-
-    def union(self, in_paths, out_file):
-
-        for index, path in enumerate(in_paths):
-            with open(path, "r") as file_obj:
-                self.read_file(file_obj)
-
-        for obj_id, objs in self.rev_objs.items():
-            merged = {}
-
-            for obj in objs:
-                merged.update(obj)
-
-            dump_observation(merged, out_file)
+    for ob in id_map.values():
+        dump_observation(ob, out_file)

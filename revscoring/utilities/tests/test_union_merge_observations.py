@@ -1,8 +1,9 @@
 import io
 import json
 import os.path
+import tempfile
 
-from revscoring.utilities.union_merge_observations import DataUnion
+import revscoring.utilities.union_merge_observations
 
 
 def test_union():
@@ -13,14 +14,19 @@ def test_union():
         data_dir + "/labeled_foo.json",
     ]
 
-    # Receive the output as a string buffer.
-    out_file = io.StringIO()
+    # Receive the output in a temporary file.
+    (fh, out_file) = tempfile.mkstemp()
 
     # Do the union.
-    DataUnion().union(in_files, out_file)
+    argv = in_files + ["--output", out_file]
+    revscoring.utilities.union_merge_observations.main(argv)
+
+    with open(out_file, "r") as f:
+        out_text = f.read()
+    os.unlink(out_file)
 
     # Split result into lines.
-    lines = out_file.getvalue().strip().split("\n")
+    lines = out_text.strip().split("\n")
 
     # There should be six records.
     assert len(lines) == 6
