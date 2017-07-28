@@ -10,9 +10,16 @@ environment.
 
 See :mod:`revscoring.scoring.models` and :mod:`revscoring.scoring.statistics`
 for more information.
+
+.. autoclass:: revscoring.Model
+    :members:
+
+.. autoclass:: revscoring.scoring.ModelInfo
+    :members:
 """
 from .models.model import Model
+from .model_info import ModelInfo
 from .statistics.statistics import Statistics
 from .environment import Environment
 
-__all__ = [Model, Statistics, Environment]
+__all__ = [Model, ModelInfo, Statistics, Environment]

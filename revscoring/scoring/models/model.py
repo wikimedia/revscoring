@@ -1,17 +1,10 @@
 """
 All scoring models are an implementation of :class:`revscoring.Model`.
 
-
-.. autoclass:: revscoring.Model
-    :members:
-
 .. autoclass:: revscoring.scoring.models.Learned
     :members:
 
 .. autoclass:: revscoring.scoring.models.Classifier
-    :members:
-
-.. autoclass:: revscoring.scoring.models.ThresholdClassifier
     :members:
 """
 import logging
@@ -48,6 +41,12 @@ class Model:
         self.version = version
 
         self.info = ModelInfo()
+        """
+        A :class:`revscoring.scoring.ModelInfo` instance that implements
+        :func:`~revscoring.scoring.Model_Info.lookup` and
+        :func:`~revscoring.scoring.Model_Info.format` -- both of which
+        act as an index into information about a model.
+        """
         self.info['type'] = self.__class__.__name__
         self.info['version'] = version
         self.info['params'] = self.params

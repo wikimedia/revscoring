@@ -6,6 +6,13 @@ from . import util
 class ModelInfo:
 
     def __init__(self, pairs=[]):
+        """
+        Constructs a mapping of information about a model.
+        :class:`~revscoring.scoring.ModelInfo` objects are usually nested
+        within each other to provide a convenient tree structure for
+        :func:`~revscoring.scoring.ModelInfo.lookup` and
+        :func:`~revscoring.scoring.ModelInfo.format`.
+        """
         self._data = OrderedDict(pairs)
 
     def __getitem__(self, key):
@@ -79,14 +86,17 @@ class ModelInfo:
 
         :Parameters:
             paths : `iterable` ( `str` | [`str`] )
-                A set of paths to
+                A set of paths to use when selecting which information should
+                formatted.  Everything beneath a provided path in the tree
+                will be formatted.  E.g. `statistics.roc_auc` and `statistics`
+                will format redundantly because `roc_auc` is already within
+                `statistics`.  Alternatively `statistics.roc_auc` and
+                `statistics.pr_auc` will format only those two specific
+                bits of information.
             formatting : "json" or "str"
                 Which output formatting do you want?  "str" returns something
                 nice to show on the command-line.  "json" returns something
                 that will pass through :func:`json.dump` without error.
-            ndigits : int
-                How many digits should statistics and other information be
-                rounded to.
         """
         paths = paths or []
         _paths = [
