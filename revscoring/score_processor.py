@@ -16,9 +16,9 @@ class ScoreProcessor:
     MIN_IO_WORKERS = 2
     MAX_IO_WORKERS = 10
 
-    def __init__(self, scorer_model, extractor, cpu_workers=None,
+    def __init__(self, scoring_model, extractor, cpu_workers=None,
                  io_workers=None, batch_size=50):
-        self.scorer_model = scorer_model
+        self.scoring_model = scoring_model
         self.extractor = extractor
         self.cpu_workers = \
             int(cpu_workers) if cpu_workers is not None else cpu_count()
@@ -39,7 +39,7 @@ class ScoreProcessor:
                     .format(self.cpu_workers))
         self.process_ex = ProcessPoolExecutor(max_workers=self.cpu_workers)
 
-        roots = dependencies.dig(self.scorer_model.features)
+        roots = dependencies.dig(self.scoring_model.features)
         self.root_datasources = [d for d in roots if isinstance(d, Datasource)]
 
     def __enter__(self):
@@ -76,7 +76,7 @@ class ScoreProcessor:
         for rev_id, (error, vals) in zip(id_batch, error_values):
             if error:
                 score_cache = {}
-                scorer_model = None
+                scoring_model = None
                 extractor = None
             else:
                 score_cache = {}
@@ -84,28 +84,28 @@ class ScoreProcessor:
                 score_cache.update((caches or {}).get(rev_id, {}))
                 score_cache.update({rd: rv for rd, rv in
                                     zip(self.root_datasources, vals)})
-                scorer_model = self.scorer_model
+                scoring_model = self.scoring_model
                 extractor = self.extractor
 
-            yield (rev_id, scorer_model, extractor, score_cache, error)
+            yield (rev_id, scoring_model, extractor, score_cache, error)
 
     @classmethod
     def _process_score(cls, e_r_caches):
-        rev_id, scorer_model, extractor, cache, error = e_r_caches
+        rev_id, scoring_model, extractor, cache, error = e_r_caches
         logger.debug("running _process_score() on {0}".format(rev_id))
 
         if error is None:
 
             try:
                 feature_values = list(extractor.solve(
-                    scorer_model.features, cache=cache))
+                    scoring_model.features, cache=cache))
             except Exception as error:
                 logger.debug("An error occured during feature extraction")
                 raise error
                 return rev_id, error_score(error)
 
             try:
-                score = scorer_model.score(feature_values)
+                score = scoring_model.score(feature_values)
                 return rev_id, score
             except Exception as error:
                 logger.debug("An error occured during scoring")

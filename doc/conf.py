@@ -76,9 +76,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Revision Scoring'
-copyright = u'2015, Revision Scoring team'
-author = u'Revision Scoring team'
+project = u'Revscoring'
+copyright = u'2017, Scoring Platform team'
+author = u'Aaron Halfaker'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -314,7 +314,7 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None,
+intersphinx_mapping = {'https://docs.python.org/3/': None,
                        'https://pythonhosted.org/mwtypes': None,
                        'https://pythonhosted.org/mwapi': None,
                        'https://pythonhosted.org/deltas': None,

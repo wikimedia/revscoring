@@ -12,18 +12,23 @@ Languages implement a subset of feature collections (e.g.
 language assets are available. See :mod:`revscoring.languages.features`.
 
 albanian
-++++++++++
+++++++++
 .. automodule:: revscoring.languages.albanian
     :members:
 
+arabic
+++++++
+.. automodule:: revscoring.languages.arabic
+    :members:
+
 bengali
-++++++++++
++++++++
 .. automodule:: revscoring.languages.bengali
     :members:
 
-dutch
+czech
 +++++
-.. automodule:: revscoring.languages.arabic
+.. automodule:: revscoring.languages.czech
     :members:
 
 dutch
@@ -41,10 +46,7 @@ estonian
 .. automodule:: revscoring.languages.estonian
     :members:
 
-finnish
-++++++++++
-.. automodule:: revscoring.languages.finnish
-    :members:
+finnishswedish
 
 french
 ++++++
@@ -66,7 +68,17 @@ hebrew
 .. automodule:: revscoring.languages.hebrew
     :members:
 
-indonesianbengali
+hindi
++++++
+.. automodule:: revscoring.languages.hindi
+    :members:
+
+hungarian
++++++++++
+.. automodule:: revscoring.languages.hungarian
+    :members:
+
+indonesian
 ++++++++++
 .. automodule:: revscoring.languages.indonesian
     :members:
@@ -77,8 +89,18 @@ italian
     :members:
 
 japanese
-+++++++bengali
+++++++++
 .. automodule:: revscoring.languages.japanese
+    :members:
+
+korean
+++++++
+.. automodule:: revscoring.languages.korean
+    :members:
+
+norwegian
++++++++++
+.. automodule:: revscoring.languages.norwegian
     :members:
 
 persian
@@ -91,9 +113,24 @@ portuguese
 .. automodule:: revscoring.languages.portuguese
     :members:
 
+romanian
+++++++++
+.. automodule:: revscoring.languages.romanian
+    :members:
+
 spanish
 +++++++
 .. automodule:: revscoring.languages.spanish
+    :members:
+
+swedish
++++++++
+.. automodule:: revscoring.languages.swedish
+    :members:
+
+tamil
++++++
+.. automodule:: revscoring.languages.tamil
     :members:
 
 turkish

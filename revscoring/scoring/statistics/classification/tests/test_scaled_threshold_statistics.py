@@ -30,6 +30,7 @@ def test_sts():
     print(json.dumps(skewed_sts.format_json(
         {'maximum recall @ precision >= 0.9': {},
          'maximum filter_rate @ recall >= 0.9': {}})))
+    json.dumps(skewed_sts.format_json({}))
 
     count = 0
     squared_error = 0

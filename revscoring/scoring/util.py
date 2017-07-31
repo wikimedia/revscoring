@@ -20,7 +20,7 @@ def _parse_pattern(string):
                 buf.append(part + ".")
         elif part[0] in ('"', "'"):
             if part[-1] in ('"', "'") and part[0] == part[-1]:
-                yield part.strip("'\"")
+                yield part.strip(part[0])
             else:
                 buf.append(part + ".")
         else:
