@@ -26,6 +26,7 @@
 """
 
 import collections
+import itertools
 import docopt
 import sys
 
@@ -42,12 +43,11 @@ def main(argv=None):
     else:
         out_file = open(args['--output'], "w")
 
-    observations = []
-    for path in args['<input>']:
-        with open(path, "r") as in_file:
-            observations.extend(read_observations(in_file))
+    observation_chunks = (read_observations(open(path, "r"))
+        for path in args['<input>'])
+    all_observations = itertools.chain(*observation_chunks)
 
-    merged_observations = union_merge(observations,
+    merged_observations = union_merge(all_observations,
                                         id_column=args['--id-column'])
     for ob in merged_observations:
         dump_observation(ob, out_file)
