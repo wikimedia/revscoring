@@ -44,7 +44,7 @@ def main(argv=None):
         out_file = open(args['--output'], "w")
 
     observation_chunks = (read_observations(open(path, "r"))
-        for path in args['<input>'])
+                          for path in args['<input>'])
     all_observations = itertools.chain(*observation_chunks)
 
     merged_observations = union_merge(all_observations,
