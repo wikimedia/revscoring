@@ -32,25 +32,33 @@ def test_sts():
          'maximum filter_rate @ recall >= 0.9': {}})))
     json.dumps(skewed_sts.format_json({}))
 
-    count = 0
-    squared_error = 0
-    error = 0
+    s_threshold_stats = {}
+    b_threshold_stats = {}
     for s_stats, b_stats in zip(skewed_sts, balanced_sts):
-        for stat_name in s_stats[1]:
-            if s_stats[1][stat_name] is not None:
-                count += 1
-                diff = s_stats[1][stat_name] - b_stats[1][stat_name]
+        squared_error = 0
+        error = 0
+
+        s_rounded_threshold = round(s_stats[0], 3)
+        s_threshold_stats[s_rounded_threshold] = s_stats[1]
+
+        b_rounded_threshold = round(b_stats[0], 3)
+        b_threshold_stats[b_rounded_threshold] = b_stats[1]
+
+    count = 0
+    for threshold, s_stats in s_threshold_stats.items():
+        if threshold not in b_threshold_stats:
+            continue
+        b_stats = b_threshold_stats[threshold]
+        for stat_name in s_stats:
+            if s_stats[stat_name] is not None:
+                diff = (s_stats[stat_name] or 0) - (b_stats[stat_name] or 0)
                 squared_error += diff**2
                 error += diff
+                count += 1
 
     rmse = (squared_error / count)**0.5
     me = error / count
     print("RMSE", rmse)
     print("Error", me)
-    assert rmse < 0.20, rmse
-
-    assert abs(balanced_sts.roc_auc() - skewed_sts.roc_auc()) < 0.10, \
-           abs(balanced_sts.roc_auc() - skewed_sts.roc_auc())
-
-    assert abs(balanced_sts.pr_auc() - skewed_sts.pr_auc()) < 0.10, \
-           abs(balanced_sts.pr_auc() - skewed_sts.pr_auc())
+    assert rmse < 0.05, rmse
+    assert count > 1000

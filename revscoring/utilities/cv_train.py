@@ -40,10 +40,6 @@
                                 based on the rate that the label appears in the
                                 population.  If not provided, sample rates will
                                 be assumed to reflect population rates.
-        -o --optimization=<p>   Adds an optimization metric to the set of
-                                statistics that are generated.  <p> is a
-                                pattern takes the form of:
-                                "(maximize|minimize) target @ cond (>=|<=) val"
         -p --parameter=<kv>     A key-value argument pair to use when
                                 constructing the <scoring-model>.
         --version=<vers>        A version to associate with the model
@@ -70,7 +66,6 @@ import yamlconf
 from nose.tools import nottest
 
 from ..dependencies import solve
-from ..scoring.statistics.classification import ThresholdOptimization
 from .util import read_labels_and_population_rates, read_observations
 
 logger = logging.getLogger(__name__)
@@ -96,16 +91,11 @@ def main(argv=None):
     labels, label_weights, population_rates = read_labels_and_population_rates(
         args['--labels'], args['--label-weight'], args['--pop-rate'])
 
-    threshold_optimizations = []
-    for pattern in args['--optimization']:
-        threshold_optimizations.append(
-            ThresholdOptimization.parse(pattern))
 
     model = ScoringModel(
         features, version=version,
         labels=labels, label_weights=label_weights,
         population_rates=population_rates,
-        threshold_optimizations=threshold_optimizations,
         center=args['--center'],
         scale=args['--scale'],
         **estimator_params)
@@ -133,7 +123,7 @@ def main(argv=None):
 
 def run(value_labels, model_file, model, folds, workers):
     model = cv_train(model, value_labels, folds, workers)
-    sys.stderr.write(model.format())
+    sys.stderr.write(model.info.format())
     sys.stderr.write("\n")
     model.dump(model_file)
 
