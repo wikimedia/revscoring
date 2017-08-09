@@ -1,4 +1,6 @@
 """
+.. autoclass:: ModelConsistencyError
+
 .. autoclass:: DependencyError
 
 .. autoclass:: CaughtDependencyError
@@ -19,6 +21,15 @@
 
 .. autoclass:: TextDeleted
 """
+
+
+class ModelConsistencyError(RuntimeError):
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
+
+    def __str__(self):
+        return "{0}: {1}".format(self.__class__.__name__, self.message)
 
 
 class DependencyError(RuntimeError):

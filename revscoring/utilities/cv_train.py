@@ -3,7 +3,8 @@
 ::
 
     Performs a cross-validation of a scorer model strategy across folds of
-    a dataset and then trains a final model on the entire set of data.
+    a dataset and then trains a final model on the entire set of data.  Note
+    that either --labels or --pop-rates must be specified for classifiers.
 
     Usage:
         cv_train -h | --help

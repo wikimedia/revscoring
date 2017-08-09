@@ -4,13 +4,13 @@ from .util import FEATURES, format_info, pickle_and_unpickle, train_test
 
 
 def test_svc():
-    model = SVC(FEATURES)
+    model = SVC(FEATURES, [True, False])
     format_info(model)
     train_test(model)
     pickle_and_unpickle(model)
     format_info(model)
 
-    model = SVC(FEATURES, scale=True, center=True)
+    model = SVC(FEATURES, [True, False], scale=True, center=True)
     format_info(model)
     train_test(model)
     pickle_and_unpickle(model)
@@ -20,6 +20,7 @@ def test_svc():
         'scorer_models': {
             'test': {
                 'class': "revscoring.scoring.models.SVC",
+                'labels': [True, False],
                 'features': [1, 2, 3]
             }
         }
@@ -29,7 +30,7 @@ def test_svc():
 
 
 def test_linear_svc():
-    model = LinearSVC(FEATURES)
+    model = LinearSVC(FEATURES, [True, False])
     format_info(model)
     train_test(model)
     pickle_and_unpickle(model)
@@ -39,6 +40,7 @@ def test_linear_svc():
         'scorer_models': {
             'test': {
                 'class': "revscoring.scoring.models.LinearSVC",
+                'labels': [True, False],
                 'features': [1, 2, 3]
             }
         }
@@ -48,7 +50,7 @@ def test_linear_svc():
 
 
 def test_rbf_svc():
-    model = RBFSVC(FEATURES)
+    model = RBFSVC(FEATURES, [True, False])
     format_info(model)
     train_test(model)
     pickle_and_unpickle(model)
@@ -58,6 +60,7 @@ def test_rbf_svc():
         'scorer_models': {
             'test': {
                 'class': "revscoring.scoring.models.RBFSVC",
+                'labels': [True, False],
                 'features': [1, 2, 3]
             }
         }

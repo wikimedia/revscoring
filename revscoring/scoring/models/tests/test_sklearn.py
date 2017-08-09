@@ -29,7 +29,7 @@ class FakeIdentityClassifier(Classifier):
 
 def test_sklean_classifier():
     skc = FakeIdentityClassifier(
-        [Feature("foo")], version="0.0.1")
+        [Feature("foo")], [True, False], version="0.0.1")
 
     eq_(skc.version, "0.0.1")
 
@@ -55,5 +55,5 @@ def test_sklean_classifier():
 @raises(ValueError)
 def test_sklearn_format_error():
     skc = FakeIdentityClassifier(
-        [Feature("foo")], version="0.0.1")
+        [Feature("foo")], [True, False], version="0.0.1")
     skc.info.format(formatting="foo")

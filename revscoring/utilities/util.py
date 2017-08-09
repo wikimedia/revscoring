@@ -72,6 +72,9 @@ def read_labels_and_population_rates(labels_str, label_weights_strs,
             population_rates[label] = rate
             labels.append(label)
 
+    if labels is None:
+        raise RuntimeError("Either --pop-rates or --labels must be specified")
+
     return labels, label_weights, population_rates
 
 

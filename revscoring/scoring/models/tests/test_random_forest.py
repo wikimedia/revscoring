@@ -4,7 +4,7 @@ from .util import FEATURES, format_info, pickle_and_unpickle, train_test
 
 
 def test_random_forest():
-    model = RandomForest(FEATURES)
+    model = RandomForest(FEATURES, [True, False])
     format_info(model)
     train_test(model)
     pickle_and_unpickle(model)
@@ -14,6 +14,7 @@ def test_random_forest():
         'scorer_models': {
             'test': {
                 'class': "revscoring.scoring.models.RandomForest",
+                'labels': [True, False],
                 'features': [1, 2, 3]
             }
         }

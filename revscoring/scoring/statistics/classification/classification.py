@@ -16,21 +16,21 @@ logger = logging.getLogger(__name__)
 
 class Classification(Statistics):
 
-    def __init__(self, prediction_key="prediction", decision_key=None,
-                 labels=None, population_rates=None, **kwargs):
+    def __init__(self, labels, prediction_key="prediction", decision_key=None,
+                 population_rates=None, **kwargs):
         """
         Constructs a set of classification statistics
 
         :Parameters:
+            labels : [ `mixed` ]
+                A sequence of labels that are in-order.  Order is used when
+                formatting statistical outputs.
             prediction_key : `str`
                 A key into a score doc under which a class predition value
                 can be found
             decision_key : `str`
                 A key into a score doc under which a scalar decision value
                 can be found for each potential class.
-            labels : [ `mixed` ]
-                A sequence of labels that are in-order.  Order is used when
-                formatting statistical outputs.
             population_rates : `dict`
                 A mapping of label classes with float representing the rate
                 that each class occurs in the target population.  Rates
@@ -43,9 +43,9 @@ class Classification(Statistics):
                             'recall', '!recall', 'precision', '!precision',
                             'f1', '!f1', 'accuracy', 'fpr', 'roc_auc',
                             'pr_auc'])
+        self.labels = labels
         self.prediction_key = prediction_key
         self.decision_key = decision_key
-        self.labels = labels
         self.population_rates = population_rates or {}
 
     def fit(self, score_labels):
@@ -58,9 +58,12 @@ class Classification(Statistics):
                 :class:`revscoring.Model.score`.  Note that fitting is usually
                 done using data withheld during model training
         """
+        # Check that all labels exist in our expected label set and that all
+        # expected labels are represented.
+        labels = [label for _, label in score_labels]
+        util.check_label_consistency(labels, self.labels)
+
         super().fit(score_labels)
-        if self.labels is None:
-            self.labels = sorted(set(l for s, l in score_labels))
 
         self['counts'] = Counts(self.labels, score_labels, self.prediction_key)
         self['rates'] = Rates(self['counts'],

@@ -4,7 +4,7 @@ from .util import FEATURES, format_info, pickle_and_unpickle, train_test
 
 
 def test_gaussian_nb():
-    model = GaussianNB(FEATURES)
+    model = GaussianNB(FEATURES, [True, False])
     format_info(model)
     train_test(model)
     pickle_and_unpickle(model)
@@ -14,6 +14,7 @@ def test_gaussian_nb():
         'scorer_models': {
             'test': {
                 'class': "revscoring.scoring.models.GaussianNB",
+                'labels': [True, False],
                 'features': [1, 2, 3]
             }
         }
@@ -23,7 +24,7 @@ def test_gaussian_nb():
 
 
 def test_multinomial_nb():
-    model = MultinomialNB(FEATURES)
+    model = MultinomialNB(FEATURES, [True, False])
     format_info(model)
 
     # Fails due to negative feature values.
@@ -34,6 +35,7 @@ def test_multinomial_nb():
         'scorer_models': {
             'test': {
                 'class': "revscoring.scoring.models.MultinomialNB",
+                'labels': [True, False],
                 'features': [1, 2, 3]
             }
         }
@@ -43,7 +45,7 @@ def test_multinomial_nb():
 
 
 def test_bernoulli_nb():
-    model = BernoulliNB(FEATURES)
+    model = BernoulliNB(FEATURES, [True, False])
     format_info(model)
     train_test(model)
     pickle_and_unpickle(model)
@@ -53,6 +55,7 @@ def test_bernoulli_nb():
         'scorer_models': {
             'test': {
                 'class': "revscoring.scoring.models.BernoulliNB",
+                'labels': [True, False],
                 'features': [1, 2, 3]
             }
         }
