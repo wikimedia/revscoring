@@ -123,7 +123,7 @@ def main(argv=None):
 
 def run(value_labels, model_file, model, folds, workers):
     model = cv_train(model, value_labels, folds, workers)
-    sys.stderr.write(model.format())
+    sys.stderr.write(model.info.format())
     sys.stderr.write("\n")
     model.dump(model_file)
 
