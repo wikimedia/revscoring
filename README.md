@@ -89,6 +89,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * languages.hungarian: myspell-hu
 * languages.indonesian: aspell-id
 * languages.italian: myspell-it
+* languages.latvian: myspell-lv
 * languages.norwegian: myspell-nb
 * languages.persian: myspell-fa
 * languages.polish: aspell-pl

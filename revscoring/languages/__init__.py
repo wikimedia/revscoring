@@ -98,6 +98,11 @@ korean
 .. automodule:: revscoring.languages.korean
     :members:
 
+latvian
+++++++
+.. automodule:: revscoring.languages.latvian
+    :members:
+
 norwegian
 +++++++++
 .. automodule:: revscoring.languages.norwegian
