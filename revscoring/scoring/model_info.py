@@ -146,6 +146,6 @@ class ModelInfo:
             yield from path_tree.keys()
         else:
             for field in self.keys():
-                if self._default_fields is not None and \
+                if self._default_fields is None or \
                    field in self._default_fields:
                     yield field
