@@ -2,6 +2,7 @@ import logging
 from collections import OrderedDict
 
 from ... import util
+from ...model_info import ModelInfo
 from ..statistics import Statistics
 from .counts import Counts
 from .micro_macro_stats import MicroMacroStats
@@ -37,7 +38,11 @@ class Classification(Statistics):
                 rates.  This is useful when training a model with different
                 sample rates than the target population rates.
         """
-        super().__init__()
+        super().__init__(
+            default_fields=['counts', 'rates', 'match_rate', 'filter_rate',
+                            'recall', '!recall', 'precision', '!precision',
+                            'f1', '!f1', 'accuracy', 'fpr', 'roc_auc',
+                            'pr_auc'])
         self.prediction_key = prediction_key
         self.decision_key = decision_key
         self.labels = labels
@@ -91,7 +96,7 @@ class Classification(Statistics):
             MicroMacroStats(self.label_stats, 'fpr')
 
         if self.decision_key is not None:
-            self.label_thresholds = OrderedDict()
+            self.label_thresholds = ModelInfo()
             for label in self.labels:
                 self.label_thresholds[label] = ScaledThresholdStatistics(
                     [s[self.decision_key][label] for s, l in score_labels],
@@ -102,6 +107,7 @@ class Classification(Statistics):
                 MicroMacroStats(self.label_thresholds, 'roc_auc')
             self['pr_auc'] = \
                 MicroMacroStats(self.label_thresholds, 'pr_auc')
+            self['thresholds'] = self.label_thresholds
 
     def __getitem__(self, key):
         if key in self:
@@ -131,7 +137,7 @@ class Classification(Statistics):
         """
         formatted = "Statistics:\n"
 
-        for key in path_tree or self.keys():
+        for key in self.normalize_fields(path_tree):
             sub_tree = path_tree.get(key, {})
             formatted += self[key].format_str(sub_tree, **kwargs)
 
@@ -144,7 +150,7 @@ class Classification(Statistics):
         """
         doc = OrderedDict()
 
-        for key in path_tree.keys() or self.keys():
+        for key in self.normalize_fields(path_tree):
             sub_tree = path_tree.get(key, {})
             doc[key] = self[key].format_json(sub_tree, **kwargs)
 
