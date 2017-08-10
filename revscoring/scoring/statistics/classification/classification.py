@@ -137,7 +137,7 @@ class Classification(Statistics):
         """
         formatted = "Statistics:\n"
 
-        for key in path_tree or self.keys():
+        for key in self.normalize_fields(path_tree):
             sub_tree = path_tree.get(key, {})
             formatted += self[key].format_str(sub_tree, **kwargs)
 
@@ -150,7 +150,7 @@ class Classification(Statistics):
         """
         doc = OrderedDict()
 
-        for key in path_tree.keys() or self.keys():
+        for key in self.normalize_fields(path_tree):
             sub_tree = path_tree.get(key, {})
             doc[key] = self[key].format_json(sub_tree, **kwargs)
 
