@@ -17,6 +17,7 @@ def test_treeify():
              for p in ['foo.bar.baz', 'foo.bar.buz', 'foo.bar', 'bum'])
     eq_(util.treeify(paths),
         {'foo': {'bar': {'baz': {}, 'buz': {}}}, 'bum': {}})
+    eq_(util.treeify([util.parse_pattern("")]), {})
 
 
 def test_dict_lookup():

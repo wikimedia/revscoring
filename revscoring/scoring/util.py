@@ -9,26 +9,27 @@ def parse_pattern(string):
 
 
 def _parse_pattern(string):
-    parts = string.split(".")
-    buf = []
-    for part in parts:
-        if buf:
-            if part[-1] in ('"', "'") and part[-1] == buf[0][0]:
-                yield (''.join(buf + [part])).strip("'\"")
-                buf = []
+    if len(string) > 0:
+        parts = string.split(".")
+        buf = []
+        for part in parts:
+            if buf:
+                if part[-1] in ('"', "'") and part[-1] == buf[0][0]:
+                    yield (''.join(buf + [part])).strip("'\"")
+                    buf = []
+                else:
+                    buf.append(part + ".")
+            elif part[0] in ('"', "'"):
+                if part[-1] in ('"', "'") and part[0] == part[-1]:
+                    yield part.strip(part[0])
+                else:
+                    buf.append(part + ".")
             else:
-                buf.append(part + ".")
-        elif part[0] in ('"', "'"):
-            if part[-1] in ('"', "'") and part[0] == part[-1]:
-                yield part.strip(part[0])
-            else:
-                buf.append(part + ".")
-        else:
-            yield part
+                yield part
 
-    if buf:
-        raise ValueError("Parsing error unmatching quotes {0}"
-                         .format(''.join(buf)))
+        if buf:
+            raise ValueError("Parsing error unmatching quotes {0}"
+                             .format(''.join(buf)))
 
 _round = round
 
