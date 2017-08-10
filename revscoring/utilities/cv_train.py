@@ -91,7 +91,6 @@ def main(argv=None):
     labels, label_weights, population_rates = read_labels_and_population_rates(
         args['--labels'], args['--label-weight'], args['--pop-rate'])
 
-
     model = ScoringModel(
         features, version=version,
         labels=labels, label_weights=label_weights,
