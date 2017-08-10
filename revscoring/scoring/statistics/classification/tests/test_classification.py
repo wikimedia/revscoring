@@ -37,7 +37,11 @@ def test_classification():
     skewed_stats.fit(SKEWED_PROBA)
 
     skewed_stats.format_str({})
-    json.dumps(skewed_stats.format_json({}), indent=2)
+    doc = skewed_stats.format_json({})
+    assert "thresholds" not in doc
+
+    json.dumps(doc, indent=2)
+
     balanced_stats.format_str({})
     json.dumps(balanced_stats.format_json({}), indent=2)
 
@@ -94,6 +98,11 @@ def test_classification():
         '"maximum recall @ precision >= 0.9".labels.true')
     assert abs(optimized - 0.51) < 0.025, \
            str(optimized - 0.51)
+
+    print(skewed_stats.format_str({"thresholds": { True: {}}}, threshold_ndigits=3))
+
+    # Optimization
+    print(skewed_stats.format_str({"thresholds": { True: {"maximum recall @ precision >= 0.9"}}}, threshold_ndigits=3))
 
     print(vars(skewed_stats))
     pickle.loads(pickle.dumps(skewed_stats))

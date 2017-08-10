@@ -5,7 +5,7 @@ from . import util
 
 class ModelInfo:
 
-    def __init__(self, pairs=[]):
+    def __init__(self, pairs=[], default_fields=None):
         """
         Constructs a mapping of information about a model.
         :class:`~revscoring.scoring.ModelInfo` objects are usually nested
@@ -14,6 +14,10 @@ class ModelInfo:
         :func:`~revscoring.scoring.ModelInfo.format`.
         """
         self._data = OrderedDict(pairs)
+        self._default_fields = set(default_fields or [])
+
+    def __len__(self):
+        return len(self.keys())
 
     def __getitem__(self, key):
         return self._data[key]
@@ -105,7 +109,9 @@ class ModelInfo:
         if len(_paths) > 0:
             path_tree = util.treeify(_paths)
         else:
-            path_tree = OrderedDict((k, {}) for k in self.keys())
+            path_tree = OrderedDict((k, {}) \
+                for k in ((self._default_fields & self.keys()) or
+                    self.keys()))
 
         if formatting == "str":
             return self.format_str(path_tree, **kwargs)
