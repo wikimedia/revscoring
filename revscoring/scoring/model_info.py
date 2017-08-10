@@ -68,16 +68,7 @@ class ModelInfo:
         remaining_path = list(path)  # Make sure we don't overwrite the input
         while len(path) > 0:
             key = path.pop(0)
-            try:
-                d = d[key]
-            except KeyError as e:
-                if key in ("true", "false"):
-                    d = d[key == 'true']
-                else:
-                    try:
-                        d = d[int(key)]
-                    except ValueError:
-                        raise e
+            d = try_key(key, d)
             if hasattr(d, "lookup"):
                 return d.lookup(remaining_path)
             else:
@@ -133,11 +124,12 @@ class ModelInfo:
     def format_json(self, path_tree, **kwargs):
         d = OrderedDict()
         for key in self.normalize_fields(path_tree):
-            if hasattr(self[key], "format_json"):
+            key_val = try_key(key, self)
+            if hasattr(key_val, "format_json"):
                 sub_tree = path_tree.get(key, {})
-                d[key] = self[key].format_json(sub_tree, **kwargs)
+                d[key] = key_val.format_json(sub_tree, **kwargs)
             else:
-                d[key] = self[key]
+                d[key] = key_val
 
         return d
 
@@ -149,3 +141,15 @@ class ModelInfo:
                 if self._default_fields is None or \
                    field in self._default_fields:
                     yield field
+
+def try_key(key, d):
+    try:
+        return d[key]
+    except KeyError as e:
+        if key in ("true", "false"):
+            return d[key == 'true']
+        else:
+            try:
+                return d[int(key)]
+            except ValueError:
+                raise e
