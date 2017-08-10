@@ -36,7 +36,7 @@ class Classifier(model.Classifier):
                  labels=None, label_weights=None, population_rates=None,
                  scale=False, center=False, statistics=None,
                  estimator=None, **estimator_params):
-        statistics = statistics or Classification(
+        statistics = statistics if statistics is not None else Classification(
             "prediction", labels=labels, population_rates=population_rates)
         super().__init__(
             features, version=version, labels=labels,
@@ -95,11 +95,6 @@ class Classifier(model.Classifier):
 
         return {'seconds_elapsed': time.time() - start}
 
-    def format_json(self, **kwargs):
-        doc = super().format_json(**kwargs)
-        doc['params']['label_weights'] = self.label_weights
-        return util.normalize_json(doc)
-
     def score(self, feature_values):
         """
         Generates a score for a single revision based on a set of extracted
@@ -147,7 +142,7 @@ class ProbabilityClassifier(Classifier):
 
     def __init__(self, *args, statistics=None,
                  labels=None, population_rates=None, **kwargs):
-        statistics = statistics or Classification(
+        statistics = statistics if statistics is not None else Classification(
             "prediction", decision_key="probability",
             labels=labels, population_rates=population_rates)
         super().__init__(*args, statistics=statistics, **kwargs)
