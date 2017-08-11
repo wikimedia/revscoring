@@ -142,6 +142,7 @@ class ModelInfo:
                    field in self._default_fields:
                     yield field
 
+
 def try_key(key, d):
     try:
         return d[key]
