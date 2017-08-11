@@ -99,10 +99,13 @@ def test_classification():
     assert abs(optimized - 0.51) < 0.025, \
            str(optimized - 0.51)
 
-    print(skewed_stats.format_str({"thresholds": { True: {}}}, threshold_ndigits=3))
+    print(skewed_stats.format_str({"thresholds": {True: {}}},
+                                  threshold_ndigits=3))
 
     # Optimization
-    print(skewed_stats.format_str({"thresholds": { True: {"maximum recall @ precision >= 0.9"}}}, threshold_ndigits=3))
+    print(skewed_stats.format_str(
+        {"thresholds": {True: {"maximum recall @ precision >= 0.9"}}},
+        threshold_ndigits=3))
 
     print(vars(skewed_stats))
     pickle.loads(pickle.dumps(skewed_stats))
