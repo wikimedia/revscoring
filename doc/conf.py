@@ -21,7 +21,10 @@ import alabaster
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, '..')
+import os
+dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+print(dir_path)
+sys.path.insert(0, dir_path)
 import revscoring
 
 
