@@ -43,6 +43,7 @@ addons:
     - aspell-ta
     - aspell-uk
     - hunspell-vi
+    - myspell-lv
 
 before_install: {}
 install:
