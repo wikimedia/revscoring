@@ -7,12 +7,15 @@
 
     Usage:
         module_info -h | --help
-        module_info <model-file> [--as-json]
+        module_info <model-file> <path>... --formatting=<type>
 
     Options:
-        -h --help     Prints this documentation
-        <model-file>  Path to a model file
-        --as-json     Output model info as a JSON blob
+        -h --help            Prints this documentation
+        <model-file>         Path to a model file
+        <path>               A model information path.  If no path is provided,
+                             all default fields will be in the output.
+        --formatting=<type>  What format to output the information?  "str" or
+                             "json" [default: str]
 """
 import json
 
@@ -23,14 +26,16 @@ from ..scoring import Model
 
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
-    scorer_model = Model.load(open(args['<model-file>'], 'rb'))
-    as_json = args['--as-json']
+    model = Model.load(open(args['<model-file>'], 'rb'))
+    paths = args['path']
+    formatting = args['--formatting']
 
-    run(scorer_model, as_json)
+    run(model, paths, formatting)
 
 
-def run(scorer_model, as_json):
-    if not as_json:
-        print(scorer_model.format())
-    else:
-        print(json.dumps(scorer_model.format(formatting="json")))
+def run(model, paths, formatting):
+    formatted = model.info.format(paths, formatting=formatting)
+    if formatting == "json":
+        formatted = json.dumps(formatted, indent=2)
+
+    print(formatted)
