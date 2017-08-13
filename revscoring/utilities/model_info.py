@@ -7,7 +7,7 @@
 
     Usage:
         module_info -h | --help
-        module_info <model-file> <path>... --formatting=<type>
+        module_info <model-file> [<path>...] [--formatting=<type>]
 
     Options:
         -h --help            Prints this documentation
@@ -27,7 +27,7 @@ from ..scoring import Model
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
     model = Model.load(open(args['<model-file>'], 'rb'))
-    paths = args['path']
+    paths = args['<path>']
     formatting = args['--formatting']
 
     run(model, paths, formatting)
