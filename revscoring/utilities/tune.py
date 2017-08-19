@@ -3,7 +3,7 @@
 ::
 
     Tunes a set of models against a training set to identify the best
-    model/configuration.  Note that either --labels or --pop-rates must be 
+    model/configuration.  Note that either --labels or --pop-rates must be
     specified for classifiers.
 
     Usage:
