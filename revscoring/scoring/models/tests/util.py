@@ -88,3 +88,4 @@ def format_info(model):
     print(model.info.format(formatting="str"))
     assert model.info.format(formatting="json") is not None
     assert model.info.format(formatting="str") is not None
+    # assert False

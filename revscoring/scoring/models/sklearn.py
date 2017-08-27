@@ -7,12 +7,14 @@ Implements the basics of all sklearn based models.
 .. autoclass:: revscoring.scoring.models.sklearn.ProbabilityClassifier
     :members:
 """
+import json
 import logging
 import time
 
 from . import model, util
 from ...features import vectorize_values
 from ..statistics import Classification
+from ..util import check_label_consistency
 
 logger = logging.getLogger(__name__)
 
@@ -20,28 +22,19 @@ logger = logging.getLogger(__name__)
 class Classifier(model.Classifier):
     Estimator = NotImplemented
     BASE_PARAMS = {}
-    SCORE_SCHEMA = {
-        'title': "Scikit learn-based classifier score",
-        'type': "object",
-        'properties': {
-            'prediction': {
-                'description': "The most likely label predicted by the " +
-                               "estimator",
-                'type': ['string', 'boolean', 'number']
-            }
-        }
-    }
 
-    def __init__(self, features, version=None,
-                 labels=None, label_weights=None, population_rates=None,
+    def __init__(self, features, labels, version=None,
+                 label_weights=None, population_rates=None,
                  scale=False, center=False, statistics=None,
                  estimator=None, **estimator_params):
         statistics = statistics if statistics is not None else Classification(
-            "prediction", labels=labels, population_rates=population_rates)
+            labels, prediction_key="prediction",
+            population_rates=population_rates)
         super().__init__(
-            features, version=version, labels=labels,
+            features, labels, version=version,
             population_rates=population_rates, scale=scale, center=center,
             statistics=statistics)
+        self.info['score_schema'] = self.build_schema()
         self.label_weights = label_weights
 
         if estimator is None:
@@ -76,13 +69,16 @@ class Classifier(model.Classifier):
                     .format(self.__class__.__name__, len(values_labels)))
         start = time.time()
         values, labels = zip(*values_labels)
-        fv_vectors = [vectorize_values(fv) for fv in values]
-        scaled_fv_vectors = self.fit_scaler_and_transform(fv_vectors)
 
-        unique_labels = set(labels)
-        if len(unique_labels) < 2:
-            raise ValueError("Only one label present in the training set {0}"
-                             .format(unique_labels))
+        # Check that all labels exist in our expected label set and that all
+        # expected labels are represented.
+        check_label_consistency(labels, self.labels)
+
+        # Re-vectorize features -- this expands/flattens sub-FeatureVectors
+        fv_vectors = [vectorize_values(fv) for fv in values]
+
+        # Scale and transform (if applicable)
+        scaled_fv_vectors = self.fit_scaler_and_transform(fv_vectors)
 
         fit_kwargs = {}
         if self.label_weights:
@@ -118,34 +114,29 @@ class Classifier(model.Classifier):
         doc = {'prediction': prediction}
         return util.normalize_json(doc)
 
-
-class ProbabilityClassifier(Classifier):
-    SCORE_SCHEMA = {
-        'title': "Scikit learn-based classifier score with probability",
-        'type': "object",
-        'properties': {
-            'prediction': {
-                'description': "The most likely label predicted by the " +
-                               "estimator",
-                'type': ['string', 'boolean', 'number']
-            },
-            'probability': {
-                'description': "A mapping of probabilities onto each of the " +
-                               "potential output labels",
-                'type': "object",
-                'additionalProperties': {
-                    'type': "number"
+    def build_schema(self):
+        return {
+            'title': "Scikit learn-based classifier score with " +
+                     "probability",
+            'type': "object",
+            'properties': {
+                'prediction': {
+                    'description': "The most likely label predicted by " +
+                                   "the estimator",
+                    'type': labels2json_type(self.labels)
                 }
             }
         }
-    }
 
-    def __init__(self, *args, statistics=None,
-                 labels=None, population_rates=None, **kwargs):
+
+class ProbabilityClassifier(Classifier):
+
+    def __init__(self, features, labels, statistics=None,
+                 population_rates=None, **kwargs):
         statistics = statistics if statistics is not None else Classification(
-            "prediction", decision_key="probability",
-            labels=labels, population_rates=population_rates)
-        super().__init__(*args, statistics=statistics, **kwargs)
+            labels, prediction_key="prediction", decision_key="probability",
+            population_rates=population_rates)
+        super().__init__(features, labels, statistics=statistics, **kwargs)
 
     def score(self, feature_values):
         """
@@ -176,3 +167,37 @@ class ProbabilityClassifier(Classifier):
 
         doc = {'prediction': prediction, 'probability': probability}
         return util.normalize_json(doc)
+
+    def build_schema(self):
+        schema_doc = super().build_schema()
+        schema_doc['properties']['probability'] = {
+            'description': "A mapping of probabilities onto " +
+                           "each of the potential output labels",
+            'type': "object",
+            'properties': json.loads(json.dumps(
+                {l: "number" for l in self.labels}))
+        }
+        return schema_doc
+
+
+def labels2json_type(labels):
+    unique_json_types = set(label2json_type(l) for l in labels)
+
+    if len(unique_json_types) == 1:
+        return unique_json_types.pop()
+    else:
+        return list(sorted(unique_json_types))
+
+
+def label2json_type(val):
+
+    if type(val) in (int, float):
+        return 'number'
+    elif isinstance(val, str):
+        return 'string'
+    elif isinstance(val, bool):
+        return 'bool'
+    else:
+        raise ValueError(
+            "{0} of type {1} can't be interpereted as a JSON type.".format(
+                val, type(val)))

@@ -1,5 +1,7 @@
 from collections import OrderedDict
 
+from .. import errors
+
 
 def parse_pattern(string):
     """
@@ -69,3 +71,16 @@ def dict_lookup(d, path_tree):
         return OrderedDict(
             (key, dict_lookup(d[key], sub_tree))
             for key, sub_tree in path_tree.items())
+
+
+def check_label_consistency(actual_labels, expected_labels):
+    expected_labels = set(expected_labels)
+    unique_labels = set(actual_labels)
+    if unique_labels - expected_labels:
+        raise errors.ModelConsistencyError(
+            "Labels {0} not in list of expected labels {1}"
+            .format(unique_labels - expected_labels, expected_labels))
+    elif expected_labels - unique_labels:
+        raise errors.ModelConsistencyError(
+            "Expected labels {0} not represented in the training set"
+            .format(expected_labels - unique_labels))

@@ -3,11 +3,13 @@
 ::
 
     Tunes a set of models against a training set to identify the best
-    model/configuration.
+    model/configuration.  Note that either --labels or --pop-rates must be
+    specified for classifiers.
 
     Usage:
         tune <params-config> <features> <label> <statistic>
              [-w=<lw>]... [-r=<lp>]...
+             [--labels=<labels>]
              [--minimize]
              [--observations=<path>]
              [--folds=<num>]
@@ -27,6 +29,9 @@
         <statistic>            The statistic to tune for.  Stated as a path
                                within the statistics tree of the model --
                                e.g. "roc_auc.micro" or "recall.labels.true"
+       --labels=<labels>       A comma-separated sequence of labels that will
+                               be used for ordering labels statistics and
+                               other presentations of the model.
        -w --label-weight=<lw>  A label-weight pair that rescales adjusts the
                                cost of getting a specific label prediction
                                wrong.
@@ -38,8 +43,6 @@
                                value.
         --observations=<path>  The path to a file containing observations to
                                train and test against. [default: <stdin>]
-        --scoring=<type>       The type of scoring strategy to optimize for
-                               when choosing parameter sets [default: roc_auc]
         --folds=<num>          The number of cross-validation folds to try
                                [default: 5]
         --report=<path>        Path to a file to write the tuning report to

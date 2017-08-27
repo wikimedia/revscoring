@@ -25,7 +25,7 @@ class Model:
     SCORE_SCHEMA = NotImplemented
 
     def __init__(self, features, version=None, environment=None,
-                 statistics=None):
+                 statistics=None, additional_info=None):
         """
         A model used to score things
 
@@ -50,6 +50,8 @@ class Model:
         self.info['type'] = self.__class__.__name__
         self.info['version'] = version
         self.info['params'] = self.params
+        for key, value in (additional_info or {}):
+            self.info[key] = value
         self.info['environment'] = environment or Environment()
         if statistics is not None:
             self.info['statistics'] = statistics
@@ -243,10 +245,10 @@ class Learned(Model):
 
 class Classifier(Learned):
 
-    def __init__(self, *args, labels=None, population_rates=None, **kwargs):
+    def __init__(self, features, labels, population_rates=None, **kwargs):
         self.labels = labels
         self.population_rates = population_rates
-        super().__init__(*args, **kwargs)
+        super().__init__(features, **kwargs)
 
         self.params.update({
             'labels': labels,

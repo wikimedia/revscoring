@@ -28,5 +28,5 @@ def test_learned_model():
 
 
 def test_classifier():
-    model = Classifier([Feature("foo")])
+    model = Classifier([Feature("foo")], [True, False])
     assert 'statustics' not in model.info
