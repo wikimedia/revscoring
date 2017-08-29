@@ -125,7 +125,9 @@ class Model:
             class_path = section['class']
             Class = yamlconf.import_module(class_path)
             if 'model_file' in section:
-                return Class.load(open(section['model_file'], 'rb'))
+                # TODO: Cache the model file for reuse across workers?
+                with open(section['model_file'], 'rb') as stream:
+                    return Class.load(stream)
             else:
                 return Class(**{k: v for k, v in section.items()
                                 if k != "class"})
