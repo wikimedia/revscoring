@@ -157,6 +157,8 @@ class MLScorerModel(ScorerModel):
         """
         section = config[section_key][name]
         if 'model_file' in section:
-            return cls.load(open(section['model_file'], 'rb'))
+            # TODO: Cache the model file for reuse across workers?
+            with open(section['model_file'], 'rb') as stream:
+                return cls.load(stream)
         else:
             return cls(**{k: v for k, v in section.items() if k != "class"})
