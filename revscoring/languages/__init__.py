@@ -26,6 +26,11 @@ bengali
 .. automodule:: revscoring.languages.bengali
     :members:
 
+croatian
++++++
+.. automodule:: revscoring.languages.croatian
+    :members:
+
 czech
 +++++
 .. automodule:: revscoring.languages.czech
