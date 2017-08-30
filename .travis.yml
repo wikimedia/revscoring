@@ -29,6 +29,7 @@ addons:
     - myspell-fa
     - myspell-fr
     - myspell-he
+    - myspell-hr
     - aspell-hi
     - aspell-hu
     - aspell-id
