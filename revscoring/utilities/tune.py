@@ -10,6 +10,8 @@
         tune <params-config> <features> <label> <statistic>
              [-w=<lw>]... [-r=<lp>]...
              [--labels=<labels>]
+             [--center]
+             [--scale]
              [--minimize]
              [--observations=<path>]
              [--folds=<num>]
@@ -52,6 +54,8 @@
         --cv-timeout=<mins>    The number of minutes to wait for a model to
                                cross-validate before timing out
                                [default: <forever>]
+        --center               Features should be centered on a common axis
+        --scale                Features should be scaled to a common range
         --verbose              Print progress information to stderr
         --debug                Print debug information to stderr
 
@@ -115,6 +119,11 @@ def main(argv=None):
     if population_rates is not None:
         additional_params['population_rates'] = population_rates
 
+    if args['--center']:
+        additional_params['center'] = args['--center']
+    if args['--scale']:
+        additional_params['scale'] = args['--scale'],
+
     maximize = not args['--minimize']
 
     folds = int(args['--folds'])
@@ -136,16 +145,16 @@ def main(argv=None):
 
     verbose = args['--verbose']
 
-    run(params_config, features, features_path, value_labels,
+    run(params_config, features, labels, features_path, value_labels,
             statistic_path, additional_params, maximize, folds, report,
             processes, cv_timeout, verbose)
 
 
-def run(params_config, features, features_path, value_labels,
+def run(params_config, features, possible_labels, features_path, value_labels,
         statistic_path, additional_params, maximize, folds, report,
         processes, cv_timeout, verbose):
 
-    feature_values, labels = (list(vect) for vect in zip(*value_labels))
+    feature_values, _ = (list(vect) for vect in zip(*value_labels))
 
     # Prepare the worker pool
     logger.debug("Starting up multiprocessing pool (processes={0})"
@@ -153,7 +162,6 @@ def run(params_config, features, features_path, value_labels,
     pool = multiprocessing.Pool(processes=processes)
 
     # Start writing the model tuning report
-    possible_labels = set(label for _, label in value_labels)
     report.write("# Model tuning report\n")
     report.write("- Revscoring version: {0}\n".format(__version__))
     report.write("- Features: {0}\n".format(features_path))
@@ -177,7 +185,8 @@ def run(params_config, features, features_path, value_labels,
 
             result = pool.apply_async(
                 _cross_validate,
-                [features, value_labels, Model, params, additional_params],
+                [features, possible_labels, value_labels, Model, params,
+                 additional_params],
                 {'cv_timeout': cv_timeout,
                  'statistic_path': statistic_path,
                  'folds': folds})
@@ -190,7 +199,8 @@ def run(params_config, features, features_path, value_labels,
     for name, param_results in cv_result_sets.items():
         for params, result in param_results:
             statistic = result.get()  # This is a line that blocks
-            grid_scores.append((name, params, statistic))
+            if statistic is not None:
+                grid_scores.append((name, params, statistic))
 
     # Write the rest of the report!  First, print the top 10 combinations
     report.write("# Top scoring configurations\n")
@@ -248,7 +258,8 @@ def _model_param_grid(params_config):
         yield name, Model, param_grid
 
 
-def _cross_validate(features, value_labels, Model, params, additional_params,
+def _cross_validate(features, possible_labels,
+                    value_labels, Model, params, additional_params,
                     statistic_path, folds=5, cv_timeout=None,
                     verbose=False):
 
@@ -257,11 +268,11 @@ def _cross_validate(features, value_labels, Model, params, additional_params,
     try:
         logger.debug("Running cross-validation for {0}"
                      .format(Model.__name__) +
-                     " with timeout of {1} seconds".format(cv_timeout)
+                     " with timeout of {0} seconds".format(cv_timeout)
                      if cv_timeout is not None else "")
         model_params = dict(additional_params)
         model_params.update(params)
-        model = Model(features, version=None, **model_params)
+        model = Model(features, possible_labels, version=None, **model_params)
         if cv_timeout is not None:
             with Timeout(cv_timeout):
                 stats = model.cross_validate(
