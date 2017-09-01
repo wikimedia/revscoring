@@ -18,8 +18,6 @@
                  [--model-file=<path>]
                  [--folds=<num>]
                  [--workers=<num>]
-                 [--balance-sample]
-                 [--balance-sample-weight]
                  [--center]
                  [--scale]
                  [--debug]
