@@ -41,9 +41,10 @@
 import logging
 import sys
 import time
-from itertools import islice
+from itertools import islice, tee
 from multiprocessing import Pool, cpu_count
 from statistics import mean, median
+from tqdm import tqdm
 
 import docopt
 import mwapi
@@ -118,20 +119,22 @@ def run(observations, output, dependents, extractor, extractors, batch_size,
     )
 
     profile = {}
+    observations, observations2 = tee(observations)
+    number_of_observations = sum(1 for line in observations2)
     results = extract(dependents, observations, extractor,
                       extractors=extractors,
                       batch_size=batch_size, profile=profile)
 
-    for e, observation in results:
+    tq = tqdm(results, file=sys.stderr, total=number_of_observations)
+    verbose_result = ''
+    for e, observation in tq:
         if isinstance(e, RevisionNotFound):
             if verbose:
-                sys.stderr.write("?")
-                sys.stderr.flush()
+                verbose_result += "?"
         elif isinstance(e, TextDeleted) or isinstance(e, UserDeleted) or \
              isinstance(e, CommentDeleted):
             if verbose:
-                sys.stderr.write("d")
-                sys.stderr.flush()
+                verbose_result += "d"
         elif e is not None:
             logger.error("An error occured while processing {0}:"
                          .format(observation['rev_id']))
@@ -140,11 +143,10 @@ def run(observations, output, dependents, extractor, extractors, batch_size,
             dump_observation(observation, output)
 
             if verbose:
-                sys.stderr.write(".")
-                sys.stderr.flush()
+                verbose_result += "."
 
     if verbose:
-        sys.stderr.write("\n")
+        sys.stderr.write(verbose_result + "\n")
 
     if profile_f is not None:
         write_profile(profile_f, dependents, profile, batch_size)
