@@ -222,7 +222,8 @@ def run(params_config, features, possible_labels, features_path, value_labels,
     for name, param_results in cv_result_sets.items():
         report.write("## {0}\n".format(name))
 
-        param_statistics = [(p, r.get()) for p, r in param_results]
+        param_statistics = [(p, r.get()) for p, r in param_results
+                            if r.get() is not None]
         param_statistics.sort(key=lambda v: v[1], reverse=maximize)
 
         table = tabulate(
