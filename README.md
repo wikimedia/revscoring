@@ -77,6 +77,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 
 * languages.arabic: aspell-ar
 * languages.bengali: aspell-bn
+* languages.bosnian: hunspell-bs
 * languages.czech: myspell-cs
 * languages.croatian: myspell-hr
 * languages.dutch: myspell-nl

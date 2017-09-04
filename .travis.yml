@@ -45,6 +45,7 @@ addons:
     - aspell-uk
     - hunspell-vi
     - myspell-lv
+    - hunspell-bs
 
 before_install: {}
 install:
