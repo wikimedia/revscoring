@@ -45,7 +45,6 @@ addons:
     - aspell-uk
     - hunspell-vi
     - myspell-lv
-    - hunspell-bs
 
 before_install: {}
 install:
@@ -57,7 +56,7 @@ install:
   - python -m nltk.downloader stopwords
   - pip install codecov
 script:
-  - nosetests -v --with-coverage --cover-package=revscoring --exclude="test_hindi.py|test_tamil.py|test_bengali.py"
+  - nosetests -v --with-coverage --cover-package=revscoring --exclude="test_hindi.py|test_tamil.py|test_bengali.py|test_bosnian.py"
   - flake8 . --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
 after_success:
     codecov
