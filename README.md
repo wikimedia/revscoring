@@ -100,7 +100,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * languages.swedish: aspell-sv
 * languages.tamil: aspell-ta
 * languages.russian: myspell-ru
-* languages.ukrainian: myspell-uk
+* languages.ukrainian: aspell-uk
 * languages.vietnamese: hunspell-vi
 
 # Authors

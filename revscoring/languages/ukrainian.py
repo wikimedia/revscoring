@@ -7,7 +7,7 @@ try:
     dictionary = enchant.Dict("uk")
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'uk'.  " +
-                      "Consider installing 'myspell-uk'.")
+                      "Consider installing 'aspell-uk'.")
 
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
