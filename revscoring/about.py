@@ -1,5 +1,5 @@
 __name__ = "revscoring"
-__version__ = "2.0.5"
+__version__ = "2.0.6"
 __author__ = "Aaron Halfaker"
 __author_email__ = "ahalfaker@wikimedia.org"
 __description__ = ("A set of utilities for generating quality scores for " +
