@@ -21,20 +21,20 @@ import json
 
 import docopt
 
-from ..scoring import Model
+from ..scoring import Model, models
 
 
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
-    model = Model.load(open(args['<model-file>'], 'rb'))
+    scoring_model = Model.load(models.open_file(args['<model-file>']))
     paths = args['<path>']
     formatting = args['--formatting']
 
-    run(model, paths, formatting)
+    run(scoring_model, paths, formatting)
 
 
-def run(model, paths, formatting):
-    formatted = model.info.format(paths, formatting=formatting)
+def run(scoring_model, paths, formatting):
+    formatted = scoring_model.info.format(paths, formatting=formatting)
     if formatting == "json":
         formatted = json.dumps(formatted, indent=2)
 

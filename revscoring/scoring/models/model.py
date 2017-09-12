@@ -7,6 +7,7 @@ All scoring models are an implementation of :class:`revscoring.Model`.
 .. autoclass:: revscoring.scoring.models.Classifier
     :members:
 """
+import bz2
 import logging
 import pickle
 from multiprocessing import Pool, cpu_count
@@ -126,11 +127,18 @@ class Model:
             Class = yamlconf.import_module(class_path)
             if 'model_file' in section:
                 # TODO: Cache the model file for reuse across workers?
-                with open(section['model_file'], 'rb') as stream:
+                with open_file(section['model_file']) as stream:
                     return Class.load(stream)
             else:
                 return Class(**{k: v for k, v in section.items()
                                 if k != "class"})
+
+
+def open_file(path):
+    if path[-4:] == ".bz2" or path[-6:] == ".bzip2":
+        return bz2.open(path, 'rb')
+    else:
+        return open(path, 'rb')
 
 
 class Learned(Model):
@@ -208,12 +216,9 @@ class Learned(Model):
                 collection of predictive values that correspond to the
                 `Feature` s provided to the constructor
             folds : `int`
-                Number of folds to train/test with.  Folds must be >= 2
-            processes : `int`
-                The number of parallel processes to run in cross-validation.
                 When set to 1, cross-validation will run in the parent thread.
                 When set to 2 or greater, a :class:`multiprocessing.Pool` will
-                be greated.
+                be created.
         """
         folds_i = KFold(len(values_labels), n_folds=folds, shuffle=True,
                         random_state=0)

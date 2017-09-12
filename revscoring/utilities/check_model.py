@@ -18,11 +18,11 @@
 """
 import docopt
 
-from ..scoring import Model
+from ..scoring import Model, models
 
 
 def main(argv=None):
     args = docopt.docopt(__doc__, argv=argv)
     raise_exception = args['--raise-exception']
-    Model.load(open(args['<model-file>'], 'rb'),
+    Model.load(models.open_file(args['<model-file>']),
                error_on_env_check=raise_exception)

@@ -28,7 +28,7 @@ import docopt
 from nose.tools import nottest
 
 from ..dependencies import solve
-from ..scoring import Model
+from ..scoring import Model, models
 from .util import read_observations
 
 logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ def main(argv=None):
         format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
     )
 
-    model = Model.load(open(args['<scorer_model>'], 'rb'))
+    scoring_model = Model.load(models.open_file(args['<scorer_model>']))
 
     if args['--observations'] == "<stdin>":
         observations = read_observations(sys.stdin)
@@ -51,7 +51,7 @@ def main(argv=None):
 
     label_name = args['<label>']
     value_labels = \
-        [(solve(model.features, cache=ob['cache']), ob[label_name])
+        [(solve(scoring_model.features, cache=ob['cache']), ob[label_name])
          for ob in observations]
 
     if args['--model-file'] is None:
@@ -59,25 +59,25 @@ def main(argv=None):
     else:
         model_file = open(args['--model-file'], 'wb')
 
-    run(model, value_labels, model_file)
+    run(scoring_model, value_labels, model_file)
 
 
-def run(model, value_labels, model_file):
+def run(scoring_model, value_labels, model_file):
 
-    model = test_model(model, value_labels)
-    sys.stderr.write(model.format())
+    scoring_model = test_model(scoring_model, value_labels)
+    sys.stderr.write(scoring_model.format())
     sys.stderr.write("\n\n")
 
     if model_file is not None:
-        model.dump(model_file)
+        scoring_model.dump(model_file)
 
 
 @nottest
-def test_model(model, value_labels):
+def test_model(scoring_model, value_labels):
 
     logger.debug("Test set: {0}".format(len(value_labels)))
 
     logger.info("Testing model...")
-    model.test(value_labels)
+    scoring_model.test(value_labels)
 
-    return model
+    return scoring_model
