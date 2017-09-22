@@ -27,10 +27,11 @@
 
 import collections
 import itertools
-import docopt
 import sys
 
-from .util import read_observations, dump_observation
+import docopt
+
+from .util import dump_observation, read_observations
 
 
 def main(argv=None):
