@@ -30,6 +30,8 @@ def test_regex_matching():
     eq_(pickle.loads(pickle.dumps(foo_tokens)), foo_tokens)
     eq_(pickle.loads(pickle.dumps(foo_case_tokens)), foo_case_tokens)
 
+    assert foo_tokens != foo_case_tokens
+
 
 def test_positive():
     cache = {my_ints: [1, 0, -1]}
@@ -37,9 +39,13 @@ def test_positive():
         [1])
     eq_(pickle.loads(pickle.dumps(positive_ints)), positive_ints)
 
+    assert positive_ints != negative_ints
+
 
 def test_negative():
     cache = {my_ints: [1, 0, -1]}
     eq_(solve(negative_ints, cache=cache),
         [-1])
     eq_(pickle.loads(pickle.dumps(negative_ints)), negative_ints)
+
+    assert negative_ints != positive_ints
