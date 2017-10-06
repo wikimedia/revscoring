@@ -50,7 +50,7 @@ class Environment(ModelInfo):
         if len(warnings) > 0:
             message = ("Differences between the current environment " +
                        "and the environment in which the model was " +
-                       "constructed environment were detected:\n" +
+                       "constructed were detected:\n" +
                        "\n".join(" - {0}".format(w) for w in warnings))
             if not raise_exception:
                 logger.warn(message)
