@@ -5,6 +5,11 @@ logger = logging.getLogger(__name__)
 
 class ScaledClassificationMatrix:
 
+    __slots__ = ('tp', 'fp', 'tn', 'fn',
+                 'n', 'positives', 'negatives',
+                 'trues', 'falses', 'correct',
+                 'population_rate')
+
     def __init__(self, y_preds=None, y_trues=None,
                  counts=None, population_rate=None):
         """

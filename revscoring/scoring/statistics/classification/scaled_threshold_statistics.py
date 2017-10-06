@@ -69,6 +69,8 @@ class ScaledThresholdStatistics(list):
         if field in self.FIELDS:
             method_name = field.replace("!", "_")
             return getattr(self, method_name)()
+        elif isinstance(field, int):
+            return super.__getitem__(field)
         else:
             if isinstance(field, ThresholdOptimization):
                 optimization = field
