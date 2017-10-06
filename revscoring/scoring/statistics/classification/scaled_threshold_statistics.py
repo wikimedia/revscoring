@@ -12,7 +12,8 @@ from .threshold_optimization import ThresholdOptimization
 class ScaledThresholdStatistics(list):
     FIELDS = ['roc_auc', 'pr_auc']
 
-    def __init__(self, y_decisions, y_trues, population_rate=None):
+    def __init__(self, y_decisions, y_trues, population_rate=None,
+                 threshold_ndigits=None):
         """
         Construct a sequence of ThresholdStatistics
 
@@ -27,6 +28,9 @@ class ScaledThresholdStatistics(list):
                 The rate at which the observed class appears in the population.
                 This value will be used to re-scale the number of y_trues
                 across all metrics.
+            threshold_ndigits : `int`
+                If set, round the threshold by this many decimals to compress
+                threshold statistics information.
         """  # noqa
         super().__init__()
         if population_rate is None:
@@ -35,6 +39,10 @@ class ScaledThresholdStatistics(list):
             n_true = sum(y_trues)
             observed_rate = n_true / len(y_trues)
             self.trues = sum(y_trues) * (population_rate / observed_rate)
+
+        if threshold_ndigits is not None:
+            y_decisions = [util.round(d, threshold_ndigits)
+                           for d in y_decisions]
         threshold_groups = groupby(
             sorted((y_d, y_t) for y_d, y_t in zip(y_decisions, y_trues)),
             key=lambda p: p[0])
@@ -49,10 +57,6 @@ class ScaledThresholdStatistics(list):
                 fp -= not y_true
                 tn += not y_true
                 fn += y_true
-
-        sps = ScaledPredictionStatistics(
-            counts=(tp, fp, tn, fn), population_rate=population_rate)
-        self.append((threshold, sps))
 
     def roc_auc(self):
         return zero_to_one_auc([stat.fpr() for t, stat in self],
@@ -69,6 +73,8 @@ class ScaledThresholdStatistics(list):
         if field in self.FIELDS:
             method_name = field.replace("!", "_")
             return getattr(self, method_name)()
+        elif isinstance(field, int):
+            return super.__getitem__(field)
         else:
             if isinstance(field, ThresholdOptimization):
                 optimization = field

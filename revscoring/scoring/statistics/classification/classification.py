@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 
 class Classification(Statistics):
 
-    def __init__(self, labels, prediction_key="prediction", decision_key=None,
+    def __init__(self, labels, prediction_key="prediction",
+                 decision_key=None, threshold_ndigits=None,
                  population_rates=None, **kwargs):
         """
         Constructs a set of classification statistics
@@ -31,6 +32,9 @@ class Classification(Statistics):
             decision_key : `str`
                 A key into a score doc under which a scalar decision value
                 can be found for each potential class.
+            thresholds_ndigits : `int`
+                If set, round the threshold by this many decimals to compress
+                threshold statistics information.
             population_rates : `dict`
                 A mapping of label classes with float representing the rate
                 that each class occurs in the target population.  Rates
@@ -46,6 +50,7 @@ class Classification(Statistics):
         self.labels = labels
         self.prediction_key = prediction_key
         self.decision_key = decision_key
+        self.threshold_ndigits = threshold_ndigits
         self.population_rates = population_rates or {}
 
     def fit(self, score_labels):
@@ -104,6 +109,7 @@ class Classification(Statistics):
                 self.label_thresholds[label] = ScaledThresholdStatistics(
                     [s[self.decision_key][label] for s, l in score_labels],
                     [l == label for s, l in score_labels],
+                    threshold_ndigits=self.threshold_ndigits,
                     population_rate=self.population_rates.get(label))
 
             self['roc_auc'] = \

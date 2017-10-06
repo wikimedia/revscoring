@@ -82,3 +82,7 @@ def test_sts():
            abs(balanced_sts.roc_auc() - skewed_sts.roc_auc())
     assert abs(balanced_sts.pr_auc() - skewed_sts.pr_auc()) < 0.05, \
            abs(balanced_sts.pr_auc() - skewed_sts.pr_auc())
+
+    limited_skewed_sts = ScaledThresholdStatistics(
+        *zip(*SKEWED), population_rate=0.05, threshold_ndigits=1)
+    assert len(limited_skewed_sts) <= 11, len(limited_skewed_sts)
