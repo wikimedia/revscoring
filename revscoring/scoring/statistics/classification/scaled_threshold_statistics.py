@@ -58,10 +58,6 @@ class ScaledThresholdStatistics(list):
                 tn += not y_true
                 fn += y_true
 
-        sps = ScaledPredictionStatistics(
-            counts=(tp, fp, tn, fn), population_rate=population_rate)
-        self.append((threshold, sps))
-
     def roc_auc(self):
         return zero_to_one_auc([stat.fpr() for t, stat in self],
                                [stat.recall() for t, stat in self])
