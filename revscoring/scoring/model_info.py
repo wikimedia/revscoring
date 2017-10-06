@@ -150,7 +150,4 @@ def try_key(key, d):
         if key in ("true", "false"):
             return d[key == 'true']
         else:
-            try:
-                return d[int(key)]
-            except ValueError:
-                raise e
+            return d[int(key)]
