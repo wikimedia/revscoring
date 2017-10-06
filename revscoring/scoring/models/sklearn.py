@@ -132,9 +132,10 @@ class Classifier(model.Classifier):
 class ProbabilityClassifier(Classifier):
 
     def __init__(self, features, labels, statistics=None,
-                 population_rates=None, **kwargs):
+                 population_rates=None, threshold_ndigits=None, **kwargs):
         statistics = statistics if statistics is not None else Classification(
             labels, prediction_key="prediction", decision_key="probability",
+            threshold_ndigits=threshold_ndigits or 3,
             population_rates=population_rates)
         super().__init__(features, labels, statistics=statistics, **kwargs)
 
