@@ -27,6 +27,7 @@ class regex_match(Feature):
         name : `str`
             A name for the feature
     """
+
     def __init__(self, regex, string_datasource, name=None):
         if not hasattr(regex, 'pattern'):
             regex = re.compile(regex, re.I)
@@ -54,6 +55,7 @@ class item_in_set(Feature):
         name : `str`
             A name for the feature
     """
+
     def __init__(self, item, items_datasource, name=None):
         self.item = item
         name = self._format_name(name, [item, items_datasource])
@@ -77,6 +79,7 @@ class set_contains_item(Feature):
         name : `str`
             A name for the feature
     """
+
     def __init__(self, items, item_datasource, name=None):
         self.items = set(items)
         name = self._format_name(name, [items, item_datasource])
@@ -100,6 +103,7 @@ class sets_intersect(Feature):
         name : `str`
             A name for the feature
     """
+
     def __init__(self, items, items_datasource, name=None):
         self.items = set(items)
         name = self._format_name(name, [items, items_datasource])

@@ -77,7 +77,7 @@ class Revision(DependentSet):
         """
         if name is None:
             name = self._name + ".has_property_value({0}, {1})" \
-                                 .format(repr(property), repr(value))
+                .format(repr(property), repr(value))
 
         return HasPropertyValue(name, property, value, self.datasources.item)
 

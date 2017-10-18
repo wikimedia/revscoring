@@ -27,6 +27,7 @@ class filter(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, include, items_datasource, inverse=False, name=None):
         self.include = include
         self.inverse = inverse
@@ -53,6 +54,7 @@ class regex_matching(filter):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, regex, strs_datasource, name=None):
         if not hasattr(regex, "pattern"):
             self.regex = re.compile(regex, re.I)
@@ -72,6 +74,7 @@ class positive(filter):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, numbers_datasource, name=None):
         name = self._format_name(name, [numbers_datasource])
         super().__init__(self.is_positive, numbers_datasource, name=name)
@@ -90,6 +93,7 @@ class negative(filter):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, numbers_datasource, name=None):
         name = self._format_name(name, [numbers_datasource])
         super().__init__(self.is_negative, numbers_datasource, name=name)

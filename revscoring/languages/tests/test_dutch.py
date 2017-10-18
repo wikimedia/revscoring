@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import dutch
 from ...datasources import revision_oriented
@@ -136,41 +135,41 @@ OTHER = [
 def test_badwords():
     compare_extraction(dutch.badwords.revision.datasources.matches, BAD, OTHER)
 
-    eq_(dutch.badwords, pickle.loads(pickle.dumps(dutch.badwords)))
+    assert dutch.badwords == pickle.loads(pickle.dumps(dutch.badwords))
 
 
 def test_informals():
     compare_extraction(dutch.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(dutch.informals, pickle.loads(pickle.dumps(dutch.informals)))
+    assert dutch.informals == pickle.loads(pickle.dumps(dutch.informals))
 
 
 def test_dictionary():
     cache = {revision_oriented.revision.text: 'Door middel van een worngly.'}
-    eq_(solve(dutch.dictionary.revision.datasources.dict_words, cache=cache),
-        ["Door", "middel", "van", "een"])
-    eq_(solve(dutch.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(dutch.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["Door", "middel", "van", "een"])
+    assert (solve(dutch.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(dutch.dictionary, pickle.loads(pickle.dumps(dutch.dictionary)))
+    assert dutch.dictionary == pickle.loads(pickle.dumps(dutch.dictionary))
 
 
 def test_stopwords():
     cache = {revision_oriented.revision.text: 'Door middel van een!'}
-    eq_(solve(dutch.stopwords.revision.datasources.stopwords, cache=cache),
-        ["Door", "van", "een"])
-    eq_(solve(dutch.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ["middel"])
+    assert (solve(dutch.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["Door", "van", "een"])
+    assert (solve(dutch.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["middel"])
 
-    eq_(dutch.stopwords, pickle.loads(pickle.dumps(dutch.stopwords)))
+    assert dutch.stopwords == pickle.loads(pickle.dumps(dutch.stopwords))
 
 
 def test_stemmed():
     cache = {revision_oriented.revision.text: 'Door middel van een!'}
-    eq_(solve(dutch.stemmed.revision.datasources.stems, cache=cache),
-        ["dor", "middel", "van", "een"])
+    assert (solve(dutch.stemmed.revision.datasources.stems, cache=cache) ==
+            ["dor", "middel", "van", "een"])
 
-    eq_(dutch.stemmed, pickle.loads(pickle.dumps(dutch.stemmed)))
+    assert dutch.stemmed == pickle.loads(pickle.dumps(dutch.stemmed))

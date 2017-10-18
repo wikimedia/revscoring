@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import polish
 from ...datasources import revision_oriented
@@ -207,34 +206,34 @@ def test_badwords():
     compare_extraction(polish.badwords.revision.datasources.matches, BAD,
                        OTHER)
 
-    eq_(polish.badwords, pickle.loads(pickle.dumps(polish.badwords)))
+    assert polish.badwords == pickle.loads(pickle.dumps(polish.badwords))
 
 
 def test_informals():
     compare_extraction(polish.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(polish.informals, pickle.loads(pickle.dumps(polish.informals)))
+    assert polish.informals == pickle.loads(pickle.dumps(polish.informals))
 
 
 def test_dictionary():
     cache = {revision_oriented.revision.text:
              'obrębie znamion barwnikowych  worngly.'}
-    eq_(solve(polish.dictionary.revision.datasources.dict_words, cache=cache),
-        ["obrębie", "znamion", "barwnikowych"])
-    eq_(solve(polish.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(polish.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["obrębie", "znamion", "barwnikowych"])
+    assert (solve(polish.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(polish.dictionary, pickle.loads(pickle.dumps(polish.dictionary)))
+    assert polish.dictionary == pickle.loads(pickle.dumps(polish.dictionary))
 
 
 def test_stopwords():
     cache = {revision_oriented.revision.text: 'być barwnikowych pomocniczą'}
-    eq_(solve(polish.stopwords.revision.datasources.stopwords, cache=cache),
-        ['być'])
-    eq_(solve(polish.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['barwnikowych', 'pomocniczą'])
+    assert (solve(polish.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['być'])
+    assert (solve(polish.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['barwnikowych', 'pomocniczą'])
 
-    eq_(polish.stopwords, pickle.loads(pickle.dumps(polish.stopwords)))
+    assert polish.stopwords == pickle.loads(pickle.dumps(polish.stopwords))

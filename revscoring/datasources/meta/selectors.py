@@ -35,6 +35,7 @@ class tfidf(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, table_datasource, max_terms=None, weight=True,
                  boolean=False, name=None):
         name = self._format_name(
@@ -78,7 +79,7 @@ class tfidf(Datasource):
         term_utilities.sort(reverse=True)
         new_document_freq = {}
         while len(new_document_freq) < self.max_terms and \
-              len(term_utilities) > 0:
+                len(term_utilities) > 0:
             _, term, _ = term_utilities.pop(0)
             new_document_freq[term] = self.document_freq[term]
 
@@ -122,6 +123,7 @@ class filter_keys(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, table_datasource, keys, name=None):
         name = self._format_name(
             name, [table_datasource, keys])

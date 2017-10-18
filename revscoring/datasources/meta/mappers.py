@@ -30,6 +30,7 @@ class map(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, apply, items_datasource, name=None):
         self.apply = apply
         name = self._format_name(name, [apply, items_datasource])
@@ -50,6 +51,7 @@ class lower_case(map):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, strs_datasource, name=None):
         name = self._format_name(name, [strs_datasource])
         super().__init__(self.lower, strs_datasource, name=name)
@@ -69,6 +71,7 @@ class derepeat(map):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, strs_datasource, name=None):
         name = self._format_name(name, [strs_datasource])
         super().__init__(self.no_repeat, strs_datasource, name=name)
@@ -111,5 +114,6 @@ class abs(map):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, numbers_datasource, name=None):
         super().__init__(absolute_value, numbers_datasource, name=name)

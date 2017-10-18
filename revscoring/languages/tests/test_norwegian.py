@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import norwegian
 from ...datasources import revision_oriented
@@ -104,34 +103,37 @@ def test_badwords():
     compare_extraction(norwegian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(norwegian.badwords, pickle.loads(pickle.dumps(norwegian.badwords)))
+    assert norwegian.badwords == pickle.loads(pickle.dumps(norwegian.badwords))
 
 
 def test_informals():
     compare_extraction(norwegian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(norwegian.informals, pickle.loads(pickle.dumps(norwegian.informals)))
+    assert norwegian.informals == pickle.loads(
+        pickle.dumps(norwegian.informals))
 
 
 def test_dictionary():
     cache = {r_text: "Hans tilhengere stiftet den worngly."}
-    eq_(solve(norwegian.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ["Hans", "tilhengere", "stiftet", "den"])
-    eq_(solve(norwegian.dictionary.revision.datasources.non_dict_words,
-        cache=cache),
-        ["worngly"])
+    assert (solve(norwegian.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ["Hans", "tilhengere", "stiftet", "den"])
+    assert (solve(norwegian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(norwegian.dictionary, pickle.loads(pickle.dumps(norwegian.dictionary)))
+    assert norwegian.dictionary == pickle.loads(
+        pickle.dumps(norwegian.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "samme senere nye anmeldere."}
-    eq_(solve(norwegian.stopwords.revision.datasources.stopwords, cache=cache),
-        ["samme", "senere", "nye"])
-    eq_(solve(norwegian.stopwords.revision.datasources.non_stopwords,
-              cache=cache),
-        ["anmeldere"])
+    assert (solve(norwegian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["samme", "senere", "nye"])
+    assert (solve(norwegian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["anmeldere"])
 
-    eq_(norwegian.stopwords, pickle.loads(pickle.dumps(norwegian.stopwords)))
+    assert norwegian.stopwords == pickle.loads(
+        pickle.dumps(norwegian.stopwords))

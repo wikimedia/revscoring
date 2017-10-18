@@ -49,7 +49,7 @@ def main(argv=None):
     all_observations = itertools.chain(*observation_chunks)
 
     merged_observations = union_merge(all_observations,
-                                        id_column=args['--id-column'])
+                                      id_column=args['--id-column'])
     for ob in merged_observations:
         dump_observation(ob, out_file)
 

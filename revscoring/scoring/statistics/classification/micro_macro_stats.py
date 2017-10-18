@@ -49,9 +49,9 @@ class MicroMacroStats(ModelInfo):
         if len(path_tree) > 0:
             logger.warn("Ignoring path_tree at {0!r}".format(path_tree))
         formatted = "{0} (micro={1}, macro={2}):\n" \
-                     .format(self.field,
-                             util.round(self['micro'], ndigits=ndigits),
-                             util.round(self['macro'], ndigits=ndigits))
+            .format(self.field,
+                    util.round(self['micro'], ndigits=ndigits),
+                    util.round(self['macro'], ndigits=ndigits))
         table_str = tabulate(
             [[util.round(stat, ndigits)
               for l, stat in self['labels'].items()]],

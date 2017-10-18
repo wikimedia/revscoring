@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import hungarian
 from ...datasources import revision_oriented
@@ -141,14 +140,15 @@ def test_badwords():
     compare_extraction(hungarian.badwords.revision.datasources.matches, BAD,
                        OTHER)
 
-    eq_(hungarian.badwords, pickle.loads(pickle.dumps(hungarian.badwords)))
+    assert hungarian.badwords == pickle.loads(pickle.dumps(hungarian.badwords))
 
 
 def test_informals():
     compare_extraction(hungarian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(hungarian.informals, pickle.loads(pickle.dumps(hungarian.informals)))
+    assert hungarian.informals == pickle.loads(
+        pickle.dumps(hungarian.informals))
 
 
 def test_dictionary():
@@ -156,16 +156,16 @@ def test_dictionary():
         revision_oriented.revision.text:
             'nyugatról között  worngly.'
     }
-    eq_(solve(
+    assert (solve(
             hungarian.dictionary.revision.datasources.dict_words,
-            cache=cache),
-        ["nyugatról", "között"])
-    eq_(solve(hungarian.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+            cache=cache) ==
+            ["nyugatról", "között"])
+    assert (solve(hungarian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(hungarian.dictionary,
-        pickle.loads(pickle.dumps(hungarian.dictionary)))
+    assert (hungarian.dictionary ==
+            pickle.loads(pickle.dumps(hungarian.dictionary)))
 
 
 def test_stopwords():
@@ -173,10 +173,11 @@ def test_stopwords():
         revision_oriented.revision.text:
             'játszótérnek adott helyett park'
     }
-    eq_(solve(hungarian.stopwords.revision.datasources.stopwords, cache=cache),
-        ['adott', ])
-    eq_(solve(hungarian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['játszótérnek', 'helyett', 'park'])
+    assert (solve(hungarian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['adott', ])
+    assert (solve(hungarian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['játszótérnek', 'helyett', 'park'])
 
-    eq_(hungarian.stopwords, pickle.loads(pickle.dumps(hungarian.stopwords)))
+    assert hungarian.stopwords == pickle.loads(
+        pickle.dumps(hungarian.stopwords))

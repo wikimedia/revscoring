@@ -27,6 +27,7 @@ class regex(Datasource):
         name : `str`
             A name for the new datasource
     """
+
     def __init__(self, regexes, text_datasource, regex_flags=re.I,
                  wrapping=(r'\b', r'\b'), exclusions=None, name=None):
         wrapping = wrapping or ("", "")
@@ -53,13 +54,13 @@ class regex(Datasource):
             return [match.group(2)
                     for match in self.group_re.finditer(text)
                     if not hasattr(self, 'exclude_re') or
-                       self.exclude_re is None or
-                       not self.exclude_re.match(match.group(2))]
+                    self.exclude_re is None or
+                    not self.exclude_re.match(match.group(2))]
         else:
             texts = text_or_texts
             return [match.group(2)
                     for text in texts
                     for match in self.group_re.finditer(text)
                     if not hasattr(self, 'exclude_re') or
-                       self.exclude_re is None or
-                       not self.exclude_re.match(match.group(2))]
+                    self.exclude_re is None or
+                    not self.exclude_re.match(match.group(2))]

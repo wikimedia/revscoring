@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import indonesian
 from ...datasources import revision_oriented
@@ -83,36 +82,39 @@ def test_badwords():
     compare_extraction(indonesian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(indonesian.badwords, pickle.loads(pickle.dumps(indonesian.badwords)))
+    assert indonesian.badwords == pickle.loads(
+        pickle.dumps(indonesian.badwords))
 
 
 def test_informals():
     compare_extraction(indonesian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(indonesian.informals, pickle.loads(pickle.dumps(indonesian.informals)))
+    assert indonesian.informals == pickle.loads(
+        pickle.dumps(indonesian.informals))
 
 
 def test_dictionary():
     cache = {r_text: "Gita Gutawa adalah seorang m80 sopran, aktris."}
-    eq_(solve(indonesian.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ['adalah', 'seorang', 'sopran', 'aktris'])
-    eq_(solve(indonesian.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ['Gita', 'Gutawa', 'm80'])
+    assert (solve(indonesian.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ['adalah', 'seorang', 'sopran', 'aktris'])
+    assert (solve(indonesian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ['Gita', 'Gutawa', 'm80'])
 
-    eq_(indonesian.dictionary,
-        pickle.loads(pickle.dumps(indonesian.dictionary)))
+    assert (indonesian.dictionary ==
+            pickle.loads(pickle.dumps(indonesian.dictionary)))
 
 
 def test_stopwords():
     cache = {r_text: "Gita Gutawa adalah seorang m80 sopran, aktris."}
-    eq_(solve(indonesian.stopwords.revision.datasources.stopwords,
-              cache=cache),
-        ['adalah', 'seorang'])
-    eq_(solve(indonesian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['Gita', 'Gutawa', 'm80', 'sopran', 'aktris'])
+    assert (solve(indonesian.stopwords.revision.datasources.stopwords,
+                  cache=cache) ==
+            ['adalah', 'seorang'])
+    assert (solve(indonesian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['Gita', 'Gutawa', 'm80', 'sopran', 'aktris'])
 
-    eq_(indonesian.stopwords, pickle.loads(pickle.dumps(indonesian.stopwords)))
+    assert indonesian.stopwords == pickle.loads(
+        pickle.dumps(indonesian.stopwords))

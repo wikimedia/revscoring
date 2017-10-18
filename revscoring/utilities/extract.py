@@ -132,7 +132,7 @@ def run(observations, output, dependents, extractor, extractors, batch_size,
             if verbose:
                 verbose_result += "?"
         elif isinstance(e, TextDeleted) or isinstance(e, UserDeleted) or \
-             isinstance(e, CommentDeleted):
+                isinstance(e, CommentDeleted):
             if verbose:
                 verbose_result += "d"
         elif e is not None:
@@ -203,7 +203,7 @@ class ConfiguredExtractor:
         rev_ids = [ob['rev_id'] for ob in observations]
         profile = {}
         caches = {ob['rev_id']: ob['cache'] for ob in observations
-                                            if 'cache' in ob}
+                  if 'cache' in ob}
         start = time.time()
         extractions = self.extractor.extract(
             rev_ids, self.dependents, caches=caches, profile=profile)

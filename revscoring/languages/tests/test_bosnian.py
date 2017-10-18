@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import bosnian
 from ...datasources import revision_oriented
@@ -118,34 +117,34 @@ def test_badwords():
     compare_extraction(bosnian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(bosnian.badwords, pickle.loads(pickle.dumps(bosnian.badwords)))
+    assert bosnian.badwords == pickle.loads(pickle.dumps(bosnian.badwords))
 
 
 def test_informals():
     compare_extraction(bosnian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(bosnian.informals, pickle.loads(pickle.dumps(bosnian.informals)))
+    assert bosnian.informals == pickle.loads(pickle.dumps(bosnian.informals))
 
 
 def test_dictionary():
     cache = {r_text: "postojanje sličan worngly."}
-    eq_(solve(bosnian.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ["postojanje", "sličan"])
-    eq_(solve(bosnian.dictionary.revision.datasources.non_dict_words,
-        cache=cache),
-        ["worngly"])
+    assert (solve(bosnian.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ["postojanje", "sličan"])
+    assert (solve(bosnian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(bosnian.dictionary, pickle.loads(pickle.dumps(bosnian.dictionary)))
+    assert bosnian.dictionary == pickle.loads(pickle.dumps(bosnian.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "hercegovine jakiel kroz postojanje."}
-    eq_(solve(bosnian.stopwords.revision.datasources.stopwords, cache=cache),
-        ["hercegovine", "jakiel", "kroz"])
-    eq_(solve(bosnian.stopwords.revision.datasources.non_stopwords,
-              cache=cache),
-        ["postojanje"])
+    assert (solve(bosnian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["hercegovine", "jakiel", "kroz"])
+    assert (solve(bosnian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["postojanje"])
 
-    eq_(bosnian.stopwords, pickle.loads(pickle.dumps(bosnian.stopwords)))
+    assert bosnian.stopwords == pickle.loads(pickle.dumps(bosnian.stopwords))

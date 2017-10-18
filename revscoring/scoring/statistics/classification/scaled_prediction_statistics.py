@@ -54,7 +54,7 @@ class ScaledPredictionStatistics(ScaledClassificationMatrix):
             filter-rate = 1 - match-rate
         """
         return (1 - self.match_rate()) \
-               if self.match_rate() is not None else None
+            if self.match_rate() is not None else None
 
     def accuracy(self):
         """
@@ -117,8 +117,8 @@ class ScaledPredictionStatistics(ScaledClassificationMatrix):
         return (2 * ((self.precision() * self.recall()) /
                      (self.precision() + self.recall()))
                 if self.precision() is not None and
-                   self.recall() is not None and
-                   self.precision() + self.recall() > 0 else None)
+                self.recall() is not None and
+                self.precision() + self.recall() > 0 else None)
 
     def _f1(self):
         """
@@ -128,5 +128,5 @@ class ScaledPredictionStatistics(ScaledClassificationMatrix):
         return (2 * ((self._precision() * self._recall()) /
                      (self._precision() + self._recall()))
                 if self._precision() is not None and
-                   self._recall() is not None and
-                   self._precision() + self._recall() > 0 else None)
+                self._recall() is not None and
+                self._precision() + self._recall() > 0 else None)

@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import finnish
 from ...datasources import revision_oriented
@@ -77,23 +76,23 @@ def test_badwords():
     compare_extraction(finnish.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(finnish.badwords, pickle.loads(pickle.dumps(finnish.badwords)))
+    assert finnish.badwords == pickle.loads(pickle.dumps(finnish.badwords))
 
 
 def test_informals():
     compare_extraction(finnish.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(finnish.informals, pickle.loads(pickle.dumps(finnish.informals)))
+    assert finnish.informals == pickle.loads(pickle.dumps(finnish.informals))
 
 
 def test_stopwords():
     cache = {revision_oriented.revision.text: "Nordström on saanut melko " +
                                               "paljon huomiota ulkomailla"}
-    eq_(solve(finnish.stopwords.revision.datasources.stopwords, cache=cache),
-        ["saanut", "paljon"])
-    eq_(solve(finnish.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ["Nordström", "on", "melko", "huomiota", "ulkomailla"])
+    assert (solve(finnish.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["saanut", "paljon"])
+    assert (solve(finnish.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["Nordström", "on", "melko", "huomiota", "ulkomailla"])
 
-    eq_(finnish.stopwords, pickle.loads(pickle.dumps(finnish.stopwords)))
+    assert finnish.stopwords == pickle.loads(pickle.dumps(finnish.stopwords))

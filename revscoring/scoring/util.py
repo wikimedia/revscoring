@@ -33,6 +33,7 @@ def _parse_pattern(string):
             raise ValueError("Parsing error unmatching quotes {0}"
                              .format(''.join(buf)))
 
+
 _round = round
 
 

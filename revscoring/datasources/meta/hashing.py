@@ -26,6 +26,7 @@ class hash(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, items_datasource, n=2 ** 20, name=None):
         name = self._format_name(name, [items_datasource, n])
         super().__init__(name, self.process,

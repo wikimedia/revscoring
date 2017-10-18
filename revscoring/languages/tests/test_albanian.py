@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import albanian
 from ...datasources import revision_oriented
@@ -383,25 +382,25 @@ def test_badwords():
     compare_extraction(albanian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(albanian.badwords, pickle.loads(pickle.dumps(albanian.badwords)))
+    assert albanian.badwords == pickle.loads(pickle.dumps(albanian.badwords))
 
 
 def test_informals():
     compare_extraction(albanian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(albanian.informals, pickle.loads(pickle.dumps(albanian.informals)))
+    assert albanian.informals == pickle.loads(pickle.dumps(albanian.informals))
 
 
 def test_stopwords():
     cache = {revision_oriented.revision.text:
-                 "Ai ishte qyteti më i vjetër dhe më " +
-                 "pesë qytetet greke në rajon"}
-    eq_(solve(albanian.stopwords.revision.datasources.stopwords, cache=cache),
-        ["ishte", "dhe"])
-    eq_(solve(albanian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ["Ai", "qyteti", "më", "i", "vjetër", "më", "pesë",
-         "qytetet", "greke", "në", "rajon"])
+             "Ai ishte qyteti më i vjetër dhe më " +
+             "pesë qytetet greke në rajon"}
+    assert (solve(albanian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["ishte", "dhe"])
+    assert (solve(albanian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["Ai", "qyteti", "më", "i", "vjetër", "më", "pesë",
+             "qytetet", "greke", "në", "rajon"])
 
-    eq_(albanian.stopwords, pickle.loads(pickle.dumps(albanian.stopwords)))
+    assert albanian.stopwords == pickle.loads(pickle.dumps(albanian.stopwords))

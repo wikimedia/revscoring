@@ -57,10 +57,11 @@ install:
   - python -m nltk.downloader stopwords
   - pip install codecov
 script:
-  - nosetests -v --with-coverage --cover-package=revscoring --exclude="test_hindi.py|test_tamil.py|test_bengali.py|test_bosnian.py"
+  - coverage run --source ores -m pytest -m "not nottest"
   - flake8 . --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
 after_success:
-    codecov
+  - coverage report
+  - codecov
 notifications:
   irc:
     channels:

@@ -422,7 +422,7 @@ class Diff():
 
 def is_uppercase_word(word_token):
     return len(word_token) > 1 and \
-           sum(c.lower() != c for c in word_token) == len(word_token)
+        sum(c.lower() != c for c in word_token) == len(word_token)
 
 
 class TokenIsInTypes:

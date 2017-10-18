@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from ....datasources import revision_oriented
 from ....dependencies import solve
@@ -13,11 +12,11 @@ def test_length():
     cache = {revision_oriented.revision.parent.text: "I am ascii",
              revision_oriented.revision.text: "地を南北に縦走する"}
 
-    eq_(solve(revision.length, cache=cache), 27)
-    eq_(solve(revision.parent.length, cache=cache), 10)
-    eq_(solve(length_change, cache=cache), -17)
+    assert solve(revision.length, cache=cache) == 27
+    assert solve(revision.parent.length, cache=cache) == 10
+    assert solve(length_change, cache=cache) == -17
 
-    eq_(pickle.loads(pickle.dumps(revision.length)), revision.length)
-    eq_(pickle.loads(pickle.dumps(revision.parent.length)),
-        revision.parent.length)
-    eq_(pickle.loads(pickle.dumps(length_change)), length_change)
+    assert pickle.loads(pickle.dumps(revision.length)) == revision.length
+    assert (pickle.loads(pickle.dumps(revision.parent.length)) ==
+            revision.parent.length)
+    assert pickle.loads(pickle.dumps(length_change)) == length_change

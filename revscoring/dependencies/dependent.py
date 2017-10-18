@@ -29,6 +29,7 @@ class Dependent:
             A collection of :class:`revscoring.Dependent` whose values are
             required by `process`
     """
+
     def __init__(self, name, process=None, depends_on=None,
                  dependencies=None):
         if not isinstance(name, str):
@@ -55,7 +56,7 @@ class Dependent:
     def __hash__(self):
         return hash('dependent.' + self.name)
 
-    def __eq__(self, other):
+    def __assert_equal_(self, other):
         return hash(self) == hash(other)
 
     def __ne__(self, other):
@@ -97,6 +98,7 @@ class DependentSet:
         name : `str`
             A base name for the items in the set
     """
+
     def __init__(self, name, _dependents=None, _dependent_sets=None):
         self._dependents = _dependents or set()
         self._dependent_sets = _dependent_sets or set()
@@ -125,7 +127,7 @@ class DependentSet:
     def __hash__(self):
         return hash('dependent_set.' + self._name)
 
-    def __eq__(self, other):
+    def __assert_equal_(self, other):
         return hash(self) == hash(other)
 
     def __ne__(self, other):

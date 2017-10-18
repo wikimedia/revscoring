@@ -229,7 +229,7 @@ class Learned(Model):
             mapper = pool.map
         results = mapper(self._cross_score,
                          ((i, [values_labels[i] for i in train_i],
-                              [values_labels[i] for i in test_i])
+                           [values_labels[i] for i in test_i])
                           for i, (train_i, test_i) in enumerate(folds_i)))
         agg_score_labels = []
         for score_labels in results:

@@ -32,6 +32,7 @@ class Feature(Dependent):
                 An ordered list of dependencies that correspond
                 to the `*args` of `process`
     """
+
     def __init__(self, name, process=None, *, returns=None, depends_on=None):
         super().__init__(name, process, depends_on)
         self.returns = returns
@@ -70,7 +71,7 @@ class Feature(Dependent):
     def __le__(self, other):
         return le(self, other)
 
-    def __eq__(self, other):
+    def __assert_equal_(self, other):
         return eq(self, other)
 
     def __ne__(self, other):
@@ -328,6 +329,7 @@ class max(Modifier):
     Generates a feature that represents the maximum of a set of
     :class:`revscoring.Feature` or constant values.
     """
+
     def __init__(self, *args, name=None):
         dependencies = [Feature.or_constant(arg) for arg in args]
         returns = float
@@ -348,6 +350,7 @@ class min(Modifier):
     Generates a feature that represents the minimum of a set of
     :class:`revscoring.Feature` or constant values.
     """
+
     def __init__(self, *args, name=None):
         dependencies = [Feature.or_constant(arg) for arg in args]
         returns = float
@@ -368,6 +371,7 @@ class log(Modifier):
     Generates a feature that represents the log of a
     :class:`revscoring.Feature`'s value.
     """
+
     def __init__(self, feature, name=None):
         feature = Feature.or_constant(feature)
         if name is None:
@@ -384,6 +388,7 @@ class not_(Modifier):
     Generates a feature that represents the negation of a
     :class:`revscoring.Feature`'s value.
     """
+
     def __init__(self, feature, name=None):
         feature = Feature.or_constant(feature)
         if name is None:

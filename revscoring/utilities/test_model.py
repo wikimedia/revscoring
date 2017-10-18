@@ -25,7 +25,7 @@ import logging
 import sys
 
 import docopt
-from nose.tools import nottest
+from pytest import mark
 
 from ..dependencies import solve
 from ..scoring import Model, models
@@ -72,7 +72,7 @@ def run(scoring_model, value_labels, model_file):
         scoring_model.dump(model_file)
 
 
-@nottest
+@mark.nottest
 def test_model(scoring_model, value_labels):
 
     logger.debug("Test set: {0}".format(len(value_labels)))

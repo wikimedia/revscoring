@@ -15,7 +15,7 @@ class ModelInfo:
         """
         self._data = OrderedDict(pairs)
         self._default_fields = set(default_fields) \
-                               if default_fields is not None else None
+            if default_fields is not None else None
 
     def __len__(self):
         return len(self.keys())

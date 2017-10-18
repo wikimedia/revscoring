@@ -17,6 +17,7 @@ class Context:
             A cache of computed values to use for every call to
             :func:`revscoring.dependencies.solve`
     """
+
     def __init__(self, context=None, cache=None):
         self.cache = cache if cache is not None else {}
 

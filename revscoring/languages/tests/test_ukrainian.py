@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import ukrainian
 from ...datasources import revision_oriented
@@ -40,34 +39,37 @@ def test_badwords():
     compare_extraction(ukrainian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(ukrainian.badwords, pickle.loads(pickle.dumps(ukrainian.badwords)))
+    assert ukrainian.badwords == pickle.loads(pickle.dumps(ukrainian.badwords))
 
 
 def test_informals():
     compare_extraction(ukrainian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(ukrainian.informals, pickle.loads(pickle.dumps(ukrainian.informals)))
+    assert ukrainian.informals == pickle.loads(
+        pickle.dumps(ukrainian.informals))
 
 
 def test_dictionary():
     cache = {r_text: 'потовщена, ущільнена і, worngly. <td>'}
-    eq_(solve(ukrainian.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ['потовщена', 'ущільнена', 'і'])
-    eq_(solve(ukrainian.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(ukrainian.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ['потовщена', 'ущільнена', 'і'])
+    assert (solve(ukrainian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(ukrainian.dictionary, pickle.loads(pickle.dumps(ukrainian.dictionary)))
+    assert ukrainian.dictionary == pickle.loads(
+        pickle.dumps(ukrainian.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "ущільнена і міцна передня як крил у комах."}
-    eq_(solve(ukrainian.stopwords.revision.datasources.stopwords, cache=cache),
-        ["як"])
-    eq_(solve(ukrainian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['ущільнена', 'і', 'міцна', 'передня', 'крил', 'у', 'комах'])
+    assert (solve(ukrainian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["як"])
+    assert (solve(ukrainian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['ущільнена', 'і', 'міцна', 'передня', 'крил', 'у', 'комах'])
 
-    eq_(ukrainian.stopwords, pickle.loads(pickle.dumps(ukrainian.stopwords)))
+    assert ukrainian.stopwords == pickle.loads(
+        pickle.dumps(ukrainian.stopwords))

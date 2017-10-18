@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import dicts
 from ....dependencies import solve
@@ -14,17 +13,17 @@ my_values = dicts.values(my_dict)
 
 def test_dict_keys():
     cache = {my_dict: {"foo": 1, "bar": 2}}
-    eq_(set(solve(my_keys, cache=cache)), {"foo", "bar"})
+    assert set(solve(my_keys, cache=cache)) == {"foo", "bar"}
     cache = {my_dict: None}
-    eq_(set(solve(my_keys, cache=cache)), set())
+    assert set(solve(my_keys, cache=cache)) == set()
 
-    eq_(pickle.loads(pickle.dumps(my_keys)), my_keys)
+    assert pickle.loads(pickle.dumps(my_keys)) == my_keys
 
 
 def test_dict_values():
     cache = {my_dict: {"foo": 1, "bar": 2}}
-    eq_(set(solve(my_values, cache=cache)), {1, 2})
+    assert set(solve(my_values, cache=cache)) == {1, 2}
     cache = {my_dict: None}
-    eq_(set(solve(my_values, cache=cache)), set())
+    assert set(solve(my_values, cache=cache)) == set()
 
-    eq_(pickle.loads(pickle.dumps(my_values)), my_values)
+    assert pickle.loads(pickle.dumps(my_values)) == my_values
