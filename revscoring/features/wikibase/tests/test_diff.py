@@ -324,8 +324,8 @@ def test_property_changed():
     cache = {revision_item_doc: ALAN_TOURING,
              parent_item_doc: ALAN_TOURING_OLD}
 
-    assert solve(p999_changed, cache=cache) == False
-    assert solve(p19_changed, cache=cache) == True
+    assert solve(p999_changed, cache=cache) is False
+    assert solve(p19_changed, cache=cache) is True
 
     assert pickle.loads(pickle.dumps(p999_changed)) == p999_changed
     assert pickle.loads(pickle.dumps(p19_changed)) == p19_changed

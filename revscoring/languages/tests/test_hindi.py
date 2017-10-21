@@ -141,6 +141,7 @@ OTHER = [
 ]
 
 
+@mark.nottravis
 def test_badwords():
     compare_extraction(hindi.badwords.revision.datasources.matches, BAD,
                        OTHER)
@@ -148,6 +149,7 @@ def test_badwords():
     assert hindi.badwords == pickle.loads(pickle.dumps(hindi.badwords))
 
 
+@mark.nottravis
 def test_informals():
     compare_extraction(hindi.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
@@ -155,6 +157,7 @@ def test_informals():
     assert hindi.informals == pickle.loads(pickle.dumps(hindi.informals))
 
 
+@mark.nottravis
 def test_dictionary():
     cache = {revision_oriented.revision.text: 'पहनाया उनकी कविताओं worngly.'}
     assert (solve(hindi.dictionary.revision.datasources.dict_words, cache=cache) ==

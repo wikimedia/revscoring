@@ -72,7 +72,7 @@ def run(scoring_model, value_labels, model_file):
         scoring_model.dump(model_file)
 
 
-@mark.nottest
+@mark.skip('Not test')
 def test_model(scoring_model, value_labels):
 
     logger.debug("Test set: {0}".format(len(value_labels)))

@@ -1,5 +1,6 @@
 import pickle
 
+from pytest import mark
 
 from .. import tamil
 from .util import compare_extraction
@@ -238,6 +239,7 @@ OTHER = [
 ]
 
 
+@mark.nottravis
 def test_badwords():
     compare_extraction(tamil.badwords.revision.datasources.matches,
                        BAD, OTHER)
@@ -245,6 +247,7 @@ def test_badwords():
     assert tamil.badwords == pickle.loads(pickle.dumps(tamil.badwords))
 
 
+@mark.nottravis
 def test_informals():
     compare_extraction(tamil.informals.revision.datasources.matches,
                        INFORMAL, OTHER)

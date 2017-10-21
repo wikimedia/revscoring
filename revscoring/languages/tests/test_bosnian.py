@@ -1,5 +1,6 @@
 import pickle
 
+from pytest import mark
 
 from .. import bosnian
 from ...datasources import revision_oriented
@@ -113,6 +114,7 @@ OTHER = [
 r_text = revision_oriented.revision.text
 
 
+@mark.nottravis
 def test_badwords():
     compare_extraction(bosnian.badwords.revision.datasources.matches,
                        BAD, OTHER)
@@ -120,6 +122,7 @@ def test_badwords():
     assert bosnian.badwords == pickle.loads(pickle.dumps(bosnian.badwords))
 
 
+@mark.nottravis
 def test_informals():
     compare_extraction(bosnian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
@@ -127,6 +130,7 @@ def test_informals():
     assert bosnian.informals == pickle.loads(pickle.dumps(bosnian.informals))
 
 
+@mark.nottravis
 def test_dictionary():
     cache = {r_text: "postojanje sličan worngly."}
     assert (solve(bosnian.dictionary.revision.datasources.dict_words,
@@ -139,6 +143,7 @@ def test_dictionary():
     assert bosnian.dictionary == pickle.loads(pickle.dumps(bosnian.dictionary))
 
 
+@mark.nottravis
 def test_stopwords():
     cache = {r_text: "hercegovine jakiel kroz postojanje."}
     assert (solve(bosnian.stopwords.revision.datasources.stopwords, cache=cache) ==

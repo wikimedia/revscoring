@@ -57,8 +57,8 @@ install:
   - python -m nltk.downloader stopwords
   - pip install codecov
 script:
-  - coverage run --source ores -m pytest -m "not nottest"
-  - flake8 . --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
+  - coverage run --source ores -m pytest -m "not nottravis"
+  - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
 after_success:
   - coverage report
   - codecov

@@ -44,6 +44,6 @@ def test_missing_key():
 def test_key_exists():
     my_dict = Datasource("my_dict")
     foo_exists = key_exists('foo', my_dict)
-    assert solve(foo_exists, cache={my_dict: {'foo': "bar"}}) == True
-    assert solve(foo_exists, cache={my_dict: {'baz': "bar"}}) == False
+    assert solve(foo_exists, cache={my_dict: {'foo': "bar"}}) is True
+    assert solve(foo_exists, cache={my_dict: {'baz': "bar"}}) is False
     assert pickle.loads(pickle.dumps(foo_exists)) == foo_exists

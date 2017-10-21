@@ -34,7 +34,7 @@ float_vector = FeatureVector("float_vector", process_float_vector(),
 FEATURES = [some_float, other_float, float_vector]
 
 
-@mark.nottest
+@mark.skip('Not test')
 def train_test(model):
     deterministic = random.Random(0)
     observations = list(chain(
@@ -62,7 +62,7 @@ def train_test(model):
     model.train(train_set)
     score_doc = model.score((-1, -2, [-1, 1, 2.5]))
 
-    assert score_doc['prediction'] == True
+    assert score_doc['prediction'] is True
     assert score_doc['probability'][True] > 0.5, \
         "Probability of True {0} is not > 0.5" \
         .format(score_doc['probability'][True])

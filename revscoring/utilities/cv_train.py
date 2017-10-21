@@ -126,7 +126,7 @@ def run(value_labels, model_file, model, folds, workers):
     model.dump(model_file)
 
 
-@mark.nottest
+@mark.skip('Not test')
 def cv_train(model, value_labels, folds, workers):
     if folds > 1:
         logger.info("Cross-validating model statistics for {0} folds..."

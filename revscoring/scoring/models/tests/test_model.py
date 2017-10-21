@@ -2,6 +2,8 @@
 from ....features import Feature
 from ..model import Classifier, Learned, Model
 
+from pytest import mark
+
 
 def test_model():
     m = Model([Feature("foo")], version="0.0.1")
@@ -13,12 +15,12 @@ def test_from_config():
     config = {
         'scorer_models': {
             'test': {
-                'module': "nose.tools.assert_equal"
+                'module': "pytest.mark"
             }
         }
     }
     model = Model.from_config(config, 'test')
-    assert model == assert_equal
+    assert model == mark
 
 
 def test_learned_model():

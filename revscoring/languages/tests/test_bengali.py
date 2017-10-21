@@ -1,5 +1,6 @@
 import pickle
 
+from pytest import mark
 
 from .. import bengali
 from ...datasources import revision_oriented
@@ -59,6 +60,7 @@ OTHER = [
 r_text = revision_oriented.revision.text
 
 
+@mark.nottravis
 def test_badwords():
     compare_extraction(bengali.badwords.revision.datasources.matches,
                        BAD, OTHER)
@@ -66,6 +68,7 @@ def test_badwords():
     assert bengali.badwords == pickle.loads(pickle.dumps(bengali.badwords))
 
 
+@mark.nottravis
 def test_informals():
     compare_extraction(bengali.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
@@ -87,6 +90,7 @@ def test_dictionary():
 '''
 
 
+@mark.nottravis
 def test_stopwords():
     cache = {r_text: "আন চলচ্চিত্র."}
     assert (solve(bengali.stopwords.revision.datasources.stopwords, cache=cache) ==
