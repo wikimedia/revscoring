@@ -2,7 +2,10 @@ import pickle
 
 from pytest import mark
 
-from .. import hindi
+try:
+    from .. import hindi
+except:
+    pytestmark = mark.nottravis
 from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
