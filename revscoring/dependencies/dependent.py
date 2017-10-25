@@ -56,7 +56,7 @@ class Dependent:
     def __hash__(self):
         return hash('dependent.' + self.name)
 
-    def __assert_equal_(self, other):
+    def __eq__(self, other):
         return hash(self) == hash(other)
 
     def __ne__(self, other):
@@ -127,7 +127,7 @@ class DependentSet:
     def __hash__(self):
         return hash('dependent_set.' + self._name)
 
-    def __assert_equal_(self, other):
+    def __eq__(self, other):
         return hash(self) == hash(other)
 
     def __ne__(self, other):

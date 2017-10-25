@@ -71,7 +71,7 @@ class Feature(Dependent):
     def __le__(self, other):
         return le(self, other)
 
-    def __assert_equal_(self, other):
+    def __eq__(self, other):
         return eq(self, other)
 
     def __ne__(self, other):
