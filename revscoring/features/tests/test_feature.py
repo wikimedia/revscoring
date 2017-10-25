@@ -127,11 +127,11 @@ def test_le():
 
 
 def test_eq():
-    five_assert_equalone = five == 1
-    check_feature(five_assert_equalone, False)
+    five_eq_one = five == 1
+    check_feature(five_eq_one, False)
 
-    five_assert_equalfive = five == five
-    check_feature(five_assert_equalfive, True)
+    five_eq_one = five == five
+    check_feature(five_eq_one, True)
 
 
 def test_ne():
