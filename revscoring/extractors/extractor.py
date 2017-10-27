@@ -39,6 +39,7 @@ class OfflineExtractor(Extractor):
     Implements a context for extracting features for a revision or a set of
     revisions that is 100% offline and will fetch no data.
     """
+
     def __init__(self):
         super().__init__()
         logger.warning("Loading OfflineExtractor.  You probably want an " +

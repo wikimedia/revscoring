@@ -58,7 +58,7 @@ def main(argv=None):
     value_labels = [
         (list(solve(dependent.dependencies, cache=ob['cache'])),
          ob[label_name])
-         for ob in observations]
+        for ob in observations]
     logger.debug(" -- {0} observations gathered".format(len(value_labels)))
 
     if args['--datasource-file'] == "<stdout>":

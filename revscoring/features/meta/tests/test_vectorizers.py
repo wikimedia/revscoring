@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import vectorizers
 from ....datasources import Datasource
@@ -26,16 +25,16 @@ def test_vectorize():
     my_vector = vectorizers.vectorize(
         my_dict, ["a", "b", "c"], returns=int)
 
-    eq_(solve(my_vector, cache={my_dict: {"a": 5}}),
-        [5, 0, 0])
-    eq_(solve(my_vector, cache={my_dict: {"d": 5}}),
-        [0, 0, 0])
-    eq_(solve(my_vector, cache={my_dict: {"a": 1, "b": 2, "c": 3}}),
-        [1, 2, 3])
+    assert (solve(my_vector, cache={my_dict: {"a": 5}}) ==
+            [5, 0, 0])
+    assert (solve(my_vector, cache={my_dict: {"d": 5}}) ==
+            [0, 0, 0])
+    assert (solve(my_vector, cache={my_dict: {"a": 1, "b": 2, "c": 3}}) ==
+            [1, 2, 3])
 
-    eq_(pickle.loads(pickle.dumps(my_vector)), my_vector)
+    assert pickle.loads(pickle.dumps(my_vector)) == my_vector
 
     my_keys_vector = vectorizers.vectorize(my_keys_dict, returns=int)
 
-    eq_(solve(my_keys_vector, cache={my_keys_dict: {"a": 1, "b": 2, "c": 3}}),
-        [1, 2, 3])
+    assert (solve(my_keys_vector, cache={my_keys_dict: {"a": 1, "b": 2, "c": 3}}) ==
+            [1, 2, 3])

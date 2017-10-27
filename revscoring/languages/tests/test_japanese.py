@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import japanese
 from .util import compare_extraction
@@ -110,11 +109,11 @@ def test_badwords():
     compare_extraction(japanese.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(japanese.badwords, pickle.loads(pickle.dumps(japanese.badwords)))
+    assert japanese.badwords == pickle.loads(pickle.dumps(japanese.badwords))
 
 
 def test_informals():
     compare_extraction(japanese.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(japanese.informals, pickle.loads(pickle.dumps(japanese.informals)))
+    assert japanese.informals == pickle.loads(pickle.dumps(japanese.informals))

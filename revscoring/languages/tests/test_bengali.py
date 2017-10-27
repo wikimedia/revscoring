@@ -1,6 +1,6 @@
 import pickle
 
-from nose.tools import eq_
+from pytest import mark
 
 from .. import bengali
 from ...datasources import revision_oriented
@@ -60,40 +60,43 @@ OTHER = [
 r_text = revision_oriented.revision.text
 
 
+@mark.nottravis
 def test_badwords():
     compare_extraction(bengali.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(bengali.badwords, pickle.loads(pickle.dumps(bengali.badwords)))
+    assert bengali.badwords == pickle.loads(pickle.dumps(bengali.badwords))
 
 
+@mark.nottravis
 def test_informals():
     compare_extraction(bengali.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(bengali.informals, pickle.loads(pickle.dumps(bengali.informals)))
+    assert bengali.informals == pickle.loads(pickle.dumps(bengali.informals))
 
 
 '''
 def test_dictionary():
     cache = {r_text: "দেখার পর তিনি worngly."}
-    eq_(solve(bengali.dictionary.revision.datasources.dict_words,
+    assert_equal(solve(bengali.dictionary.revision.datasources.dict_words,
               cache=cache),
         ['দেখার', 'পর', 'তিনি'])
-    eq_(solve(bengali.dictionary.revision.datasources.non_dict_words,
+    assert_equal(solve(bengali.dictionary.revision.datasources.non_dict_words,
         cache=cache),
         ["worngly"])
 
-    eq_(bengali.dictionary, pickle.loads(pickle.dumps(bengali.dictionary)))
+    assert_equal(bengali.dictionary, pickle.loads(pickle.dumps(bengali.dictionary)))
 '''
 
 
+@mark.nottravis
 def test_stopwords():
     cache = {r_text: "আন চলচ্চিত্র."}
-    eq_(solve(bengali.stopwords.revision.datasources.stopwords, cache=cache),
-        ["আন"])
-    eq_(solve(bengali.stopwords.revision.datasources.non_stopwords,
-              cache=cache),
-        ['চলচ্চিত্র'])
+    assert (solve(bengali.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["আন"])
+    assert (solve(bengali.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['চলচ্চিত্র'])
 
-    eq_(bengali.stopwords, pickle.loads(pickle.dumps(bengali.stopwords)))
+    assert bengali.stopwords == pickle.loads(pickle.dumps(bengali.stopwords))

@@ -1,4 +1,3 @@
-from nose.tools import eq_
 
 from ...datasources import Datasource, revision_oriented
 from ..extractor import Extractor, OfflineExtractor
@@ -14,16 +13,16 @@ def test_offline_extractor():
 
     extractor = OfflineExtractor()
 
-    eq_(extractor.extract(345678, last_two_in_id), 78)
+    assert extractor.extract(345678, last_two_in_id) == 78
 
-    eq_(list(extractor.extract([345678, 4634800], last_two_in_id)),
-        [(None, 78), (None, 0)])
+    assert (list(extractor.extract([345678, 4634800], last_two_in_id)) ==
+            [(None, 78), (None, 0)])
 
     extraction_profile = {}
     list(extractor.extract([345678, 4634800], last_two_in_id,
-         profile=extraction_profile))
-    eq_(len(extraction_profile), 1)
-    eq_(len(extraction_profile[last_two_in_id]), 2)
+                           profile=extraction_profile))
+    assert len(extraction_profile) == 1
+    assert len(extraction_profile[last_two_in_id]) == 2
 
 
 def test_from_config():
@@ -51,4 +50,4 @@ def test_from_config():
             }
         }
     }
-    eq_(Extractor.from_config(config, 'offline'), OfflineExtractor)
+    assert Extractor.from_config(config, 'offline') == OfflineExtractor

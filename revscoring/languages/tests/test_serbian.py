@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import serbian
 from ...datasources import revision_oriented
@@ -100,36 +99,36 @@ def test_badwords():
     compare_extraction(serbian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(serbian.badwords, pickle.loads(pickle.dumps(serbian.badwords)))
+    assert serbian.badwords == pickle.loads(pickle.dumps(serbian.badwords))
 
 
 def test_informals():
     compare_extraction(serbian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(serbian.informals, pickle.loads(pickle.dumps(serbian.informals)))
+    assert serbian.informals == pickle.loads(pickle.dumps(serbian.informals))
 
 
 def test_dictionary():
     cache = {r_text: "Стога мулплати се мултипла склероза."}
-    eq_(solve(serbian.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ['Стога', 'се', 'мултипла', 'склероза'])
-    eq_(solve(serbian.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ['мулплати'])
+    assert (solve(serbian.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ['Стога', 'се', 'мултипла', 'склероза'])
+    assert (solve(serbian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ['мулплати'])
 
-    eq_(serbian.dictionary,
-        pickle.loads(pickle.dumps(serbian.dictionary)))
+    assert (serbian.dictionary ==
+            pickle.loads(pickle.dumps(serbian.dictionary)))
 
 
 def test_stopwords():
     cache = {r_text: "Стога дан датум склероза."}
-    eq_(solve(serbian.stopwords.revision.datasources.stopwords,
-              cache=cache),
-        ['дан', 'датум'])
-    eq_(solve(serbian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['Стога', 'склероза'])
+    assert (solve(serbian.stopwords.revision.datasources.stopwords,
+                  cache=cache) ==
+            ['дан', 'датум'])
+    assert (solve(serbian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['Стога', 'склероза'])
 
-    eq_(serbian.stopwords, pickle.loads(pickle.dumps(serbian.stopwords)))
+    assert serbian.stopwords == pickle.loads(pickle.dumps(serbian.stopwords))

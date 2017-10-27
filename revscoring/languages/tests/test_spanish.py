@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import spanish
 from ...datasources import revision_oriented
@@ -195,41 +194,41 @@ def test_badwords():
     compare_extraction(spanish.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(spanish.badwords, pickle.loads(pickle.dumps(spanish.badwords)))
+    assert spanish.badwords == pickle.loads(pickle.dumps(spanish.badwords))
 
 
 def test_informals():
     compare_extraction(spanish.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(spanish.informals, pickle.loads(pickle.dumps(spanish.informals)))
+    assert spanish.informals == pickle.loads(pickle.dumps(spanish.informals))
 
 
 def test_dictionary():
     cache = {r_text: 'Su cuerpo es largo y worngly. <td>'}
-    eq_(solve(spanish.dictionary.revision.datasources.dict_words, cache=cache),
-        ['Su', 'cuerpo', 'es', 'largo', 'y'])
-    eq_(solve(spanish.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(spanish.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ['Su', 'cuerpo', 'es', 'largo', 'y'])
+    assert (solve(spanish.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(spanish.dictionary, pickle.loads(pickle.dumps(spanish.dictionary)))
+    assert spanish.dictionary == pickle.loads(pickle.dumps(spanish.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "Su cuerpo es largo y estilizado, está áreas."}
-    eq_(solve(spanish.stopwords.revision.datasources.stopwords, cache=cache),
-        ['Su', 'es', 'y', 'está'])
-    eq_(solve(spanish.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['cuerpo', 'largo', 'estilizado', 'áreas'])
+    assert (solve(spanish.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['Su', 'es', 'y', 'está'])
+    assert (solve(spanish.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['cuerpo', 'largo', 'estilizado', 'áreas'])
 
-    eq_(spanish.stopwords, pickle.loads(pickle.dumps(spanish.stopwords)))
+    assert spanish.stopwords == pickle.loads(pickle.dumps(spanish.stopwords))
 
 
 def test_stemmmed():
     cache = {r_text: "Su cuerpo es largo y estilizado, está áreas."}
-    eq_(solve(spanish.stemmed.revision.datasources.stems, cache=cache),
-        ['su', 'cuerp', 'es', 'larg', 'y', 'estiliz', 'esta', 'are'])
+    assert (solve(spanish.stemmed.revision.datasources.stems, cache=cache) ==
+            ['su', 'cuerp', 'es', 'larg', 'y', 'estiliz', 'esta', 'are'])
 
-    eq_(spanish.stemmed, pickle.loads(pickle.dumps(spanish.stemmed)))
+    assert spanish.stemmed == pickle.loads(pickle.dumps(spanish.stemmed))

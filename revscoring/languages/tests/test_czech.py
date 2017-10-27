@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import czech
 from ...datasources import revision_oriented
@@ -269,33 +268,33 @@ def test_badwords():
     compare_extraction(czech.badwords.revision.datasources.matches, BAD,
                        OTHER)
 
-    eq_(czech.badwords, pickle.loads(pickle.dumps(czech.badwords)))
+    assert czech.badwords == pickle.loads(pickle.dumps(czech.badwords))
 
 
 def test_informals():
     compare_extraction(czech.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(czech.informals, pickle.loads(pickle.dumps(czech.informals)))
+    assert czech.informals == pickle.loads(pickle.dumps(czech.informals))
 
 
 def test_dictionary():
     cache = {revision_oriented.revision.text: 'kam se roku worngly.'}
-    eq_(solve(czech.dictionary.revision.datasources.dict_words, cache=cache),
-        ["kam", "se", "roku"])
-    eq_(solve(czech.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(czech.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["kam", "se", "roku"])
+    assert (solve(czech.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(czech.dictionary, pickle.loads(pickle.dumps(czech.dictionary)))
+    assert czech.dictionary == pickle.loads(pickle.dumps(czech.dictionary))
 
 
 def test_stopwords():
     cache = {revision_oriented.revision.text: 'rúmského sultána odkazy'}
-    eq_(solve(czech.stopwords.revision.datasources.stopwords, cache=cache),
-        ['odkazy'])
-    eq_(solve(czech.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['rúmského', 'sultána'])
+    assert (solve(czech.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['odkazy'])
+    assert (solve(czech.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['rúmského', 'sultána'])
 
-    eq_(czech.stopwords, pickle.loads(pickle.dumps(czech.stopwords)))
+    assert czech.stopwords == pickle.loads(pickle.dumps(czech.stopwords))

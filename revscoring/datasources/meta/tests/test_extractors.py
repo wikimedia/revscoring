@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import extractors
 from ....dependencies import solve
@@ -28,25 +27,25 @@ segment_extractor = extractors.regex(["foo bar", "bar foo"], segments,
 
 def test_text_extractor():
     cache = {text: "This is some text foo bar nope bar foo"}
-    eq_(solve(text_extractor, cache=cache), ["foo bar", "bar foo"])
+    assert solve(text_extractor, cache=cache) == ["foo bar", "bar foo"]
     cache = {text: None}
-    eq_(solve(text_extractor, cache=cache), [])
+    assert solve(text_extractor, cache=cache) == []
 
-    eq_(pickle.loads(pickle.dumps(text_extractor)), text_extractor)
+    assert pickle.loads(pickle.dumps(text_extractor)) == text_extractor
 
 
 def test_exclusion_text_extractor():
     cache = {text: "This is some text foooo bar nope bar foo fooo"}
-    eq_(solve(exclusion_text_extractor, cache=cache), ["foo", "fooo"])
+    assert solve(exclusion_text_extractor, cache=cache) == ["foo", "fooo"]
 
-    eq_(pickle.loads(pickle.dumps(exclusion_text_extractor)),
-        exclusion_text_extractor)
+    assert (pickle.loads(pickle.dumps(exclusion_text_extractor)) ==
+            exclusion_text_extractor)
 
 
 def test_segment_extractor():
     cache = {segments: ["This is some text foo bar nope bar foo", "foo bar",
                         "foo"]}
-    eq_(solve(segment_extractor, cache=cache),
-        ["foo bar", "bar foo", "foo bar"])
+    assert (solve(segment_extractor, cache=cache) ==
+            ["foo bar", "bar foo", "foo bar"])
 
-    eq_(pickle.loads(pickle.dumps(segment_extractor)), segment_extractor)
+    assert pickle.loads(pickle.dumps(segment_extractor)) == segment_extractor

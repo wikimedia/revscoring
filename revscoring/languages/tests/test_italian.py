@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import italian
 from ...datasources import revision_oriented
@@ -134,43 +133,43 @@ def test_badwords():
     compare_extraction(italian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(italian.badwords, pickle.loads(pickle.dumps(italian.badwords)))
+    assert italian.badwords == pickle.loads(pickle.dumps(italian.badwords))
 
 
 def test_informals():
     compare_extraction(italian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(italian.informals, pickle.loads(pickle.dumps(italian.informals)))
+    assert italian.informals == pickle.loads(pickle.dumps(italian.informals))
 
 
 def test_dictionary():
     cache = {r_text: "Furono progettate e m80 costruire dalla."}
-    eq_(solve(italian.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ['Furono', 'progettate', 'e', 'costruire', 'dalla'])
-    eq_(solve(italian.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ['m80'])
+    assert (solve(italian.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ['Furono', 'progettate', 'e', 'costruire', 'dalla'])
+    assert (solve(italian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ['m80'])
 
-    eq_(italian.dictionary,
-        pickle.loads(pickle.dumps(italian.dictionary)))
+    assert (italian.dictionary ==
+            pickle.loads(pickle.dumps(italian.dictionary)))
 
 
 def test_stopwords():
     cache = {r_text: "Furono progettate e m80 costruire dalla."}
-    eq_(solve(italian.stopwords.revision.datasources.stopwords, cache=cache),
-        ['Furono', 'e', 'dalla'])
-    eq_(solve(italian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['progettate', 'm80', 'costruire'])
+    assert (solve(italian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['Furono', 'e', 'dalla'])
+    assert (solve(italian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['progettate', 'm80', 'costruire'])
 
-    eq_(italian.stopwords, pickle.loads(pickle.dumps(italian.stopwords)))
+    assert italian.stopwords == pickle.loads(pickle.dumps(italian.stopwords))
 
 
 def test_stemmmed():
     cache = {r_text: "Furono progettate e m80 costruire dalla."}
-    eq_(solve(italian.stemmed.revision.datasources.stems, cache=cache),
-        ['fur', 'progett', 'e', 'm80', 'costru', 'dall'])
+    assert (solve(italian.stemmed.revision.datasources.stems, cache=cache) ==
+            ['fur', 'progett', 'e', 'm80', 'costru', 'dall'])
 
-    eq_(italian.stemmed, pickle.loads(pickle.dumps(italian.stemmed)))
+    assert italian.stemmed == pickle.loads(pickle.dumps(italian.stemmed))

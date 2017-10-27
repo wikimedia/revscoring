@@ -21,6 +21,7 @@ class index(Datasource):
         name : `str`
             A name for the new datasource.
     """
+
     def __init__(self, i, datasources, default=NotImplemented, name=None):
         name = self._format_name(name, [i, default])
         self.i = int(i)

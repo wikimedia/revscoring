@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import greek
 from ...datasources import revision_oriented
@@ -104,33 +103,33 @@ def test_badwords():
     compare_extraction(greek.badwords.revision.datasources.matches,
                        BAD, OTHER)
     print(greek.badwords.revision.datasources.matches("βλάκας"))
-    eq_(greek.badwords, pickle.loads(pickle.dumps(greek.badwords)))
+    assert greek.badwords == pickle.loads(pickle.dumps(greek.badwords))
 
 
 def test_informals():
     compare_extraction(greek.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(greek.informals, pickle.loads(pickle.dumps(greek.informals)))
+    assert greek.informals == pickle.loads(pickle.dumps(greek.informals))
 
 
 def test_dictionary():
     cache = {r_text: 'Αυτό είναι γραμμένο λθος. <td>'}
-    eq_(solve(greek.dictionary.revision.datasources.dict_words, cache=cache),
-        ["Αυτό", "είναι", "γραμμένο"])
-    eq_(solve(greek.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["λθος"])
+    assert (solve(greek.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["Αυτό", "είναι", "γραμμένο"])
+    assert (solve(greek.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["λθος"])
 
-    eq_(greek.dictionary, pickle.loads(pickle.dumps(greek.dictionary)))
+    assert greek.dictionary == pickle.loads(pickle.dumps(greek.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: 'Αυτό είναι γραμμένο λθος. <td>'}
-    eq_(solve(greek.stopwords.revision.datasources.stopwords, cache=cache),
-        ["Αυτό", "είναι"])
-    eq_(solve(greek.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ["γραμμένο", "λθος"])
+    assert (solve(greek.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["Αυτό", "είναι"])
+    assert (solve(greek.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["γραμμένο", "λθος"])
 
-    eq_(greek.stopwords, pickle.loads(pickle.dumps(greek.stopwords)))
+    assert greek.stopwords == pickle.loads(pickle.dumps(greek.stopwords))

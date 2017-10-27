@@ -1,8 +1,12 @@
 import pickle
 
-from nose.tools import eq_
+from pytest import mark
 
-from .. import hindi
+try:
+    from .. import hindi
+except:
+    # Can't install the enchant dictionary, skip
+    pytestmark = mark.nottravis
 from ...datasources import revision_oriented
 from ...dependencies import solve
 from .util import compare_extraction
@@ -141,26 +145,29 @@ OTHER = [
 ]
 
 
+@mark.nottravis
 def test_badwords():
     compare_extraction(hindi.badwords.revision.datasources.matches, BAD,
                        OTHER)
 
-    eq_(hindi.badwords, pickle.loads(pickle.dumps(hindi.badwords)))
+    assert hindi.badwords == pickle.loads(pickle.dumps(hindi.badwords))
 
 
+@mark.nottravis
 def test_informals():
     compare_extraction(hindi.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(hindi.informals, pickle.loads(pickle.dumps(hindi.informals)))
+    assert hindi.informals == pickle.loads(pickle.dumps(hindi.informals))
 
 
+@mark.nottravis
 def test_dictionary():
     cache = {revision_oriented.revision.text: 'पहनाया उनकी कविताओं worngly.'}
-    eq_(solve(hindi.dictionary.revision.datasources.dict_words, cache=cache),
-        ["पहनाया", "उनकी"])
-    eq_(solve(hindi.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["कविताओं", "worngly"])
+    assert (solve(hindi.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["पहनाया", "उनकी"])
+    assert (solve(hindi.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["कविताओं", "worngly"])
 
-    eq_(hindi.dictionary, pickle.loads(pickle.dumps(hindi.dictionary)))
+    assert hindi.dictionary == pickle.loads(pickle.dumps(hindi.dictionary))

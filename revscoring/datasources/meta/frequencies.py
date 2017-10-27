@@ -26,6 +26,7 @@ class table(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, items_datasource, name=None):
         name = self._format_name(name, [items_datasource])
         super().__init__(name, self.process,
@@ -55,6 +56,7 @@ class delta(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, old_ft_datasource, new_ft_datasource, name=None):
         name = self._format_name(name, [old_ft_datasource, new_ft_datasource])
         super().__init__(name, self.process,
@@ -88,6 +90,7 @@ class prop_delta(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, old_ft_datasource, delta_datasource, name=None):
         name = self._format_name(name, [old_ft_datasource, delta_datasource])
         super().__init__(name, self.process,
@@ -114,6 +117,7 @@ class positive(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, table_datasource, name=None):
         name = self._format_name(name, [table_datasource])
         super().__init__(name, self.process,
@@ -135,6 +139,7 @@ class negative(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, table_datasource, absolute=False, name=None):
         name = self._format_name(name, [table_datasource])
         super().__init__(name, self.process,

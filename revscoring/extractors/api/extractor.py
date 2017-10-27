@@ -95,7 +95,7 @@ class Extractor(BaseExtractor):
 
         caches = caches if caches is not None else {}
         caches.update({rev_id: {} for rev_id in rev_ids
-                                  if rev_id not in caches})
+                       if rev_id not in caches})
         for rev_id, rev_cache in caches.items():
             for dependent, value in (cache or {}).items():
                 if dependent not in rev_cache:

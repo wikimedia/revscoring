@@ -146,8 +146,8 @@ def main(argv=None):
     verbose = args['--verbose']
 
     run(params_config, features, labels, features_path, value_labels,
-            statistic_path, additional_params, maximize, folds, report,
-            processes, cv_timeout, verbose)
+        statistic_path, additional_params, maximize, folds, report,
+        processes, cv_timeout, verbose)
 
 
 def run(params_config, features, possible_labels, features_path, value_labels,

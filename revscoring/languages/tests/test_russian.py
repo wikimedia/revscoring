@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import russian
 from ...datasources import revision_oriented
@@ -113,41 +112,41 @@ def test_badwords():
     compare_extraction(russian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(russian.badwords, pickle.loads(pickle.dumps(russian.badwords)))
+    assert russian.badwords == pickle.loads(pickle.dumps(russian.badwords))
 
 
 def test_informals():
     compare_extraction(russian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(russian.informals, pickle.loads(pickle.dumps(russian.informals)))
+    assert russian.informals == pickle.loads(pickle.dumps(russian.informals))
 
 
 def test_dictionary():
     cache = {r_text: 'прежние границы государства worngly. <td>'}
-    eq_(solve(russian.dictionary.revision.datasources.dict_words, cache=cache),
-        ['прежние', 'границы', 'государства'])
-    eq_(solve(russian.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(russian.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ['прежние', 'границы', 'государства'])
+    assert (solve(russian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(russian.dictionary, pickle.loads(pickle.dumps(russian.dictionary)))
+    assert russian.dictionary == pickle.loads(pickle.dumps(russian.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "начатую в правление его предшественника I"}
-    eq_(solve(russian.stopwords.revision.datasources.stopwords, cache=cache),
-        ['в', 'его'])
-    eq_(solve(russian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['начатую', 'правление', 'предшественника', 'I'])
+    assert (solve(russian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['в', 'его'])
+    assert (solve(russian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['начатую', 'правление', 'предшественника', 'I'])
 
-    eq_(russian.stopwords, pickle.loads(pickle.dumps(russian.stopwords)))
+    assert russian.stopwords == pickle.loads(pickle.dumps(russian.stopwords))
 
 
 def test_stemmmed():
     cache = {r_text: "На востоке он продолжил войну с Персией"}
-    eq_(solve(russian.stemmed.revision.datasources.stems, cache=cache),
-        ['на', 'восток', 'он', 'продолж', 'войн', 'с', 'перс'])
+    assert (solve(russian.stemmed.revision.datasources.stems, cache=cache) ==
+            ['на', 'восток', 'он', 'продолж', 'войн', 'с', 'перс'])
 
-    eq_(russian.stemmed, pickle.loads(pickle.dumps(russian.stemmed)))
+    assert russian.stemmed == pickle.loads(pickle.dumps(russian.stemmed))

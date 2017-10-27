@@ -1,7 +1,6 @@
 import json
 import pickle
 
-from nose.tools import eq_
 
 from ..counts import Counts
 
@@ -18,8 +17,8 @@ def test_counts():
 
     print(c.format_str({}))
     print(json.dumps(c.format_json({}), indent=2))
-    eq_(c.lookup("n"), 100)
-    eq_(c.lookup("labels.true"), 50)
-    eq_(c.lookup("predictions.false.false"), 30)
+    assert c.lookup("n") == 100
+    assert c.lookup("labels.true") == 50
+    assert c.lookup("predictions.false.false") == 30
 
     pickle.loads(pickle.dumps(c))

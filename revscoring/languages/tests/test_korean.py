@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import korean
 from ...datasources import revision_oriented
@@ -94,11 +93,11 @@ def test_badwords():
     compare_extraction(korean.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(korean.badwords, pickle.loads(pickle.dumps(korean.badwords)))
+    assert korean.badwords == pickle.loads(pickle.dumps(korean.badwords))
 
 
 def test_informals():
     compare_extraction(korean.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(korean.informals, pickle.loads(pickle.dumps(korean.informals)))
+    assert korean.informals == pickle.loads(pickle.dumps(korean.informals))

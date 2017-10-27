@@ -21,6 +21,7 @@ class gram(Datasource):
         name : `str`
             A name for the datasource.
     """
+
     def __init__(self, items_datasource, grams=[(0,)], name=None):
         name = self._format_name(name, [items_datasource, grams])
         super().__init__(name, self.process,

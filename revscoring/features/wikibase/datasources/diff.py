@@ -51,7 +51,7 @@ class Diff(DependentSet):
         )
         (self.descriptions_added, self.descriptions_removed,
          self.descriptions_changed) = \
-                diff_parts(name + ".descriptions", self.descriptions_diff)
+            diff_parts(name + ".descriptions", self.descriptions_diff)
 
         # properties
         self.properties_diff = Datasource(
@@ -124,6 +124,7 @@ class dict_diff_field(Datasource):
             A name to associate with the Datasource.  If not set, the feature's
             name will be 'wikibase.diff.dict_diff_field(<property>)'
     """
+
     def __init__(self, field_name, diff_datasource, name=None):
         self.field_name = field_name
         name = self._format_name(name, [field_name, diff_datasource])
@@ -154,8 +155,8 @@ def _process_claims_removed(properties_diff, past_item, current_item):
         current_guids = {claim.snak
                          for claim in past_item.claims[property]}
         for claim in past_item.claims[property]:
-                if claim.snak not in current_guids:
-                    claims_removed.append(claim)
+            if claim.snak not in current_guids:
+                claims_removed.append(claim)
 
     return claims_removed
 

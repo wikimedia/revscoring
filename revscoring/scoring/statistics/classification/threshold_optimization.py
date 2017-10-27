@@ -71,14 +71,14 @@ class ThresholdOptimization:
             filtered = [(tstats[self.target_stat], t, tstats)
                         for t, tstats in threshold_statistics
                         if tstats[self.cond_stat] is not None and
-                           tstats[self.target_stat] is not None and
-                           tstats[self.cond_stat] >= self.cond_value]
+                        tstats[self.target_stat] is not None and
+                        tstats[self.cond_stat] >= self.cond_value]
         else:
             filtered = [(tstats[self.target_stat], t, tstats)
                         for t, tstats in threshold_statistics
                         if tstats[self.cond_stat] is not None and
-                           tstats[self.target_stat] is not None and
-                           tstats[self.cond_stat] <= self.cond_value]
+                        tstats[self.target_stat] is not None and
+                        tstats[self.cond_stat] <= self.cond_value]
 
         if not filtered:
             return None

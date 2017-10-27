@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import arabic
 from ...datasources import revision_oriented
@@ -105,33 +104,33 @@ def test_badwords():
     compare_extraction(arabic.badwords.revision.datasources.matches, BAD,
                        OTHER)
 
-    eq_(arabic.badwords, pickle.loads(pickle.dumps(arabic.badwords)))
+    assert arabic.badwords == pickle.loads(pickle.dumps(arabic.badwords))
 
 
 def test_informals():
     compare_extraction(arabic.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(arabic.informals, pickle.loads(pickle.dumps(arabic.informals)))
+    assert arabic.informals == pickle.loads(pickle.dumps(arabic.informals))
 
 
 def test_dictionary():
     cache = {revision_oriented.revision.text: 'التي لم تكن معروفة  worngly.'}
-    eq_(solve(arabic.dictionary.revision.datasources.dict_words, cache=cache),
-        ["التي", "لم", "تكن", "معروفة"])
-    eq_(solve(arabic.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(arabic.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["التي", "لم", "تكن", "معروفة"])
+    assert (solve(arabic.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(arabic.dictionary, pickle.loads(pickle.dumps(arabic.dictionary)))
+    assert arabic.dictionary == pickle.loads(pickle.dumps(arabic.dictionary))
 
 
 def test_stopwords():
     cache = {revision_oriented.revision.text: 'التي لم تكن معروفة'}
-    eq_(solve(arabic.stopwords.revision.datasources.stopwords, cache=cache),
-        ['التي'])
-    eq_(solve(arabic.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['لم', 'تكن', 'معروفة'])
+    assert (solve(arabic.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['التي'])
+    assert (solve(arabic.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['لم', 'تكن', 'معروفة'])
 
-    eq_(arabic.stopwords, pickle.loads(pickle.dumps(arabic.stopwords)))
+    assert arabic.stopwords == pickle.loads(pickle.dumps(arabic.stopwords))

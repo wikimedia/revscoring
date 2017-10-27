@@ -1,6 +1,5 @@
 import io
 
-from nose.tools import eq_
 
 from .. import frequencies, selectors
 from ....dependencies import solve
@@ -31,8 +30,8 @@ def test_tfidf():
     cache = {my_tokens: ["one", "maybe", "true", "four", "false"]}
     tfidf_table = solve(my_tfidf_table, cache=cache)
 
-    eq_(set(my_tfidf_table.keys()), {'true', 'false', 'maybe'})
-    eq_(set(tfidf_table.keys()), {'true', 'false', 'maybe'})
+    assert set(my_tfidf_table.keys()) == {'true', 'false', 'maybe'}
+    assert set(tfidf_table.keys()) == {'true', 'false', 'maybe'}
     assert tfidf_table['true'] > tfidf_table['false']
     assert tfidf_table['maybe'] > 0
 
@@ -40,8 +39,8 @@ def test_tfidf():
     my_tfidf_table.dump(f)
     f.seek(0)
     loaded_my_tfidf_table = Datasource.load(f)
-    eq_(solve(my_tfidf_table, cache=cache),
-        solve(loaded_my_tfidf_table, cache=cache))
+    assert (solve(my_tfidf_table, cache=cache) ==
+            solve(loaded_my_tfidf_table, cache=cache))
 
     cache = {my_table: {'maybe': -1}}
     tfidf_table = solve(my_tfidf_table, cache=cache)
@@ -64,11 +63,11 @@ def test_boolean_tfidf():
     cache = {my_tokens: ["one", "one", "maybe", "true", "four", "false"]}
     tfidf_table = solve(my_boolean_tfidf_table, cache=cache)
 
-    eq_(set(tfidf_table.keys()), {'true', 'false', 'maybe'})
+    assert set(tfidf_table.keys()) == {'true', 'false', 'maybe'}
 
 
 def test_filter_keys():
     cache = {my_tokens: ["one", "maybe", "true", "four", "false"]}
     filtered_keys = solve(my_filtered_keys, cache=cache)
 
-    eq_(set(filtered_keys.keys()), {'true', 'false'})
+    assert set(filtered_keys.keys()) == {'true', 'false'}

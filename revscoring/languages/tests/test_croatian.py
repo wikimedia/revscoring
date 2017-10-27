@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import croatian
 from ...datasources import revision_oriented
@@ -172,34 +171,35 @@ def test_badwords():
     compare_extraction(croatian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(croatian.badwords, pickle.loads(pickle.dumps(croatian.badwords)))
+    assert croatian.badwords == pickle.loads(pickle.dumps(croatian.badwords))
 
 
 def test_informals():
     compare_extraction(croatian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(croatian.informals, pickle.loads(pickle.dumps(croatian.informals)))
+    assert croatian.informals == pickle.loads(pickle.dumps(croatian.informals))
 
 
 def test_dictionary():
     cache = {r_text: "svom eseju worngly."}
-    eq_(solve(croatian.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ["svom", "eseju"])
-    eq_(solve(croatian.dictionary.revision.datasources.non_dict_words,
-        cache=cache),
-        ["worngly"])
+    assert (solve(croatian.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ["svom", "eseju"])
+    assert (solve(croatian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(croatian.dictionary, pickle.loads(pickle.dumps(croatian.dictionary)))
+    assert croatian.dictionary == pickle.loads(
+        pickle.dumps(croatian.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "može mrva primatelj nagrade."}
-    eq_(solve(croatian.stopwords.revision.datasources.stopwords, cache=cache),
-        ["može", "mrva", "nagrade"])
-    eq_(solve(croatian.stopwords.revision.datasources.non_stopwords,
-              cache=cache),
-        ["primatelj"])
+    assert (solve(croatian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["može", "mrva", "nagrade"])
+    assert (solve(croatian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["primatelj"])
 
-    eq_(croatian.stopwords, pickle.loads(pickle.dumps(croatian.stopwords)))
+    assert croatian.stopwords == pickle.loads(pickle.dumps(croatian.stopwords))

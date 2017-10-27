@@ -70,6 +70,7 @@ class Revision(DependentSet):
 
 class ParentRevision(Revision):
     "Represents a parent revision"
+
     def __init__(self, name, revision_datasources):
         super().__init__(name, revision_datasources.parent)
 
@@ -84,6 +85,7 @@ class ParentRevision(Revision):
 
 class User(DependentSet):
     "Represents a revision user"
+
     def __init__(self, name, revision_datasources):
         super().__init__(name)
         self.datasources = revision_datasources.user
@@ -117,6 +119,7 @@ class User(DependentSet):
 
 class LastUserRevision(Revision):
     "Represents a revision user's last revision"
+
     def __init__(self, name, revision_datasources):
         super().__init__(name, revision_datasources.user.last_revision)
 
@@ -131,6 +134,7 @@ class LastUserRevision(Revision):
 
 class Page(DependentSet):
     "Represents a revision's page"
+
     def __init__(self, name, revision_datasources):
         super().__init__(name)
         self.creation = PageCreation(
@@ -145,6 +149,7 @@ class Page(DependentSet):
 
 class PageCreation(DependentSet):
     "Represents a page's creating revision"
+
     def __init__(self, name, revision_datasources):
         super().__init__(name)
         self.seconds_since = Feature(

@@ -1,4 +1,3 @@
-from nose.tools import eq_
 
 from ..model_info import ModelInfo
 
@@ -14,5 +13,5 @@ def test_model_info():
     assert 'baz' not in mi.format([''], formatting="json")
     mi.format(['true'], formatting="json")
 
-    eq_(list(mi.keys()), ['foo', 'bar', 'baz', True])
-    eq_(list(mi.format_json({}).keys()), ['foo', 'bar'])
+    assert list(mi.keys()) == ['foo', 'bar', 'baz', True]
+    assert list(mi.format_json({}).keys()) == ['foo', 'bar']

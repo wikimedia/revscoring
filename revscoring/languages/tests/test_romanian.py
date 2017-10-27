@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import romanian
 from ...datasources import revision_oriented
@@ -62,42 +61,43 @@ def test_badwords():
     compare_extraction(romanian.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(romanian.badwords, pickle.loads(pickle.dumps(romanian.badwords)))
+    assert romanian.badwords == pickle.loads(pickle.dumps(romanian.badwords))
 
 
 def test_informals():
     compare_extraction(romanian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(romanian.informals, pickle.loads(pickle.dumps(romanian.informals)))
+    assert romanian.informals == pickle.loads(pickle.dumps(romanian.informals))
 
 
 def test_dictionary():
     cache = {r_text: 'În timpul acestei perioade worngly. <td>'}
-    eq_(solve(romanian.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ['În', 'timpul', 'acestei', 'perioade'])
-    eq_(solve(romanian.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(romanian.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ['În', 'timpul', 'acestei', 'perioade'])
+    assert (solve(romanian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(romanian.dictionary, pickle.loads(pickle.dumps(romanian.dictionary)))
+    assert romanian.dictionary == pickle.loads(
+        pickle.dumps(romanian.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "În timpul acestei perioade"}
-    eq_(solve(romanian.stopwords.revision.datasources.stopwords, cache=cache),
-        ['În', 'timpul'])
-    eq_(solve(romanian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['acestei', 'perioade'])
+    assert (solve(romanian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['În', 'timpul'])
+    assert (solve(romanian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['acestei', 'perioade'])
 
-    eq_(romanian.stopwords, pickle.loads(pickle.dumps(romanian.stopwords)))
+    assert romanian.stopwords == pickle.loads(pickle.dumps(romanian.stopwords))
 
 
 def test_stemmmed():
     cache = {r_text: "În timpul acestei perioade"}
-    eq_(solve(romanian.stemmed.revision.datasources.stems, cache=cache),
-        ['în', 'timp', 'aceste', 'perioad'])
+    assert (solve(romanian.stemmed.revision.datasources.stems, cache=cache) ==
+            ['în', 'timp', 'aceste', 'perioad'])
 
-    eq_(romanian.stemmed, pickle.loads(pickle.dumps(romanian.stemmed)))
+    assert romanian.stemmed == pickle.loads(pickle.dumps(romanian.stemmed))

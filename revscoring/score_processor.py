@@ -65,9 +65,9 @@ class ScoreProcessor:
         logger.debug("running _score_batch() on {0} rev_ids"
                      .format(len(id_batch)))
         error_values = self.extractor.extract(
-                id_batch, self.root_datasources, caches=caches, cache=cache)
+            id_batch, self.root_datasources, caches=caches, cache=cache)
         e_r_caches = self._group_error_root_caches(
-                id_batch, error_values, caches, cache)
+            id_batch, error_values, caches, cache)
 
         rev_scores = self.process_ex.map(self._process_score, e_r_caches)
         return list(rev_scores)

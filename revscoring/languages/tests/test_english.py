@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import english
 from ...datasources import revision_oriented
@@ -175,41 +174,41 @@ def test_badwords():
     compare_extraction(english.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(english.badwords, pickle.loads(pickle.dumps(english.badwords)))
+    assert english.badwords == pickle.loads(pickle.dumps(english.badwords))
 
 
 def test_informals():
     compare_extraction(english.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(english.informals, pickle.loads(pickle.dumps(english.informals)))
+    assert english.informals == pickle.loads(pickle.dumps(english.informals))
 
 
 def test_dictionary():
     cache = {r_text: 'This is spelled worngly. <td>'}
-    eq_(solve(english.dictionary.revision.datasources.dict_words, cache=cache),
-        ["This", "is", "spelled"])
-    eq_(solve(english.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(english.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["This", "is", "spelled"])
+    assert (solve(english.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(english.dictionary, pickle.loads(pickle.dumps(english.dictionary)))
+    assert english.dictionary == pickle.loads(pickle.dumps(english.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: 'This is spelled worngly. <td>'}
-    eq_(solve(english.stopwords.revision.datasources.stopwords, cache=cache),
-        ["This", "is"])
-    eq_(solve(english.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ["spelled", "worngly"])
+    assert (solve(english.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["This", "is"])
+    assert (solve(english.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["spelled", "worngly"])
 
-    eq_(english.stopwords, pickle.loads(pickle.dumps(english.stopwords)))
+    assert english.stopwords == pickle.loads(pickle.dumps(english.stopwords))
 
 
 def test_stemmmed():
     cache = {r_text: 'This is spelled worngly. <td>'}
-    eq_(solve(english.stemmed.revision.datasources.stems, cache=cache),
-        ["this", "is", "spell", "worng"])
+    assert (solve(english.stemmed.revision.datasources.stems, cache=cache) ==
+            ["this", "is", "spell", "worng"])
 
-    eq_(english.stemmed, pickle.loads(pickle.dumps(english.stemmed)))
+    assert english.stemmed == pickle.loads(pickle.dumps(english.stemmed))

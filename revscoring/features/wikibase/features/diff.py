@@ -143,7 +143,7 @@ class Diff(DependentSet):
         """
         if name is None:
             name = self._name + ".property_changed({0})" \
-                                 .format(repr(property))
+                .format(repr(property))
         return bools.item_in_set(property, self.datasources.properties_changed,
                                  name=name)
 
@@ -154,7 +154,7 @@ def _process_proportion_of_qid_added(parent_item, revision_item):
     revision_item_qids = len(re.findall(re_qid, str(revision_item.toJSON())))
     parent_item_qids = len(re.findall(re_qid, str(parent_item_doc)))
     return float(revision_item_qids - parent_item_qids) / \
-           float(revision_item_qids + 1)
+        float(revision_item_qids + 1)
 
 
 # AF/8

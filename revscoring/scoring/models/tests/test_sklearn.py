@@ -1,4 +1,4 @@
-from nose.tools import eq_, raises
+from pytest import raises
 
 from ....features import Feature
 from ..sklearn import Classifier
@@ -31,7 +31,7 @@ def test_sklean_classifier():
     skc = FakeIdentityClassifier(
         [Feature("foo")], [True, False], version="0.0.1")
 
-    eq_(skc.version, "0.0.1")
+    assert skc.version == "0.0.1"
 
     cv_feature_values = [
         ([True], True),
@@ -47,13 +47,13 @@ def test_sklean_classifier():
     ]
 
     stats = skc.cross_validate(cv_feature_values, folds=2)
-    eq_(stats['counts']['predictions'],
-        {True: {False: 0, True: 5},
-         False: {False: 5, True: 0}})
+    assert (stats['counts']['predictions'] ==
+            {True: {False: 0, True: 5},
+             False: {False: 5, True: 0}})
 
 
-@raises(ValueError)
 def test_sklearn_format_error():
-    skc = FakeIdentityClassifier(
-        [Feature("foo")], [True, False], version="0.0.1")
-    skc.info.format(formatting="foo")
+    with raises(ValueError):
+        skc = FakeIdentityClassifier(
+            [Feature("foo")], [True, False], version="0.0.1")
+        skc.info.format(formatting="foo")

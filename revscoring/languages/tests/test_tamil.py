@@ -1,6 +1,6 @@
 import pickle
 
-from nose.tools import eq_
+from pytest import mark
 
 from .. import tamil
 from .util import compare_extraction
@@ -239,15 +239,17 @@ OTHER = [
 ]
 
 
+@mark.nottravis
 def test_badwords():
     compare_extraction(tamil.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(tamil.badwords, pickle.loads(pickle.dumps(tamil.badwords)))
+    assert tamil.badwords == pickle.loads(pickle.dumps(tamil.badwords))
 
 
+@mark.nottravis
 def test_informals():
     compare_extraction(tamil.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(tamil.informals, pickle.loads(pickle.dumps(tamil.informals)))
+    assert tamil.informals == pickle.loads(pickle.dumps(tamil.informals))

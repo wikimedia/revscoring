@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import swedish
 from ...datasources import revision_oriented
@@ -262,33 +261,33 @@ def test_badwords():
     compare_extraction(swedish.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(swedish.badwords, pickle.loads(pickle.dumps(swedish.badwords)))
+    assert swedish.badwords == pickle.loads(pickle.dumps(swedish.badwords))
 
 
 def test_informals():
     compare_extraction(swedish.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(swedish.informals, pickle.loads(pickle.dumps(swedish.informals)))
+    assert swedish.informals == pickle.loads(pickle.dumps(swedish.informals))
 
 
 def test_dictionary():
     cache = {r_text: "skötts övervakning av worngly."}
-    eq_(solve(swedish.dictionary.revision.datasources.dict_words, cache=cache),
-        ["skötts", "övervakning", "av"])
-    eq_(solve(swedish.dictionary.revision.datasources.non_dict_words,
-        cache=cache),
-        ["worngly"])
+    assert (solve(swedish.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["skötts", "övervakning", "av"])
+    assert (solve(swedish.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(swedish.dictionary, pickle.loads(pickle.dumps(swedish.dictionary)))
+    assert swedish.dictionary == pickle.loads(pickle.dumps(swedish.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "även omkring introducerades när."}
-    eq_(solve(swedish.stopwords.revision.datasources.stopwords, cache=cache),
-        ["även", "omkring", "när"])
-    eq_(solve(swedish.stopwords.revision.datasources.non_stopwords,
-              cache=cache),
-        ["introducerades"])
+    assert (solve(swedish.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["även", "omkring", "när"])
+    assert (solve(swedish.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["introducerades"])
 
-    eq_(swedish.stopwords, pickle.loads(pickle.dumps(swedish.stopwords)))
+    assert swedish.stopwords == pickle.loads(pickle.dumps(swedish.stopwords))

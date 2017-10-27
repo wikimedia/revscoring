@@ -91,7 +91,7 @@ class ScaledClassificationMatrix:
 
         # Useful variables
         self.n = self.tp + self.tn + \
-                 self.fp + self.fn
+            self.fp + self.fn
         self.positives = self.tp + self.fp
         self.negatives = self.tn + self.fn
         self.trues = self.tp + self.fn

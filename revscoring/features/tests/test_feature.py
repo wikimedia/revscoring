@@ -1,6 +1,6 @@
 import pickle
 
-from nose.tools import eq_, raises
+from pytest import raises
 
 from ...dependencies import solve
 from ..feature import Feature
@@ -31,20 +31,20 @@ int_identity = Feature("int_identity", identity_process,
 
 def check_feature(feature, expected):
 
-    eq_(feature.returns, type(expected))
+    assert isinstance(expected, feature.returns)
 
-    eq_(hash(pickle.loads(pickle.dumps(feature))), hash(feature))
+    assert hash(pickle.loads(pickle.dumps(feature))) == hash(feature)
 
-    eq_(solve(feature), expected)
-    eq_(solve(pickle.loads(pickle.dumps(feature))), expected)
+    assert solve(feature) == expected
+    assert solve(pickle.loads(pickle.dumps(feature))) == expected
 
 
 def test_feature():
     f = Feature("f")
 
-    eq_(pickle.loads(pickle.dumps(f)), f)
-    eq_(solve(f, cache={f: 5}), 5)
-    eq_(solve(f, cache={"feature.f": 5}), 5)
+    assert pickle.loads(pickle.dumps(f)) == f
+    assert solve(f, cache={f: 5}) == 5
+    assert solve(f, cache={"feature.f": 5}) == 5
 
     check_feature(five, 5)
 
@@ -52,15 +52,14 @@ def test_feature():
 def test_minimal_constructor():
     myfive = Feature("five")
 
-    eq_(myfive, five)
+    assert myfive == five
 
 
-@raises(ValueError)
 def test_feature_type():
+    with raises(ValueError):
+        int_identity(11)
 
-    int_identity(11)
-
-    int_identity("not int")
+        int_identity("not int")
 
 
 def test_add():
@@ -131,8 +130,8 @@ def test_eq():
     five_eq_one = five == 1
     check_feature(five_eq_one, False)
 
-    five_eq_five = five == five
-    check_feature(five_eq_five, True)
+    five_eq_one = five == five
+    check_feature(five_eq_one, True)
 
 
 def test_ne():

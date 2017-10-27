@@ -20,6 +20,7 @@ class keys(Datasource):
         name : `str`
             A name for the new datasource.
     """
+
     def __init__(self, dict_datasource, name=None):
         name = self._format_name(name, [dict_datasource])
         super().__init__(name, self.process,
@@ -39,6 +40,7 @@ class values(Datasource):
         name : `str`
             A name for the new datasource.
     """
+
     def __init__(self, dict_datasource, name=None):
         name = self._format_name(name, [dict_datasource])
         super().__init__(name, self.process,

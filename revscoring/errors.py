@@ -71,27 +71,27 @@ class RevisionNotFound(MissingResource):
 
 
 class UserNotFound(MissingResource):
-     def __init__(self, datasources, user_text=None, arg=None):
-         super().__init__("Could not find user account ({0}:{1})"
-                          .format(datasources, repr(user_text)))
+    def __init__(self, datasources, user_text=None, arg=None):
+        super().__init__("Could not find user account ({0}:{1})"
+                         .format(datasources, repr(user_text)))
 
 
 class PageNotFound(MissingResource):
-     def __init__(self, datasources, page_id=None, arg=None):
-         super().__init__("Could not find page ({0}:{1})"
-                          .format(datasources, repr(page_id)))
+    def __init__(self, datasources, page_id=None, arg=None):
+        super().__init__("Could not find page ({0}:{1})"
+                         .format(datasources, repr(page_id)))
 
 
 class UserDeleted(MissingResource):
-     def __init__(self, datasources, arg=None):
-         super().__init__("User deleted ({0})"
-                          .format(datasources))
+    def __init__(self, datasources, arg=None):
+        super().__init__("User deleted ({0})"
+                         .format(datasources))
 
 
 class CommentDeleted(MissingResource):
-     def __init__(self, datasources, arg=None):
-         super().__init__("Comment deleted ({0})"
-                          .format(datasources))
+    def __init__(self, datasources, arg=None):
+        super().__init__("Comment deleted ({0})"
+                         .format(datasources))
 
 
 class TextDeleted(MissingResource):

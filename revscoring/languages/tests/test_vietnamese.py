@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import vietnamese
 from ...datasources import revision_oriented
@@ -66,36 +65,39 @@ def test_badwords():
     compare_extraction(vietnamese.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(vietnamese.badwords, pickle.loads(pickle.dumps(vietnamese.badwords)))
+    assert vietnamese.badwords == pickle.loads(
+        pickle.dumps(vietnamese.badwords))
 
 
 def test_informals():
     compare_extraction(vietnamese.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(vietnamese.informals, pickle.loads(pickle.dumps(vietnamese.informals)))
+    assert vietnamese.informals == pickle.loads(
+        pickle.dumps(vietnamese.informals))
 
 
 def test_dictionary():
     cache = {r_text: "Hóa thạch của: loài này được."}
-    eq_(solve(vietnamese.dictionary.revision.datasources.dict_words,
-              cache=cache),
-        ['thạch', 'của', 'loài', 'này', 'được'])
-    eq_(solve(vietnamese.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ['Hóa'])
+    assert (solve(vietnamese.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ['thạch', 'của', 'loài', 'này', 'được'])
+    assert (solve(vietnamese.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ['Hóa'])
 
-    eq_(vietnamese.dictionary,
-        pickle.loads(pickle.dumps(vietnamese.dictionary)))
+    assert (vietnamese.dictionary ==
+            pickle.loads(pickle.dumps(vietnamese.dictionary)))
 
 
 def test_stopwords():
     cache = {r_text: "Hóa thạch của: loài này được."}
-    eq_(solve(vietnamese.stopwords.revision.datasources.stopwords,
-              cache=cache),
-        ['của', 'này', 'được'])
-    eq_(solve(vietnamese.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['Hóa', 'thạch', 'loài'])
+    assert (solve(vietnamese.stopwords.revision.datasources.stopwords,
+                  cache=cache) ==
+            ['của', 'này', 'được'])
+    assert (solve(vietnamese.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['Hóa', 'thạch', 'loài'])
 
-    eq_(vietnamese.stopwords, pickle.loads(pickle.dumps(vietnamese.stopwords)))
+    assert vietnamese.stopwords == pickle.loads(
+        pickle.dumps(vietnamese.stopwords))

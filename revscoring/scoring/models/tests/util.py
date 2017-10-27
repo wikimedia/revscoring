@@ -3,7 +3,7 @@ import random
 from io import BytesIO
 from itertools import chain
 
-from nose.tools import eq_, nottest
+from pytest import mark
 
 from ....features import Feature, FeatureVector
 from ..model import Model
@@ -34,7 +34,7 @@ float_vector = FeatureVector("float_vector", process_float_vector(),
 FEATURES = [some_float, other_float, float_vector]
 
 
-@nottest
+@mark.skip('Not test')
 def train_test(model):
     deterministic = random.Random(0)
     observations = list(chain(
@@ -62,7 +62,7 @@ def train_test(model):
     model.train(train_set)
     score_doc = model.score((-1, -2, [-1, 1, 2.5]))
 
-    eq_(score_doc['prediction'], True)
+    assert score_doc['prediction'] is True
     assert score_doc['probability'][True] > 0.5, \
         "Probability of True {0} is not > 0.5" \
         .format(score_doc['probability'][True])
@@ -77,9 +77,9 @@ def pickle_and_unpickle(model):
     model.dump(f)
     f.seek(0)  # Rewind the file
     reconstructed_model = Model.load(f)
-    eq_([feature.name for feature in reconstructed_model.features],
-        [feature.name for feature in model.features])
-    eq_(type(reconstructed_model), type(model))
+    assert ([feature.name for feature in reconstructed_model.features] ==
+            [feature.name for feature in model.features])
+    assert isinstance(reconstructed_model, type(model))
     train_test(reconstructed_model)
 
 

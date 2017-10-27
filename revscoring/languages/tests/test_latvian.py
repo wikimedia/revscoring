@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import latvian
 from ...datasources import revision_oriented
@@ -157,34 +156,34 @@ def test_badwords():
     compare_extraction(latvian.badwords.revision.datasources.matches, BAD,
                        OTHER)
 
-    eq_(latvian.badwords, pickle.loads(pickle.dumps(latvian.badwords)))
+    assert latvian.badwords == pickle.loads(pickle.dumps(latvian.badwords))
 
 
 def test_informals():
     compare_extraction(latvian.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(latvian.informals, pickle.loads(pickle.dumps(latvian.informals)))
+    assert latvian.informals == pickle.loads(pickle.dumps(latvian.informals))
 
 
 def test_dictionary():
     cache = {revision_oriented.revision.text:
              'novirze no ilggadējiem vidējiem  worngly.'}
-    eq_(solve(latvian.dictionary.revision.datasources.dict_words, cache=cache),
-        ["novirze", "no", "ilggadējiem", "vidējiem"])
-    eq_(solve(latvian.dictionary.revision.datasources.non_dict_words,
-              cache=cache),
-        ["worngly"])
+    assert (solve(latvian.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["novirze", "no", "ilggadējiem", "vidējiem"])
+    assert (solve(latvian.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["worngly"])
 
-    eq_(latvian.dictionary, pickle.loads(pickle.dumps(latvian.dictionary)))
+    assert latvian.dictionary == pickle.loads(pickle.dumps(latvian.dictionary))
 
 
 def test_stopwords():
     cache = {revision_oriented.revision.text: 'novirze būt vidējiem'}
-    eq_(solve(latvian.stopwords.revision.datasources.stopwords, cache=cache),
-        ['būt'])
-    eq_(solve(latvian.stopwords.revision.datasources.non_stopwords,
-        cache=cache),
-        ['novirze', 'vidējiem'])
+    assert (solve(latvian.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ['būt'])
+    assert (solve(latvian.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ['novirze', 'vidējiem'])
 
-    eq_(latvian.stopwords, pickle.loads(pickle.dumps(latvian.stopwords)))
+    assert latvian.stopwords == pickle.loads(pickle.dumps(latvian.stopwords))

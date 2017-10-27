@@ -1,6 +1,5 @@
 import pickle
 
-from nose.tools import eq_
 
 from .. import german
 from ...datasources import revision_oriented
@@ -152,41 +151,41 @@ def test_badwords():
     compare_extraction(german.badwords.revision.datasources.matches,
                        BAD, OTHER)
 
-    eq_(german.badwords, pickle.loads(pickle.dumps(german.badwords)))
+    assert german.badwords == pickle.loads(pickle.dumps(german.badwords))
 
 
 def test_informals():
     compare_extraction(german.informals.revision.datasources.matches,
                        INFORMAL, OTHER)
 
-    eq_(german.informals, pickle.loads(pickle.dumps(german.informals)))
+    assert german.informals == pickle.loads(pickle.dumps(german.informals))
 
 
 def test_dictionary():
     cache = {r_text: "Hinzu kamen rund sechs m80 Personen."}
-    eq_(solve(german.dictionary.revision.datasources.dict_words, cache=cache),
-        ["Hinzu", "kamen", "rund", "sechs", "Personen"])
-    eq_(solve(german.dictionary.revision.datasources.non_dict_words,
-        cache=cache),
-        ["m80"])
+    assert (solve(german.dictionary.revision.datasources.dict_words, cache=cache) ==
+            ["Hinzu", "kamen", "rund", "sechs", "Personen"])
+    assert (solve(german.dictionary.revision.datasources.non_dict_words,
+                  cache=cache) ==
+            ["m80"])
 
-    eq_(german.dictionary, pickle.loads(pickle.dumps(german.dictionary)))
+    assert german.dictionary == pickle.loads(pickle.dumps(german.dictionary))
 
 
 def test_stopwords():
     cache = {r_text: "im Lager oder in der Verbannung."}
-    eq_(solve(german.stopwords.revision.datasources.stopwords, cache=cache),
-        ["im", "oder", "in", "der"])
-    eq_(solve(german.stopwords.revision.datasources.non_stopwords,
-              cache=cache),
-        ["Lager", "Verbannung"])
+    assert (solve(german.stopwords.revision.datasources.stopwords, cache=cache) ==
+            ["im", "oder", "in", "der"])
+    assert (solve(german.stopwords.revision.datasources.non_stopwords,
+                  cache=cache) ==
+            ["Lager", "Verbannung"])
 
-    eq_(german.stopwords, pickle.loads(pickle.dumps(german.stopwords)))
+    assert german.stopwords == pickle.loads(pickle.dumps(german.stopwords))
 
 
 def test_stemmed():
     cache = {r_text: "Hinzu kamen rund sechs m80 Personen."}
-    eq_(solve(german.stemmed.revision.datasources.stems, cache=cache),
-        ["hinzu", "kam", "rund", "sech", "m80", "person"])
+    assert (solve(german.stemmed.revision.datasources.stems, cache=cache) ==
+            ["hinzu", "kam", "rund", "sech", "m80", "person"])
 
-    eq_(german.stemmed, pickle.loads(pickle.dumps(german.stemmed)))
+    assert german.stemmed == pickle.loads(pickle.dumps(german.stemmed))

@@ -7,7 +7,7 @@ import random
 import signal
 import sys
 
-from nose.tools import nottest
+from pytest import mark
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ def read_labels_and_population_rates(labels_str, label_weights_strs,
     return labels, label_weights, population_rates
 
 
-@nottest
+@mark.notest
 def train_test_split(observations, test_prop=0.25):
     # Split train and test set from obs.
     observations = list(observations)
@@ -96,6 +96,7 @@ class Timeout:
     """
     A context for performing a timeout.
     """
+
     def __init__(self, timeout_seconds):
         self.timeout_seconds = int(timeout_seconds)
 

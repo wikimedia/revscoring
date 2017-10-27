@@ -29,6 +29,7 @@ class Dependent:
             A collection of :class:`revscoring.Dependent` whose values are
             required by `process`
     """
+
     def __init__(self, name, process=None, depends_on=None,
                  dependencies=None):
         if not isinstance(name, str):
@@ -97,6 +98,7 @@ class DependentSet:
         name : `str`
             A base name for the items in the set
     """
+
     def __init__(self, name, _dependents=None, _dependent_sets=None):
         self._dependents = _dependents or set()
         self._dependent_sets = _dependent_sets or set()
