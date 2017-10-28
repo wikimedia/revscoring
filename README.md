@@ -68,9 +68,9 @@ sudo make install
 
 
 Finally, in order to make use of language features, you'll need to download
-some NLTK data.  The following command will get the necessary corpus.
+some NLTK data.  The following command will get the necessary corpora.
 
-``python -m nltk.downloader stopwords``
+``python -m nltk.downloader omw sentiwordnet stopwords wordnet``
 
 You'll also need to install `enchant <https://en.wikipedia.org/wiki/Enchant_(software)>`_ compatible
 dictionaries of the languages you'd like to use.  We recommend the following:
