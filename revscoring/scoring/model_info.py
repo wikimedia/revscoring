@@ -110,14 +110,15 @@ class ModelInfo:
 
     def format_str(self, path_tree, **kwargs):
         formatted = "Model Information:\n"
-        for key in path_tree or self.normalize_fields(path_tree):
-            if hasattr(self[key], "format_str"):
+        for key in self.normalize_fields(path_tree):
+            key_val = try_key(key, self)
+            if hasattr(key_val, "format_str"):
                 sub_tree = path_tree.get(key, {})
                 formatted += util.tab_it_in(
-                    self[key].format_str(sub_tree, **kwargs))
+                    key_val.format_str(sub_tree, **kwargs))
             else:
                 formatted += util.tab_it_in(" - {0}: {1}"
-                                            .format(key, self[key]))
+                                            .format(key, key_val))
 
         return formatted
 
