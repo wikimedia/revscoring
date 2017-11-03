@@ -35,6 +35,7 @@ def test_sts():
     print(skewed_sts.format_str({}, threshold_ndigits=3))
     print(balanced_sts.format_str({}, threshold_ndigits=3))
     print(skewed_sts.format_str({'maximum recall @ precision >= 0.9': {}}))
+    print(skewed_sts.format_str({'maximum recall @ precision >= 1.1': {}}))
     print(json.dumps(skewed_sts.format_json(
         {'maximum recall @ precision >= 0.9': {},
          'maximum filter_rate @ recall >= 0.9': {}})))
