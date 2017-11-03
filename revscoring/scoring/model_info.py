@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from . import util
+from ..errors import ModelInfoLookupError
 
 
 class ModelInfo:
@@ -27,7 +28,12 @@ class ModelInfo:
         self._data[key] = value
 
     def __contains__(self, key):
-        return key in self._data
+        try:
+            return (key in self._data or
+                    key in ('true', 'false') and key == 'true' in self._data or
+                    int(key) in self._data)
+        except ValueError:
+            return False
 
     def keys(self):
         return self._data.keys()
@@ -147,11 +153,14 @@ class ModelInfo:
 def try_key(key, d):
     try:
         return d[key]
-    except KeyError as e:
-        if key in ("true", "false"):
-            return d[key == 'true']
-        else:
-            try:
-                return d[int(key)]
-            except ValueError:
-                raise e
+    except KeyError:
+        try:
+            if key in ("true", "false"):
+                return d[key == 'true']
+            else:
+                try:
+                    return d[int(key)]
+                except ValueError:
+                    raise ModelInfoLookupError(key)
+        except KeyError:
+            raise ModelInfoLookupError(key)
