@@ -55,12 +55,11 @@ install:
   - python -c "import numpy;print(numpy.__version__)"
   - python -c "import scipy;print(scipy.__version__)"
   - python -m nltk.downloader stopwords
-  - pip install codecov
+  - pip install codecov pytest-cov
 script:
-  - coverage run --source ores -m pytest -m "not nottravis"
   - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
+  - pytest --cov=revscoring -m "not nottravis"
 after_success:
-  - coverage report
   - codecov
 notifications:
   irc:
