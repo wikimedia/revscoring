@@ -1,4 +1,6 @@
+from pytest import raises
 
+from ...errors import ModelInfoLookupError
 from ..model_info import ModelInfo
 
 
@@ -15,3 +17,13 @@ def test_model_info():
 
     assert list(mi.keys()) == ['foo', 'bar', 'baz', True]
     assert list(mi.format_json({}).keys()) == ['foo', 'bar']
+
+
+def test_model_info_error():
+    with raises(ModelInfoLookupError) as e:
+        mi = ModelInfo()
+        mi['baz'] = 3
+        mi[True] = 1
+
+        mi.format(['false'])
+    assert e.value.args[0] == 'false'

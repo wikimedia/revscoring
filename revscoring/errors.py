@@ -1,4 +1,6 @@
 """
+.. autoclass:: ModelInfoLookupError
+
 .. autoclass:: ModelConsistencyError
 
 .. autoclass:: DependencyError
@@ -21,6 +23,10 @@
 
 .. autoclass:: TextDeleted
 """
+
+
+class ModelInfoLookupError(KeyError):
+    pass
 
 
 class ModelConsistencyError(RuntimeError):

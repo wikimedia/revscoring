@@ -105,10 +105,11 @@ class ScaledThresholdStatistics(list):
             formatted = ""
             for key in path_tree:
                 opt = ThresholdOptimization.parse(key)
-                threshold, tstats = opt.get_optimal(self)
-                if tstats is None:
+                threshold_tstats = opt.get_optimal(self)
+                if threshold_tstats is None:
                     formatted += "{0} @ n/a\n".format(opt)
                 else:
+                    threshold, tstats = threshold_tstats
                     formatted += "{0} @ {1}\n".format(
                         opt, util.round(threshold,
                                         threshold_ndigits))
@@ -132,12 +133,16 @@ class ScaledThresholdStatistics(list):
         else:
             for key in path_tree:
                 opt = ThresholdOptimization.parse(key)
-                threshold, pstats = opt.get_optimal(self)
-                pstats_doc = pstats.format_json(
-                    path_tree[key], ndigits=3, **kwargs)
-                pstats_doc['threshold'] = threshold
-                pstats_doc.move_to_end('threshold', last=False)
-                doc.append(pstats_doc)
+                threshold_tstats = opt.get_optimal(self)
+                if threshold_tstats is None:
+                    doc.append(None)
+                else:
+                    threshold, tstats = threshold_tstats
+                    tstats_doc = tstats.format_json(
+                        path_tree[key], ndigits=3, **kwargs)
+                    tstats_doc['threshold'] = threshold
+                    tstats_doc.move_to_end('threshold', last=False)
+                    doc.append(tstats_doc)
 
         return doc
 

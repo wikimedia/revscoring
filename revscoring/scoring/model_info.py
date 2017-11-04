@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from . import util
+from ..errors import ModelInfoLookupError
 
 
 class ModelInfo:
@@ -27,7 +28,12 @@ class ModelInfo:
         self._data[key] = value
 
     def __contains__(self, key):
-        return key in self._data
+        try:
+            return (key in self._data or
+                    key in ('true', 'false') and key == 'true' in self._data or
+                    int(key) in self._data)
+        except ValueError:
+            return False
 
     def keys(self):
         return self._data.keys()
@@ -110,14 +116,15 @@ class ModelInfo:
 
     def format_str(self, path_tree, **kwargs):
         formatted = "Model Information:\n"
-        for key in path_tree or self.normalize_fields(path_tree):
-            if hasattr(self[key], "format_str"):
+        for key in self.normalize_fields(path_tree):
+            key_val = try_key(key, self)
+            if hasattr(key_val, "format_str"):
                 sub_tree = path_tree.get(key, {})
                 formatted += util.tab_it_in(
-                    self[key].format_str(sub_tree, **kwargs))
+                    key_val.format_str(sub_tree, **kwargs))
             else:
                 formatted += util.tab_it_in(" - {0}: {1}"
-                                            .format(key, self[key]))
+                                            .format(key, key_val))
 
         return formatted
 
@@ -146,11 +153,14 @@ class ModelInfo:
 def try_key(key, d):
     try:
         return d[key]
-    except KeyError as e:
-        if key in ("true", "false"):
-            return d[key == 'true']
-        else:
-            try:
-                return d[int(key)]
-            except ValueError:
-                raise e
+    except KeyError:
+        try:
+            if key in ("true", "false"):
+                return d[key == 'true']
+            else:
+                try:
+                    return d[int(key)]
+                except ValueError:
+                    raise ModelInfoLookupError(key)
+        except KeyError:
+            raise ModelInfoLookupError(key)
