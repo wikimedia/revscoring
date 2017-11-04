@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/wiki-ai/revscoring.svg?branch=master)](https://travis-ci.org/wiki-ai/revscoring)
-[![codecov](https://codecov.io/gh/wiki-ai/revscoring/branch/master/graph/badge.svg)](https://codecov.io/gh/wiki-ai/revscoring)
+[![Test coverage](https://codecov.io/gh/wiki-ai/revscoring/branch/master/graph/badge.svg)](https://codecov.io/gh/wiki-ai/revscoring)
 # Revision Scoring
 
 A generic, machine learning-based revision scoring system designed to be used
