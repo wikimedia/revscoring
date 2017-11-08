@@ -7,8 +7,6 @@ import random
 import signal
 import sys
 
-from pytest import mark
-
 logger = logging.getLogger(__name__)
 
 DECODERS = {
@@ -78,7 +76,6 @@ def read_labels_and_population_rates(labels_str, label_weights_strs,
     return labels, label_weights, population_rates
 
 
-@mark.notest
 def train_test_split(observations, test_prop=0.25):
     # Split train and test set from obs.
     observations = list(observations)
