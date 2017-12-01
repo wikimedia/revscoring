@@ -8,7 +8,8 @@ exec(compile(open(about_path).read(), about_path, "exec"))
 
 
 if sys.version_info <= (3, 0):
-    print("Revscoring needs Python 3 to run properly. Your version is " + platform.python_version()) # noqa
+    print("Revscoring needs Python 3 to run properly. Your version is " 
+          + platform.python_version())
     sys.exit(1)
 
 
