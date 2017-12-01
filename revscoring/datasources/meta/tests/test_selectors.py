@@ -34,6 +34,7 @@ def test_tfidf():
     assert set(tfidf_table.keys()) == {'true', 'false', 'maybe'}
     assert tfidf_table['true'] > tfidf_table['false']
     assert tfidf_table['maybe'] > 0
+    assert my_tfidf_table.document_n == 9
 
     f = io.BytesIO()
     my_tfidf_table.dump(f)

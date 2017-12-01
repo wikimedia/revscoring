@@ -54,13 +54,13 @@ class tfidf(Datasource):
         label_n = defaultdict(lambda: 0)
         for values, label in value_labels:
             table = values[0]
+            self.document_n += 1
+            label_n[label] += 1
             for term, freq in table.items():
                 if self.boolean:
                     freq = 1 if freq > 0 else -1
                 self.document_freq[term] += freq
-                self.document_n += 1
                 label_freq[label][term] += freq
-                label_n[label] += 1
 
         # Select terms
         if self.max_terms is not None:
