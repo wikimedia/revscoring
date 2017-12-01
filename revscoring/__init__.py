@@ -123,6 +123,9 @@ Example:
         <len(<english.informals.revision.matches>)>: 2
         <len(<spanish.informals.revision.matches>)>: 0
 """  # noqa
+import sys
+import platform
+from pkg_resources import VersionConflict
 from .datasources import Datasource
 from .dependencies import Dependent, DependentSet
 from .extractors import Extractor
@@ -132,6 +135,11 @@ from .score_processor import ScoreProcessor
 
 from .about import (__author__, __author_email__, __description__, __name__,
                     __url__, __version__)
+
+
+if sys.version_info <= (3, 0):
+    raise VersionConflict("Revscoring requires Python '>=3' but your Python version is " + platform.python_version())
+
 
 __all__ = [Datasource, Dependent, DependentSet, Extractor, Feature,
            Model, ScoreProcessor, __name__, __version__, __author__,
