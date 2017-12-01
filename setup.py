@@ -23,7 +23,7 @@ def requirements(fname):
 
 
 setup(
-    python_requires="<=3"
+    python_requires=">=3"
     name=__name__,  # noqa
     version=__version__,  # noqa
     author=__author__,  # noqa
