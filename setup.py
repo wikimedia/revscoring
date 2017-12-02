@@ -1,9 +1,16 @@
 import os
-
+import sys
+import package
 from setuptools import find_packages, setup
 
 about_path = os.path.join(os.path.dirname(__file__), "revscoring/about.py")
 exec(compile(open(about_path).read(), about_path, "exec"))
+
+
+if sys.version_info <= (3, 0):
+    print("Revscoring needs Python 3 to run properly. Your version is " +
+          platform.python_version())
+    sys.exit(1)
 
 
 def read(fname):
@@ -16,6 +23,7 @@ def requirements(fname):
 
 
 setup(
+    python_requires=">=3"
     name=__name__,  # noqa
     version=__version__,  # noqa
     author=__author__,  # noqa
