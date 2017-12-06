@@ -241,7 +241,8 @@ class MultilabelClassifier(ProbabilityClassifier):
         fv_vector = vectorize_values(feature_values)
         scaled_fv_vector = self.apply_scaling(fv_vector)
 
-        prediction = self.estimator.predict([scaled_fv_vector])[0]
+        prediction = self.mlb.inverse_transform(
+            self.estimator.predict([scaled_fv_vector])[0])
         labels = self.mlb.classes_
         probas = self.estimator.predict_proba([scaled_fv_vector])[0]
         probability = {label: proba for label, proba in zip(labels, probas)}
