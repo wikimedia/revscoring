@@ -11,6 +11,8 @@ import json
 import logging
 import time
 
+from sklearn.preprocessing import MultiLabelBinarizer
+
 from . import model, util
 from ...features import vectorize_values
 from ..statistics import Classification
@@ -56,20 +58,8 @@ class Classifier(model.Classifier):
         return cls(self.features, version=self.version,
                    **kwargs)
 
-    def train(self, values_labels, **kwargs):
-        """
-        Fits the internal model to the provided `values_labels`.
-
-        :Returns:
-            A dictionary with the fields:
-
-            * seconds_elapsed -- Time in seconds spent fitting the model
-        """
-        logger.info("Training {0} with {1} observations"
-                    .format(self.__class__.__name__, len(values_labels)))
-        start = time.time()
+    def preprocess(self, values_labels):
         values, labels = zip(*values_labels)
-
         # Check that all labels exist in our expected label set and that all
         # expected labels are represented.
         check_label_consistency(labels, self.labels)
@@ -84,6 +74,22 @@ class Classifier(model.Classifier):
         if self.label_weights:
             fit_kwargs['sample_weight'] = [
                 self.label_weights.get(l, 1) for l in labels]
+        return scaled_fv_vectors, labels, fit_kwargs
+
+    def train(self, values_labels, **kwargs):
+        """
+        Fits the internal model to the provided `values_labels`.
+
+        :Returns:
+            A dictionary with the fields:
+
+            * seconds_elapsed -- Time in seconds spent fitting the model
+        """
+        logger.info("Training {0} with {1} observations"
+                    .format(self.__class__.__name__, len(values_labels)))
+        start = time.time()
+        scaled_fv_vectors, labels, fit_kwargs = \
+            self.preprocess(values_labels)
 
         # fit the esitimator
         self.estimator.fit(scaled_fv_vectors, labels, **fit_kwargs)
@@ -179,6 +185,69 @@ class ProbabilityClassifier(Classifier):
                 {l: "number" for l in self.labels}))
         }
         return schema_doc
+
+
+class MultilabelClassifier(ProbabilityClassifier):
+    def __init__(self, features, labels, statistics=None,
+                 population_rates=None, threshold_ndigits=None, **kwargs):
+        statistics = statistics if statistics is not None else Classification(
+            labels, prediction_key="prediction", decision_key="probability",
+            threshold_ndigits=threshold_ndigits or 3,
+            population_rates=population_rates)
+        super().__init__(features, labels, statistics=statistics, **kwargs)
+        self.mlb = MultiLabelBinarizer()
+
+    def train(self, values_labels, **kwargs):
+        """
+        Fits the internal model to the provided `values_labels`.
+
+        :Returns:
+            A dictionary with the fields:
+
+            * seconds_elapsed -- Time in seconds spent fitting the model
+        """
+        logger.info("Training {0} with {1} observations"
+                    .format(self.__class__.__name__, len(values_labels)))
+        start = time.time()
+        scaled_fv_vectors, labels, fit_kwargs = \
+            self.preprocess(values_labels)
+
+        binarized_labels = self.mlb.fit_transform()
+        # fit the esitimator
+        self.estimator.fit(scaled_fv_vectors, binarized_labels, **fit_kwargs)
+        self.trained = time.time()
+
+        return {'seconds_elapsed': time.time() - start}
+
+    def score(self, feature_values):
+        """
+        Generates a score for a single revision based on a set of extracted
+        feature_values.
+
+        :Parameters:
+            feature_values : collection(`mixed`)
+                an ordered collection of values that correspond to the
+                `Feature` s provided to the constructor
+
+        :Returns:
+            A dict with the fields:
+
+            * predicion -- The most likely class
+            * probability -- A mapping of probabilities for input classes
+                             corresponding to the classes the classifier was
+                             trained on.  Generating this probability is
+                             slower than a simple prediction.
+        """
+        fv_vector = vectorize_values(feature_values)
+        scaled_fv_vector = self.apply_scaling(fv_vector)
+
+        prediction = self.estimator.predict([scaled_fv_vector])[0]
+        labels = self.mlb.classes_
+        probas = self.estimator.predict_proba([scaled_fv_vector])[0]
+        probability = {label: proba for label, proba in zip(labels, probas)}
+
+        doc = {'prediction': prediction, 'probability': probability}
+        return util.normalize_json(doc)
 
 
 def labels2json_type(labels):
