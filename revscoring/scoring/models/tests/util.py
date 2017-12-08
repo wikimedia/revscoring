@@ -72,6 +72,59 @@ def train_test(model):
     assert stats['roc_auc']['micro'] > 0.5
 
 
+@mark.skip('Not test')
+def train_test_multilabel(model):
+    deterministic = random.Random(0)
+    observations = list(chain(
+        zip(((some, other, vector) for some, other, vector in
+             zip((deterministic.normalvariate(1, .3) for i in range(500)),
+                 (deterministic.normalvariate(2, .5) for i in range(500)),
+                 ([deterministic.normalvariate(1, .5),
+                   deterministic.normalvariate(0, 2),
+                   deterministic.normalvariate(3, 5)] for i in range(500)))),
+            (["A", "B"] for i in range(250))),
+        zip(((some, other, vector) for some, other, vector in
+             zip((deterministic.normalvariate(1, .3) for i in range(500)),
+                 (deterministic.normalvariate(5, .5) for i in range(500)),
+                 ([deterministic.normalvariate(1, .5),
+                   deterministic.normalvariate(0, 2),
+                   deterministic.normalvariate(3, 5)] for i in range(500)))),
+            (["B"] for i in range(250))),
+        zip(((some, other, vector) for some, other, vector in
+             zip((deterministic.normalvariate(1, .5) for i in range(50)),
+                 (deterministic.normalvariate(-2, .3) for i in range(50)),
+                 ([deterministic.normalvariate(-1, .5),
+                   deterministic.normalvariate(1, 2),
+                   deterministic.normalvariate(2.5, 5)] for i in range(50)))),
+            (["A", "C"] for i in range(250))),
+        zip(((some, other, vector) for some, other, vector in
+             zip((deterministic.normalvariate(-1, .5) for i in range(50)),
+                 (deterministic.normalvariate(-2, .3) for i in range(50)),
+                 ([deterministic.normalvariate(-1, .5),
+                   deterministic.normalvariate(1, 2),
+                   deterministic.normalvariate(2.5, 5)] for i in range(50)))),
+            (["C"] for i in range(250)))
+    ))
+    deterministic.shuffle(observations)
+
+    mid = int(len(observations) / 2)
+    train_set = observations[:mid]
+    test_set = observations[mid:]
+
+    model.train(train_set)
+    score_doc = model.score((-1, -2, [-1, 1, 2.5]))
+
+    assert score_doc['prediction'] == ["C"]
+    assert score_doc['probability']['C'] > 0.5, \
+        "Probability of 'C' {0} is not > 0.5" \
+        .format(score_doc['probability']['C'])
+    json.dumps(score_doc)  # Checks if the doc is JSONable
+    print(model.info.format())
+
+    stats = model.test(test_set)
+    assert stats['roc_auc']['micro'] > 0.5
+
+
 def pickle_and_unpickle(model):
     f = BytesIO()
     model.dump(f)
@@ -80,7 +133,7 @@ def pickle_and_unpickle(model):
     assert ([feature.name for feature in reconstructed_model.features] ==
             [feature.name for feature in model.features])
     assert isinstance(reconstructed_model, type(model))
-    train_test(reconstructed_model)
+    return reconstructed_model
 
 
 def format_info(model):

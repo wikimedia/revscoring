@@ -11,10 +11,9 @@ import json
 import logging
 import time
 
-from sklearn.preprocessing import MultiLabelBinarizer
-
 from . import model, util
 from ...features import vectorize_values
+from ..labels import Binarizer, ClassVerifier
 from ..statistics import Classification
 from ..util import check_label_consistency
 
@@ -23,21 +22,29 @@ logger = logging.getLogger(__name__)
 
 class Classifier(model.Classifier):
     Estimator = NotImplemented
+    SUPPORTS_MULTILABEL = False
     BASE_PARAMS = {}
 
-    def __init__(self, features, labels, version=None,
+    def __init__(self, features, labels, multilabel=False, version=None,
                  label_weights=None, population_rates=None,
                  scale=False, center=False, statistics=None,
                  estimator=None, **estimator_params):
         statistics = statistics if statistics is not None else Classification(
-            labels, prediction_key="prediction",
+            labels, multilabel=multilabel, prediction_key="prediction",
             population_rates=population_rates)
         super().__init__(
-            features, labels, version=version,
+            features, labels, multilabel=multilabel, version=version,
             population_rates=population_rates, scale=scale, center=center,
             statistics=statistics)
         self.info['score_schema'] = self.build_schema()
         self.label_weights = label_weights
+        if self.multilabel:
+            if not self.SUPPORTS_MULTILABEL:
+                raise NotImplementedError(
+                    "{0} does not support multilabel".format(self.__class__))
+            self.label_normalizer = Binarizer(self.labels)
+        else:
+            self.label_normalizer = ClassVerifier(self.labels)
 
         if estimator is None:
             params = dict(self.BASE_PARAMS)
@@ -60,9 +67,11 @@ class Classifier(model.Classifier):
 
     def preprocess(self, values_labels):
         values, labels = zip(*values_labels)
+
         # Check that all labels exist in our expected label set and that all
         # expected labels are represented.
-        check_label_consistency(labels, self.labels)
+        normalized_labels = \
+            self.label_normalizer.normalize_and_check_consistency(labels)
 
         # Re-vectorize features -- this expands/flattens sub-FeatureVectors
         fv_vectors = [vectorize_values(fv) for fv in values]
@@ -74,7 +83,7 @@ class Classifier(model.Classifier):
         if self.label_weights:
             fit_kwargs['sample_weight'] = [
                 self.label_weights.get(l, 1) for l in labels]
-        return scaled_fv_vectors, labels, fit_kwargs
+        return scaled_fv_vectors, normalized_labels, fit_kwargs
 
     def train(self, values_labels, **kwargs):
         """
@@ -88,11 +97,11 @@ class Classifier(model.Classifier):
         logger.info("Training {0} with {1} observations"
                     .format(self.__class__.__name__, len(values_labels)))
         start = time.time()
-        scaled_fv_vectors, labels, fit_kwargs = \
+        scaled_fv_vectors, normalized_labels, fit_kwargs = \
             self.preprocess(values_labels)
 
         # fit the esitimator
-        self.estimator.fit(scaled_fv_vectors, labels, **fit_kwargs)
+        self.estimator.fit(scaled_fv_vectors, normalized_labels, **fit_kwargs)
         self.trained = time.time()
 
         return {'seconds_elapsed': time.time() - start}
@@ -115,7 +124,8 @@ class Classifier(model.Classifier):
         fv_vector = vectorize_values(feature_values)
         scaled_fv_vector = self.apply_scaling(fv_vector)
 
-        prediction = self.estimator.predict([scaled_fv_vector])[0]
+        prediction = self.label_normalizer.denormalize(
+            self.estimator.predict([scaled_fv_vector])[0])
 
         doc = {'prediction': prediction}
         return util.normalize_json(doc)
@@ -137,13 +147,15 @@ class Classifier(model.Classifier):
 
 class ProbabilityClassifier(Classifier):
 
-    def __init__(self, features, labels, statistics=None,
+    def __init__(self, features, labels, multilabel=False, statistics=None,
                  population_rates=None, threshold_ndigits=None, **kwargs):
         statistics = statistics if statistics is not None else Classification(
-            labels, prediction_key="prediction", decision_key="probability",
+            labels, multilabel=multilabel, prediction_key="prediction",
+            decision_key="probability",
             threshold_ndigits=threshold_ndigits or 3,
             population_rates=population_rates)
-        super().__init__(features, labels, statistics=statistics, **kwargs)
+        super().__init__(features, labels, multilabel=multilabel,
+                         statistics=statistics, **kwargs)
 
     def score(self, feature_values):
         """
@@ -167,10 +179,21 @@ class ProbabilityClassifier(Classifier):
         fv_vector = vectorize_values(feature_values)
         scaled_fv_vector = self.apply_scaling(fv_vector)
 
-        prediction = self.estimator.predict([scaled_fv_vector])[0]
-        labels = self.estimator.classes_
+        prediction = self.label_normalizer.denormalize(
+            self.estimator.predict([scaled_fv_vector])[0])
         probas = self.estimator.predict_proba([scaled_fv_vector])[0]
-        probability = {label: proba for label, proba in zip(labels, probas)}
+
+        if self.multilabel:
+            probas = [
+                p[0][1]
+                for p in self.estimator.predict_proba([scaled_fv_vector])]
+            probability = {label: proba
+                           for label, proba in zip(self.labels, probas)}
+        else:
+            labels = self.estimator.classes_
+            probas = self.estimator.predict_proba([scaled_fv_vector])[0]
+            probability = {label: proba
+                           for label, proba in zip(labels, probas)}
 
         doc = {'prediction': prediction, 'probability': probability}
         return util.normalize_json(doc)
@@ -185,70 +208,6 @@ class ProbabilityClassifier(Classifier):
                 {l: "number" for l in self.labels}))
         }
         return schema_doc
-
-
-class MultilabelClassifier(ProbabilityClassifier):
-    def __init__(self, features, labels, statistics=None,
-                 population_rates=None, threshold_ndigits=None, **kwargs):
-        statistics = statistics if statistics is not None else Classification(
-            labels, prediction_key="prediction", decision_key="probability",
-            threshold_ndigits=threshold_ndigits or 3,
-            population_rates=population_rates)
-        super().__init__(features, labels, statistics=statistics, **kwargs)
-        self.mlb = MultiLabelBinarizer()
-
-    def train(self, values_labels, **kwargs):
-        """
-        Fits the internal model to the provided `values_labels`.
-
-        :Returns:
-            A dictionary with the fields:
-
-            * seconds_elapsed -- Time in seconds spent fitting the model
-        """
-        logger.info("Training {0} with {1} observations"
-                    .format(self.__class__.__name__, len(values_labels)))
-        start = time.time()
-        scaled_fv_vectors, labels, fit_kwargs = \
-            self.preprocess(values_labels)
-
-        binarized_labels = self.mlb.fit_transform()
-        # fit the esitimator
-        self.estimator.fit(scaled_fv_vectors, binarized_labels, **fit_kwargs)
-        self.trained = time.time()
-
-        return {'seconds_elapsed': time.time() - start}
-
-    def score(self, feature_values):
-        """
-        Generates a score for a single revision based on a set of extracted
-        feature_values.
-
-        :Parameters:
-            feature_values : collection(`mixed`)
-                an ordered collection of values that correspond to the
-                `Feature` s provided to the constructor
-
-        :Returns:
-            A dict with the fields:
-
-            * predicion -- The most likely class
-            * probability -- A mapping of probabilities for input classes
-                             corresponding to the classes the classifier was
-                             trained on.  Generating this probability is
-                             slower than a simple prediction.
-        """
-        fv_vector = vectorize_values(feature_values)
-        scaled_fv_vector = self.apply_scaling(fv_vector)
-
-        prediction = self.mlb.inverse_transform(
-            self.estimator.predict([scaled_fv_vector])[0])
-        labels = self.mlb.classes_
-        probas = self.estimator.predict_proba([scaled_fv_vector])[0]
-        probability = {label: proba for label, proba in zip(labels, probas)}
-
-        doc = {'prediction': prediction, 'probability': probability}
-        return util.normalize_json(doc)
 
 
 def labels2json_type(labels):
