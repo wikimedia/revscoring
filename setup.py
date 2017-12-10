@@ -1,6 +1,6 @@
 import os
 import sys
-import package
+import platform
 from setuptools import find_packages, setup
 
 about_path = os.path.join(os.path.dirname(__file__), "revscoring/about.py")
@@ -23,7 +23,7 @@ def requirements(fname):
 
 
 setup(
-    python_requires=">=3"
+    python_requires=">=3",
     name=__name__,  # noqa
     version=__version__,  # noqa
     author=__author__,  # noqa
