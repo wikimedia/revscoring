@@ -11,8 +11,9 @@ def test_class_verifier():
 
 
 def test_binarizer():
+    label_set = ['A', 'B', 'C', 'D']
     labels = [['A', 'B'], ['B', 'D'], ['A', 'B', 'C', 'D'], ['B', 'C']]
-    binarizer = Binarizer()
+    binarizer = Binarizer(label_set)
     binarizer.check_label_consistency(labels)
     normalized_labels = binarizer.normalize(labels[1])
     normalized_labels_actual = [0, 1, 0, 1]

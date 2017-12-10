@@ -13,6 +13,7 @@
              [--center]
              [--scale]
              [--minimize]
+             [--multilabel]
              [--observations=<path>]
              [--folds=<num>]
              [--report=<path>]
@@ -43,6 +44,7 @@
                                be assumed to reflect population rates.
         --minimize             If set, assume the best score is the smallest
                                value.
+        --multilabel           Whether to perform multilabel classification
         --observations=<path>  The path to a file containing observations to
                                train and test against. [default: <stdin>]
         --folds=<num>          The number of cross-validation folds to try
@@ -61,6 +63,7 @@
 
 """
 import datetime
+from itertools import chain
 import json
 import logging
 import multiprocessing
@@ -123,6 +126,12 @@ def main(argv=None):
         additional_params['center'] = args['--center']
     if args['--scale']:
         additional_params['scale'] = args['--scale'],
+
+    additional_params['multilabel'] = False
+    if args['--multilabel']:
+        _, all_labels = zip(*value_labels)
+        labels = get_multilabel_set(all_labels)
+        additional_params['multilabel'] = True
 
     maximize = not args['--minimize']
 
@@ -298,3 +307,8 @@ def _cross_validate(features, possible_labels,
                     .format(Model.__name__))
         logger.warn("Exception:\n" + traceback.format_exc())
         return None
+
+
+def get_multilabel_set(label_set):
+    labels = set(chain(*(l for l in label_set)))
+    return list(labels)
