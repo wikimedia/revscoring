@@ -50,10 +50,14 @@ class Binarizer(ClassVerifier):
     def __init__(self, possible_labels=None):
         super().__init__(possible_labels)
         self.possible_labels = possible_labels
+        if possible_labels:
+            self.label_index_map = \
+                {l: i for i, l in enumerate(possible_labels)}
 
     def check_label_consistency(self, labels):
         unique_labels = sorted(set(chain(*(l for l in labels))))
-        # possible labels were not passed during initialization, infer from data
+        # possible labels were not passed during initialization,
+        # infer from data
         if not self.possible_labels:
             self.label_index_map = {l: i for i, l in enumerate(unique_labels)}
             self.possible_labels = unique_labels
