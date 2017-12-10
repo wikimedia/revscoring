@@ -5,7 +5,7 @@ from .. import errors
 
 class Normalizer:
 
-    def normalize_and_check_consistency(self, labels):
+    def check_consistency_and_normalize(self, labels):
         self.check_label_consistency(labels)
         return [self.normalize(l) for l in labels]
 

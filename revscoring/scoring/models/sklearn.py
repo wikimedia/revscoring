@@ -15,7 +15,6 @@ from . import model, util
 from ...features import vectorize_values
 from ..labels import Binarizer, ClassVerifier
 from ..statistics import Classification
-from ..util import check_label_consistency
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +70,7 @@ class Classifier(model.Classifier):
         # Check that all labels exist in our expected label set and that all
         # expected labels are represented.
         normalized_labels = \
-            self.label_normalizer.normalize_and_check_consistency(labels)
+            self.label_normalizer.check_consistency_and_normalize(labels)
 
         # Re-vectorize features -- this expands/flattens sub-FeatureVectors
         fv_vectors = [vectorize_values(fv) for fv in values]
