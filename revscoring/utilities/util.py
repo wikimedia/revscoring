@@ -7,6 +7,8 @@ import random
 import signal
 import sys
 
+import yamlconf
+
 logger = logging.getLogger(__name__)
 
 DECODERS = {
@@ -44,22 +46,39 @@ def dump_observation(observation, f):
 
 
 def read_labels_and_population_rates(labels_str, label_weights_strs,
-                                     pop_rates_strs):
+                                     pop_rates_strs, config_file_str):
+    # First try config file
+    if config_file_str:
+        config = yamlconf.load(open(config_file_str))
+        labels = []
+        label_weights = {}
+        population_rates = {}
+        for name, conf in config.items():
+            labels.append(name)
+            if 'population-rate' in conf:
+                population_rates[name] = conf['population-rate']
+            if 'weight' in conf:
+                label_weights[name] = conf['weight']
+        return labels, label_weights, population_rates
+
     if labels_str is not None:
         labels = [json.loads(l) for l in labels_str.strip().split(",")]
     else:
         labels = None
 
-    if label_weights_strs is not None:
+    if len(label_weights_strs) > 0:
         label_weights = {}
+        if labels is None:
+            labels = []
         for label_weights_str in label_weights_strs:
             label, weight = (
                 json.loads(s) for s in label_weights_str.split("=", 1))
             label_weights[label] = weight
+            labels.append(label)
     else:
         label_weights = None
 
-    if pop_rates_strs is None:
+    if len(pop_rates_strs) == 0:
         population_rates = None
     else:
         population_rates = {}
@@ -71,7 +90,8 @@ def read_labels_and_population_rates(labels_str, label_weights_strs,
             labels.append(label)
 
     if labels is None:
-        raise RuntimeError("Either --pop-rates or --labels must be specified")
+        raise RuntimeError("Either --pop-rates or --labels or \
+                           --labels-config must be specified")
 
     return labels, label_weights, population_rates
 

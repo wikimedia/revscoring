@@ -10,6 +10,7 @@
         tune <params-config> <features> <label> <statistic>
              [-w=<lw>]... [-r=<lp>]...
              [--labels=<labels>]
+             [--labels-config=<lc>]
              [--center]
              [--scale]
              [--minimize]
@@ -35,6 +36,9 @@
        --labels=<labels>       A comma-separated sequence of labels that will
                                be used for ordering labels statistics and
                                other presentations of the model.
+       --labels-config=<lc>    Path to a config file containing labels and
+                               associated configurations like population rates
+                               and weights
        -w --label-weight=<lw>  A label-weight pair that rescales adjusts the
                                cost of getting a specific label prediction
                                wrong.
@@ -63,7 +67,6 @@
 
 """
 import datetime
-from itertools import chain
 import json
 import logging
 import multiprocessing
@@ -116,7 +119,8 @@ def main(argv=None):
 
     labels, label_weights, population_rates = \
         util.read_labels_and_population_rates(
-            None, args['--label-weight'], args['--pop-rate'])
+            None, args['--label-weight'], args['--pop-rate'],
+            args['--labels-config'])
     if label_weights is not None:
         additional_params['label_weights'] = label_weights
     if population_rates is not None:
@@ -127,10 +131,7 @@ def main(argv=None):
     if args['--scale']:
         additional_params['scale'] = args['--scale'],
 
-    additional_params['multilabel'] = False
     if args['--multilabel']:
-        _, all_labels = zip(*value_labels)
-        labels = get_multilabel_set(all_labels)
         additional_params['multilabel'] = True
 
     maximize = not args['--minimize']
@@ -307,8 +308,3 @@ def _cross_validate(features, possible_labels,
                     .format(Model.__name__))
         logger.warn("Exception:\n" + traceback.format_exc())
         return None
-
-
-def get_multilabel_set(label_set):
-    labels = set(chain(*(l for l in label_set)))
-    return list(labels)
