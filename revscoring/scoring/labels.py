@@ -46,7 +46,7 @@ class ClassVerifier(Normalizer):
 
 class Binarizer(ClassVerifier):
 
-    def __init__(self, possible_labels=None):
+    def __init__(self, possible_labels):
         super().__init__(possible_labels)
         self.possible_labels = possible_labels
         if possible_labels:
