@@ -2,9 +2,12 @@ os: linux
 dist: trusty
 group: stable
 language: python
-sudo: required
 python:
-  - "3.5"
+  # Track Python version on current production machines, Debian Jessie.
+  - 3.4
+  # Track Python version on future production machines, Debian Stretch.
+  - 3.5
+sudo: required
 addons:
   apt:
     packages:
@@ -50,14 +53,9 @@ addons:
 
 before_install: {}
 install:
-  - python --version
-  - pip install 'numpy >= 1.8.2, < 1.10.999'
-  - pip install scipy
-  - travis_wait pip install -r requirements.txt || date
-  - python -c "import numpy;print(numpy.__version__)"
-  - python -c "import scipy;print(scipy.__version__)"
+  - pip install -r requirements.txt
   - python -m nltk.downloader stopwords
-  - pip install codecov pytest-cov
+  - pip install -r test-requirements.txt
 script:
   - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
   - pytest --cov=revscoring -m "not nottravis"
