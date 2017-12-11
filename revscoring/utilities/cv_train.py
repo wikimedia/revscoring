@@ -10,6 +10,7 @@
         cv_train -h | --help
         cv_train <scoring-model> <features> <label>
                  [--labels=<labels>]
+                 [--labels-config=<lc>]
                  [-p=<kv>]... [-s=<kv>]...
                  [-w=<lw>]... [-r=<lp>]...
                  [-o=<p>]...
@@ -20,6 +21,7 @@
                  [--workers=<num>]
                  [--center]
                  [--scale]
+                 [--multilabel]
                  [--debug]
 
     Options:
@@ -32,6 +34,9 @@
         --labels=<labels>       A comma-separated sequence of labels that will
                                 be used for ordering labels statistics and
                                 other presentations of the model.
+        --labels-config=<lc>    Path to a file containing labels and its
+                                configurations like population-rates and
+                                weights
         -w --label-weight=<lw>  A label-weight pair that rescales adjusts the
                                 cost of getting a specific label prediction
                                 wrong.
@@ -54,6 +59,7 @@
                                 cross-validating
         --center                Features should be centered on a common axis
         --scale                 Features should be scaled to a common range
+        --multilabel            Whether to perform multilabel classification
         --debug                 Print debug logging.
 """  # noqa
 import json
@@ -87,10 +93,15 @@ def main(argv=None):
         estimator_params[key] = json.loads(value)
 
     labels, label_weights, population_rates = read_labels_and_population_rates(
-        args['--labels'], args['--label-weight'], args['--pop-rate'])
+        args['--labels'], args['--label-weight'], args['--pop-rate'],
+        args['--labels-config'])
+
+    multilabel = False
+    if args['--multilabel']:
+        multilabel = True
 
     model = ScoringModel(
-        features, version=version,
+        features, version=version, multilabel=multilabel,
         labels=labels, label_weights=label_weights,
         population_rates=population_rates,
         center=args['--center'],
