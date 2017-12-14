@@ -10,9 +10,11 @@
         tune <params-config> <features> <label> <statistic>
              [-w=<lw>]... [-r=<lp>]...
              [--labels=<labels>]
+             [--labels-config=<lc>]
              [--center]
              [--scale]
              [--minimize]
+             [--multilabel]
              [--observations=<path>]
              [--folds=<num>]
              [--report=<path>]
@@ -34,6 +36,9 @@
        --labels=<labels>       A comma-separated sequence of labels that will
                                be used for ordering labels statistics and
                                other presentations of the model.
+       --labels-config=<lc>    Path to a config file containing labels and
+                               associated configurations like population rates
+                               and weights
        -w --label-weight=<lw>  A label-weight pair that rescales adjusts the
                                cost of getting a specific label prediction
                                wrong.
@@ -43,6 +48,7 @@
                                be assumed to reflect population rates.
         --minimize             If set, assume the best score is the smallest
                                value.
+        --multilabel           Whether to perform multilabel classification
         --observations=<path>  The path to a file containing observations to
                                train and test against. [default: <stdin>]
         --folds=<num>          The number of cross-validation folds to try
@@ -113,7 +119,8 @@ def main(argv=None):
 
     labels, label_weights, population_rates = \
         util.read_labels_and_population_rates(
-            None, args['--label-weight'], args['--pop-rate'])
+            None, args['--label-weight'], args['--pop-rate'],
+            args['--labels-config'])
     if label_weights is not None:
         additional_params['label_weights'] = label_weights
     if population_rates is not None:
@@ -123,6 +130,9 @@ def main(argv=None):
         additional_params['center'] = args['--center']
     if args['--scale']:
         additional_params['scale'] = args['--scale'],
+
+    if args['--multilabel']:
+        additional_params['multilabel'] = True
 
     maximize = not args['--minimize']
 

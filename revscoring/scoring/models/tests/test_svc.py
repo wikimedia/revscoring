@@ -7,13 +7,15 @@ def test_svc():
     model = SVC(FEATURES, [True, False])
     format_info(model)
     train_test(model)
-    pickle_and_unpickle(model)
+    reconstructed_model = pickle_and_unpickle(model)
+    train_test(reconstructed_model)
     format_info(model)
 
     model = SVC(FEATURES, [True, False], scale=True, center=True)
     format_info(model)
     train_test(model)
-    pickle_and_unpickle(model)
+    reconstructed_model = pickle_and_unpickle(model)
+    train_test(reconstructed_model)
     format_info(model)
 
     config = {
@@ -33,7 +35,8 @@ def test_linear_svc():
     model = LinearSVC(FEATURES, [True, False])
     format_info(model)
     train_test(model)
-    pickle_and_unpickle(model)
+    reconstructed_model = pickle_and_unpickle(model)
+    train_test(reconstructed_model)
     format_info(model)
 
     config = {
@@ -53,7 +56,8 @@ def test_rbf_svc():
     model = RBFSVC(FEATURES, [True, False])
     format_info(model)
     train_test(model)
-    pickle_and_unpickle(model)
+    reconstructed_model = pickle_and_unpickle(model)
+    train_test(reconstructed_model)
     format_info(model)
 
     config = {

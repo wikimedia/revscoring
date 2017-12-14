@@ -252,12 +252,15 @@ class Learned(Model):
 
 class Classifier(Learned):
 
-    def __init__(self, features, labels, population_rates=None, **kwargs):
+    def __init__(self, features, labels, multilabel=False,
+                 population_rates=None, **kwargs):
         self.labels = labels
+        self.multilabel = multilabel
         self.population_rates = population_rates
         super().__init__(features, **kwargs)
 
         self.params.update({
             'labels': labels,
+            'multilabel': multilabel,
             'population_rates': population_rates
         })

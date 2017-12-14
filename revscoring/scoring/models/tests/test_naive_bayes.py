@@ -7,7 +7,8 @@ def test_gaussian_nb():
     model = GaussianNB(FEATURES, [True, False])
     format_info(model)
     train_test(model)
-    pickle_and_unpickle(model)
+    reconstructed_model = pickle_and_unpickle(model)
+    train_test(reconstructed_model)
     format_info(model)
 
     config = {
@@ -48,7 +49,8 @@ def test_bernoulli_nb():
     model = BernoulliNB(FEATURES, [True, False])
     format_info(model)
     train_test(model)
-    pickle_and_unpickle(model)
+    reconstructed_model = pickle_and_unpickle(model)
+    train_test(reconstructed_model)
     format_info(model)
 
     config = {

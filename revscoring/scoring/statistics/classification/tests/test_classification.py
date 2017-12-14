@@ -1,10 +1,13 @@
 import json
 import pickle
+import random
 
 
 from ..classification import Classification
 
 LABELS = [True, False]
+MULTILABELS = ['A', 'B', 'C', 'D']
+
 pool = \
     [({'prediction': i / 100 >= 0.5,
        'probability': {True: i / 100, False: 1 - (i / 100)}},
@@ -21,6 +24,29 @@ SKEWED_PROBA = \
 BALANCED_PROBA = \
     ([(s, l) for (s, l) in pool if l] * 20)[:1000] + \
     [(s, l) for (s, l) in pool if not l][:1000]
+
+
+def generate_multilabels():
+    random.seed(10)
+    multilabels = []
+    labels = MULTILABELS
+    for i in range(0, 10):
+        trues = []
+        predicted = []
+        # Select how many samples to take in true set
+        choose = random.randint(0, 4)
+        for j in range(0, choose):
+            idx = random.randint(0, 3)
+            if labels[idx] not in trues:
+                trues.append(labels[idx])
+        # Select how many samples to take in prediction set
+        choose = random.randint(0, 4)
+        for j in range(0, choose):
+            idx = random.randint(0, 3)
+            if labels[idx] not in predicted:
+                predicted.append(labels[idx])
+        multilabels.append(({'prediction': predicted}, trues))
+    return multilabels
 
 
 def test_classification():
@@ -108,3 +134,13 @@ def test_classification():
 
     print(vars(skewed_stats))
     pickle.loads(pickle.dumps(skewed_stats))
+
+
+def test_multilabel_classification():
+    multilabels = generate_multilabels()
+    stats = Classification(
+        labels=MULTILABELS,
+        prediction_key="prediction", multilabel=True)
+    stats.fit(multilabels)
+    assert stats.lookup('accuracy.macro') == 0.5
+    assert round(stats.lookup('match_rate.macro'), 2) == 0.32
