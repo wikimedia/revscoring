@@ -2,10 +2,12 @@ import base64
 import getpass
 import json
 import logging
+import os
 import pickle
 import random
 import signal
 import sys
+from collections import OrderedDict
 
 import yamlconf
 
@@ -46,52 +48,60 @@ def dump_observation(observation, f):
 
 
 def read_labels_and_population_rates(labels_str, label_weights_strs,
-                                     pop_rates_strs, config_file_str):
+                                     pop_rates_strs, config_path):
     # First try config file
-    if config_file_str:
-        config = yamlconf.load(open(config_file_str))
-        labels = []
-        label_weights = {}
-        population_rates = {}
-        for name, conf in config.items():
-            labels.append(name)
-            if 'population-rate' in conf:
-                population_rates[name] = conf['population-rate']
-            if 'weight' in conf:
-                label_weights[name] = conf['weight']
-        return labels, label_weights, population_rates
+    if config_path:
+        labels_config = yamlconf.load(open(os.path.expanduser(config_path)))
+        return read_labels_config(labels_config)
 
+    # Try to read --labels
     if labels_str is not None:
         labels = [json.loads(l) for l in labels_str.strip().split(",")]
     else:
         labels = None
 
+    # Try to read --label-weight
     if len(label_weights_strs) > 0:
-        label_weights = {}
-        if labels is None:
-            labels = []
+        label_weights = OrderedDict()
         for label_weights_str in label_weights_strs:
             label, weight = (
                 json.loads(s) for s in label_weights_str.split("=", 1))
             label_weights[label] = weight
-            labels.append(label)
     else:
         label_weights = None
 
+    # Try to read --pop-rate
     if len(pop_rates_strs) == 0:
         population_rates = None
     else:
-        population_rates = {}
-        if labels is None:
-            labels = []
+        population_rates = OrderedDict()
         for label_rate_str in pop_rates_strs:
             label, rate = (json.loads(s) for s in label_rate_str.split("=", 1))
             population_rates[label] = rate
-            labels.append(label)
 
-    if labels is None:
+    if labels is None and label_weights is None and population_rates is None:
         raise RuntimeError("Either --pop-rates or --labels or \
                            --labels-config must be specified")
+    elif labels is None:
+        if population_rates is not None:
+            labels = list(population_rates.keys())
+        else:
+            labels = list(label_weights.keys())
+
+    return labels, label_weights, population_rates
+
+
+def read_labels_config(labels_config):
+    labels = []
+    label_weights = {}
+    population_rates = {}
+    for label_doc in labels_config['labels']:
+        label = label_doc['value']
+        labels.append(label)
+        if 'weight' in label_doc:
+            label_weights[label] = label_doc['weight']
+        if 'population_rate' in label_doc:
+            population_rates[label] = label_doc['population_rate']
 
     return labels, label_weights, population_rates
 
