@@ -47,7 +47,7 @@ class Classifier(model.Classifier):
             # transform class weights to multilabel format
             if class_weights:
                 class_weights = \
-                self.label_normalizer.normalize_weights(class_weights)
+                    self.label_normalizer.normalize_weights(class_weights)
                 estimator_params['class_weight'] = class_weights
         else:
             self.label_normalizer = ClassVerifier(self.labels)
