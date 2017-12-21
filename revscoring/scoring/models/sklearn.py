@@ -37,11 +37,18 @@ class Classifier(model.Classifier):
             statistics=statistics)
         self.info['score_schema'] = self.build_schema()
         self.label_weights = label_weights
+        class_weights = estimator_params.get('class_weight', None)
+
         if self.multilabel:
             if not self.SUPPORTS_MULTILABEL:
                 raise NotImplementedError(
                     "{0} does not support multilabel".format(self.__class__))
             self.label_normalizer = Binarizer(self.labels)
+            # transform class weights to multilabel format
+            if class_weights:
+                class_weights = \
+                self.label_normalizer.normalize_weights(class_weights)
+                estimator_params['class_weight'] = class_weights
         else:
             self.label_normalizer = ClassVerifier(self.labels)
 

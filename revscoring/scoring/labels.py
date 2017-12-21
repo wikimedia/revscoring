@@ -69,6 +69,13 @@ class Binarizer(ClassVerifier):
             binary_map[index] = 1
         return binary_map
 
+    def normalize_weights(self, weights):
+        """
+        Label weights will be given as {A: W1, B: W2...}
+        convert these to [{0: 1, 1: W1}, {0:1, 1: W2}]
+        """
+        return [{0: 1, 1: w} for k, w in weights.items()]
+
     def denormalize(self, binary_map):
         label_set = []
         for index, val in enumerate(binary_map):
