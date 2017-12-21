@@ -99,6 +99,9 @@ def main(argv=None):
     multilabel = False
     if args['--multilabel']:
         multilabel = True
+        if label_weights:
+            estimator_params['class_weight'] = label_weights
+            label_weights = None
 
     model = ScoringModel(
         features, version=version, multilabel=multilabel,
