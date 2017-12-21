@@ -75,7 +75,7 @@ class Binarizer(ClassVerifier):
         Label weights will be given as {A: W1, B: W2...}
         convert these to [{0: 1, 1: W1}, {0:1, 1: W2}]
         """
-        return [{0: 1, 1: w} for k, w in OrderedDict(weights).items()]
+        return [{0: 1, 1: weights[k]} for k in self.possible_labels]
 
     def denormalize(self, binary_map):
         label_set = []
