@@ -11,6 +11,8 @@ import json
 import logging
 import time
 
+import numpy as np
+
 from . import model, util
 from ...features import vectorize_values
 from ..labels import Binarizer, ClassVerifier
@@ -127,7 +129,7 @@ class Classifier(model.Classifier):
         :Returns:
             A dict with the fields:
 
-            * predicion -- The most likely class
+            * prediction -- The most likely class
         """
         fv_vector = vectorize_values(feature_values)
         scaled_fv_vector = self.apply_scaling(fv_vector)
@@ -137,6 +139,33 @@ class Classifier(model.Classifier):
 
         doc = {'prediction': prediction}
         return util.normalize_json(doc)
+
+    def score_many(self, feature_values):
+        """
+        Generates a score for a bunch of revisions based on a set of extracted
+        feature_values.
+
+        :Parameters:
+            feature_values : collection(`mixed`)
+                an ordered collection of values that correspond to the
+                `Feature` s provided to the constructor
+
+        :Returns:
+            A dict with the fields:
+
+            * prediction -- The most likely class
+        """
+        # Re-vectorize features -- this expands/flattens sub-FeatureVectors
+        fv_vectors = [vectorize_values(fv) for fv in feature_values]
+
+        # Scale and transform (if applicable)
+        scaled_fv_vectors = self.fit_scaler_and_transform(fv_vectors)
+        predictions = self.estimator.predict(scaled_fv_vectors)
+        docs = []
+        for pred in predictions:
+            doc = {'prediction': pred}
+            docs.append(util.normalize_json(doc))
+        return docs
 
     def build_schema(self):
         return {
@@ -178,7 +207,7 @@ class ProbabilityClassifier(Classifier):
         :Returns:
             A dict with the fields:
 
-            * predicion -- The most likely class
+            * prediction -- The most likely class
             * probability -- A mapping of probabilities for input classes
                              corresponding to the classes the classifier was
                              trained on.  Generating this probability is
@@ -205,6 +234,59 @@ class ProbabilityClassifier(Classifier):
 
         doc = {'prediction': prediction, 'probability': probability}
         return util.normalize_json(doc)
+
+    def score_many(self, feature_values):
+        """
+        Generates a score for a bunch of revisions based on a set of extracted
+        feature_values.
+
+        :Parameters:
+            feature_values : array(collection(`mixed`))
+                an ordered collection of values that correspond to the
+                `Feature` s provided to the constructor
+
+        :Returns:
+            A dict with the fields:
+
+            * prediction -- The most likely class
+            * probability -- A mapping of probabilities for input classes
+                             corresponding to the classes the classifier was
+                             trained on.  Generating this probability is
+                             slower than a simple prediction.
+        """
+        # Re-vectorize features -- this expands/flattens sub-FeatureVectors
+        fv_vectors = [vectorize_values(fv) for fv in feature_values]
+
+        # Scale and transform (if applicable)
+        scaled_fv_vectors = self.fit_scaler_and_transform(fv_vectors)
+        predictions = self.estimator.predict(scaled_fv_vectors)
+        probabilities = []
+        docs = []
+        if self.multilabel:
+            prob_matrix = np.empty((0, len(feature_values)))
+            probas = self.estimator.predict_proba(scaled_fv_vectors)
+            for label_prob in probas:
+                curr_label_prob = []
+                for prob in label_prob:
+                    curr_label_prob.append(prob[1])
+                prob_matrix = np.append(prob_matrix, [curr_label_prob], axis=0)
+            # This converts probability matrix to [n_samples, n_labels] for
+            # ease of iteration
+            prob_matrix = np.transpose(prob_matrix)
+            for pr in prob_matrix:
+                probabilities.append({label: proba
+                                     for label, proba in zip(self.labels, pr)})
+        else:
+            labels = self.estimator.classes_
+            probas = self.estimator.predict_proba(scaled_fv_vectors)
+            for prob in probas:
+                probabilities.append({label: prob
+                                      for label, prob in zip(labels, prob)})
+        for pred, prob in zip(predictions, probabilities):
+            preds = self.label_normalizer.denormalize(pred)
+            doc = {'prediction': preds, 'probability': prob}
+            docs.append(util.normalize_json(doc))
+        return docs
 
     def build_schema(self):
         schema_doc = super().build_schema()

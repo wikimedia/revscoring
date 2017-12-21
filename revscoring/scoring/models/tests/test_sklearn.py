@@ -1,7 +1,21 @@
 from pytest import raises
 
 from ....features import Feature
-from ..sklearn import Classifier
+from ..sklearn import Classifier, ProbabilityClassifier
+
+
+cv_feature_values = [
+    ([True], True),
+    ([False], False),
+    ([True], True),
+    ([False], False),
+    ([True], True),
+    ([False], False),
+    ([True], True),
+    ([False], False),
+    ([True], True),
+    ([False], False)
+]
 
 
 class FakeIdentityEstimator:
@@ -17,13 +31,17 @@ class FakeIdentityEstimator:
         return None
 
     def predict(self, vals):
-        return [vals[0][0]]
+        return [v[0] for v in vals]
 
     def predict_proba(self, vals):
-        return [[vals[0][0] * True, vals[0][0] * False]]
+        return [[v[0] * True, 1 - v[0] * True] for v in vals]
 
 
 class FakeIdentityClassifier(Classifier):
+    Estimator = FakeIdentityEstimator
+
+
+class FakeIdentityProbabilityClassifier(ProbabilityClassifier):
     Estimator = FakeIdentityEstimator
 
 
@@ -39,23 +57,50 @@ def test_sklean_classifier():
 
     assert skc.version == "0.0.1"
 
-    cv_feature_values = [
-        ([True], True),
-        ([False], False),
-        ([True], True),
-        ([False], False),
-        ([True], True),
-        ([False], False),
-        ([True], True),
-        ([False], False),
-        ([True], True),
-        ([False], False)
-    ]
+    stats = skc.cross_validate(cv_feature_values, folds=2)
+    assert (stats['counts']['predictions'] ==
+            {True: {False: 0, True: 5},
+             False: {False: 5, True: 0}})
+
+
+def test_sklean_probabilityclassifier():
+    skc = FakeIdentityProbabilityClassifier(
+        [Feature("foo")], [True, False], version="0.0.1")
+
+    assert skc.version == "0.0.1"
 
     stats = skc.cross_validate(cv_feature_values, folds=2)
     assert (stats['counts']['predictions'] ==
             {True: {False: 0, True: 5},
              False: {False: 5, True: 0}})
+
+
+def test_score():
+    skc = FakeIdentityClassifier(
+        [Feature("foo")], [True, False], version="0.0.1")
+    docs = skc.score_many([cv_feature_values[0][0]])
+    assert len(docs) == 1
+
+    skc = FakeIdentityProbabilityClassifier(
+        [Feature("foo")], [True, False], version="0.0.1")
+    docs = skc.score_many([cv_feature_values[0][0]])
+    assert len(docs) == 1
+    assert 'probability' in docs[0]
+
+
+def test_score_many():
+    skc = FakeIdentityClassifier(
+        [Feature("foo")], [True, False], version="0.0.1")
+    features, labels = zip(*cv_feature_values)
+    docs = skc.score_many(features)
+    assert len(docs) == 10
+
+    skc = FakeIdentityProbabilityClassifier(
+        [Feature("foo")], [True, False], version="0.0.1")
+    features, labels = zip(*cv_feature_values)
+    docs = skc.score_many(features)
+    assert len(docs) == 10
+    assert 'probability' in docs[0]
 
 
 def test_sklean_classifier_multilabel():
