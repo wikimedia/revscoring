@@ -1,5 +1,3 @@
-import json
-
 from ..micro_macro_stats import MicroMacroStats
 from ..scaled_prediction_statistics import ScaledPredictionStatistics as SPS
 

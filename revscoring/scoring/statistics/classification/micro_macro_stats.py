@@ -81,7 +81,7 @@ class MicroMacroStats(ModelInfo):
     def format_row_major_table(self, ndigits):
         return tabulate(
             [[l, util.round(stat, ndigits)]
-              for l, stat in self['labels'].items()])
+             for l, stat in self['labels'].items()])
 
     def format_column_major_table(self, ndigits):
         return tabulate(
