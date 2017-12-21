@@ -7,6 +7,8 @@ from ...model_info import ModelInfo
 
 logger = logging.getLogger(__name__)
 
+MAX_COLUMNS_WIDTH_CHARS = 80
+
 
 class MicroMacroStats(ModelInfo):
 
@@ -52,10 +54,9 @@ class MicroMacroStats(ModelInfo):
             .format(self.field,
                     util.round(self['micro'], ndigits=ndigits),
                     util.round(self['macro'], ndigits=ndigits))
-        table_str = tabulate(
-            [[util.round(stat, ndigits)
-              for l, stat in self['labels'].items()]],
-            headers=self['labels'].keys())
+
+        table_str = self.format_label_table(ndigits)
+
         formatted += util.tab_it_in(table_str)
         return formatted
 
@@ -68,3 +69,22 @@ class MicroMacroStats(ModelInfo):
             'labels': {l: util.round(self['labels'][l], ndigits)
                        for l in self['labels']}
         }
+
+    def format_label_table(self, ndigits):
+        column_header_width = sum(max(len(str(l)) + 2, ndigits + 4)
+                                  for l in self['labels'])
+        if column_header_width < MAX_COLUMNS_WIDTH_CHARS:
+            return self.format_column_major_table(ndigits)
+        else:
+            return self.format_row_major_table(ndigits)
+
+    def format_row_major_table(self, ndigits):
+        return tabulate(
+            [[l, util.round(stat, ndigits)]
+              for l, stat in self['labels'].items()])
+
+    def format_column_major_table(self, ndigits):
+        return tabulate(
+            [[util.round(stat, ndigits)
+              for l, stat in self['labels'].items()]],
+            headers=self['labels'].keys())
