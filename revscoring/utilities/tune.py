@@ -133,11 +133,6 @@ def main(argv=None):
 
     if args['--multilabel']:
         additional_params['multilabel'] = True
-        # For multilabel classification, specify weights during initialization,
-        # rather than during fitting
-        if label_weights is not None:
-            additional_params['class_weight'] = label_weights
-            del additional_params['label_weights']
 
     maximize = not args['--minimize']
 

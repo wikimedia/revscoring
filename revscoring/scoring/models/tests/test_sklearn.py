@@ -29,16 +29,13 @@ class FakeIdentityClassifier(Classifier):
 
 class FakeIdentityClassifierMultilabel(Classifier):
     SUPPORTS_MULTILABEL = True
+    SUPPORTS_CLASSWEIGHT = True
     Estimator = FakeIdentityEstimator
 
 
 def test_sklean_classifier():
     skc = FakeIdentityClassifier(
-        [Feature("foo")], [True, False], version="0.0.1",
-        class_weight={True: 0.5, False: 0.5})
-    expected_estimator_params = {'class_weight':
-                                 {True: 0.5, False: 0.5}}
-    assert skc.estimator_params == expected_estimator_params
+        [Feature("foo")], [True, False], version="0.0.1")
 
     assert skc.version == "0.0.1"
 
@@ -64,9 +61,9 @@ def test_sklean_classifier():
 def test_sklean_classifier_multilabel():
     skc = FakeIdentityClassifierMultilabel(
         [Feature("foo")], [True, False], multilabel=True,
-        version="0.0.1", class_weight={True: 0.5, False: 0.5})
+        version="0.0.1", label_weights={True: 5, False: 0.5})
     expected_estimator_params = {'class_weight':
-                                 [{0: 1, 1: 0.5}, {0: 1, 1: 0.5}]}
+                                 [{0: 1, 1: 5}, {0: 1, 1: 0.5}]}
     assert skc.estimator_params == expected_estimator_params
 
 

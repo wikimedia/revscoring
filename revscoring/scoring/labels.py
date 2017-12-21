@@ -12,6 +12,9 @@ class Normalizer:
     def normalize(self, label):
         raise NotImplementedError()
 
+    def normalize_weights(self, weights):
+        raise NotImplementedError()
+
     def denormalize(self, normalized_label):
         raise NotImplementedError()
 
@@ -39,6 +42,9 @@ class ClassVerifier(Normalizer):
                 .format(label, self.label_set))
         else:
             return label
+
+    def normalize_weights(self, weights):
+        return weights
 
     def denormalize(self, label):
         return label

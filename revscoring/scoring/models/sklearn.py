@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 class Classifier(model.Classifier):
     Estimator = NotImplemented
     SUPPORTS_MULTILABEL = False
+    SUPPORTS_CLASSWEIGHT = False
     BASE_PARAMS = {}
 
     def __init__(self, features, labels, multilabel=False, version=None,
@@ -36,21 +37,20 @@ class Classifier(model.Classifier):
             population_rates=population_rates, scale=scale, center=center,
             statistics=statistics)
         self.info['score_schema'] = self.build_schema()
-        self.label_weights = label_weights
-        class_weights = estimator_params.get('class_weight', None)
 
         if self.multilabel:
             if not self.SUPPORTS_MULTILABEL:
                 raise NotImplementedError(
                     "{0} does not support multilabel".format(self.__class__))
             self.label_normalizer = Binarizer(self.labels)
-            # transform class weights to multilabel format
-            if class_weights:
-                class_weights = \
-                    self.label_normalizer.normalize_weights(class_weights)
-                estimator_params['class_weight'] = class_weights
         else:
             self.label_normalizer = ClassVerifier(self.labels)
+
+        self.label_weights = label_weights
+        if self.label_weights is not None and self.SUPPORTS_CLASSWEIGHT:
+            # normalize label weights and apply it as an estimator parameter
+            estimator_params['class_weight'] = \
+                self.label_normalizer.normalize_weights(label_weights)
 
         if estimator is None:
             params = dict(self.BASE_PARAMS)
@@ -86,7 +86,9 @@ class Classifier(model.Classifier):
         scaled_fv_vectors = self.fit_scaler_and_transform(fv_vectors)
 
         fit_kwargs = {}
-        if self.label_weights:
+        if self.label_weights and not self.SUPPORTS_CLASSWEIGHT:
+            # Note that, when class weight is supported, that's handle as a
+            # hyper parameter on the estimator.
             fit_kwargs['sample_weight'] = [
                 self.label_weights.get(l, 1) for l in labels]
         return scaled_fv_vectors, normalized_labels, fit_kwargs
