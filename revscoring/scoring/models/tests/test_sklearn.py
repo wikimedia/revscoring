@@ -6,7 +6,7 @@ from ..sklearn import Classifier
 
 class FakeIdentityEstimator:
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.classes_ = [True, False]
         self._params = {}
 
@@ -24,6 +24,12 @@ class FakeIdentityEstimator:
 
 
 class FakeIdentityClassifier(Classifier):
+    Estimator = FakeIdentityEstimator
+
+
+class FakeIdentityClassifierMultilabel(Classifier):
+    SUPPORTS_MULTILABEL = True
+    SUPPORTS_CLASSWEIGHT = True
     Estimator = FakeIdentityEstimator
 
 
@@ -50,6 +56,15 @@ def test_sklean_classifier():
     assert (stats['counts']['predictions'] ==
             {True: {False: 0, True: 5},
              False: {False: 5, True: 0}})
+
+
+def test_sklean_classifier_multilabel():
+    skc = FakeIdentityClassifierMultilabel(
+        [Feature("foo")], [True, False], multilabel=True,
+        version="0.0.1", label_weights={True: 5, False: 0.5})
+    expected_estimator_params = {'class_weight':
+                                 [{0: 1, 1: 5}, {0: 1, 1: 0.5}]}
+    assert skc.estimator_params == expected_estimator_params
 
 
 def test_sklearn_format_error():

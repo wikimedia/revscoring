@@ -21,3 +21,12 @@ def test_binarizer():
 
     denormalized_labels = binarizer.denormalize(normalized_labels_actual)
     assert denormalized_labels == labels[1]
+
+
+def test_label_weights_normalizer():
+    label_weights = {'A': 0.4, 'B': 0.6}
+    label_set = ['A', 'B']
+    binarizer = Binarizer(label_set)
+    expected_label_weights = [{0: 1, 1: 0.4}, {0: 1, 1: 0.6}]
+    assert expected_label_weights == \
+        binarizer.normalize_weights(label_weights)

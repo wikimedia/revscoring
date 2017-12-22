@@ -12,6 +12,9 @@ class Normalizer:
     def normalize(self, label):
         raise NotImplementedError()
 
+    def normalize_weights(self, weights):
+        raise NotImplementedError()
+
     def denormalize(self, normalized_label):
         raise NotImplementedError()
 
@@ -39,6 +42,9 @@ class ClassVerifier(Normalizer):
                 .format(label, self.label_set))
         else:
             return label
+
+    def normalize_weights(self, weights):
+        return weights
 
     def denormalize(self, label):
         return label
@@ -68,6 +74,13 @@ class Binarizer(ClassVerifier):
                     .format(l, self.possible_labels))
             binary_map[index] = 1
         return binary_map
+
+    def normalize_weights(self, weights):
+        """
+        Label weights will be given as {A: W1, B: W2...}
+        convert these to [{0: 1, 1: W1}, {0:1, 1: W2}]
+        """
+        return [{0: 1, 1: weights[k]} for k in self.possible_labels]
 
     def denormalize(self, binary_map):
         label_set = []

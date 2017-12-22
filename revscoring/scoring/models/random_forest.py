@@ -20,3 +20,4 @@ class RandomForest(ProbabilityClassifier):
     """
     Estimator = RandomForestClassifier
     SUPPORTS_MULTILABEL = True
+    SUPPORTS_CLASSWEIGHT = True
