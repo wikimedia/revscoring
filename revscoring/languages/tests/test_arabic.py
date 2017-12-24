@@ -127,10 +127,10 @@ def test_dictionary():
 
 def test_stopwords():
     cache = {revision_oriented.revision.text: 'التي لم تكن معروفة'}
-    assert (solve(arabic.stopwords.revision.datasources.stopwords, cache=cache) ==
-            ['التي'])
+    assert (solve(arabic.stopwords.revision.datasources.stopwords,
+            cache=cache) == ['التي', 'لم'])
     assert (solve(arabic.stopwords.revision.datasources.non_stopwords,
                   cache=cache) ==
-            ['لم', 'تكن', 'معروفة'])
+            ['تكن', 'معروفة'])
 
     assert arabic.stopwords == pickle.loads(pickle.dumps(arabic.stopwords))

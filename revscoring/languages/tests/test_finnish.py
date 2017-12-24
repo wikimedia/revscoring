@@ -87,12 +87,11 @@ def test_informals():
 
 
 def test_stopwords():
-    cache = {revision_oriented.revision.text: "Nordström on saanut melko " +
-                                              "paljon huomiota ulkomailla"}
-    assert (solve(finnish.stopwords.revision.datasources.stopwords, cache=cache) ==
-            ["saanut", "paljon"])
+    cache = {revision_oriented.revision.text: "Nordström on ette melko " +
+                                              "paljon huomiota"}
+    assert (solve(finnish.stopwords.revision.datasources.stopwords,
+            cache=cache) == ["on", "ette"])
     assert (solve(finnish.stopwords.revision.datasources.non_stopwords,
-                  cache=cache) ==
-            ["Nordström", "on", "melko", "huomiota", "ulkomailla"])
+            cache=cache) == ['Nordström', 'melko', 'paljon', 'huomiota'])
 
     assert finnish.stopwords == pickle.loads(pickle.dumps(finnish.stopwords))
