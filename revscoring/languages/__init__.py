@@ -31,6 +31,11 @@ bosnian
 .. automodule:: revscoring.languages.bosnian
     :members:
 
+catalan
++++++
+.. automodule:: revscoring.languages.catalan
+    :members:
+
 croatian
 +++++
 .. automodule:: revscoring.languages.croatian
