@@ -171,10 +171,10 @@ def test_dictionary():
 def test_stopwords():
     cache = {
         revision_oriented.revision.text:
-            'játszótérnek adott helyett park'
+            'játszótérnek még helyett park jól'
     }
-    assert (solve(hungarian.stopwords.revision.datasources.stopwords, cache=cache) ==
-            ['adott', ])
+    assert (solve(hungarian.stopwords.revision.datasources.stopwords,
+            cache=cache) == ['még', 'jól'])
     assert (solve(hungarian.stopwords.revision.datasources.non_stopwords,
                   cache=cache) ==
             ['játszótérnek', 'helyett', 'park'])

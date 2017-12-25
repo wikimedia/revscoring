@@ -15,53 +15,19 @@ dictionary = Dictionary(name + ".dictionary", dictionary.check)
 :class:`enchant.Dict` "ru".  Provided by `aspell-ro`
 """
 
-stopwords = Stopwords(name + ".stopwords", set([
-    "a", "accessdate", "aceasta", "această", "acest", "acesta",
-    "adresă", "ai", "al", "ale", "ales", "alt", "alte", "altitudine",
-    "and", "ani", "anul", "apoi", "aprilie", "are", "asemenea", "astfel",
-    "au", "august", "avea", "avut", "așezare",
-    "b", "bibliografie", "bibliotecare", "bucurești",
-    "c", "care", "categorie", "cea", "cei", "cel", "cele", "center", "ciot",
-    "cod", "codpoștal", "com", "comuna", "comună", "coordonate",
-    "cum", "când", "că", "către",
-    "d", "dar", "data", "date", "dată", "decembrie", "defaultsort",
-    "densitate", "descriere", "despre", "din", "dintre", "doar", "două",
-    "după",
-    "e", "ei", "era", "este", "externe",
-    "f", "face", "februarie", "fiind", "file", "fişier", "fișier", "foarte",
-    "fost", "fără",
-    "harta", "hartă", "htm", "html", "http",
-    "i", "ianuarie", "iar", "ii", "image", "imagine", "in", "index", "infobox",
-    "infocaseta", "informații", "iulie", "iunie",
-    "jpg", "județ", "județul", "județului",
-    "l", "latd", "latm", "latns", "lats", "le", "lea", "left", "legături",
-    "limba", "limbă", "lista", "listănote", "loc", "localități", "locul",
-    "longd", "longev", "longm", "longs", "lor", "lui", "lumii",
-    "m", "map", "mare", "martie", "mult", "multe",
-    "n", "name", "nașteri", "național", "nbsp", "noiembrie", "note",
-    "nu", "nume", "numele",
-    "o", "oameni", "octombrie", "of", "old", "oraș", "orașe", "orașul",
-    "orașului", "org",
-    "p", "parte", "partea", "pe", "pentru", "peste", "php", "png", "poate",
-    "populaţie", "populație", "prima", "primar", "primul", "prin",
-    "printre", "publisher", "px", "până",
-    "recensământ", "redirecteaza",
-    "ref", "references", "referințe", "reflist", "right", "românia",
-    "româniei", "română",
-    "s", "sale", "sau", "secolul", "septembrie", "sit", "spre", "stat",
-    "stemă", "style", "sub", "sunt", "suprafaţă", "suprafață", "svg",
-    "să", "său",
-    "the", "thumb", "timp", "timpul", "tip", "title", "titlu", "toate", "trei",
-    "ul", "ului", "un", "unde", "unei", "unui", "unul", "url",
-    "v", "va", "vezi", "viață",
-    "web", "website", "www",
-    "x",
-    "în", "început", "într", "între",
-    "şi",
-    "ţară",
-    "și",
-    "țară", "țările"
-]))
+try:
+    from nltk.corpus import stopwords as nltk_stopwords
+    stopwords = set(nltk_stopwords.words('romanian'))
+except LookupError:
+    raise ImportError("Could not load stopwords for {0}. ".format(__name__) +
+                      "You may need to install the nltk 'stopwords' " +
+                      "corpora.  See http://www.nltk.org/data.html")
+
+stopwords = Stopwords(name + ".stopwords", stopwords)
+"""
+:class:`~revscoring.languages.features.Stopwords` features provided by
+:func:`nltk.corpus.stopwords` "romanian"
+"""
 
 try:
     from nltk.stem.snowball import SnowballStemmer

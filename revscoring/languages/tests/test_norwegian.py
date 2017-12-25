@@ -130,10 +130,10 @@ def test_dictionary():
 def test_stopwords():
     cache = {r_text: "samme senere nye anmeldere."}
     assert (solve(norwegian.stopwords.revision.datasources.stopwords, cache=cache) ==
-            ["samme", "senere", "nye"])
+            ["samme"])
     assert (solve(norwegian.stopwords.revision.datasources.non_stopwords,
                   cache=cache) ==
-            ["anmeldere"])
+            ["senere", "nye", "anmeldere"])
 
     assert norwegian.stopwords == pickle.loads(
         pickle.dumps(norwegian.stopwords))

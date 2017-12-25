@@ -87,10 +87,10 @@ def test_dictionary():
 def test_stopwords():
     cache = {r_text: "În timpul acestei perioade"}
     assert (solve(romanian.stopwords.revision.datasources.stopwords, cache=cache) ==
-            ['În', 'timpul'])
+            ['În', 'acestei'])
     assert (solve(romanian.stopwords.revision.datasources.non_stopwords,
                   cache=cache) ==
-            ['acestei', 'perioade'])
+            ['timpul', 'perioade'])
 
     assert romanian.stopwords == pickle.loads(pickle.dumps(romanian.stopwords))
 

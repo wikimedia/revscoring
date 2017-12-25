@@ -284,10 +284,10 @@ def test_dictionary():
 
 def test_stopwords():
     cache = {r_text: "även omkring introducerades när."}
-    assert (solve(swedish.stopwords.revision.datasources.stopwords, cache=cache) ==
-            ["även", "omkring", "när"])
+    assert (solve(swedish.stopwords.revision.datasources.stopwords,
+            cache=cache) == ["när"])
     assert (solve(swedish.stopwords.revision.datasources.non_stopwords,
                   cache=cache) ==
-            ["introducerades"])
+            ["även", "omkring", "introducerades"])
 
     assert swedish.stopwords == pickle.loads(pickle.dumps(swedish.stopwords))
