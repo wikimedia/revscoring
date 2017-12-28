@@ -300,6 +300,135 @@ class ProbabilityClassifier(Classifier):
         return schema_doc
 
 
+class OneVsRestClassifier(ProbabilityClassifier):
+    SUPPORTS_MULTILABEL = True
+
+    def __init__(self, features, labels, multilabel=False, statistics=None,
+                 population_rates=None, threshold_ndigits=None, **kwargs):
+        statistics = statistics if statistics is not None else Classification(
+            labels, multilabel=multilabel, prediction_key="prediction",
+            decision_key="probability",
+            threshold_ndigits=threshold_ndigits or 3,
+            population_rates=population_rates)
+        super().__init__(features, labels, multilabel=multilabel,
+                         statistics=statistics, **kwargs)
+
+        # The collection of estimators per label. Each entry in this
+        # collection is a tuple of (label, estimator)
+        self.estimators = []
+
+        for idx, label in enumerate(labels):
+            params = self.estimator_params.copy()
+            if 'class_weight' in params:
+                params['class_weight'] = params['class_weight'][idx]
+            self.estimators.append((label, self.Estimator(**params)))
+
+    def train(self, values_labels, **kwargs):
+        """
+        Fits the internal model to the provided `values_labels`.
+
+        :Returns:
+            A dictionary with the fields:
+
+            * seconds_elapsed -- Time in seconds spent fitting the model
+        """
+        logger.info("Training {0} with {1} observations"
+                    .format(self.__class__.__name__, len(values_labels)))
+        start = time.time()
+        scaled_fv_vectors, normalized_labels, fit_kwargs = \
+            self.preprocess(values_labels)
+        normalized_labels = np.array(normalized_labels)
+        # fit the esitimators
+        for idx, estimator in enumerate(self.estimators):
+            estimator[1].fit(scaled_fv_vectors, normalized_labels[:, idx],
+                             **fit_kwargs)
+        self.trained = time.time()
+
+        return {'seconds_elapsed': time.time() - start}
+
+    def score(self, feature_values):
+        """
+        Generates a score for a single revision based on a set of extracted
+        feature_values.
+
+        :Parameters:
+            feature_values : collection(`mixed`)
+                an ordered collection of values that correspond to the
+                `Feature` s provided to the constructor
+
+        :Returns:
+            A dict with the fields:
+
+            * prediction -- The most likely class
+            * probability -- A mapping of probabilities for input classes
+                             corresponding to the classes the classifier was
+                             trained on.  Generating this probability is
+                             slower than a simple prediction.
+        """
+        fv_vector = vectorize_values(feature_values)
+        scaled_fv_vector = self.apply_scaling(fv_vector)
+
+        prediction, probas = [], []
+        for _, estimator in self.estimators:
+            prediction.append(estimator.predict([scaled_fv_vector])[0])
+            probas.append(estimator.predict_proba([scaled_fv_vector])[0][1])
+        prediction = self.label_normalizer.denormalize(prediction)
+
+        labels = self.labels
+        probability = {label: proba
+                       for label, proba in zip(labels, probas)}
+
+        doc = {'prediction': prediction, 'probability': probability}
+        return util.normalize_json(doc)
+
+    def score_many(self, feature_values):
+        """
+        Generates a score for a bunch of revisions based on a set of extracted
+        feature_values.
+
+        :Parameters:
+            feature_values : array(collection(`mixed`))
+                an ordered collection of values that correspond to the
+                `Feature` s provided to the constructor
+
+        :Returns:
+            A dict with the fields:
+
+            * prediction -- The most likely class
+            * probability -- A mapping of probabilities for input classes
+                             corresponding to the classes the classifier was
+                             trained on.  Generating this probability is
+                             slower than a simple prediction.
+        """
+        # Re-vectorize features -- this expands/flattens sub-FeatureVectors
+        fv_vectors = [vectorize_values(fv) for fv in feature_values]
+
+        # Scale and transform (if applicable)
+        scaled_fv_vectors = self.fit_scaler_and_transform(fv_vectors)
+        predictions, probabilities = [], []
+        docs = []
+        for _, estimator in self.estimators:
+            predictions.append(estimator.predict(scaled_fv_vectors))
+            all_probabilities = estimator.predict_proba(scaled_fv_vectors)
+            positive_probabilities = [prob[1] for prob in all_probabilities]
+            probabilities.append(positive_probabilities)
+
+        # This converts probability matrix to [n_samples, n_labels] for
+        # ease of iteration
+        predictions = np.transpose(np.array(predictions))
+        prob_matrix = np.transpose(np.array(probabilities))
+        probabilities = []
+        labels = self.labels
+        for prob in prob_matrix:
+            probabilities.append({label: prob
+                                  for label, prob in zip(labels, prob)})
+        for pred, prob in zip(predictions, probabilities):
+            preds = self.label_normalizer.denormalize(pred)
+            doc = {'prediction': preds, 'probability': prob}
+            docs.append(util.normalize_json(doc))
+        return docs
+
+
 def labels2json_type(labels):
     unique_json_types = set(label2json_type(l) for l in labels)
 

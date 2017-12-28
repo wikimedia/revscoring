@@ -1,7 +1,7 @@
 from pytest import raises
 
 from ....features import Feature
-from ..sklearn import Classifier, ProbabilityClassifier
+from ..sklearn import Classifier, ProbabilityClassifier, OneVsRestClassifier
 
 
 cv_feature_values = [
@@ -15,6 +15,20 @@ cv_feature_values = [
     ([False], False),
     ([True], True),
     ([False], False)
+]
+
+
+cv_feature_values_multilabel = [
+    ([1], ['A', 'B']),
+    ([0], ['A']),
+    ([1], ['A']),
+    ([0], ['B']),
+    ([1], ['B']),
+    ([0], ['A', 'B']),
+    ([1], ['B']),
+    ([0], ['A']),
+    ([1], ['A']),
+    ([0], ['B'])
 ]
 
 
@@ -42,6 +56,11 @@ class FakeIdentityClassifier(Classifier):
 
 
 class FakeIdentityProbabilityClassifier(ProbabilityClassifier):
+    Estimator = FakeIdentityEstimator
+
+
+class FakeIdentityOvrClassifier(OneVsRestClassifier):
+    SUPPORTS_CLASSWEIGHT = True
     Estimator = FakeIdentityEstimator
 
 
@@ -73,6 +92,22 @@ def test_sklean_probabilityclassifier():
     assert (stats['counts']['predictions'] ==
             {True: {False: 0, True: 5},
              False: {False: 5, True: 0}})
+
+
+def test_sklean_ovrclassifier():
+    skc = FakeIdentityOvrClassifier(
+        [Feature("foo")], ['A', 'B'], multilabel=True, version="0.0.1",
+        label_weights={'A': 5, 'B': 0.5})
+
+    expected_estimator_params = {'class_weight':
+                                 [{0: 1, 1: 5}, {0: 1, 1: 0.5}]}
+    expected_counts = {'A': {True: {True: 3, False: 3},
+                             False: {True: 2, False: 2}},
+                       'B': {True: {True: 3, False: 3},
+                             False: {True: 2, False: 2}}}
+    stats = skc.cross_validate(cv_feature_values_multilabel, folds=2)
+    assert expected_estimator_params == skc.estimator_params
+    assert expected_counts == stats['counts']['predictions']
 
 
 def test_score():
