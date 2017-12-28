@@ -246,8 +246,9 @@ class Learned(Model):
         logger.debug("Training cross-validation for {0}...".format(i + 1))
         model.train(train_set)
         logger.debug("Scoring cross-validation for {0}...".format(i + 1))
-        return [(model.score(feature_values), label)
-                for feature_values, label in test_set]
+        feature_values, labels = map(list, zip(*test_set))
+        docs = model.score_many(feature_values)
+        return list(zip(docs, labels))
 
 
 class Classifier(Learned):
