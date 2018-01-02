@@ -27,15 +27,15 @@ class Classifier(model.Classifier):
     SUPPORTS_CLASSWEIGHT = False
     BASE_PARAMS = {}
 
-    def __init__(self, features, labels, multilabel=False, version=None,
-                 label_weights=None, population_rates=None,
-                 scale=False, center=False, statistics=None,
-                 estimator=None, **estimator_params):
+    def __init__(self, features, labels, version=None, multilabel=False,
+                 threshold_ndigits=None, label_weights=None,
+                 population_rates=None, scale=False, center=False,
+                 statistics=None, estimator=None, **estimator_params):
         statistics = statistics if statistics is not None else Classification(
-            labels, multilabel=multilabel, prediction_key="prediction",
-            population_rates=population_rates)
+            labels, multilabel=multilabel, threshold_ndigits=threshold_ndigits,
+            prediction_key="prediction", population_rates=population_rates)
         super().__init__(
-            features, labels, multilabel=multilabel, version=version,
+            features, labels, version=version, multilabel=multilabel,
             population_rates=population_rates, scale=scale, center=center,
             statistics=statistics)
         self.info['score_schema'] = self.build_schema()
@@ -184,14 +184,16 @@ class Classifier(model.Classifier):
 
 class ProbabilityClassifier(Classifier):
 
-    def __init__(self, features, labels, multilabel=False, statistics=None,
+    def __init__(self, features, labels, version=None, multilabel=False,
+                 statistics=None,
                  population_rates=None, threshold_ndigits=None, **kwargs):
         statistics = statistics if statistics is not None else Classification(
             labels, multilabel=multilabel, prediction_key="prediction",
             decision_key="probability",
             threshold_ndigits=threshold_ndigits or 3,
             population_rates=population_rates)
-        super().__init__(features, labels, multilabel=multilabel,
+        super().__init__(features, labels, version=version,
+                         multilabel=multilabel,
                          statistics=statistics, **kwargs)
 
     def score(self, feature_values):

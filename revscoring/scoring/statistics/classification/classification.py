@@ -35,7 +35,7 @@ class Classification(Statistics):
             decision_key : `str`
                 A key into a score doc under which a scalar decision value
                 can be found for each potential class.
-            thresholds_ndigits : `int`
+            threshold_ndigits : `int`
                 If set, round the threshold by this many decimals to compress
                 threshold statistics information.
             population_rates : `dict`
