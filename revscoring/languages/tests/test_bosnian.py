@@ -4,7 +4,7 @@ from pytest import mark
 
 try:
     from .. import bosnian
-except:
+except ImportError:
     # Can't install the enchant dictionary, skip
     pytestmark = mark.nottravis
 from ...datasources import revision_oriented
