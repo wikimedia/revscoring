@@ -41,12 +41,9 @@ from .gradient_boosting import GradientBoosting
 from .linear import LogisticRegression
 from .naive_bayes import NaiveBayes, GaussianNB, MultinomialNB, BernoulliNB
 from .random_forest import RandomForest
-from .random_forest_ovr import RandomForestOneVsRest
-from .gradient_boosting_ovr import GradientBoostingOneVsRest
 
 __all__ = [
     Learned, Classifier, open_file,
     SVC, LinearSVC, RBFSVC, NaiveBayes, GaussianNB, MultinomialNB, BernoulliNB,
-    RandomForest, RandomForestOneVsRest, GradientBoostingOneVsRest,
-    GradientBoosting, LogisticRegression
+    RandomForest, GradientBoosting, LogisticRegression
 ]
