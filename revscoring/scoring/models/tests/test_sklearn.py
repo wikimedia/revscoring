@@ -60,13 +60,11 @@ class FakeIdentityProbabilityClassifier(ProbabilityClassifier):
 
 
 class FakeIdentityClassifierMultilabel(Classifier):
-    SUPPORTS_MULTILABEL = True
     SUPPORTS_CLASSWEIGHT = True
     Estimator = FakeIdentityEstimator
 
 
 class FakeIdentityProbabilityClassifierMultilabel(ProbabilityClassifier):
-    SUPPORTS_MULTILABEL = True
     SUPPORTS_CLASSWEIGHT = True
     Estimator = FakeIdentityEstimator
 

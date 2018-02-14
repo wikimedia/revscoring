@@ -1,6 +1,7 @@
 from ..gradient_boosting import GradientBoosting
 from ..model import Model
-from .util import FEATURES, format_info, pickle_and_unpickle, train_test
+from .util import (FEATURES, format_info, pickle_and_unpickle, train_test,
+                   train_test_multilabel)
 
 
 def test_gradient_boosting():
@@ -23,7 +24,7 @@ def test_gradient_boosting():
     model = Model.from_config(config, 'test')
     assert isinstance(model, GradientBoosting)
 
-def test_random_forest_multilabel():
+def test_gradient_boosting_multilabel():
     model = GradientBoosting(FEATURES, ["A", "B", "C"], multilabel=True)
     format_info(model)
     train_test_multilabel(model)

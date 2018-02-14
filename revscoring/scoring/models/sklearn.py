@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 class Classifier(model.Classifier):
     Estimator = NotImplemented
-    SUPPORTS_MULTILABEL = False
     SUPPORTS_CLASSWEIGHT = False
     BASE_PARAMS = {}
 
@@ -65,9 +64,6 @@ class Classifier(model.Classifier):
         self.params.update(self.estimator.get_params())
 
         if self.multilabel:
-            if not self.SUPPORTS_MULTILABEL:
-                raise NotImplementedError(
-                    "{0} does not support multilabel".format(self.__class__))
             # The collection of estimators per label. Each entry in this
             # collection is a tuple of (label, estimator)
             self.estimators = []
