@@ -24,6 +24,7 @@ def test_gradient_boosting():
     model = Model.from_config(config, 'test')
     assert isinstance(model, GradientBoosting)
 
+
 def test_gradient_boosting_multilabel():
     model = GradientBoosting(FEATURES, ["A", "B", "C"], multilabel=True)
     format_info(model)
