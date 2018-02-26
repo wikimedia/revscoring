@@ -46,7 +46,8 @@ class word2vec(Datasource):
 
     def process(self, d):
         return [self.w2v[w] if w in self.w2v else np.zeros(self.dim)
-                        for w in d]
-    
+                for w in d]
+
     def load_kv(self, path, limit):
-        return KeyedVectors.load_word2vec_format(path, binary=True, limit=limit)
+        return KeyedVectors.load_word2vec_format(path, binary=True,
+                                                 limit=limit)

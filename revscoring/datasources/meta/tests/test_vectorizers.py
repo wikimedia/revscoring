@@ -18,7 +18,7 @@ loadvectors_full_path = vectorizers.__name__ + \
 def test_vectorize(loadw2v):
     loadw2v.return_value = test_vectors
     wv = vectorizers.word2vec(wikitext.revision.datasources.tokens,
-                                       'prefix', 'vector_name', dim=200)
+                              'prefix', 'vector_name', dim=200)
     vector = solve(wv, cache={ro.revision.text: 'a bv c d'})
     assert len(vector) == 7
     assert len(vector[0]) == 200
