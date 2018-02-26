@@ -19,5 +19,4 @@ class RandomForest(ProbabilityClassifier):
     Implements a Random Forest model.
     """
     Estimator = RandomForestClassifier
-    SUPPORTS_MULTILABEL = True
     SUPPORTS_CLASSWEIGHT = True

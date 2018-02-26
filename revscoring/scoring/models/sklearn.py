@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 class Classifier(model.Classifier):
     Estimator = NotImplemented
-    SUPPORTS_MULTILABEL = False
     SUPPORTS_CLASSWEIGHT = False
     BASE_PARAMS = {}
 
@@ -40,30 +39,41 @@ class Classifier(model.Classifier):
             statistics=statistics)
         self.info['score_schema'] = self.build_schema()
 
+        # Initialize the label preprocessor
         if self.multilabel:
-            if not self.SUPPORTS_MULTILABEL:
-                raise NotImplementedError(
-                    "{0} does not support multilabel".format(self.__class__))
             self.label_normalizer = Binarizer(self.labels)
         else:
             self.label_normalizer = ClassVerifier(self.labels)
 
+        self.estimator_params = {}
+        # Set label weights as class weights if given
         self.label_weights = label_weights
         if self.label_weights is not None and self.SUPPORTS_CLASSWEIGHT:
             # normalize label weights and apply it as an estimator parameter
-            estimator_params['class_weight'] = \
+            self.estimator_params['class_weight'] = \
                 self.label_normalizer.normalize_weights(label_weights)
 
         if estimator is None:
             params = dict(self.BASE_PARAMS)
             params.update(estimator_params)
-            self.estimator_params = params
+            self.estimator_params.update(params)
             self.estimator = self.Estimator(**params)
         else:
             self.estimator = estimator
             self.estimator_params = estimator.get_params()
-
         self.params.update(self.estimator.get_params())
+
+        if self.multilabel:
+            # The collection of estimators per label. Each entry in this
+            # collection is a tuple of (label, estimator)
+            self.estimators = []
+            for idx, label in enumerate(labels):
+                params = self.estimator_params.copy()
+                # class_weight will be set above if supported
+                if 'class_weight' in params:
+                    params['class_weight'] = params['class_weight'][idx]
+                self.estimators.append((label, self.Estimator(**params)))
+
         self.params.update({'label_weights': label_weights})
 
     def _clean_copy(self):
@@ -111,7 +121,15 @@ class Classifier(model.Classifier):
             self.preprocess(values_labels)
 
         # fit the esitimator
-        self.estimator.fit(scaled_fv_vectors, normalized_labels, **fit_kwargs)
+        if self.multilabel:
+            normalized_labels = np.array(normalized_labels)
+            # fit the esitimators
+            for idx, estimator in enumerate(self.estimators):
+                estimator[1].fit(scaled_fv_vectors, normalized_labels[:, idx],
+                                 **fit_kwargs)
+        else:
+            self.estimator.fit(scaled_fv_vectors, normalized_labels,
+                               **fit_kwargs)
         self.trained = time.time()
 
         return {'seconds_elapsed': time.time() - start}
@@ -134,8 +152,14 @@ class Classifier(model.Classifier):
         fv_vector = vectorize_values(feature_values)
         scaled_fv_vector = self.apply_scaling(fv_vector)
 
-        prediction = self.label_normalizer.denormalize(
-            self.estimator.predict([scaled_fv_vector])[0])
+        prediction = []
+        if self.multilabel:
+            for _, estimator in self.estimators:
+                prediction.append(estimator.predict([scaled_fv_vector])[0])
+            prediction = self.label_normalizer.denormalize(prediction)
+        else:
+            prediction = self.label_normalizer.denormalize(
+                self.estimator.predict([scaled_fv_vector])[0])
 
         doc = {'prediction': prediction}
         return util.normalize_json(doc)
@@ -160,10 +184,16 @@ class Classifier(model.Classifier):
 
         # Scale and transform (if applicable)
         scaled_fv_vectors = self.fit_scaler_and_transform(fv_vectors)
-        predictions = self.estimator.predict(scaled_fv_vectors)
+        predictions = []
         docs = []
+        if self.multilabel:
+            for _, estimator in self.estimators:
+                predictions.append(estimator.predict(scaled_fv_vectors))
+            predictions = np.transpose(np.array(predictions))
+        else:
+            predictions = self.estimator.predict(scaled_fv_vectors)
         for pred in predictions:
-            doc = {'prediction': pred}
+            doc = {'prediction': self.label_normalizer.denormalize(pred)}
             docs.append(util.normalize_json(doc))
         return docs
 
@@ -215,18 +245,19 @@ class ProbabilityClassifier(Classifier):
         """
         fv_vector = vectorize_values(feature_values)
         scaled_fv_vector = self.apply_scaling(fv_vector)
-
-        prediction = self.label_normalizer.denormalize(
-            self.estimator.predict([scaled_fv_vector])[0])
-        probas = self.estimator.predict_proba([scaled_fv_vector])[0]
-
+        prediction, probas, probability = [], [], []
         if self.multilabel:
-            probas = [
-                p[0][1]
-                for p in self.estimator.predict_proba([scaled_fv_vector])]
+            for _, estimator in self.estimators:
+                prediction.append(estimator.predict([scaled_fv_vector])[0])
+                probas.append(
+                    estimator.predict_proba([scaled_fv_vector])[0][1])
+            prediction = self.label_normalizer.denormalize(prediction)
+            labels = self.labels
             probability = {label: proba
-                           for label, proba in zip(self.labels, probas)}
+                           for label, proba in zip(labels, probas)}
         else:
+            prediction = self.label_normalizer.denormalize(
+                self.estimator.predict([scaled_fv_vector])[0])
             labels = self.estimator.classes_
             probas = self.estimator.predict_proba([scaled_fv_vector])[0]
             probability = {label: proba
@@ -259,24 +290,27 @@ class ProbabilityClassifier(Classifier):
 
         # Scale and transform (if applicable)
         scaled_fv_vectors = self.fit_scaler_and_transform(fv_vectors)
-        predictions = self.estimator.predict(scaled_fv_vectors)
-        probabilities = []
+        predictions, probabilities = [], []
         docs = []
         if self.multilabel:
-            prob_matrix = np.empty((0, len(feature_values)))
-            probas = self.estimator.predict_proba(scaled_fv_vectors)
-            for label_prob in probas:
-                curr_label_prob = []
-                for prob in label_prob:
-                    curr_label_prob.append(prob[1])
-                prob_matrix = np.append(prob_matrix, [curr_label_prob], axis=0)
+            for _, estimator in self.estimators:
+                predictions.append(estimator.predict(scaled_fv_vectors))
+                all_probabilities = estimator.predict_proba(scaled_fv_vectors)
+                positive_probabilities = [prob[1]
+                                          for prob in all_probabilities]
+                probabilities.append(positive_probabilities)
+
             # This converts probability matrix to [n_samples, n_labels] for
             # ease of iteration
-            prob_matrix = np.transpose(prob_matrix)
-            for pr in prob_matrix:
-                probabilities.append({label: proba
-                                     for label, proba in zip(self.labels, pr)})
+            predictions = np.transpose(np.array(predictions))
+            prob_matrix = np.transpose(np.array(probabilities))
+            probabilities = []
+            labels = self.labels
+            for prob in prob_matrix:
+                probabilities.append({label: prob
+                                      for label, prob in zip(labels, prob)})
         else:
+            predictions = self.estimator.predict(scaled_fv_vectors)
             labels = self.estimator.classes_
             probas = self.estimator.predict_proba(scaled_fv_vectors)
             for prob in probas:
