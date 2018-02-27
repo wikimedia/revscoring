@@ -4,16 +4,14 @@ return `list`'s of items and produce vectors out of the same.
 
 .. autoclass:: revscoring.datasources.meta.vectors
 """
-import numpy as np
+import os.path
+
 from gensim.models.keyedvectors import KeyedVectors
 
 from ..datasource import Datasource
 
-
-def load_kv(self, path, prefix="~/.word2vec/", limit=None):
-    full_path = prefix + path
-    return KeyedVectors.load_word2vec_format(full_path, binary=True,
-                                             limit=limit)
+ASSET_SEARCH_DIRS = ["word2vec/", "~/.word2vec/", "/var/share/word2vec/"]
+VECTOR_DIMENSIONS = 300
 
 
 class word2vec(Datasource):
@@ -24,30 +22,35 @@ class word2vec(Datasource):
     :Parameters:
         items_datasource : :class:`revscoring.Datasource`
             A datasource that returns a list of words.
-        w2v_prefix : `string`
-            prefix path where vectors are stores
-        w2v : `string`
-            name of word vector file to load
-        returns : `func`
-            A function that represents the type of value that will be
-            contained in the vector.  When called without an argument, this
-            function should return the default value (for missing) keys
-            in the dict.
-        dim : `int`
-            The dimension of the vectors
-        limit : `int`
-            Max number of word vectors to load
+        keyed_vectors : :class:`gensim.models.keyedvectors.KeyedVectors`
+            loaded key-vectors.  See :func:`~revscoring.datasources.meta.vectorizers.word2vec.load_kv`
         name : `str`
             A name for the `revscoring.FeatureVector`
-    """
+    """  # noqa
 
-    def __init__(self, items_datasource, word_vectors,
-                 dim=300, returns=np.float64, name=None):
-        name = self._format_name(name, [items_datasource])
-        self.dim = dim
-        self.w2v = word_vectors
+    def __init__(self, items_datasource, keyed_vectors, name=None):
+        name = self._format_name(name, [items_datasource, keyed_vectors])
+        self.keyed_vectors = keyed_vectors
         super().__init__(name, self.process, depends_on=[items_datasource])
 
-    def process(self, d):
-        return [self.w2v[w] if w in self.w2v else np.zeros(self.dim)
-                for w in d]
+    def process(self, words):
+        return [self.keyed_vectors[word] if word in self.keyed_vectors
+                else [0] * VECTOR_DIMENSIONS
+                for word in words]
+
+    @staticmethod
+    def load_kv(filename=None, path=None, limit=None):
+        if path is not None:
+            return KeyedVectors.load_word2vec_format(
+                path, binary=True, limit=limit)
+        elif filename is not None:
+            for dir_path in ASSET_SEARCH_DIRS:
+                try:
+                    path = os.join(dir_path, filename)
+                    return KeyedVectors.load_word2vec_format(
+                        path, binary=True, limit=limit)
+                except FileNotFoundError:
+                    continue
+        else:
+            raise TypeError(
+                "load_kv() requires either 'filename' or 'path' to be set.")
