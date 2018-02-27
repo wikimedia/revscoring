@@ -10,6 +10,7 @@ These Meta-Features apply an aggregate function to
 
 .. autoclass revscoring.features.meta.aggregators.min
 """
+import statistics
 import numpy as np
 
 from ..feature import Feature
@@ -19,7 +20,7 @@ len_builtin = len
 sum_builtin = sum
 max_builtin = max
 min_builtin = min
-mean_builtin = np.mean
+mean_builtin = statistics.mean
 
 
 class AggregatorsScalar(Feature):
@@ -50,7 +51,8 @@ class AggregatorsVector(FeatureVector):
         else:
             return_func = np.vectorize(self.returns)
             # apply the function over each row
-            return return_func(np.apply_along_axis(self.func, 0, items))
+            return return_func(np.apply_along_axis(
+                self.func, 0, np.array(items, dtype=self.returns)))
 
 
 def aggregators_factory(func):
