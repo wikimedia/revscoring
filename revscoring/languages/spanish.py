@@ -119,7 +119,6 @@ badword_regexes = [
     r"jili(puerta|polla)s?",  # cock sucker ???
     r"joder",  # fuck
     r"jot(a|o|eria)s?",  # faggot
-    r"jud[íi]o",  # jew (derogatory)
     r"jod(er|ido)",  # fucked
     r"komekaka",  # misspelling of 'come caca' -- "eat shit"
     r"lesbiana",  # lesbian
@@ -135,15 +134,16 @@ badword_regexes = [
     r"marimach[ao]",  # tomboy
     r"maripos[óo]n",  # fag
     r"marrano",  # pig
-    r"meachupan", r"meapelan",  # something 'suck me' ???
+    r"meachupan", r"meapelan",  # suck my cock
     r"me[- ]?castra[- ]?la[- ]?madre",  # 'I <something> your mother' ???
-    r"me[- ]?la[- ]?pelan?s?",  # "You ain't shit" ???
+    r"me[- ]?la[- ]?pelan?s?",  # I don't give a f***
     r"mi?er[dg]a+s?\w*",  # shit
     r"mimsn",  # ???
     r"ming[ao]",  # ugly person
     r"mocos",  # boogers / mucus
     r"mojon",  # shit
     r"monda",  # man part / penis
+    r"mongolo", # idiot (slang)
     r"moro",  # moor / muslim (derogatory)
     r"nacio",  # ???
     r"nazi",  # nazi
@@ -165,7 +165,7 @@ badword_regexes = [
     r"petard[oa]s?",  # slow / retarded
     r"pich(a|ula)",  # cock
     r"pijas?",  # cock
-    r"piko",  # ???
+    r"piko",  # cock
     r"pinches?",  # kitchen boy / insignificant
     r"pinga",  # dick
     r"pipi",  # small penis
@@ -173,7 +173,7 @@ badword_regexes = [
     r"pit(o|ito|ote)s?",  # penis
     r"pollas?",  # cock
     r"poronga",  # cock
-    r"polvo",  # nut (testical)
+    r"polvo",  # sexual intercourse
     r"poto",  # ass
     r"prostituta",  # prostitute
     r"put([ao]+|isim[oa]|iza)(s|n)?\w*",  # bitch/whore
@@ -183,6 +183,7 @@ badword_regexes = [
     r"sida",  # AIDS
     r"sorete",  # piece of shit
     r"sudaca",  # greaser
+    r"subnormal", # retarded
     r"s[íi]filis",  # syphilis
     r"tajodido",  # ???
     r"tetas?",  # tits
@@ -191,12 +192,12 @@ badword_regexes = [
     r"tortillera",  # lesbian
     r"tranca",  # bar ???
     r"travesti",  # transvestite
-    r"travolo",  # ???
+    r"travolo",  # transgender
     r"trol(o|a)",  # faggot
     r"uta", r"utama", r"utamadre",  # short for 'puta'
     r"verg(a|uero|ud[ao])s?\w*", r"versh",  # cock
     r"vibrador",  # vibrator
-    r"viol(o|a|e|ar)",  # violate
+    r"viol(o|a|e|ar)",  # rape
     r"vulva",  # vulva
     r"watdafuq",  # "what the fuck"
     r"wea",  # shit
