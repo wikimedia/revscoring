@@ -143,7 +143,7 @@ badword_regexes = [
     r"mocos",  # boogers / mucus
     r"mojon",  # shit
     r"monda",  # man part / penis
-    r"mongolo", # idiot (slang)
+    r"mongolo",  # idiot (slang)
     r"moro",  # moor / muslim (derogatory)
     r"nacio",  # ???
     r"nazi",  # nazi
@@ -183,7 +183,7 @@ badword_regexes = [
     r"sida",  # AIDS
     r"sorete",  # piece of shit
     r"sudaca",  # greaser
-    r"subnormal", # retarded
+    r"subnormal",  # retarded
     r"s[íi]filis",  # syphilis
     r"tajodido",  # ???
     r"tetas?",  # tits
