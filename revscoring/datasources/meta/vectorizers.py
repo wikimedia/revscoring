@@ -46,11 +46,15 @@ class word2vec(Datasource):
         elif filename is not None:
             for dir_path in ASSET_SEARCH_DIRS:
                 try:
-                    path = os.join(dir_path, filename)
+                    path = os.path.join(dir_path, filename)
                     return KeyedVectors.load_word2vec_format(
                         path, binary=True, limit=limit)
                 except FileNotFoundError:
                     continue
+            raise FileNotFoundError("Please make sure that 'filename' \
+                                    specifies the word vector binary name \
+                                    in default search paths or 'path' \
+                                    speficies file path of the binary")
         else:
             raise TypeError(
                 "load_kv() requires either 'filename' or 'path' to be set.")
