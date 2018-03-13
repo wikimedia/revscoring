@@ -13,6 +13,7 @@ from ..datasource import Datasource
 ASSET_SEARCH_DIRS = ["word2vec/", "~/.word2vec/", "/var/share/word2vec/"]
 VECTOR_DIMENSIONS = 300
 
+keyed_vecs = {}
 
 class word2vec(Datasource):
     """
@@ -30,12 +31,12 @@ class word2vec(Datasource):
 
     def __init__(self, items_datasource, keyed_vectors, name=None):
         name = self._format_name(name, [items_datasource, keyed_vectors])
-        self.keyed_vectors = keyed_vectors
+        keyed_vecs[name] = keyed_vectors
         super().__init__(name, self.process, depends_on=[items_datasource])
 
     def process(self, words):
-        return [self.keyed_vectors[word] if word in self.keyed_vectors
-                else [0] * VECTOR_DIMENSIONS
+        return [keyed_vecs[self.name][word] if word in
+                keyed_vecs[self.name] else [0] * VECTOR_DIMENSIONS
                 for word in words]
 
     @staticmethod
