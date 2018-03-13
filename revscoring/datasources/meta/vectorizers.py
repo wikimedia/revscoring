@@ -12,8 +12,8 @@ from ..datasource import Datasource
 
 ASSET_SEARCH_DIRS = ["word2vec/", "~/.word2vec/", "/var/share/word2vec/"]
 VECTOR_DIMENSIONS = 300
-
 keyed_vecs = {}
+
 
 class word2vec(Datasource):
     """
