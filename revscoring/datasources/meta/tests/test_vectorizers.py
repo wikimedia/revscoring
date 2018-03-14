@@ -1,6 +1,7 @@
+import pickle
 from unittest.mock import patch
-import pytest
 
+import pytest
 from revscoring.datasources import revision_oriented as ro
 from revscoring.dependencies import solve
 from revscoring.features import wikitext
@@ -12,12 +13,18 @@ test_vectors = {'a': [1] * 300,
                 'c': [1] * 300}
 
 
+def vectorize_words(words):
+    return vectorizers.word2vec.vectorize_words(test_vectors, words)
+
+
 def test_word2vec():
     wv = vectorizers.word2vec(wikitext.revision.datasources.words,
-                              test_vectors, name='word vectors')
+                              vectorize_words, name='word vectors')
     vector = solve(wv, cache={ro.revision.text: 'a bv c d'})
     assert len(vector) == 4
     assert len(vector[0]) == 300
+
+    assert pickle.loads(pickle.dumps(wv)) == wv
 
 
 @patch('gensim.models.keyedvectors')
