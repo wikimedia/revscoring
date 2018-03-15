@@ -20,22 +20,24 @@ class word2vec(Datasource):
     datasource.
 
     :Parameters:
-        items_datasource : :class:`revscoring.Datasource`
+        words_datasource : :class:`revscoring.Datasource`
             A datasource that returns a list of words.
-        keyed_vectors : :class:`gensim.models.keyedvectors.KeyedVectors`
-            loaded key-vectors.  See :func:`~revscoring.datasources.meta.vectorizers.word2vec.load_kv`
+        vectorize_words : `function`
+            a function that takes a list of words and converts it to a list
+            of vectors of those words
         name : `str`
             A name for the `revscoring.FeatureVector`
     """  # noqa
 
-    def __init__(self, items_datasource, keyed_vectors, name=None):
-        name = self._format_name(name, [items_datasource, keyed_vectors])
-        self.keyed_vectors = keyed_vectors
-        super().__init__(name, self.process, depends_on=[items_datasource])
+    def __init__(self, words_datasource, vectorize_words, name=None):
+        name = self._format_name(name, [words_datasource, vectorize_words])
 
-    def process(self, words):
-        return [self.keyed_vectors[word] if word in self.keyed_vectors
-                else [0] * VECTOR_DIMENSIONS
+        super().__init__(name, vectorize_words, depends_on=[words_datasource])
+
+    @staticmethod
+    def vectorize_words(keyed_vectors, words):
+        return [keyed_vectors[word] if word in
+                keyed_vectors else [0] * VECTOR_DIMENSIONS
                 for word in words]
 
     @staticmethod
