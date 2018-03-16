@@ -2,7 +2,7 @@ import json
 import os.path
 import tempfile
 
-from revscoring.utilities.union_merge_observations import main, union_merge
+from ..union_merge_observations import main, union_merge_observations
 
 
 def test_union_merge():
@@ -17,7 +17,7 @@ def test_union_merge():
         {"rev_id": 101, "goodfaith": True, "damaging": True},
         {"rev_id": 102, "goodfaith": False, "damaging": False},
     ]
-    result = union_merge(observations, "rev_id")
+    result = union_merge_observations(observations, "rev_id")
     assert expected == list(result)
 
 

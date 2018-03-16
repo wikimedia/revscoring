@@ -21,7 +21,7 @@
         <input>           List of input file paths
         --output=<path>   Path to write out the merged observations
                           [default: <stdout>]
-        --id-column=<str> Name of the id column for deduplication.
+        --id-column=<str> Name of the id field for deduplication.
                           [default: rev_id]
 """
 
@@ -30,6 +30,8 @@ import itertools
 import sys
 
 import docopt
+
+import deep_merge
 
 from .util import dump_observation, read_observations
 
@@ -48,13 +50,13 @@ def main(argv=None):
                           for path in args['<input>'])
     all_observations = itertools.chain(*observation_chunks)
 
-    merged_observations = union_merge(all_observations,
-                                      id_column=args['--id-column'])
+    merged_observations = union_merge_observations(
+        all_observations, id_column=args['--id-column'])
     for ob in merged_observations:
         dump_observation(ob, out_file)
 
 
-def union_merge(observations, id_column):
+def union_merge_observations(observations, id_column):
     """Merge all observations, returning the output as a list.
     """
     id_map = collections.defaultdict(dict)
@@ -64,6 +66,6 @@ def union_merge(observations, id_column):
 
         # Merge the contents, with later entries taking precedence when keys
         # match.
-        id_map[ob_id].update(ob)
+        id_map[ob_id] = deep_merge.merge(id_map[ob_id], ob)
 
     return id_map.values()
