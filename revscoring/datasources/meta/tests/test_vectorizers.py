@@ -23,6 +23,9 @@ def test_word2vec():
     vector = solve(wv, cache={ro.revision.text: 'a bv c d'})
     assert len(vector) == 4
     assert len(vector[0]) == 300
+    vector = solve(wv, cache={ro.revision.text: ''})
+    assert len(vector) == 1
+    assert len(vector[0]) == 300
 
     assert pickle.loads(pickle.dumps(wv)) == wv
 

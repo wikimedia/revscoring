@@ -36,6 +36,8 @@ class word2vec(Datasource):
 
     @staticmethod
     def vectorize_words(keyed_vectors, words):
+        if not words:
+            return [[0] * VECTOR_DIMENSIONS]
         return [keyed_vectors[word] if word in
                 keyed_vectors else [0] * VECTOR_DIMENSIONS
                 for word in words]
