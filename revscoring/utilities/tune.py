@@ -119,7 +119,7 @@ def main(argv=None):
 
     labels, label_weights, population_rates = \
         util.read_labels_and_population_rates(
-            None, args['--label-weight'], args['--pop-rate'],
+            args['--labels'], args['--label-weight'], args['--pop-rate'],
             args['--labels-config'])
     if label_weights is not None:
         additional_params['label_weights'] = label_weights
