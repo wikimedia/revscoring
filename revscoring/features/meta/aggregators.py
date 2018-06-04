@@ -52,7 +52,7 @@ class AggregatorsVector(FeatureVector):
             return_func = np.vectorize(self.returns)
             # apply the function over each row
             return return_func(np.apply_along_axis(
-                self.func, 0, np.array(items, dtype=self.returns)))
+                self.func, 0, np.array(items, dtype=self.returns))).tolist()
 
 
 def aggregators_factory(func):
