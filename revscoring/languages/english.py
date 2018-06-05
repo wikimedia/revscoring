@@ -101,7 +101,7 @@ badword_regexes = [
     r"lick(er)?s?",
     r"meth",
     r"meth[-_ ]?head\w*",
-    r"naz+i",
+    r"naz+i(sm?)?",
     r"nig", r"n+?i+?gg+?[aeious]+?\w*", r"niglet", r"nigor", r"nigr", r"nigra",
     r"nonc(e|ing)\w*",
     r"overdose[sd]",

@@ -5,7 +5,7 @@ def compare_extraction(extractor, examples, counter_examples,
 
     for example in examples:
         wrapped = lwrap + example + rwrap
-        print(extractor.process(wrapped))
+        # print(extractor.process(wrapped))
         assert extractor.process(wrapped) == [example]
         assert extractor.process(
             "Sentence " +
