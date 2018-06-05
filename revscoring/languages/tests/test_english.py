@@ -46,7 +46,7 @@ BAD = [
     "lesbian", "lesbo",
     "liar",
     "meth", "methhead",
-    "nazi", "nazzzi",
+    "nazi", "nazzzi", "nazism",
     # The decision was made that "niggardly" is almost never used in good faith
     "nigger", "nigga", "nig", "niglet", "nigra", "niggardlyi",
     "nonce", "noncer", "noncing",
