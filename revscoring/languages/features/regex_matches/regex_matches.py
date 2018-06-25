@@ -1,6 +1,6 @@
+from . import datasources, features
 from ....dependencies import DependentSet
 from ....features import wikitext
-from . import datasources, features
 
 
 class RegexMatches(DependentSet):
@@ -17,7 +17,7 @@ class RegexMatches(DependentSet):
     """
 
     def __init__(self, name, regexes, exclusions=None,
-                 wrapping=(r'\b', r'\b')):
+                 wrapping=(r'\b', r'\b'), text_preprocess=None):
         super().__init__(name)
         self._regexes = regexes
         self._exclusions = exclusions
@@ -28,7 +28,8 @@ class RegexMatches(DependentSet):
                 name + ".revision", regexes,
                 wikitext.revision.datasources,
                 exclusions=exclusions,
-                wrapping=wrapping
+                wrapping=wrapping,
+                text_preprocess=text_preprocess
             )
         )
         """
