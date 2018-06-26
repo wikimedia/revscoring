@@ -329,7 +329,7 @@ class ProbabilityClassifier(Classifier):
                            "each of the potential output labels",
             'type': "object",
             'properties': json.loads(json.dumps(
-                {l: "number" for l in self.labels}))
+                {l: {"type": "number"} for l in self.labels}))
         }
         return schema_doc
 
