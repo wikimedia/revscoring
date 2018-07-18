@@ -1,6 +1,7 @@
 import json
 
 import pywikibase
+import mwbase
 
 from ....datasources import Datasource
 from ....dependencies import DependentSet
@@ -28,6 +29,14 @@ class Revision(DependentSet):
         A `~pywikibase.Item` for the Wikibase content
         """
 
+        self.entity = Datasource(
+            name + ".entity", _process_entity,
+            depends_on=[self.item_doc]
+        )
+        """
+        A `~mwbase.Entity` for the Wikibase content
+        """
+
         self.sitelinks = Datasource(
             name + ".sitelinks", _process_sitelinks, depends_on=[self.item]
         )
@@ -36,7 +45,7 @@ class Revision(DependentSet):
         """
 
         self.labels = Datasource(
-            name + ".labels", _process_labels, depends_on=[self.item]
+            name + ".labels", _process_labels, depends_on=[self.entity]
         )
         """
         A `dict` of lang/label pairs in the revision
@@ -51,14 +60,14 @@ class Revision(DependentSet):
 
         self.descriptions = Datasource(
             name + ".descriptions", _process_descriptions,
-            depends_on=[self.item]
+            depends_on=[self.entity]
         )
         """
         A `dict` of lang/description pairs in the revision
         """
 
         self.properties = Datasource(
-            name + ".properties", _process_properties, depends_on=[self.item]
+            name + ".properties", _process_properties, depends_on=[self.entity]
         )
         """
         A `set` of properties in the revision
@@ -110,14 +119,21 @@ def _process_item_doc(text):
         return None
 
 
+def _process_entity(text):
+    if text is not None:
+        return mwbase.Entity.from_json(text)
+    else:
+        return mwbase.Entity.from_json({})
+
+
 def _process_item(item_doc):
     item = pywikibase.ItemPage()
     item.get(content=item_doc or {'aliases': {}})
     return item
 
 
-def _process_properties(item):
-    return item.claims
+def _process_properties(entity):
+    return entity.properties
 
 
 def _process_claims(item):
@@ -154,16 +170,16 @@ def _process_badges(item):
     return item.badges
 
 
-def _process_labels(item):
-    return item.labels
+def _process_labels(entity):
+    return entity.labels
 
 
 def _process_sitelinks(item):
     return item.sitelinks
 
 
-def _process_descriptions(item):
-    return item.descriptions
+def _process_descriptions(entity):
+    return entity.descriptions
 
 
 def _claim_to_str(claim):
