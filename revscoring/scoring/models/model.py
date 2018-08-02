@@ -8,8 +8,8 @@ All scoring models are an implementation of :class:`revscoring.Model`.
     :members:
 """
 import bz2
+import joblib
 import logging
-import pickle
 from multiprocessing import Pool, cpu_count
 
 import yamlconf
@@ -99,9 +99,9 @@ class Model:
         Reads serialized model information from a file.
         """
         if hasattr(f, 'buffer'):
-            model = pickle.load(f.buffer)
+            model = joblib.load(f.buffer)
         else:
-            model = pickle.load(f)
+            model = joblib.load(f)
 
         model.info['environment'].check(raise_exception=error_on_env_check)
         return model
@@ -112,9 +112,9 @@ class Model:
         """
 
         if hasattr(f, 'buffer'):
-            return pickle.dump(self, f.buffer)
+            return joblib.dump(self, f.buffer, compress=True)
         else:
-            return pickle.dump(self, f)
+            return joblib.dump(self, f, compress=True)
 
     @classmethod
     def from_config(cls, config, name, section_key='scorer_models'):
