@@ -18,7 +18,7 @@
         <label>                 The name of the field to be predicted
         --observations=<path>   Path to a file containing observations
                                 containing a 'cache' [default: <stdin>]
-        --model-file=<math>     Path to write a model file to
+        --model-file=<path>     Path to write a model file to
         --debug                 Print debug logging.
 """
 import logging
@@ -64,7 +64,7 @@ def main(argv=None):
 def run(scoring_model, value_labels, model_file):
 
     scoring_model = test_model(scoring_model, value_labels)
-    sys.stderr.write(scoring_model.format())
+    sys.stderr.write(scoring_model.info.format())
     sys.stderr.write("\n\n")
 
     if model_file is not None:
