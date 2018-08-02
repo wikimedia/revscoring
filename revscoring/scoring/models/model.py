@@ -10,6 +10,7 @@ All scoring models are an implementation of :class:`revscoring.Model`.
 import bz2
 import joblib
 import logging
+import pickle
 from multiprocessing import Pool, cpu_count
 
 import yamlconf
@@ -92,6 +93,19 @@ class Model:
         self.info['statistics'].fit(score_labels)
 
         return self.info['statistics']
+
+    @classmethod
+    def load_pickle(cls, f, error_on_env_check=False):
+        """
+        Reads serialized model information from a file.
+        """
+        if hasattr(f, 'buffer'):
+            model = pickle.load(f.buffer)
+        else:
+            model = pickle.load(f)
+
+        model.info['environment'].check(raise_exception=error_on_env_check)
+        return model
 
     @classmethod
     def load(cls, f, error_on_env_check=False):
