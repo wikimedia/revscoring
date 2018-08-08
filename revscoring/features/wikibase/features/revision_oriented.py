@@ -79,7 +79,7 @@ class Revision(DependentSet):
             name = self._name + ".has_property_value({0}, {1})" \
                 .format(repr(property), repr(value))
 
-        return HasPropertyValue(name, property, value, self.datasources.item)
+        return HasPropertyValue(name, property, value, self.datasources.entity)
 
 
 class HasPropertyValue(Feature):
@@ -90,5 +90,5 @@ class HasPropertyValue(Feature):
                          depends_on=[item_datasource])
 
     def _process(self, item):
-        values = item.claims.get(self.property, [])
-        return self.value in (i.target for i in values)
+        statements = item.properties.get(self.property, [])
+        return self.value in (str(s.claim.datavalue) for s in statements)

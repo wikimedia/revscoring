@@ -1,6 +1,5 @@
 import json
 
-import pywikibase
 import mwbase
 
 from ....datasources import Datasource
@@ -13,32 +12,24 @@ class Revision(DependentSet):
     def __init__(self, name, revision_datasources):
         super().__init__(name)
 
-        self.item_doc = Datasource(
-            name + ".item_doc", _process_item_doc,
+        self.entity_doc = Datasource(
+            name + ".entity_doc", _process_entity_doc,
             depends_on=[revision_datasources.text]
         )
         """
         A JSONable `dict` of content for a Wikibase content.
         """
 
-        self.item = Datasource(
-            name + ".item", _process_item,
-            depends_on=[self.item_doc]
-        )
-        """
-        A `~pywikibase.Item` for the Wikibase content
-        """
-
         self.entity = Datasource(
             name + ".entity", _process_entity,
-            depends_on=[self.item_doc]
+            depends_on=[self.entity_doc]
         )
         """
         A `~mwbase.Entity` for the Wikibase content
         """
 
         self.sitelinks = Datasource(
-            name + ".sitelinks", _process_sitelinks, depends_on=[self.item]
+            name + ".sitelinks", _process_sitelinks, depends_on=[self.entity]
         )
         """
         A `dict` of wiki/sitelink pairs in the revision
@@ -52,7 +43,7 @@ class Revision(DependentSet):
         """
 
         self.aliases = Datasource(
-            name + ".aliases", _process_aliases, depends_on=[self.item]
+            name + ".aliases", _process_aliases, depends_on=[self.entity]
         )
         """
         A `set` of unique aliases in the revision
@@ -74,28 +65,28 @@ class Revision(DependentSet):
         """
 
         self.claims = Datasource(
-            name + ".claim", _process_claims, depends_on=[self.item]
+            name + ".claim", _process_claims, depends_on=[self.entity]
         )
         """
         A `set` of unique claims in the revision
         """
 
         self.sources = Datasource(
-            name + ".sources", _process_sources, depends_on=[self.item]
+            name + ".sources", _process_sources, depends_on=[self.entity]
         )
         """
         A `set` of unique sources in the revision
         """
 
         self.qualifiers = Datasource(
-            name + ".qualifiers", _process_qualifiers, depends_on=[self.item]
+            name + ".qualifiers", _process_qualifiers, depends_on=[self.entity]
         )
         """
         A `set` of unique qualifiers in the revision
         """
 
         self.badges = Datasource(
-            name + ".badges", _process_badges, depends_on=[self.item]
+            name + ".badges", _process_badges, depends_on=[self.entity]
         )
         """
         A `set` of unique badges in the revision
@@ -112,7 +103,7 @@ class Revision(DependentSet):
                 self.diff = Diff(name + ".diff", self)
 
 
-def _process_item_doc(text):
+def _process_entity_doc(text):
     if text is not None:
         return json.loads(text)
     else:
@@ -126,68 +117,58 @@ def _process_entity(text):
         return mwbase.Entity.from_json({})
 
 
-def _process_item(item_doc):
-    item = pywikibase.ItemPage()
-    item.get(content=item_doc or {'aliases': {}})
-    return item
-
-
 def _process_properties(entity):
     return entity.properties
 
 
-def _process_claims(item):
+def _process_claims(entity):
     return set(
-        (property, _claim_to_str(claim))
-        for property in item.claims
-        for claim in item.claims[property]
+        (pid, str(statement.claim.datavalue))
+        for pid, statements in entity.properties.items()
+        for statement in statements
     )
 
 
-def _process_aliases(item):
-    return item.aliases
+def _process_aliases(entity):
+    return entity.aliases
 
 
-def _process_sources(item):
+def _process_sources(entity):
     return set(
-        (property, _claim_to_str(claim), i)
-        for property in item.claims
-        for claim in item.claims[property]
-        for i, source in enumerate(claim.sources)
+        (pid, str(statement.claim.datavalue), ref_pid, i,
+         str(ref_claim.datavalue))
+        for pid, statements in entity.properties.items()
+        for statement in statements
+        for ref_pid, ref_claims in statement.references.items()
+        for i, ref_claim in enumerate(ref_claims)
     )
 
 
-def _process_qualifiers(item):
+def _process_qualifiers(entity):
     return set(
-        (property, _claim_to_str(claim), qualifier)
-        for property in item.claims
-        for claim in item.claims[property]
-        for qualifier in claim.qualifiers
+        (pid, str(statement.claim.datavalue), qualifier_pid, i,
+         str(qualifier_claim.datavalue))
+        for pid, statements in entity.properties.items()
+        for statement in statements
+        for qualifier_pid, qualifier_claims in statement.qualifiers.items()
+        for i, qualifier_claim in enumerate(qualifier_claims)
     )
 
 
-def _process_badges(item):
-    return item.badges
+def _process_badges(entity):
+    return {dbname: sitelink.badges
+            for dbname, sitelink in entity.sitelinks.items()
+            if len(sitelink.badges) > 0}
 
 
 def _process_labels(entity):
     return entity.labels
 
 
-def _process_sitelinks(item):
-    return item.sitelinks
+def _process_sitelinks(entity):
+    return {dbname: sitelink.title
+            for dbname, sitelink in entity.sitelinks.items()}
 
 
 def _process_descriptions(entity):
     return entity.descriptions
-
-
-def _claim_to_str(claim):
-    if isinstance(claim.target, pywikibase.ItemPage):
-        return str(claim.target.id)
-    elif isinstance(claim.target, pywikibase.WbTime):
-        return claim.target.toTimestr()
-    elif isinstance(claim.target, pywikibase.WbQuantity):
-        return repr(claim.target)
-    else:
-        return str(claim.target)
