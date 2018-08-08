@@ -237,7 +237,8 @@ class Extractor(BaseExtractor):
                 break
             else:
                 doc = self.session.get(action='query', prop='revisions',
-                                       revids=batch_ids, **params)
+                                       revids=batch_ids, rvslots='main',
+                                       **params)
 
                 for page_doc in doc['query'].get('pages', {}).values():
                     yield from _normalize_revisions(page_doc)

@@ -27,11 +27,11 @@ class Revision(DependentSet):
                             name=revision.byte_len.name)
         self.minor = key_exists('minor', rev_doc,
                                 name=revision.minor.name)
-        self.content_model = key('contentmodel', rev_doc,
+        self.content_model = key(['slots', 'main', 'contentmodel'], rev_doc,
                                  revision.content_model.name)
 
         if hasattr(revision, 'text'):
-            self.text = key('*', rev_doc, name=revision.text.name,
+            self.text = key(['slots', 'main', '*'], rev_doc, name=revision.text.name,
                             if_missing=(TextDeleted, revision.text))
 
         if hasattr(revision, 'parent'):
