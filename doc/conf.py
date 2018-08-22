@@ -46,7 +46,7 @@ html_sidebars = {
     ]
 }
 github_button = True
-github_user = "wiki-ai"
+github_user = "wikimedia"
 github_repo = "revscoring"
 
 

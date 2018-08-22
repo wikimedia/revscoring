@@ -1,6 +1,6 @@
 # Dockerfile for building a Docker container.  See https://www.docker.com/
 # Install wikimedia runscoring, with dependencies
-# See: https://github.com/wiki-ai/revscoring
+# See: https://github.com/wikimedia/revscoring
 
 # Build via docker build --rm -t nealmcb/revscoring:0.3 .
 
