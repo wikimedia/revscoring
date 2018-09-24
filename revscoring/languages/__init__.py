@@ -68,6 +68,11 @@ french
 .. automodule:: revscoring.languages.french
     :members:
 
+galician
+++++++
+.. automodule:: revscoring.languages.galician
+    :members:
+
 german
 ++++++
 .. automodule:: revscoring.languages.german
