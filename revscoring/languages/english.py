@@ -208,3 +208,63 @@ informals = RegexMatches(name + ".informals", informal_regexes)
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 informal word detecting regexes.
 """
+
+words_to_watch_regexes = [
+    # Puffery
+    r'legendary', r'best', r'great', r'acclaimed', r'iconic',
+    r'visionary', r'outstanding', r'leading', r'celebrated',
+    r'award[- ]?winning',
+    r'landmark', r'cutting[- ]?edge', r'innovative', r'extraordinary',
+    r'brilliant', r'hit', r'famous', r'renowned', r'remarkable',
+    r'prestigious',
+    r'world[- ]?class', r'respected', r'notable', r'virtuoso', r'honorable',
+    r'awesome', r'unique', r'pioneering',
+    # Contentious labels (-gate removed)
+    r'cult', r'racist', r'perverted', r'sect', r'fundamentalist', r'heretic',
+    r'extremist', r'denialist', r'terrorist', r'freedom[- ]?fighter', r'bigot',
+    r'myth', r'neo[- ]?nazi', r'pseudo(scientific|intellectual)',
+    r'controversial',
+    # Unsupported attributions
+    r'(most|many|some|people|scholars|scientists|science|experts) (say|state|believe|regard|report|claim|feel|declare)',
+    r'it is ((often|sometimes|widely) )?(believed|regarded|said|shown|reported|thought)',
+    r'are of the opinion',
+    r'(research|science) (has shown|says|claims)',
+    # Expressions of doubt
+    r'supposed', r'apparent', r'purported', r'alleged', r'accused',
+    r'so[- ]called',
+    # Editorializing
+    r'notably', r'it should be noted', r'arguably', r'interestingly',
+    r'essentially', r'actually', r'clearly', r'of course', r'without a doubt',
+    r'happily', r'tragically', r'aptly', r'fortunately', r'unfortunately',
+    r'untimely', r'but', r'despite', r'however', r'though', r'although',
+    r'furthermore',
+    # Synonyms for "said"
+    r'reveal', r'point out', r'clarify', r'expose', r'explain', r'find',
+    r'note', r'observe', r'insist', r'speculate', r'surmise', r'claim',
+    r'assert', r'admit', r'confess', r'deny',
+    # Lack of precision
+    r'passed away', r'gave his life', r'eternal rest', r'make love',
+    r'an issue with', r'collateral damage', r'living with cancer',
+    # Idioms
+    r'lion\'s share', r'tip of the iceberg', r'white elephant',
+    r'gild the lily', r'take the plunge', r'ace up the sleeve',
+    r'bird in the hand', r'twist of fate', r'at the end of the day',
+    # Relative time reference
+    r'recently', r'lately', r'currently', r'today', r'presently', r'to date',
+    r'15 years ago', r'formerly', r'in the past', r'traditionally',
+    r'(this|last|next) (year|month|winter|spring|summer|fall|autumn)',
+    r'yesterday', r'tomorrow', r'in the future', r'now', r'soon', r'since',
+    # Unspecified places or events
+    r'this country', r'here', r'there', r'somewhere', r'sometimes', r'often',
+    r'occasionally', r'somehow',
+    # Survived by
+    r'(is|was) survived by', r'was survived by',
+    # Neologisms
+    r'(pre|post|anti|non)-\w+', r'\w+-like'
+]
+
+words_to_watch = RegexMatches(name + ".words_to_watch", words_to_watch_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+problematic words and phrases for use in reference text
+"""
