@@ -313,11 +313,8 @@ badword detecting regexes.
 """
 
 informal_regexes = [
-    r'carallo',
     r'jajaja',
     r'jajajaja',
-    r'merda',
-    r'tetas',
     r'ola',
     r'adeus'
 ]

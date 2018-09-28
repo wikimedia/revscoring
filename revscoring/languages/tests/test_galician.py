@@ -56,11 +56,8 @@ BAD = [
 ]
 
 INFORMAL = [
-    'carallo',
     'jajaja',
     'jajajaja',
-    'merda',
-    'tetas',
     'ola',
     'adeus'
 ]
