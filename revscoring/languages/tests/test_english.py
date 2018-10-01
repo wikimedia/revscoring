@@ -1,6 +1,5 @@
 import pickle
 
-
 from .. import english
 from ...datasources import revision_oriented
 from ...dependencies import solve
@@ -146,6 +145,57 @@ INFORMAL = [
     "yolo", "yooolloo"
 ]
 
+# Borrowed from https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style/Words_to_watch
+WORDS_TO_WATCH = [
+    # Puffery
+    "legendary", "best", "great", "acclaimed", "iconic",
+    "visionary", "outstanding", "leading", "celebrated", "award-winning",
+    "landmark", "cutting-edge", "innovative", "extraordinary", "brilliant",
+    "hit", "famous", "renowned", "remarkable", "prestigious",
+    "world-class", "respected", "notable", "virtuoso", "honorable",
+    "awesome", "unique", "pioneering",
+    # Contentious labels (-gate removed)
+    "cult", "racist", "perverted", "sect", "fundamentalist", "heretic",
+    "extremist", "denialist", "terrorist", "freedom fighter", "bigot",
+    "myth", "neo-Nazi", "pseudoscientific", "controversial",
+    # Unsupported attributions
+    "people say", "scholars state", "it is believed", "it is regarded",
+    "are of the opinion", "most feel", "many feel", "experts declare",
+    "it is often reported", "it is sometimes said", "it is widely thought",
+    "research has shown", "science says", "experts say", "scientists claim",
+    # Expressions of doubt
+    "supposed", "apparent", "purported", "alleged", "accused", "so-called",
+    # Editorializing
+    "notably", "it should be noted", "arguably", "interestingly",
+    "essentially", "actually", "clearly", "of course", "without a doubt",
+    "happily", "tragically", "aptly", "fortunately", "unfortunately",
+    "untimely", "but", "despite", "however", "though", "although",
+    "furthermore",
+    # Synonyms for "said"
+    "reveal", "point out", "clarify", "expose", "explain", "find", "note",
+    "observe", "insist", "speculate", "surmise", "claim", "assert", "admit",
+    "confess", "deny",
+    # Lack of precision
+    "passed away", "gave his life", "eternal rest", "make love",
+    "an issue with", "collateral damage", "living with cancer",
+    # Idioms
+    "lion's share", "tip of the iceberg", "white elephant", "gild the lily",
+    "take the plunge", "ace up the sleeve", "bird in the hand",
+    "twist of fate", "at the end of the day",
+    # Relative time reference
+    "recently", "lately", "currently", "today", "presently", "to date",
+    "15 years ago", "formerly", "in the past", "traditionally",
+    "this fall", "this year", "last autumn", "next month",
+    "yesterday", "tomorrow", "in the future", "now", "soon", "since",
+    # Unspecified places or events
+    "this country", "here", "there", "somewhere", "sometimes", "often",
+    "occasionally", "somehow",
+    # Survived by
+    "is survived by", "was survived by",
+    # Neologisms
+    "pre-trumpism", "post-truth", "anti-choice", "trump-like"
+]
+
 OTHER = [
     """
     The Smyth Report is the common name of an administrative history written
@@ -155,8 +205,8 @@ OTHER = [
     and Nagasaki. Smyth was commissioned to write the report by Major General
     Leslie Groves, the director of the Manhattan Project. The Smyth Report was
     the first official account of the development of the atomic bombs and the
-    basic physical processes behind them. Since anything in the declassified
-    Smyth Report could be discussed openly, it focused heavily on basic nuclear
+    basic physical processes behind them. Anything in the declassified
+    Smyth Report could be discussed openly, so it focused heavily on basic nuclear
     physics and other information which was either already widely known in the
     scientific community or easily deducible by a competent scientist. It
     omitted details about chemistry, metallurgy, and ordnance, ultimately
@@ -182,6 +232,14 @@ def test_informals():
                        INFORMAL, OTHER)
 
     assert english.informals == pickle.loads(pickle.dumps(english.informals))
+
+
+def test_words_to_watch():
+    compare_extraction(english.words_to_watch.revision.datasources.matches,
+                       WORDS_TO_WATCH, OTHER)
+
+    assert english.words_to_watch == \
+        pickle.loads(pickle.dumps(english.words_to_watch))
 
 
 def test_dictionary():
