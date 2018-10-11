@@ -6,6 +6,7 @@ gensim >= 2.3.3, < 3.3.999
 mmh3 >= 2.3.1, < 2.3.999
 more-itertools == 2.2
 mwapi >= 0.5.0, < 0.5.999
+mwbase >= 0.1.4, < 0.1.999
 mwtypes >= 0.2.0, < 0.3.999
 mwparserfromhell >= 0.5.1, < 0.5.999
 mysqltsv >= 0.0.7, < 0.0.999
@@ -15,7 +16,6 @@ pytest >= 3.2.2, < 3.2.999
 pytz >= 2017.2
 requests >= 2.0.0, < 2.999.999
 pyenchant >= 1.6.6, < 1.6.999
-pywikibase >= 0.0.3, < 0.0.999
 scipy >= 1.0.0, < 1.0.999
 scikit-learn >= 0.19.0, < 0.19.999
 tabulate >= 0.7.5, < 0.7.999

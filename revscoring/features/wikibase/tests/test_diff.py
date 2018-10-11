@@ -2,7 +2,6 @@ import json
 import os
 import pickle
 
-
 from ....dependencies import solve
 from ..revision_oriented import revision
 
@@ -10,14 +9,14 @@ pwd = os.path.dirname(os.path.realpath(__file__))
 ALAN_TURING = json.load(open(os.path.join(pwd, "alan_turing.json")))
 ALAN_TURING_OLD = json.load(open(os.path.join(pwd, "alan_turing.old.json")))
 
-revision_item_doc = revision.datasources.item_doc
-parent_item_doc = revision.parent.datasources.item_doc
+revision_entity_doc = revision.datasources.entity_doc
+parent_entity_doc = revision.parent.datasources.entity_doc
 diff = revision.diff
 
 
 def test_sitelinks_diff():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     sitelinks_diff = solve(diff.datasources.sitelinks_diff, cache=cache)
     assert (sitelinks_diff.added ==
@@ -71,8 +70,8 @@ def test_sitelinks_diff():
 
 
 def test_labels_diff():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     labels_diff = solve(diff.datasources.labels_diff, cache=cache)
     assert (labels_diff.added ==
@@ -109,8 +108,8 @@ def test_labels_diff():
 
 
 def test_aliases_diff():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     aliases_diff = solve(diff.datasources.aliases_diff, cache=cache)
     assert (aliases_diff.added ==
@@ -127,8 +126,8 @@ def test_aliases_diff():
 
 
 def test_descriptions_diff():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     descriptions_diff = solve(diff.datasources.descriptions_diff, cache=cache)
     assert (descriptions_diff.added ==
@@ -145,8 +144,8 @@ def test_descriptions_diff():
 
 
 def test_properties_diff():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     properties_diff = solve(diff.datasources.properties_diff, cache=cache)
     assert (properties_diff.added ==
@@ -182,19 +181,19 @@ def test_properties_diff():
             diff.properties_changed)
 
 
-def test_claims_diff():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+def test_statements_diff():
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
-    assert ({c.id for c in solve(diff.datasources.claims_added, cache=cache)} ==
+    assert ({s.claim.property for s in solve(diff.datasources.statements_added, cache=cache)} ==
             {'P1430', 'P1006', 'P691', 'P512', 'P1816', 'P735', 'P646', 'P1412',
              'P1196', 'P2021', 'P950', 'P1273', 'P31', 'P1563', 'P906', 'P949',
              'P106', 'P1417', 'P22', 'P1263', 'P549', 'P19', 'P1207', 'P1415',
              'P345', 'P1741', 'P800', 'P1296', 'P910', 'P166', 'P140', 'P108',
              'P1819', 'P935', 'P25', 'P69', 'P27', 'P1343'})
-    assert ({c.id for c in solve(diff.datasources.claims_removed, cache=cache)} ==
+    assert ({s.claim.property for s in solve(diff.datasources.statements_removed, cache=cache)} ==
             {'P107', 'P509'})
-    assert ({c.id for c, _ in solve(diff.datasources.claims_changed, cache=cache)} ==
+    assert ({s.claim.property for s, _ in solve(diff.datasources.statements_changed, cache=cache)} ==
             {'P21', 'P570', 'P101', 'P19', 'P106', 'P91', 'P20', 'P69', 'P569',
              'P227'})
 
@@ -211,16 +210,16 @@ def test_claims_diff():
 
 
 def test_sources_diff():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
-    assert ({c.id for c in solve(diff.datasources.sources_added, cache=cache)} ==
+    assert ({source.property for source in solve(diff.datasources.sources_added, cache=cache)} ==
             {'P813', 'P248', 'P854', 'P143', 'P345'})
-    assert ({c.id for c in solve(diff.datasources.sources_removed, cache=cache)} ==
+    assert ({c.property for c in solve(diff.datasources.sources_removed, cache=cache)} ==
             {'P143'})
 
-    assert solve(diff.sources_added, cache=cache) == 26
-    assert solve(diff.sources_removed, cache=cache) == 1
+    assert solve(diff.sources_added, cache=cache) == 20
+    assert solve(diff.sources_removed, cache=cache) == 2
     assert (pickle.loads(pickle.dumps(diff.sources_added)) ==
             diff.sources_added)
     assert (pickle.loads(pickle.dumps(diff.sources_removed)) ==
@@ -229,8 +228,8 @@ def test_sources_diff():
 
 def test_qualifiers_diff():
     # TODO: Ladsgroup, this test seems wrong
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     assert ({c.id for c in solve(diff.datasources.qualifiers_added, cache=cache)} ==
             set())
@@ -248,8 +247,8 @@ def test_qualifiers_diff():
 
 
 def test_badges_diff():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     badges_diff = solve(diff.datasources.badges_diff, cache=cache)
     assert badges_diff.added == {
@@ -278,17 +277,17 @@ def test_badges_diff():
 
 
 def test_proportion_of_qid_added():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
-    assert round(solve(diff.proportion_of_qid_added, cache=cache), 2) == 0.95
+    assert round(solve(diff.proportion_of_qid_added, cache=cache), 2) == 0.78
     assert (pickle.loads(pickle.dumps(diff.proportion_of_qid_added)) ==
             diff.proportion_of_qid_added)
 
 
 def test_proportion_of_language_added():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     assert round(
         solve(
@@ -300,17 +299,17 @@ def test_proportion_of_language_added():
 
 
 def test_proportion_of_links_added():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
-    assert round(solve(diff.proportion_of_links_added, cache=cache), 2) == 0.87
+    assert round(solve(diff.proportion_of_links_added, cache=cache), 2) == 0.86
     assert (pickle.loads(pickle.dumps(diff.proportion_of_links_added)) ==
             diff.proportion_of_links_added)
 
 
 def test_identifiers_changed():
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     assert round(solve(diff.identifiers_changed, cache=cache), 2) == 1
     assert (pickle.loads(pickle.dumps(diff.identifiers_changed)) ==
@@ -321,8 +320,8 @@ def test_property_changed():
     p999_changed = diff.property_changed('P999')
     p19_changed = diff.property_changed('P19')
 
-    cache = {revision_item_doc: ALAN_TURING,
-             parent_item_doc: ALAN_TURING_OLD}
+    cache = {revision_entity_doc: ALAN_TURING,
+             parent_entity_doc: ALAN_TURING_OLD}
 
     assert solve(p999_changed, cache=cache) is False
     assert solve(p19_changed, cache=cache) is True

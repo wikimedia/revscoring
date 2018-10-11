@@ -1,5 +1,7 @@
 import re
 
+import mwbase
+
 from ....dependencies import DependentSet
 from ...feature import Feature
 from ...meta import aggregators, bools
@@ -63,15 +65,18 @@ class Diff(DependentSet):
         "`int` : The number of properties changed"
 
         # Claims
-        self.claims_added = \
-            aggregators.len(self.datasources.claims_added)
-        "`int` : The number of claims added"
-        self.claims_removed = \
-            aggregators.len(self.datasources.claims_removed)
-        "`int` : The number of claims removed"
-        self.claims_changed = \
-            aggregators.len(self.datasources.claims_changed)
-        "`int` : The number of claims changed"
+        self.statements_added = \
+            aggregators.len(self.datasources.statements_added)
+        "`int` : The number of statements/claims added"
+        self.claims_added = self.statements_added  # Backwards compatible
+        self.statements_removed = \
+            aggregators.len(self.datasources.statements_removed)
+        "`int` : The number of statements/claims removed"
+        self.claims_removed = self.statements_removed  # Backwards compatible
+        self.statements_changed = \
+            aggregators.len(self.datasources.statements_changed)
+        "`int` : The number of statements/claims changed"
+        self.claims_changed = self.statements_changed  # Backwards compatible
 
         # Sources
         self.sources_added = aggregators.len(self.datasources.sources_added)
@@ -100,8 +105,8 @@ class Diff(DependentSet):
         self.proportion_of_qid_added = Feature(
             name + ".proportion_of_qid_added",
             _process_proportion_of_qid_added,
-            returns=float, depends_on=[self.datasources.parent_item,
-                                       self.datasources.revision_item]
+            returns=float, depends_on=[self.datasources.parent_entity,
+                                       self.datasources.revision_entity]
         )
         "`int` : The proportion of Q# added."
 
@@ -109,16 +114,16 @@ class Diff(DependentSet):
         self.proportion_of_language_added = Feature(
             name + ".proportion_of_language_added",
             _process_proportion_of_language_added,
-            returns=float, depends_on=[self.datasources.parent_item,
-                                       self.datasources.revision_item]
+            returns=float, depends_on=[self.datasources.parent_entity,
+                                       self.datasources.revision_entity]
         )
         "`int` : The proportion of language added."
 
         self.proportion_of_links_added = Feature(
             name + ".proportion_of_links_added",
             _process_proportion_of_links_added,
-            returns=float, depends_on=[self.datasources.parent_item,
-                                       self.datasources.revision_item]
+            returns=float, depends_on=[self.datasources.parent_entity,
+                                       self.datasources.revision_entity]
         )
         "`int` : The proportion of links added."
 
@@ -148,13 +153,15 @@ class Diff(DependentSet):
                                  name=name)
 
 
-def _process_proportion_of_qid_added(parent_item, revision_item):
-    parent_item_doc = parent_item.toJSON() if parent_item is not None else {}
+def _process_proportion_of_qid_added(parent_entity, revision_entity):
+    parent_entity_doc = parent_entity if parent_entity is not None else {}
     re_qid = re.compile(r'Q\d{1,8}')
-    revision_item_qids = len(re.findall(re_qid, str(revision_item.toJSON())))
-    parent_item_qids = len(re.findall(re_qid, str(parent_item_doc)))
-    return float(revision_item_qids - parent_item_qids) / \
-        float(revision_item_qids + 1)
+    revision_entity_qids = len(re.findall(
+        re_qid, mwbase.json_dumps(revision_entity)))
+    parent_entity_qids = len(re.findall(
+        re_qid, mwbase.json_dumps(parent_entity_doc)))
+    return float(revision_entity_qids - parent_entity_qids) / \
+        float(revision_entity_qids + 1)
 
 
 # AF/8
@@ -198,27 +205,30 @@ LANGUAGE_REGEXES = (r"(a(frikaa?ns|lbanian?|lemanha|ng(lais|ol)|ra?b(e?|"
 LANGUAGE_RE = re.compile(LANGUAGE_REGEXES)
 
 
-def _process_proportion_of_language_added(parent_item, revision_item):
-    parent_item_doc = parent_item.toJSON() if parent_item is not None else {}
-    revision_item_res = len(re.findall(LANGUAGE_RE,
-                                       str(revision_item.toJSON())))
-    parent_item_res = len(re.findall(LANGUAGE_RE, str(parent_item_doc)))
-    return float(revision_item_res - parent_item_res) / \
-        float(revision_item_res + 1)
+def _process_proportion_of_language_added(parent_entity, revision_entity):
+    parent_entity_doc = parent_entity if parent_entity is not None else {}
+    revision_entity_res = len(re.findall(LANGUAGE_RE,
+                                         mwbase.json_dumps(revision_entity)))
+    parent_entity_res = len(re.findall(LANGUAGE_RE,
+                                       mwbase.json_dumps(parent_entity_doc)))
+    return float(revision_entity_res - parent_entity_res) / \
+        float(revision_entity_res + 1)
 
 
-def _process_proportion_of_links_added(parent_item, revision_item):
-    parent_item_doc = parent_item.toJSON() if parent_item is not None else {}
+def _process_proportion_of_links_added(parent_entity, revision_entity):
+    parent_entity_doc = parent_entity if parent_entity is not None else {}
     re_qid = re.compile(r'https?\://|wwww\.')
-    revision_item_res = len(re.findall(re_qid, str(revision_item.toJSON())))
-    parent_item_res = len(re.findall(re_qid, str(parent_item_doc)))
-    return float(revision_item_res - parent_item_res) / \
-        float(revision_item_res + 1)
+    revision_entity_res = len(re.findall(re_qid,
+                                         mwbase.json_dumps(revision_entity)))
+    parent_entity_res = len(re.findall(re_qid,
+                                       mwbase.json_dumps(parent_entity_doc)))
+    return float(revision_entity_res - parent_entity_res) / \
+        float(revision_entity_res + 1)
 
 
 def _process_identifiers_changed(changed_claims):
     counter = 0
     for old, new in changed_claims:
-        if isinstance(old.target, str):
+        if isinstance(old.claim.datavalue, mwbase.String):
             counter += 1
     return counter
