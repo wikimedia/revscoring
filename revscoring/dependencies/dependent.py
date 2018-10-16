@@ -68,6 +68,12 @@ class Dependent:
     def __repr__(self):
         return "<" + self.__str__() + ">"
 
+    def __contains__(self, item):
+        return item == self
+
+    def __iter__(self):
+        return iter([self])
+
     @classmethod
     def load(cls, f):
         """
@@ -151,3 +157,43 @@ class DependentSet:
 
     def __or__(self, other):
         return self._dependents.union(*self._dependent_sets) | other
+
+
+class DependentList(List):
+    """
+    Represents a List of :class:`~revscoring.Dependent`.  This class behaves
+    like a :class:`list`.
+
+    :Parameters:
+        name : `str`
+            A base name for the items in the set
+    """
+
+    def __init__(self, name, _dependents=None, _dependent_sets=None):
+        self._name = name
+
+    # String methods
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return "{" + self._name + "}"
+
+    def __hash__(self):
+        return hash('dependent_list.' + self._name)
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return not self == other
+
+    # List methods
+    def __len__(self):
+        return sum(len(item) for item in self)
+
+    def __contains__(self, item):
+        for dependent in self:
+            if item in dependent:
+                return True
+        return False
