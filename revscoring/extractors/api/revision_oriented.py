@@ -66,6 +66,22 @@ class RevisionPage(DependentSet):
             self.creation = Revision(page.creation, extractor,
                                      page_creation_doc)
 
+        if hasattr(page, 'suggested'):
+            self.suggested = PageSuggested(page, extractor)
+
+
+class PageSuggested(DependentSet):
+
+    def __init__(self, page, extractor):
+        super().__init__(page.suggested._name)
+
+        if hasattr(page.suggested, "properties"):
+            property_suggestion_doc = \
+                extractor.get_property_suggestion_search_doc(page)
+            self.properties = Datasource(
+                page.suggested.properties.name, identity,
+                depends_on=[property_suggestion_doc])
+
 
 class Namespace(DependentSet):
     def __init__(self, namespace, extractor, rev_doc, namespace_title):
@@ -132,3 +148,7 @@ def first(pair):
 
 def second(pair):
     return pair[1]
+
+
+def identity(val):
+    return val

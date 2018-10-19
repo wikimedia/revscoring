@@ -48,6 +48,7 @@ class Revision(DependentSet):
                  include_user_last_revision=False,
                  include_page=True,
                  include_page_creation=False,
+                 include_page_suggested=False,
                  include_content=False):
         super().__init__(name)
 
@@ -74,7 +75,8 @@ class Revision(DependentSet):
                 include_parent=False,
                 include_user_info=False,
                 include_page=False,
-                include_content=include_content
+                include_content=include_content,
+                include_page_suggested=False
             )
             """
             :class:`~revscoring.datasources.revision_oriented.Revision` : The
@@ -84,7 +86,8 @@ class Revision(DependentSet):
         if include_page:
             self.page = Page(
                 name + ".page",
-                include_creation=include_page_creation
+                include_creation=include_page_creation,
+                include_suggested=include_page_suggested
             )
             """
             :class:`~revscoring.datasources.revision_oriented.Page` : The
@@ -137,7 +140,8 @@ class User(DependentSet):
                 name + ".last_revision",
                 include_parent=False,
                 include_user=False,
-                include_content=False
+                include_content=False,
+                include_page_suggested=False
             )
             """
             :class:`~revscoring.datasources.revision_oriented.Revision` : The
@@ -169,7 +173,7 @@ class Page(DependentSet):
     Represents a revision's page
     """
 
-    def __init__(self, name, include_creation=False):
+    def __init__(self, name, include_creation=False, include_suggested=False):
         super().__init__(name)
         self.id = Datasource(name + ".id")
         "`int` : The page's ID"
@@ -187,12 +191,31 @@ class Page(DependentSet):
                 include_parent=False,
                 include_page=False,
                 include_content=False,
-                include_user_last_revision=False
+                include_user_last_revision=False,
+                include_page_suggested=False
             )
             """
             :class:`~revscoring.datasources.revision_oriented.Revision` : The
             first revision to the page.
             """
+
+        if include_suggested:
+            self.suggested = Suggested(name + ".suggestions")
+            """
+            :class:`~revscoring.datasources.revision_oriented.Suggested" :
+            The set of suggestions for a page.
+            """
+
+
+class Suggested(DependentSet):
+    """
+    Represents a set of intelligent suggestions about the structure of a page.
+    """
+
+    def __init__(self, name):
+        super().__init__(name)
+        self.properties = Datasource(name + ".properties")
+        "`list` : The set of property suggestions for this page"
 
 
 class Namespace(DependentSet):
@@ -221,7 +244,8 @@ revision = Revision(
     "revision",
     include_page_creation=True,
     include_content=True,
-    include_user_last_revision=True
+    include_user_last_revision=True,
+    include_page_suggested=True
 )
 """
 Represents the base revision of interest.  Implements this structure:

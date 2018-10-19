@@ -1,5 +1,6 @@
 from ...datasources import Datasource
-from ...errors import PageNotFound, RevisionNotFound, UserNotFound
+from ...errors import (EntityNotFound, PageNotFound, RevisionNotFound,
+                       UserNotFound)
 from .util import REV_PROPS, USER_PROPS
 
 
@@ -49,6 +50,26 @@ class PageCreationRevDoc(Datasource):
             raise PageNotFound(self.page, page_id)
         else:
             return rev_doc
+
+
+class PropertySuggestionDoc(Datasource):
+
+    def __init__(self, page, extractor):
+        self.page = page
+        self.extractor = extractor
+        super().__init__(page.suggested.properties.name + ".doc", self.process,
+                         depends_on=[page.title, extractor.dependents])
+
+    def process(self, entity_id, dependents):
+
+        property_suggestion_doc = \
+            self.extractor.get_property_suggestion_doc(entity_id)
+
+        # If we didn't find a revision for page creation, this is bad.  Error.
+        if property_suggestion_doc is None:
+            raise EntityNotFound(self.page, entity_id)
+        else:
+            return property_suggestion_doc
 
 
 class UserInfoDoc(Datasource):
