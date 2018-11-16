@@ -1,11 +1,11 @@
 import pickle
 import traceback
 
-
-from ..dependencies import DependentSet
+from ..dependencies import Dependent, DependentSet
 from ..errors import (CaughtDependencyError, CommentDeleted, DependencyError,
                       DependencyLoop, MissingResource, PageNotFound,
-                      RevisionNotFound, TextDeleted, UserDeleted, UserNotFound)
+                      QueryNotSupported, RevisionNotFound, TextDeleted,
+                      UserDeleted, UserNotFound)
 
 
 def test_exceptions_picklability():
@@ -25,6 +25,18 @@ def test_exceptions_picklability():
     assert str(dl) == "DependencyLoop: FooBar"
 
     mr = MissingResource("FooBar")
+    pickle.loads(pickle.dumps(mr))
+    assert str(mr) == "MissingResource: FooBar"
+
+    qns = QueryNotSupported(
+        Dependent("revision.page.suggested.properties"),
+        "Unrecognized value for parameter \"action\": wbsgetsuggestions.")
+    pickle.loads(pickle.dumps(qns))
+    assert str(qns) == (
+        "QueryNotSupported: Query failed " +
+        "(dependent.revision.page.suggested.properties:Unrecognized value for " +
+        "parameter \"action\": wbsgetsuggestions.)")
+
     pickle.loads(pickle.dumps(mr))
     assert str(mr) == "MissingResource: FooBar"
 

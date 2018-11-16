@@ -7,7 +7,7 @@ from . import datasources
 from .. import Extractor as BaseExtractor
 from ...datasources import Datasource, revision_oriented
 from ...dependencies import expand
-from ...errors import RevisionNotFound, UserNotFound
+from ...errors import QueryNotSupported, RevisionNotFound, UserNotFound
 from .revision_oriented import Revision
 from .util import REV_PROPS, USER_PROPS
 
@@ -40,6 +40,9 @@ class Extractor(BaseExtractor):
 
     def get_last_user_rev_doc(self, user):
         return datasources.LastUserRevDoc(user, self)
+
+    def get_property_suggestion_search_doc(self, page):
+        return datasources.PropertySuggestionDoc(page, self)
 
     def extract(self, rev_ids, dependents, context=None, caches=None,
                 cache=None, profile=None):
@@ -306,6 +309,25 @@ class Extractor(BaseExtractor):
         else:
             # This is bad, but it should be handled by the calling funcion
             return None
+
+    def get_property_suggestion_doc(self, entity_id):
+        if entity_id is None:
+            return None
+
+        logger.debug("Requesting property suggestions for ({0}) from the API"
+                     .format(entity_id))
+        doc = self.session.get(
+            action='wbsgetsuggestions', entity=entity_id, include='all',
+            limit=50)
+
+        if 'error' in doc:
+            if doc['error']['code'] == "unknown_action":
+                raise QueryNotSupported(doc['error']['info'])
+            else:
+                # Any other error should be a missing entity
+                return None
+
+        return doc['search']
 
     @classmethod
     def from_config(cls, config, name, section_key="extractors"):

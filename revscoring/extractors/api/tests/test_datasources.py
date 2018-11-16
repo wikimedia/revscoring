@@ -3,8 +3,8 @@ import pickle
 import mwapi
 
 from ....datasources import revision_oriented as ro
-from ..datasources import (RevDocById, PageCreationRevDoc, UserInfoDoc,
-                           LastUserRevDoc)
+from ..datasources import (LastUserRevDoc, PageCreationRevDoc,
+                           PropertySuggestionDoc, RevDocById, UserInfoDoc)
 from ..extractor import Extractor
 
 
@@ -23,6 +23,15 @@ def test_page_creation_rev_doc():
     hash(page_creation_rev_doc)
     assert (pickle.loads(pickle.dumps(page_creation_rev_doc)) ==
             page_creation_rev_doc)
+
+
+def test_property_suggestion_doc():
+    extractor = Extractor(mwapi.Session("foobar"))
+    property_suggestion_doc = PropertySuggestionDoc(ro.revision.page, extractor)
+
+    hash(property_suggestion_doc)
+    assert (pickle.loads(pickle.dumps(property_suggestion_doc)) ==
+            property_suggestion_doc)
 
 
 def test_user_info_doc():

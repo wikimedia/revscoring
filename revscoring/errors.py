@@ -70,6 +70,12 @@ class MissingResource(DependencyError):
     pass
 
 
+class QueryNotSupported(DependencyError):
+    def __init__(self, datasources, info=None, arg=None):
+        super().__init__("Query failed ({0}:{1})"
+                         .format(datasources, info))
+
+
 class RevisionNotFound(MissingResource):
     def __init__(self, datasources, rev_id=None, arg=None):
         super().__init__("Could not find revision ({0}:{1})"
@@ -86,6 +92,12 @@ class PageNotFound(MissingResource):
     def __init__(self, datasources, page_id=None, arg=None):
         super().__init__("Could not find page ({0}:{1})"
                          .format(datasources, repr(page_id)))
+
+
+class EntityNotFound(MissingResource):
+    def __init__(self, datasources, entity_id=None, arg=None):
+        super().__init__("Could not find entity ({0}:{1})"
+                         .format(datasources, repr(entity_id)))
 
 
 class UserDeleted(MissingResource):
