@@ -11,6 +11,7 @@ These Meta-Features apply an aggregate function to
 .. autoclass revscoring.features.meta.aggregators.min
 """
 import statistics
+
 import numpy as np
 
 from ..feature import Feature
@@ -25,7 +26,8 @@ mean_builtin = statistics.mean
 
 class AggregatorsScalar(Feature):
     def __init__(self, items_datasource, func, name=None, returns=float):
-        name = self._format_name(name, [items_datasource])
+        name = self._format_name(
+            name, [items_datasource], func_name=func.__name__)
         super().__init__(name, self.process, depends_on=[items_datasource],
                          returns=returns)
         self.func = func
@@ -39,7 +41,8 @@ class AggregatorsScalar(Feature):
 
 class AggregatorsVector(FeatureVector):
     def __init__(self, items_datasource, func, name=None, returns=float):
-        name = self._format_name(name, [items_datasource])
+        name = self._format_name(
+            name, [items_datasource], func_name=func.__name__)
         super().__init__(name, self.process, depends_on=[items_datasource],
                          returns=returns)
         self.func = func

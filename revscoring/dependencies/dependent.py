@@ -39,10 +39,10 @@ class Dependent:
         self.dependencies = dependencies or depends_on or []
         self.calls = 0
 
-    def _format_name(self, name, args):
+    def _format_name(self, name, args, func_name=None):
         if name is None:
             name = "{0}({1})" \
-                   .format(self.__class__.__name__,
+                   .format(func_name or self.__class__.__name__,
                            ", ".join(repr(arg) for arg in args))
 
         return name

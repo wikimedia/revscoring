@@ -1,6 +1,5 @@
 import pickle
 
-
 from .. import aggregators
 from ....datasources import Datasource
 from ....dependencies import solve
@@ -15,6 +14,7 @@ def test_sum():
     assert solve(my_sum, cache=cache) == 0
     cache = {my_list: None}
     assert solve(my_sum, cache=cache) == 0
+    assert str(my_sum) == "feature.sum(<datasource.my_list>)"
 
     assert pickle.loads(pickle.dumps(my_sum)) == my_sum
 
@@ -29,6 +29,7 @@ def test_sum_vectors():
     assert solve(my_sum, cache=cache) == [0]
     cache = {my_list: [None]}
     assert solve(my_sum, cache=cache) == [0]
+    assert str(my_sum) == "feature_vector.sum(<datasource.my_list>)"
 
     assert pickle.loads(pickle.dumps(my_sum)) == my_sum
 
