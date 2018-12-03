@@ -3,7 +3,6 @@ from pytest import raises
 from ....features import Feature
 from ..sklearn import Classifier, ProbabilityClassifier
 
-
 cv_feature_values = [
     ([True], True),
     ([False], False),
@@ -91,6 +90,8 @@ def test_sklearn_probabilityclassifier():
     assert (stats['counts']['predictions'] ==
             {True: {False: 0, True: 5},
              False: {False: 5, True: 0}})
+    assert (skc.info['score_schema']['properties']['prediction']['type'] ==
+            "boolean")
 
 
 def test_sklearn_classifier_multilabel():
@@ -107,6 +108,8 @@ def test_sklearn_classifier_multilabel():
     assert expected_estimator_params == skc.estimator_params
     assert expected_counts == stats['counts']['predictions']
     assert skc.estimator_params == expected_estimator_params
+    assert (skc.info['score_schema']['properties']['prediction']['type'] ==
+            "array")
 
 
 def test_sklearn_probabilityclassifier_multilabel():
