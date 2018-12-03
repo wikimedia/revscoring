@@ -198,16 +198,27 @@ class Classifier(model.Classifier):
         return docs
 
     def build_schema(self):
+        if not self.multilabel:
+            prediction_type = {
+                'description': "The most likely label predicted by " +
+                               "the estimator",
+                'type': labels2json_type(self.labels)
+            }
+        else:
+            prediction_type = {
+                'description': "The most likely labels predicted by " +
+                               "the estimator",
+                'type': "array",
+                'items': {
+                    'type': labels2json_type(self.labels)
+                }
+            }
         return {
             'title': "Scikit learn-based classifier score with " +
                      "probability",
             'type': "object",
             'properties': {
-                'prediction': {
-                    'description': "The most likely label predicted by " +
-                                   "the estimator",
-                    'type': labels2json_type(self.labels)
-                }
+                'prediction': prediction_type
             }
         }
 
@@ -350,7 +361,7 @@ def label2json_type(val):
     elif isinstance(val, str):
         return 'string'
     elif isinstance(val, bool):
-        return 'bool'
+        return 'boolean'
     else:
         raise ValueError(
             "{0} of type {1} can't be interpereted as a JSON type.".format(
