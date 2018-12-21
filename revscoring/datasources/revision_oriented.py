@@ -55,7 +55,7 @@ class Revision(DependentSet):
         self.id = Datasource(name + ".id")
         "`int` : Revision ID"
         self.timestamp = Datasource(name + ".timestamp")
-        ":class:`mwtypes.Timestamp` : Timestamp the revision was saved"
+        "`str` : Timestamp the revision was saved in ISO format"
         self.comment = Datasource(name + ".comment")
         "`str` : The comment saved with the revision"
         self.byte_len = Datasource(name + ".byte_length")
@@ -159,9 +159,9 @@ class UserInfo(DependentSet):
         self.editcount = Datasource(name + ".editcount")
         "`int` : A count of edits the user has ever saved"
         self.registration = Datasource(name + ".registration")
-        ":class:`mwtypes.Timestamp` : The date the user registered"
+        "`str` : The date the user registered in ISO format"
         self.groups = Datasource(name + ".groups")
-        "`set` ( `str` ) : The groups the user is a member of"
+        "`list` ( `str` ) : The groups the user is a member of"
         self.emailable = Datasource(name + ".emailable")
         "`bool` : `True` if the users is emailable, `False` otherwise"
         self.gender = Datasource(name + ".gender")

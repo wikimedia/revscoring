@@ -1,15 +1,13 @@
 import logging
 from datetime import datetime
 
-import mwtypes
-
-from pytz import utc
+from mwtypes import Timestamp
 
 from ...datasources import revision_oriented
 from ...dependencies import DependentSet
 from ..feature import Feature
 
-MW_REGISTRATION_EPOCH = mwtypes.Timestamp("2006-01-01T00:00:00Z")
+MW_REGISTRATION_EPOCH = '2006-01-01T00:00:00Z'
 
 logger = logging.getLogger(__name__)
 
@@ -164,14 +162,15 @@ class PageCreation(DependentSet):
 def _process_day_of_week(timestamp):
     if timestamp is None:
         return 7  # The day after Sunday.
-    dt = datetime.fromtimestamp(timestamp.unix(), tz=utc)
+    # TODO: After release of python3.7 use fromisoformat instead
+    dt = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
     return dt.weekday()
 
 
 def _process_hour_of_day(timestamp):
     if timestamp is None:
         return 24  # The hour after midnight
-    dt = datetime.fromtimestamp(timestamp.unix(), tz=utc)
+    dt = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
     return dt.hour
 
 
@@ -179,7 +178,7 @@ def _process_seconds_since(old_timestamp, current_timestamp):
     if old_timestamp is None:
         return 0
     else:
-        return current_timestamp - old_timestamp
+        return Timestamp(current_timestamp) - Timestamp(old_timestamp)
 
 
 def _process_seconds_since_registration(id, registration, timestamp):
@@ -188,7 +187,8 @@ def _process_seconds_since_registration(id, registration, timestamp):
     else:
         # Handles users who registered before registration dates were
         # recorded
-        registration = registration or MW_REGISTRATION_EPOCH
+        registration = Timestamp(registration or MW_REGISTRATION_EPOCH)
+        timestamp = Timestamp(timestamp)
         if registration > timestamp:
             # Something is weird.  Probably an old user.
             logger.info("Timestamp chronology issue {0} < {1}"

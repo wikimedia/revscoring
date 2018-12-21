@@ -1,11 +1,9 @@
 import logging
 
-import mwtypes
-
 from ...datasources import Datasource
 from ...dependencies import DependentSet
 from ...errors import CommentDeleted, TextDeleted, UserDeleted
-from .util import key, key_exists, or_none
+from .util import key, key_exists
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +17,7 @@ class Revision(DependentSet):
         self.id = id_datasource or key('revid', rev_doc, name=revision.id.name)
 
         self.timestamp = key('timestamp', rev_doc,
-                             name=revision.timestamp.name,
-                             apply=mwtypes.Timestamp)
+                             name=revision.timestamp.name)
         self.comment = key('comment', rev_doc, name=revision.comment.name,
                            if_missing=(CommentDeleted, revision.comment))
         self.byte_len = key('byte_len', rev_doc,
@@ -118,10 +115,8 @@ class RevisionUserInfo(DependentSet):
         self.editcount = key('editcount', self.doc,
                              name=user.info.editcount.name)
         self.registration = key('registration', self.doc,
-                                name=user.info.registration.name,
-                                apply=or_none(mwtypes.Timestamp))
-        self.groups = key('groups', self.doc, name=user.info.groups.name,
-                          apply=set)
+                                name=user.info.registration.name)
+        self.groups = key('groups', self.doc, name=user.info.groups.name)
         self.emailable = key_exists('emailable', self.doc,
                                     name=user.info.emailable.name)
         self.gender = key('gender', self.doc, name=user.info.gender.name)

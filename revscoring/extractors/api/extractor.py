@@ -56,7 +56,7 @@ class Extractor(BaseExtractor):
             rev_ids : int | `iterable`
                 Either a single rev_id or an `iterable` of rev_ids
             dependents : :class:`~revscoring.dependents.dependent.Dependent`
-                A set of dependents to extract values for
+                A list of dependents to extract values for
             context : `dict` | `iterable`
                 A set of call-specific
                 :class:`~revscoring.Dependent` to inject
@@ -94,7 +94,7 @@ class Extractor(BaseExtractor):
 
     def _extract_many(self, rev_ids, dependents, context, caches, cache,
                       profile):
-        all_dependents = set(expand(dependents))
+        all_dependents = list(set(expand(dependents)))
 
         caches = caches if caches is not None else {}
         caches.update({rev_id: {} for rev_id in rev_ids
@@ -213,7 +213,7 @@ class Extractor(BaseExtractor):
                     yield e, None
 
     def _extract(self, rev_id, dependents, context, cache, profile):
-        all_dependents = set(expand(dependents))
+        all_dependents = list(set(expand(dependents)))
 
         cache.update({self.revision.id: rev_id,
                       self.dependents: all_dependents})
