@@ -32,9 +32,11 @@ Supporting classes
     :member-order: bysource
 
 """
+import mwtypes
+
 from ..dependencies import DependentSet
+from ..dependencies.util import or_none
 from .datasource import Datasource
-from .meta.timestamp import Timestamp
 
 
 class Revision(DependentSet):
@@ -57,7 +59,9 @@ class Revision(DependentSet):
         "`int` : Revision ID"
         self.timestamp_str = Datasource(name + ".timestamp_str")
         "`str` : Timestamp the revision was saved in ISO format"
-        self.timestamp = Timestamp(self.timestamp_str, name + ".timestamp")
+        self.timestamp = Datasource(
+            name + ".timestamp", or_none(mwtypes.Timestamp),
+            depends_on=[self.timestamp_str])
         ":class:`mwtypes.Timestamp`: Timestamp the revision was saved"
         self.comment = Datasource(name + ".comment")
         "`str` : The comment saved with the revision"
@@ -162,8 +166,10 @@ class UserInfo(DependentSet):
         self.editcount = Datasource(name + ".editcount")
         "`int` : A count of edits the user has ever saved"
         self.registration_str = Datasource(name + ".registration_str")
-        self.registration = Timestamp(self.registration_str, name + ".registration")
-        ":class:`mwtypes.Timestamp` : The date the user registered"
+        self.registration = Datasource(
+            name + ".registration", or_none(mwtypes.Timestamp),
+            depends_on=[self.registration_str])
+        ":class:`mwtypes.Timestamp` : The date the user registered or None"
         "`str` : The date the user registered in ISO format"
         self.groups = Datasource(name + ".groups")
         "`list` ( `str` ) : The groups the user is a member of"

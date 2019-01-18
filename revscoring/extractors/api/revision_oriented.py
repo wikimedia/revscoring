@@ -17,7 +17,7 @@ class Revision(DependentSet):
         self.id = id_datasource or key('revid', rev_doc, name=revision.id.name)
 
         self.timestamp_str = key('timestamp', rev_doc,
-                                 name=revision.timestamp.name)
+                                 name=revision.timestamp_str.name)
         self.comment = key('comment', rev_doc, name=revision.comment.name,
                            if_missing=(CommentDeleted, revision.comment))
         self.byte_len = key('byte_len', rev_doc,
@@ -114,8 +114,8 @@ class RevisionUserInfo(DependentSet):
         self.doc = extractor.get_user_info_doc(user)
         self.editcount = key('editcount', self.doc,
                              name=user.info.editcount.name)
-        self.registration = key('registration', self.doc,
-                                name=user.info.registration.name)
+        self.registration_str = key('registration', self.doc,
+                                    name=user.info.registration_str.name)
         self.groups = key('groups', self.doc, name=user.info.groups.name)
         self.emailable = key_exists('emailable', self.doc,
                                     name=user.info.emailable.name)

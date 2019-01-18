@@ -1,12 +1,14 @@
 import logging
 from datetime import datetime
 
+import mwtypes
 from pytz import utc
 
 from ...datasources import revision_oriented
 from ...dependencies import DependentSet
 from ..feature import Feature
 
+MW_REGISTRATION_EPOCH = mwtypes.Timestamp("2006-01-01T00:00:00Z")
 
 logger = logging.getLogger(__name__)
 
@@ -185,6 +187,8 @@ def _process_seconds_since_registration(id, registration, timestamp):
     else:
         # Handles users who registered before registration dates were
         # recorded
+        registration = registration or MW_REGISTRATION_EPOCH
+
         if registration > timestamp:
             # Something is weird.  Probably an old user.
             logger.info("Timestamp chronology issue {0} < {1}"

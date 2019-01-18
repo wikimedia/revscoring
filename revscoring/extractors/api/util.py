@@ -51,17 +51,6 @@ class key_exists(Datasource):
         return self.key in d
 
 
-class or_none:
-    def __init__(self, func):
-        self.func = func
-
-    def __call__(self, val):
-        if val is None:
-            return None
-        else:
-            return self.func(val)
-
-
 def _lookup_keys(keys, d):
     if isinstance(keys, str) or not hasattr(keys, "__iter__"):
         keys = [keys]

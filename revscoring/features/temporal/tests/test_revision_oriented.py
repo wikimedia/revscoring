@@ -4,10 +4,7 @@ from mwtypes import Timestamp
 
 from ....datasources import revision_oriented
 from ....dependencies import solve
-from ..revision_oriented import revision
-
-
-MW_REGISTRATION_EPOCH = Timestamp("2006-01-01T00:00:00Z")
+from ..revision_oriented import MW_REGISTRATION_EPOCH, revision
 
 
 def test_revision():
@@ -79,7 +76,7 @@ def test_user_registration():
     cache = {
         revision_oriented.revision.timestamp: Timestamp(10),
         revision_oriented.revision.user.id: 0,
-        revision_oriented.revision.user.info.registration: MW_REGISTRATION_EPOCH
+        revision_oriented.revision.user.info.registration: None
     }
     assert solve(revision.user.seconds_since_registration, cache=cache) == 0
 
@@ -87,7 +84,7 @@ def test_user_registration():
     cache = {
         revision_oriented.revision.timestamp: MW_REGISTRATION_EPOCH + 10,
         revision_oriented.revision.user.id: 10,
-        revision_oriented.revision.user.info.registration: MW_REGISTRATION_EPOCH
+        revision_oriented.revision.user.info.registration: None
     }
     assert solve(revision.user.seconds_since_registration, cache=cache) == 10
 
