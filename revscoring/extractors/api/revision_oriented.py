@@ -16,8 +16,8 @@ class Revision(DependentSet):
 
         self.id = id_datasource or key('revid', rev_doc, name=revision.id.name)
 
-        self.timestamp = key('timestamp', rev_doc,
-                             name=revision.timestamp.name)
+        self.timestamp_str = key('timestamp', rev_doc,
+                                 name=revision.timestamp.name)
         self.comment = key('comment', rev_doc, name=revision.comment.name,
                            if_missing=(CommentDeleted, revision.comment))
         self.byte_len = key('byte_len', rev_doc,

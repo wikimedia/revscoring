@@ -34,6 +34,7 @@ Supporting classes
 """
 from ..dependencies import DependentSet
 from .datasource import Datasource
+from .meta.timestamp import Timestamp
 
 
 class Revision(DependentSet):
@@ -54,8 +55,10 @@ class Revision(DependentSet):
 
         self.id = Datasource(name + ".id")
         "`int` : Revision ID"
-        self.timestamp = Datasource(name + ".timestamp")
+        self.timestamp_str = Datasource(name + ".timestamp_str")
         "`str` : Timestamp the revision was saved in ISO format"
+        self.timestamp = Timestamp(self.timestamp_str, name + ".timestamp")
+        ":class:`mwtypes.Timestamp`: Timestamp the revision was saved"
         self.comment = Datasource(name + ".comment")
         "`str` : The comment saved with the revision"
         self.byte_len = Datasource(name + ".byte_length")
@@ -158,7 +161,9 @@ class UserInfo(DependentSet):
         super().__init__(name)
         self.editcount = Datasource(name + ".editcount")
         "`int` : A count of edits the user has ever saved"
-        self.registration = Datasource(name + ".registration")
+        self.registration_str = Datasource(name + ".registration_str")
+        self.registration = Timestamp(self.registration_str, name + ".registration")
+        ":class:`mwtypes.Timestamp` : The date the user registered"
         "`str` : The date the user registered in ISO format"
         self.groups = Datasource(name + ".groups")
         "`list` ( `str` ) : The groups the user is a member of"

@@ -37,4 +37,8 @@ mappers
 selectors
 +++++++++
 .. automodule:: revscoring.datasources.meta.selectors
+
+timestamp
++++++++++
+.. automodule:: revscoring.datasources.meta.timestamp
 """
