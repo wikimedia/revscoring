@@ -1,12 +1,10 @@
 import base64
-import getpass
 import json
 import logging
 import os
 import pickle
 import random
 import signal
-import sys
 from collections import OrderedDict
 
 import yamlconf
@@ -19,13 +17,6 @@ DECODERS = {
     'str': lambda v: str(v),
     'bool': lambda v: v in ("True", "true", "1", "T", "y", "Y")
 }
-
-
-def get_user_pass(for_what):
-    sys.stderr.write("Log into " + for_what + "\n")
-    sys.stderr.write("Username: ")
-    sys.stderr.flush()
-    return open('/dev/tty').readline().strip(), getpass.getpass("Password: ")
 
 
 def read_observations(f):

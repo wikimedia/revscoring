@@ -48,13 +48,14 @@ from tqdm import tqdm
 
 import docopt
 import mwapi
+import mwapi.cli
 import yamlconf
 from tabulate import tabulate
 
 from ..dependencies import Dependent
 from ..errors import CommentDeleted, RevisionNotFound, TextDeleted, UserDeleted
 from ..extractors import api
-from .util import dump_observation, get_user_pass, read_observations
+from .util import dump_observation, read_observations
 
 logger = logging.getLogger(__name__)
 
@@ -78,8 +79,7 @@ def main(argv=None):
     session = mwapi.Session(args['--host'],
                             user_agent="Revscoring extract utility")
     if args['--login']:
-        username, password = get_user_pass(args['--host'])
-        session.login(username, password)
+        mwapi.cli.do_login(session, args['--host'])
     extractor = api.Extractor(session)
 
     if args['--input'] == "<stdin>":
