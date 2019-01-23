@@ -107,7 +107,7 @@ class Extractor(BaseExtractor):
         errored = {}
 
         # Build up caches for data that can be queried in batch
-        if self.revision & all_dependents:
+        if self.revision and all_dependents:
             rvprop = set(REV_PROPS)
             if self.revision.text in all_dependents:
                 rvprop.add('content')
@@ -136,7 +136,7 @@ class Extractor(BaseExtractor):
                                                        lookup_rev_id)
 
             # datasource.revision.parent.doc
-            if self.revision.parent & all_dependents:
+            if self.revision.parent and all_dependents:
                 parentids_to_lookup = []
                 for rev_id, rev_cache in caches.items():
                     if self.revision.doc in rev_cache and \
@@ -170,7 +170,7 @@ class Extractor(BaseExtractor):
                                 RevisionNotFound(self.revision.parent,
                                                  parent_id)
 
-            if self.revision.user.info & all_dependents:
+            if self.revision.user.info and all_dependents:
                 user_texts_to_lookup = set()
                 for rev_id, rev_cache in caches.items():
                     if self.revision.doc in rev_cache and \
