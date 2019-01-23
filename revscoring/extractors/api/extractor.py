@@ -228,7 +228,7 @@ class Extractor(BaseExtractor):
 
         logger.debug("Building a map of {0} revisions: {1}"
                      .format(len(rev_ids), rev_ids))
-        rev_docs = self.query_revisions_by_revids(rev_ids, rvprop=rvprop)
+        rev_docs = self.query_revisions_by_revids(rev_ids, rvprop=rvprop, drvprop=rvprop)
 
         return {rd['revid']: rd for rd in rev_docs}
 
@@ -239,8 +239,8 @@ class Extractor(BaseExtractor):
             if len(batch_ids) == 0:
                 break
             else:
-                doc = self.session.get(action='query', prop='revisions',
-                                       revids=batch_ids, rvslots='main',
+                doc = self.session.get(action='query', prop='revisions|deletedrevisions',
+                                       revids=batch_ids, rvslots='main', drvslots='main',
                                        **params)
 
                 for page_doc in doc['query'].get('pages', {}).values():
@@ -342,5 +342,9 @@ def _normalize_revisions(page_doc):
                  if k != 'revisions'}
     if 'revisions' in page_doc:
         for revision_doc in page_doc['revisions']:
+            revision_doc['page'] = page_meta
+            yield revision_doc
+    if 'deletedrevisions' in page_doc:
+        for revision_doc in page_doc['deletedrevisions']:
             revision_doc['page'] = page_meta
             yield revision_doc
