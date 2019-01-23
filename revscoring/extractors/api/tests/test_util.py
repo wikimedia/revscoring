@@ -4,7 +4,8 @@ from pytest import raises
 
 from ....datasources import Datasource
 from ....dependencies import solve
-from ..util import _lookup_keys, key, key_exists, or_none
+from ....dependencies.util import or_none
+from ..util import _lookup_keys, key, key_exists
 
 
 def test_lookup_keys():

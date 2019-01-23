@@ -32,7 +32,10 @@ Supporting classes
     :member-order: bysource
 
 """
+import mwtypes
+
 from ..dependencies import DependentSet
+from ..dependencies.util import or_none
 from .datasource import Datasource
 
 
@@ -54,8 +57,12 @@ class Revision(DependentSet):
 
         self.id = Datasource(name + ".id")
         "`int` : Revision ID"
-        self.timestamp = Datasource(name + ".timestamp")
-        ":class:`mwtypes.Timestamp` : Timestamp the revision was saved"
+        self.timestamp_str = Datasource(name + ".timestamp_str")
+        "`str` : Timestamp the revision was saved in ISO format"
+        self.timestamp = Datasource(
+            name + ".timestamp", or_none(mwtypes.Timestamp),
+            depends_on=[self.timestamp_str])
+        ":class:`mwtypes.Timestamp`: Timestamp the revision was saved"
         self.comment = Datasource(name + ".comment")
         "`str` : The comment saved with the revision"
         self.byte_len = Datasource(name + ".byte_length")
@@ -158,10 +165,14 @@ class UserInfo(DependentSet):
         super().__init__(name)
         self.editcount = Datasource(name + ".editcount")
         "`int` : A count of edits the user has ever saved"
-        self.registration = Datasource(name + ".registration")
-        ":class:`mwtypes.Timestamp` : The date the user registered"
+        self.registration_str = Datasource(name + ".registration_str")
+        self.registration = Datasource(
+            name + ".registration", or_none(mwtypes.Timestamp),
+            depends_on=[self.registration_str])
+        ":class:`mwtypes.Timestamp` : The date the user registered or None"
+        "`str` : The date the user registered in ISO format"
         self.groups = Datasource(name + ".groups")
-        "`set` ( `str` ) : The groups the user is a member of"
+        "`list` ( `str` ) : The groups the user is a member of"
         self.emailable = Datasource(name + ".emailable")
         "`bool` : `True` if the users is emailable, `False` otherwise"
         self.gender = Datasource(name + ".gender")
