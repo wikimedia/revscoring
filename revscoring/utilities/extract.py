@@ -14,6 +14,7 @@
                                             [--output=<path>]
                                             [--extractors=<num>]
                                             [--batch-size=<num>]
+                                            [--roots-only]
                                             [--login]
                                             [--profile=<path>]
                                             [--verbose] [--debug]
@@ -32,6 +33,8 @@
                                 [default: <cpu count>]
         --batch-size=<num>      The number of rev_ids to batch together per
                                 request to the API [default: 50]
+        --roots-only            If set, we'll extract the root datasources
+                                which are required to build the listed <dependent> features.
         --login                 If set, prompt for username and password
         --profile=<path>        Path to a file to write extraction profiling
                                 output
@@ -52,7 +55,7 @@ import mwapi.cli
 import yamlconf
 from tabulate import tabulate
 
-from ..dependencies import Dependent
+from ..dependencies import Dependent, dig
 from ..errors import CommentDeleted, RevisionNotFound, TextDeleted, UserDeleted
 from ..extractors import api
 from .util import dump_observation, read_observations
@@ -75,6 +78,9 @@ def main(argv=None):
             dependents.append(dependent_or_list)
         else:
             dependents.extend(dependent_or_list)
+
+    if args['--roots-only']:
+        dependents = dig(dependents)
 
     session = mwapi.Session(args['--host'],
                             user_agent="Revscoring extract utility")
