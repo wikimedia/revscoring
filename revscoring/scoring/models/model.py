@@ -13,7 +13,7 @@ import pickle
 from multiprocessing import Pool, cpu_count
 
 import yamlconf
-from sklearn.cross_validation import KFold
+from sklearn.model_selection import KFold
 from sklearn.preprocessing import RobustScaler
 
 from ..environment import Environment
