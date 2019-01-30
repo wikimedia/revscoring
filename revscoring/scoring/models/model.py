@@ -220,7 +220,7 @@ class Learned(Model):
                 When set to 2 or greater, a :class:`multiprocessing.Pool` will
                 be created.
         """
-        folds_i = KFold(len(values_labels), n_folds=folds, shuffle=True,
+        folds_i = KFold(n_splits=folds, shuffle=True,
                         random_state=0)
         if processes == 1:
             mapper = map
