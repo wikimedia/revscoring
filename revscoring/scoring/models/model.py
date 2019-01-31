@@ -230,7 +230,8 @@ class Learned(Model):
         results = mapper(self._cross_score,
                          ((i, [values_labels[i] for i in train_i],
                            [values_labels[i] for i in test_i])
-                          for i, (train_i, test_i) in enumerate(folds_i)))
+                          for i, (train_i, test_i) in enumerate(
+                              folds_i.split(values_labels))))
         agg_score_labels = []
         for score_labels in results:
             agg_score_labels.extend(score_labels)
