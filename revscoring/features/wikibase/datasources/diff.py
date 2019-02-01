@@ -68,19 +68,28 @@ class Diff(DependentSet):
             depends_on=[self.properties_diff, self.parent_entity,
                         self.revision_entity]
         )
-        self.claims_added = self.statements_added  # Backwards compatible
+        self.claims_added = Datasource(  # Backwards compatible
+            name + ".claims_added", _identity,
+            depends_on=[self.statements_added]
+        )
         self.statements_removed = Datasource(
             name + ".statements_removed", _process_statements_removed,
             depends_on=[self.properties_diff, self.parent_entity,
                         self.revision_entity]
         )
-        self.claims_removed = self.statements_removed  # Backwards compatible
+        self.claims_removed = Datasource(  # Backwards compatible
+            name + ".claims_removed", _identity,
+            depends_on=[self.statements_removed]
+        )
         self.statements_changed = Datasource(
             name + ".statements_changed", _process_statements_changed,
             depends_on=[self.properties_diff, self.parent_entity,
                         self.revision_entity]
         )
-        self.claims_changed = self.statements_changed  # Backwards compatible
+        self.claims_changed = Datasource(  # Backwards compatible
+            name + ".claims_changed", _identity,
+            depends_on=[self.statements_changed]
+        )
         self.sources_added = Datasource(
             name + ".sources_added", _process_sources_added,
             depends_on=[self.claims_changed]
@@ -228,3 +237,7 @@ def _process_qualifiers_removed(statements_changed):
                 if qualifier.hash not in current_guids:
                     qualifiers_removed.append(qualifier)
     return qualifiers_removed
+
+
+def _identity(value):
+    return value
