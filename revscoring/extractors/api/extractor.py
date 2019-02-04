@@ -94,7 +94,7 @@ class Extractor(BaseExtractor):
 
     def _extract_many(self, rev_ids, dependents, context, caches, cache,
                       profile):
-        all_dependents = list(set(expand(dependents)))
+        all_dependents = set(expand(dependents))
 
         caches = caches if caches is not None else {}
         caches.update({rev_id: {} for rev_id in rev_ids
@@ -213,10 +213,10 @@ class Extractor(BaseExtractor):
                     yield e, None
 
     def _extract(self, rev_id, dependents, context, cache, profile):
-        all_dependents = list(set(expand(dependents)))
+        all_dependents = set(expand(dependents))
 
         cache.update({self.revision.id: rev_id,
-                      self.dependents: all_dependents})
+                      self.dependents: list(all_dependents)})
         return self.solve(dependents, context=context, cache=cache,
                           profile=profile)
 
