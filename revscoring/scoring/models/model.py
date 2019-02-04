@@ -13,7 +13,7 @@ import pickle
 from multiprocessing import Pool, cpu_count
 
 import yamlconf
-from sklearn.cross_validation import KFold
+from sklearn.model_selection import KFold
 from sklearn.preprocessing import RobustScaler
 
 from ..environment import Environment
@@ -220,7 +220,7 @@ class Learned(Model):
                 When set to 2 or greater, a :class:`multiprocessing.Pool` will
                 be created.
         """
-        folds_i = KFold(len(values_labels), n_folds=folds, shuffle=True,
+        folds_i = KFold(n_splits=folds, shuffle=True,
                         random_state=0)
         if processes == 1:
             mapper = map
@@ -230,7 +230,8 @@ class Learned(Model):
         results = mapper(self._cross_score,
                          ((i, [values_labels[i] for i in train_i],
                            [values_labels[i] for i in test_i])
-                          for i, (train_i, test_i) in enumerate(folds_i)))
+                          for i, (train_i, test_i) in enumerate(
+                              folds_i.split(values_labels))))
         agg_score_labels = []
         for score_labels in results:
             agg_score_labels.extend(score_labels)
