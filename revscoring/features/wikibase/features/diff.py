@@ -68,15 +68,21 @@ class Diff(DependentSet):
         self.statements_added = \
             aggregators.len(self.datasources.statements_added)
         "`int` : The number of statements/claims added"
-        self.claims_added = self.statements_added  # Backwards compatible
+        self.claims_added = \
+            aggregators.len(self.datasources.claims_added)  # Backwards compatible
+        "`int` : The number of statements/claims added"
         self.statements_removed = \
             aggregators.len(self.datasources.statements_removed)
         "`int` : The number of statements/claims removed"
-        self.claims_removed = self.statements_removed  # Backwards compatible
+        self.claims_removed = \
+            aggregators.len(self.datasources.claims_removed)  # Backwards compatible
+        "`int` : The number of statements/claims removed"
         self.statements_changed = \
             aggregators.len(self.datasources.statements_changed)
         "`int` : The number of statements/claims changed"
-        self.claims_changed = self.statements_changed  # Backwards compatible
+        self.claims_changed = \
+            aggregators.len(self.datasources.claims_changed)  # Backwards compatible
+        "`int` : The number of statements/claims changed"
 
         # Sources
         self.sources_added = aggregators.len(self.datasources.sources_added)
