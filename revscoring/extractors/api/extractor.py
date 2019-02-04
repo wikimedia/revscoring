@@ -216,7 +216,7 @@ class Extractor(BaseExtractor):
         all_dependents = set(expand(dependents))
 
         cache.update({self.revision.id: rev_id,
-                      self.dependents: list(all_dependents)})
+                      self.dependents: [str(i) for i in all_dependents]})
         return self.solve(dependents, context=context, cache=cache,
                           profile=profile)
 
