@@ -3,8 +3,6 @@ dist: trusty
 group: stable
 language: python
 python:
-  # Track Python version on current production machines, Debian Jessie.
-  - 3.4
   # Track Python version on future production machines, Debian Stretch.
   - 3.5
 sudo: required
