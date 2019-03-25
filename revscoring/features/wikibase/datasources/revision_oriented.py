@@ -2,8 +2,8 @@ import json
 
 import mwbase
 
-from ....datasources import Datasource
-from ....dependencies import DependentSet
+from revscoring.datasources import Datasource
+from revscoring.dependencies import DependentSet
 from .diff import Diff
 
 

@@ -3,8 +3,8 @@ import re
 from deltas import wikitext_split
 from deltas.segmenters import ParagraphsSentencesAndWhitespace
 
-from ....datasources import Datasource
-from ....datasources.meta import filters, frequencies, mappers
+from revscoring.datasources import Datasource
+from revscoring.datasources.meta import filters, frequencies, mappers
 
 
 class Revision:

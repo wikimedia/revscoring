@@ -1,5 +1,5 @@
 from . import datasources
-from ...datasources import revision_oriented
+from revscoring.datasources import revision_oriented
 from .features import Revision
 
 name = "wikitext.revision"

@@ -1,5 +1,5 @@
 from . import edit, parsed, sentences, tokenized
-from ....dependencies import DependentSet
+from revscoring.dependencies import DependentSet
 
 
 class BaseRevision(DependentSet):

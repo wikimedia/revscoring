@@ -1,6 +1,6 @@
 from itertools import groupby
 
-from ....datasources.meta import mappers
+from revscoring.datasources.meta import mappers
 from ...feature import Feature
 from ...meta import aggregators
 

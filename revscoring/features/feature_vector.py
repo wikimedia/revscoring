@@ -1,4 +1,4 @@
-from . import Feature
+from revscoring.features import Feature
 
 
 class FeatureVector(Feature):

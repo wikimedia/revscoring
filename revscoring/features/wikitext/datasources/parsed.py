@@ -2,8 +2,8 @@ import re
 
 import mwparserfromhell
 
-from ....datasources import Datasource
-from ....datasources.meta import filters, mappers
+from revscoring.datasources import Datasource
+from revscoring.datasources.meta import filters, mappers
 
 
 class Revision:

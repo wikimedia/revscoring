@@ -3,8 +3,8 @@
     :members:
     :member-order: bysource
 """
-from ....datasources import Datasource
-from ....dependencies import DependentSet
+from revscoring.datasources import Datasource
+from revscoring.dependencies import DependentSet
 from ..util import diff_dicts
 
 

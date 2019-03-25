@@ -1,7 +1,7 @@
 from deltas.segmenters import MatchableSegment
 
-from ....datasources import Datasource
-from ....datasources.meta import indexable
+from revscoring.datasources import Datasource
+from revscoring.datasources.meta import indexable
 
 
 class Revision:

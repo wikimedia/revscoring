@@ -2,7 +2,7 @@ import re
 
 import mwbase
 
-from ....dependencies import DependentSet
+from revscoring.dependencies import DependentSet
 from ...feature import Feature
 from ...meta import aggregators, bools
 
