@@ -1,5 +1,5 @@
 os: linux
-dist: trusty
+dist: xenial
 group: stable
 language: python
 python:
