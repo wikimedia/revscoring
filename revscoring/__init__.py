@@ -52,7 +52,7 @@ efficiency concerns. See :mod:`revscoring.features`,
 
 Example:
 
-    >>> from mwapi import Session
+    >>>     >>> from mwapi import Session
     >>> from revscoring.extractors import api
     >>> from revscoring.features import temporal, wikitext
     >>>

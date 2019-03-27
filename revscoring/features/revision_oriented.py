@@ -19,8 +19,8 @@ A revision-oriented nesting of basic features.
 
 import re
 
-from ..datasources import revision_oriented
-from ..dependencies import DependentSet
+from revscoring.datasources import revision_oriented
+from revscoring.dependencies import DependentSet
 from .feature import Feature
 from .meta import bools
 

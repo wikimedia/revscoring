@@ -1,4 +1,4 @@
-from ....datasources.meta import dicts, filters, mappers
+from revscoring.datasources.meta import dicts, filters, mappers
 from ...meta import aggregators
 
 

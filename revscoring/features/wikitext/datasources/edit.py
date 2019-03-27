@@ -4,8 +4,8 @@ import time
 
 from deltas import segment_matcher
 
-from ....datasources import Datasource
-from ....datasources.meta import filters
+from revscoring.datasources import Datasource
+from revscoring.datasources.meta import filters
 from .tokenized import TokenIsInTypes, is_uppercase_word
 
 logger = logging.getLogger(__name__)

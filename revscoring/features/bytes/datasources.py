@@ -1,4 +1,4 @@
-from ...datasources import Datasource
+from revscoring.datasources import Datasource
 
 
 class Revision:

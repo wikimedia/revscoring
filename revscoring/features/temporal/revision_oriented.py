@@ -4,8 +4,8 @@ from datetime import datetime
 import mwtypes
 from pytz import utc
 
-from ...datasources import revision_oriented
-from ...dependencies import DependentSet
+from revscoring.datasources import revision_oriented
+from revscoring.dependencies import DependentSet
 from ..feature import Feature
 
 MW_REGISTRATION_EPOCH = mwtypes.Timestamp("2006-01-01T00:00:00Z")

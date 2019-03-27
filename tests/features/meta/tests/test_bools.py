@@ -1,0 +1,68 @@
+import pickle
+import re
+
+
+from revscoring.features.meta import bools
+from revscoring.datasources import Datasource
+from revscoring.dependencies import solve
+
+my_item = Datasource("my_item")
+
+my_set = Datasource("my_set")
+
+my_string = Datasource("my_string")
+
+
+def test_regex_match():
+    starts_with_t = bools.regex_match(r"^t", my_string)
+
+    assert (solve(starts_with_t, cache={my_string: "Foo"}) is
+            False)
+    assert (solve(starts_with_t, cache={my_string: "too"}) is
+            True)
+    assert (solve(starts_with_t, cache={my_string: "Too"}) is
+            True)
+
+    assert pickle.loads(pickle.dumps(starts_with_t)) == starts_with_t
+
+    starts_with_lower_t = bools.regex_match(re.compile(r"^t"), my_string)
+
+    assert (solve(starts_with_lower_t, cache={my_string: "Foo"}) is
+            False)
+    assert (solve(starts_with_lower_t, cache={my_string: "too"}) is
+            True)
+    assert (solve(starts_with_lower_t, cache={my_string: "Too"}) is
+            False)
+
+    assert pickle.loads(pickle.dumps(starts_with_lower_t)
+                        ) == starts_with_lower_t
+
+
+def test_item_in_set():
+    is_a_sysop = bools.item_in_set('sysop', my_set)
+
+    assert solve(is_a_sysop, cache={my_set: {'foo', 'bar'}}) is False
+    assert solve(is_a_sysop, cache={my_set: {'foo', 'sysop'}}) is True
+    assert solve(is_a_sysop, cache={my_set: None}) is False
+
+    assert pickle.loads(pickle.dumps(is_a_sysop)) == is_a_sysop
+
+
+def test_set_contains_item():
+    is_me = bools.set_contains_item({6877667}, my_item)
+
+    assert solve(is_me, cache={my_item: 999}) is False
+    assert solve(is_me, cache={my_item: 6877667}) is True
+    assert solve(is_me, cache={my_item: None}) is False
+
+    assert pickle.loads(pickle.dumps(is_me)) == is_me
+
+
+def test_sets_intersect():
+    has_small_odd = bools.sets_intersect({1, 2, 3, 5, 7, 9, 11, 13}, my_set)
+
+    assert solve(has_small_odd, cache={my_set: {4, 18, 10}}) is False
+    assert solve(has_small_odd, cache={my_set: {20, 10, 3, 5, 1}}) is True
+    assert solve(has_small_odd, cache={my_set: None}) is False
+
+    assert pickle.loads(pickle.dumps(has_small_odd)) == has_small_odd

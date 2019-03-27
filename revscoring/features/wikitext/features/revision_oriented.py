@@ -1,5 +1,5 @@
 from . import chars, edit_tokens, parsed, tokenized
-from ....dependencies import DependentSet
+from revscoring.dependencies import DependentSet
 
 prefix = "wikitext.revision"
 

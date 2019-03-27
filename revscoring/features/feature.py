@@ -10,7 +10,7 @@
 """
 from math import log as math_log
 
-from ..dependencies import Dependent
+from revscoring.dependencies import Dependent
 
 # Sets up refences to overloaded function names
 math_max = max

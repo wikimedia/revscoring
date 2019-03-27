@@ -1,5 +1,5 @@
 from . import datasources, features
-from ...datasources import revision_oriented
+from revscoring.datasources import revision_oriented
 
 name = "wikibase.revision"
 
