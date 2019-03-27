@@ -1,6 +1,6 @@
 from mwapi import Session
 from revscoring.extractors import api
-from revscoring.features import wikitext, temporal
+from revscoring.features import temporal, wikitext
 
 session = Session("https://en.wikipedia.org/w/api.php", user_agent="test")
 api_extractor = api.Extractor(session)
