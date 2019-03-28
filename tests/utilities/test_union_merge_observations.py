@@ -2,7 +2,8 @@ import json
 import os.path
 import tempfile
 
-from revscoring.utilities.union_merge_observations import main, union_merge_observations
+from revscoring.utilities.union_merge_observations import (
+    main, union_merge_observations)
 
 
 def test_union_merge():

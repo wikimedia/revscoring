@@ -1,10 +1,9 @@
 import pickle
 import re
 
-
+from revscoring.datasources.datasource import Datasource
 from revscoring.datasources.meta import filters
 from revscoring.dependencies import solve
-from revscoring.datasources.datasource import Datasource
 
 tokens = Datasource("tokens")
 

@@ -21,6 +21,7 @@ import re
 
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import DependentSet
+
 from .feature import Feature
 from .meta import bools
 

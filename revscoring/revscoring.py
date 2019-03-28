@@ -22,7 +22,6 @@ import sys
 import traceback
 from importlib import import_module
 
-
 USAGE = """Usage:
     revscoring (-h | --help)
     revscoring <utility> [-h|--help]\n"""

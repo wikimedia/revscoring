@@ -16,8 +16,8 @@ Supporting classes
     :member-order: bysource
 
 """
+from .features import Diff, Revision
 from .revision_oriented import revision
-from .features import Revision, Diff
-from .util import diff_dicts, DictDiff
+from .util import DictDiff, diff_dicts
 
 __all__ = [diff_dicts, DictDiff, revision, Revision, Diff]

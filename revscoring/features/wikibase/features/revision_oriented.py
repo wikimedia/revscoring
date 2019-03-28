@@ -1,4 +1,5 @@
 from revscoring.dependencies import DependentSet
+
 from ...feature import Feature
 from ...meta import aggregators, bools
 from .diff import Diff

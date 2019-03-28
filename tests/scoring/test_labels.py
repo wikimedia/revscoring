@@ -1,4 +1,4 @@
-from revscoring.scoring.labels import ClassVerifier, Binarizer
+from revscoring.scoring.labels import Binarizer, ClassVerifier
 
 
 def test_class_verifier():

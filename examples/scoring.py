@@ -1,4 +1,5 @@
 import mwapi
+
 from revscoring import ScorerModel
 from revscoring.extractors import api
 

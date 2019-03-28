@@ -37,11 +37,11 @@ that produce factors (aka levels) as an ouput.  E.g. True and False or
 """  # noqa
 from .classification import Classification
 from .counts import Counts
-from .rates import Rates
 from .micro_macro_stats import MicroMacroStats
+from .rates import Rates
+from .scaled_classification_matrix import ScaledClassificationMatrix
 from .scaled_prediction_statistics import ScaledPredictionStatistics
 from .scaled_threshold_statistics import ScaledThresholdStatistics
-from .scaled_classification_matrix import ScaledClassificationMatrix
 from .threshold_optimization import ThresholdOptimization
 
 __all__ = [Classification, Counts, Rates, MicroMacroStats,

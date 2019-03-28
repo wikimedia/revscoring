@@ -1,6 +1,5 @@
 import pickle
 
-
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
 from revscoring.features.bytes.revision_oriented import revision

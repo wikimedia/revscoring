@@ -2,14 +2,16 @@ import pickle
 
 from pytest import mark
 
+from revscoring.datasources import revision_oriented
+from revscoring.dependencies import solve
+
+from .util import compare_extraction
+
 try:
     from revscoring.languages import hindi
 except ImportError:
     # Can't install the enchant dictionary, skip
     pytestmark = mark.nottravis
-from revscoring.datasources import revision_oriented
-from revscoring.dependencies import solve
-from .util import compare_extraction
 
 # Word list provided by
 BAD = [

@@ -1,8 +1,9 @@
 from pytest import raises
 
-from revscoring.errors import DependencyError, DependencyLoop
 from revscoring.dependencies.dependent import Dependent
-from revscoring.dependencies.functions import dig, draw, expand, normalize_context, solve
+from revscoring.dependencies.functions import (dig, draw, expand,
+                                               normalize_context, solve)
+from revscoring.errors import DependencyError, DependencyLoop
 
 
 def test_solve():

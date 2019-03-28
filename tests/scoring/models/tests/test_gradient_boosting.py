@@ -1,5 +1,6 @@
 from revscoring.scoring.models.gradient_boosting import GradientBoosting
 from revscoring.scoring.models.model import Model
+
 from .util import (FEATURES, format_info, pickle_and_unpickle, train_test,
                    train_test_multilabel)
 

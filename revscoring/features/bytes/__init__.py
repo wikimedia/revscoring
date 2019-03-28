@@ -11,6 +11,6 @@ Supporting classes
     :members:
 
 """
-from .revision_oriented import revision, Revision
+from .revision_oriented import Revision, revision
 
 __all__ = [revision, Revision]

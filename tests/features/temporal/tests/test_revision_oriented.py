@@ -4,7 +4,8 @@ from mwtypes import Timestamp
 
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
-from revscoring.features.temporal.revision_oriented import MW_REGISTRATION_EPOCH, revision
+from revscoring.features.temporal.revision_oriented import (
+    MW_REGISTRATION_EPOCH, revision)
 
 
 def test_revision():

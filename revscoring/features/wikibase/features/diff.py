@@ -3,6 +3,7 @@ import re
 import mwbase
 
 from revscoring.dependencies import DependentSet
+
 from ...feature import Feature
 from ...meta import aggregators, bools
 

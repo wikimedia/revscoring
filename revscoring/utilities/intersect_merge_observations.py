@@ -22,9 +22,8 @@
 
 import sys
 
-import docopt
-
 import deep_merge
+import docopt
 
 from .util import dump_observation, read_observations
 

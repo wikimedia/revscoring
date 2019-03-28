@@ -1,7 +1,8 @@
 import json
 import pickle
 
-from revscoring.scoring.statistics.classification.counts import MultilabelCounts
+from revscoring.scoring.statistics.classification.counts import \
+    MultilabelCounts
 
 
 def test_counts():

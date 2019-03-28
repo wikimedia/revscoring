@@ -1,4 +1,5 @@
-from revscoring.utilities.intersect_merge_observations import intersect_merge_observations
+from revscoring.utilities.intersect_merge_observations import \
+    intersect_merge_observations
 
 
 def test_intersect_merge():

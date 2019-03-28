@@ -1,9 +1,8 @@
 import pickle
 
-
+from revscoring.datasources.datasource import Datasource
 from revscoring.datasources.meta import frequencies
 from revscoring.dependencies import solve
-from revscoring.datasources.datasource import Datasource
 
 old_tokens = Datasource("old_tokens")
 new_tokens = Datasource("new_tokens")

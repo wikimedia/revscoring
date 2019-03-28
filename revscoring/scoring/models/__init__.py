@@ -35,12 +35,12 @@ SciKit Learn-based models
 .. automodule:: revscoring.scoring.models.sklearn
 
 """
-from .model import Learned, Classifier, open_file
-from .svc import SVC, LinearSVC, RBFSVC
 from .gradient_boosting import GradientBoosting
 from .linear import LogisticRegression
-from .naive_bayes import NaiveBayes, GaussianNB, MultinomialNB, BernoulliNB
+from .model import Classifier, Learned, open_file
+from .naive_bayes import BernoulliNB, GaussianNB, MultinomialNB, NaiveBayes
 from .random_forest import RandomForest
+from .svc import RBFSVC, SVC, LinearSVC
 
 __all__ = [
     Learned, Classifier, open_file,

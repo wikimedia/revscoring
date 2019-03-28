@@ -1,5 +1,6 @@
 
-from revscoring.scoring.statistics.classification.threshold_optimization import ThresholdOptimization
+from revscoring.scoring.statistics.classification.threshold_optimization import \
+    ThresholdOptimization
 
 
 def test_threshold_optimization():

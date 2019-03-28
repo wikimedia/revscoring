@@ -1,7 +1,6 @@
 import json
 import pickle
 
-
 from revscoring.scoring.statistics.classification.counts import Counts
 
 

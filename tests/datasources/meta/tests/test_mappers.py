@@ -1,9 +1,8 @@
 import pickle
 
-
+from revscoring.datasources.datasource import Datasource
 from revscoring.datasources.meta import mappers
 from revscoring.dependencies import solve
-from revscoring.datasources.datasource import Datasource
 
 tokens = Datasource("tokens")
 my_ints = Datasource("my_ints")

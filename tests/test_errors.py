@@ -2,10 +2,11 @@ import pickle
 import traceback
 
 from revscoring.dependencies import Dependent, DependentSet
-from revscoring.errors import (CaughtDependencyError, CommentDeleted, DependencyError,
-                               DependencyLoop, MissingResource, PageNotFound,
-                               QueryNotSupported, RevisionNotFound, TextDeleted,
-                               UserDeleted, UserNotFound)
+from revscoring.errors import (CaughtDependencyError, CommentDeleted,
+                               DependencyError, DependencyLoop,
+                               MissingResource, PageNotFound,
+                               QueryNotSupported, RevisionNotFound,
+                               TextDeleted, UserDeleted, UserNotFound)
 
 
 def test_exceptions_picklability():

@@ -16,7 +16,7 @@ Supporting classes
     :members:
     :member-order: bysource
 """
+from .features import Diff, Revision
 from .stemmed import Stemmed
-from .features import Revision, Diff
 
 __all__ = [Stemmed, Revision, Diff]

@@ -1,9 +1,8 @@
 import pickle
 
-
+from revscoring.datasources.datasource import Datasource
 from revscoring.datasources.meta import hashing
 from revscoring.dependencies import solve
-from revscoring.datasources.datasource import Datasource
 
 my_tokens = Datasource("my_tokens")
 my_hashes = hashing.hash(my_tokens, n=10)

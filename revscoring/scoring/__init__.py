@@ -17,9 +17,9 @@ for more information.
 .. autoclass:: revscoring.scoring.ModelInfo
     :members:
 """
-from .models.model import Model
-from .model_info import ModelInfo
-from .statistics.statistics import Statistics
 from .environment import Environment
+from .model_info import ModelInfo
+from .models.model import Model
+from .statistics.statistics import Statistics
 
 __all__ = [Model, ModelInfo, Statistics, Environment]

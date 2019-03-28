@@ -1,9 +1,8 @@
 import pickle
 
-
-from revscoring.features.meta import vectorizers
 from revscoring.datasources import Datasource
 from revscoring.dependencies import solve
+from revscoring.features.meta import vectorizers
 
 my_dict = Datasource("my_dict")
 

@@ -1,4 +1,5 @@
 from mwapi import Session
+
 from revscoring.extractors import api
 from revscoring.features import temporal, wikitext
 

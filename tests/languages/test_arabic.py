@@ -1,9 +1,9 @@
 import pickle
 
-
-from revscoring.languages import arabic
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
+from revscoring.languages import arabic
+
 from .util import compare_extraction
 
 BAD = [

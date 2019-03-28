@@ -44,13 +44,13 @@ import time
 from itertools import islice, tee
 from multiprocessing import Pool, cpu_count
 from statistics import mean, median
-from tqdm import tqdm
 
 import docopt
 import mwapi
 import mwapi.cli
 import yamlconf
 from tabulate import tabulate
+from tqdm import tqdm
 
 from ..dependencies import Dependent
 from ..errors import CommentDeleted, RevisionNotFound, TextDeleted, UserDeleted

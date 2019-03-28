@@ -1,6 +1,7 @@
 import os
-import sys
 import platform
+import sys
+
 from setuptools import find_packages, setup
 
 about_path = os.path.join(os.path.dirname(__file__), "revscoring/about.py")

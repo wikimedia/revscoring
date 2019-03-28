@@ -1,5 +1,6 @@
 from revscoring.scoring.models.model import Model
 from revscoring.scoring.models.svc import RBFSVC, SVC, LinearSVC
+
 from .util import FEATURES, format_info, pickle_and_unpickle, train_test
 
 
