@@ -16,7 +16,7 @@ Supporting classes
     :members:
     :member-order: bysource
 """
+from .features import Diff, Revision
 from .regex_matches import RegexMatches
-from .features import Revision, Diff
 
 __all__ = [RegexMatches, Revision, Diff]

@@ -1,4 +1,5 @@
 from revscoring.datasources.revision_oriented import revision
+
 from .util import check_datasource
 
 

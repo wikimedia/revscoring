@@ -1,7 +1,7 @@
 import pickle
 
-
 from revscoring.languages import japanese
+
 from .util import compare_extraction
 
 BAD = [

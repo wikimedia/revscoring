@@ -2,9 +2,10 @@ import pickle
 
 from pytest import mark
 
-from revscoring.languages import bengali
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
+from revscoring.languages import bengali
+
 from .util import compare_extraction
 
 BAD = [

@@ -2,8 +2,8 @@ import json
 import pickle
 import random
 
-
-from revscoring.scoring.statistics.classification.classification import Classification
+from revscoring.scoring.statistics.classification.classification import \
+    Classification
 
 LABELS = [True, False]
 MULTILABELS = ['A', 'B', 'C', 'D']

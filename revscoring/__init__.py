@@ -123,19 +123,19 @@ Example:
         <len(<english.informals.revision.matches>)>: 2
         <len(<spanish.informals.revision.matches>)>: 0
 """  # noqa
-import sys
 import platform
+import sys
+
 from pkg_resources import VersionConflict
+
+from .about import (__author__, __author_email__, __description__, __name__,
+                    __url__, __version__)
 from .datasources import Datasource
 from .dependencies import Dependent, DependentSet
 from .extractors import Extractor
 from .features import Feature
-from .scoring import Model
 from .score_processor import ScoreProcessor
-
-from .about import (__author__, __author_email__, __description__, __name__,
-                    __url__, __version__)
-
+from .scoring import Model
 
 if sys.version_info <= (3, 0):
     raise VersionConflict(

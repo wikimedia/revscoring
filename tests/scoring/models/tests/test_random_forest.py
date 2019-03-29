@@ -1,5 +1,6 @@
 from revscoring.scoring.models.model import Model
 from revscoring.scoring.models.random_forest import RandomForest
+
 from .util import (FEATURES, format_info, pickle_and_unpickle, train_test,
                    train_test_multilabel)
 

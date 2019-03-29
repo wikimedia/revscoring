@@ -1,8 +1,9 @@
 import re
 
-from ...meta import aggregators
-from ...feature import Feature
 from textstat.textstat import textstat
+
+from ...feature import Feature
+from ...meta import aggregators
 
 
 class Revision:

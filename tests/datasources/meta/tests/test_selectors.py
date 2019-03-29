@@ -1,9 +1,8 @@
 import io
 
-
+from revscoring.datasources.datasource import Datasource
 from revscoring.datasources.meta import frequencies, selectors
 from revscoring.dependencies import solve
-from revscoring.datasources.datasource import Datasource
 
 my_tokens = Datasource("my_tokens")
 my_table = frequencies.table(my_tokens)

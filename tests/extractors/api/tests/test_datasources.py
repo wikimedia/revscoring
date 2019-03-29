@@ -3,8 +3,10 @@ import pickle
 import mwapi
 
 from revscoring.datasources import revision_oriented as ro
-from revscoring.extractors.api.datasources import (LastUserRevDoc, PageCreationRevDoc,
-                                                   PropertySuggestionDoc, RevDocById, UserInfoDoc)
+from revscoring.extractors.api.datasources import (LastUserRevDoc,
+                                                   PageCreationRevDoc,
+                                                   PropertySuggestionDoc,
+                                                   RevDocById, UserInfoDoc)
 from revscoring.extractors.api.extractor import Extractor
 
 

@@ -1,9 +1,8 @@
 import pickle
 from math import log as math_log
 
-
-from revscoring.features import modifiers
 from revscoring.dependencies import solve
+from revscoring.features import modifiers
 
 
 def test_log():

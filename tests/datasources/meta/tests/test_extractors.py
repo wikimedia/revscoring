@@ -1,9 +1,8 @@
 import pickle
 
-
+from revscoring.datasources.datasource import Datasource
 from revscoring.datasources.meta import extractors
 from revscoring.dependencies import solve
-from revscoring.datasources.datasource import Datasource
 
 
 def return_foo():

@@ -365,7 +365,7 @@ Supporting classes
             The length of the longest sequence of UPPPERCASE characters
             added
 """  # noqa
+from .features import Diff, Revision
 from .revision_oriented import revision
-from .features import Revision, Diff
 
 __all__ = [revision, Revision, Diff]

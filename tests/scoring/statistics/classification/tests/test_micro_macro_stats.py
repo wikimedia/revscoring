@@ -1,5 +1,7 @@
-from revscoring.scoring.statistics.classification.micro_macro_stats import MicroMacroStats
-from revscoring.scoring.statistics.classification.scaled_prediction_statistics import ScaledPredictionStatistics as SPS
+from revscoring.scoring.statistics.classification.micro_macro_stats import \
+    MicroMacroStats
+from revscoring.scoring.statistics.classification.scaled_prediction_statistics import \
+    ScaledPredictionStatistics as SPS
 
 
 def test_micro_macro_stats():

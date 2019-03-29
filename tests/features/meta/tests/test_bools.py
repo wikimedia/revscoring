@@ -1,10 +1,9 @@
 import pickle
 import re
 
-
-from revscoring.features.meta import bools
 from revscoring.datasources import Datasource
 from revscoring.dependencies import solve
+from revscoring.features.meta import bools
 
 my_item = Datasource("my_item")
 

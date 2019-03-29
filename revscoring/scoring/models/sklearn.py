@@ -13,10 +13,10 @@ import time
 
 import numpy as np
 
-from . import model, util
 from ...features import vectorize_values
 from ..labels import Binarizer, ClassVerifier
 from ..statistics import Classification
+from . import model, util
 
 logger = logging.getLogger(__name__)
 

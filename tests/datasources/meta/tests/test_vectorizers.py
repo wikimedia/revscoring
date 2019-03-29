@@ -2,11 +2,11 @@ import pickle
 from unittest.mock import patch
 
 import pytest
+
 from revscoring.datasources import revision_oriented as ro
+from revscoring.datasources.meta import vectorizers
 from revscoring.dependencies import solve
 from revscoring.features import wikitext
-
-from revscoring.datasources.meta import vectorizers
 
 test_vectors = {'a': [1] * 300,
                 'b': [1] * 300,

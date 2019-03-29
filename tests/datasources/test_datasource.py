@@ -1,8 +1,7 @@
 import pickle
 
-
-from revscoring.dependencies import solve
 from revscoring.datasources.datasource import Datasource
+from revscoring.dependencies import solve
 
 
 def test_datasource():

@@ -1,5 +1,7 @@
 from revscoring.scoring.models.model import Model
-from revscoring.scoring.models.naive_bayes import BernoulliNB, GaussianNB, MultinomialNB
+from revscoring.scoring.models.naive_bayes import (BernoulliNB, GaussianNB,
+                                                   MultinomialNB)
+
 from .util import FEATURES, format_info, pickle_and_unpickle, train_test
 
 

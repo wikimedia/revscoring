@@ -1,9 +1,9 @@
 import pickle
 
-
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
-from revscoring.languages.features.regex_matches.regex_matches import RegexMatches
+from revscoring.languages.features.regex_matches.regex_matches import \
+    RegexMatches
 
 badwords = RegexMatches(
     "english.badwords",

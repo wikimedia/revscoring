@@ -1,8 +1,8 @@
 import pickle
 
-
-from revscoring.languages import korean
 from revscoring.datasources import revision_oriented
+from revscoring.languages import korean
+
 from .util import compare_extraction
 
 BAD = [

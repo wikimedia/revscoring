@@ -80,10 +80,10 @@ import yamlconf
 from sklearn import grid_search
 from tabulate import tabulate
 
-from . import util
 from ..about import __version__
 from ..dependencies import solve
 from ..scoring.models import util as model_util
+from . import util
 from .util import Timeout, read_observations
 
 logger = logging.getLogger(__name__)

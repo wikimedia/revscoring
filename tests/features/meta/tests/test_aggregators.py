@@ -1,8 +1,8 @@
 import pickle
 
-from revscoring.features.meta import aggregators
 from revscoring.datasources import Datasource
 from revscoring.dependencies import solve
+from revscoring.features.meta import aggregators
 
 
 def test_sum():

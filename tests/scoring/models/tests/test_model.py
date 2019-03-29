@@ -1,8 +1,8 @@
 
+from pytest import mark
+
 from revscoring.features import Feature
 from revscoring.scoring.models.model import Classifier, Learned, Model
-
-from pytest import mark
 
 
 def test_model():

@@ -4,6 +4,7 @@ import mwbase
 
 from revscoring.datasources import Datasource
 from revscoring.dependencies import DependentSet
+
 from .diff import Diff
 
 

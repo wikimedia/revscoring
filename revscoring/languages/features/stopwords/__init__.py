@@ -16,7 +16,7 @@ Supporting classes
     :members:
     :member-order: bysource
 """
+from .features import Diff, Revision
 from .stopwords import Stopwords
-from .features import Revision, Diff
 
 __all__ = [Stopwords, Revision, Diff]

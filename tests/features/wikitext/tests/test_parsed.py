@@ -1,9 +1,8 @@
 import pickle
 
-
-from revscoring.features.wikitext import revision
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
+from revscoring.features.wikitext import revision
 
 h_headings_ds = revision.datasources.heading_titles_matching(r"h")
 h_headings = revision.heading_titles_matching(r"h")

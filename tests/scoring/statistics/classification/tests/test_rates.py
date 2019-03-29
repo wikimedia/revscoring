@@ -1,6 +1,5 @@
 import json
 
-
 from revscoring.scoring.statistics.classification.counts import Counts
 from revscoring.scoring.statistics.classification.rates import Rates
 

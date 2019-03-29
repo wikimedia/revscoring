@@ -6,6 +6,7 @@ from deltas import segment_matcher
 
 from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters
+
 from .tokenized import TokenIsInTypes, is_uppercase_word
 
 logger = logging.getLogger(__name__)

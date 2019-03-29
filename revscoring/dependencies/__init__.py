@@ -13,9 +13,9 @@ context
 .. automodule:: revscoring.dependencies.context
 """
 
-from .functions import solve, expand, dig, draw, normalize_context
 from .context import Context
 from .dependent import Dependent, DependentSet
+from .functions import dig, draw, expand, normalize_context, solve
 
 __all__ = [solve, expand, dig, draw, normalize_context, Context, Dependent,
            DependentSet]

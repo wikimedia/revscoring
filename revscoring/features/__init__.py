@@ -51,7 +51,7 @@ Base classes
 .. automodule:: revscoring.features.feature
 """
 
-from .feature import Feature, Modifier, Constant
+from .feature import Constant, Feature, Modifier
 from .feature_vector import FeatureVector
 from .functions import trim, vectorize_values
 

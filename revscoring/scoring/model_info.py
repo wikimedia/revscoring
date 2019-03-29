@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
-from . import util
 from ..errors import ModelInfoLookupError
+from . import util
 
 
 class ModelInfo:

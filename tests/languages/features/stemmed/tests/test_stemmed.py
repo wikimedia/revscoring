@@ -1,6 +1,5 @@
 import pickle
 
-
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
 from revscoring.languages.features.stemmed.stemmed import Stemmed

@@ -1,9 +1,8 @@
 import pickle
 
-
-from revscoring.features.wikitext import revision
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
+from revscoring.features.wikitext import revision
 
 r_text = revision_oriented.revision.text
 p_text = revision_oriented.revision.parent.text

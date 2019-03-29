@@ -3,11 +3,11 @@ from itertools import islice
 
 import mwapi
 
-from . import datasources
-from .. import Extractor as BaseExtractor
 from ...datasources import Datasource, revision_oriented
 from ...dependencies import expand
 from ...errors import QueryNotSupported, RevisionNotFound, UserNotFound
+from .. import Extractor as BaseExtractor
+from . import datasources
 from .revision_oriented import Revision
 from .util import REV_PROPS, USER_PROPS
 

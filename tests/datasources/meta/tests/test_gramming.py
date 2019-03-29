@@ -1,9 +1,8 @@
 import pickle
 
-
+from revscoring.datasources.datasource import Datasource
 from revscoring.datasources.meta import gramming
 from revscoring.dependencies import solve
-from revscoring.datasources.datasource import Datasource
 
 my_tokens = Datasource("my_tokens")
 my_grams = gramming.gram(my_tokens, grams=[(0,), (0, 2)])

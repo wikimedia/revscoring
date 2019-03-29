@@ -3,6 +3,7 @@ import pickle
 from pytest import mark
 
 from revscoring.languages import tamil
+
 from .util import compare_extraction
 
 BAD = [

@@ -1,4 +1,5 @@
-from revscoring.utilities.util import read_labels_and_population_rates, read_labels_config
+from revscoring.utilities.util import (read_labels_and_population_rates,
+                                       read_labels_config)
 
 
 def test_plain_labels():

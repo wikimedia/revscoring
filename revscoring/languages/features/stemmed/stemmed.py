@@ -1,6 +1,6 @@
-from . import datasources, features
 from ....dependencies import DependentSet
 from ....features import wikitext
+from . import datasources, features
 
 
 class Stemmed(DependentSet):
