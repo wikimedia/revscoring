@@ -2,9 +2,7 @@
 [![Test coverage](https://codecov.io/gh/wikimedia/revscoring/branch/master/graph/badge.svg)](https://codecov.io/gh/wikimedia/revscoring)
 # Revision Scoring
 
-A generic, machine learning-based revision scoring system designed to be used
-to automatically differentiate damage from productive contributory behavior on
-Wikipedia.
+A generic, machine learning-based revision scoring system designed to help automate critical wiki-work — for example, vandalism detection and removal. This library empowers [ORES](https://ores.wikimedia.org).
 
 ## Example
 
@@ -42,8 +40,9 @@ dependencies in your operating system.
 ### Ubuntu & Debian:
   *  Run ``sudo apt-get install python3-dev g++ gfortran liblapack-dev libopenblas-dev``
   *  Run ``apt-get install aspell-ar aspell-bn aspell-is myspell-cs myspell-nl myspell-en-us myspell-en-gb myspell-en-au myspell-et voikko-fi myspell-fr myspell-de-at myspell-de-ch myspell-de-de myspell-he myspell-hr myspell-hu aspell-id myspell-it myspell-nb myspell-fa aspell-pl myspell-pt myspell-es hunspell-sr aspell-sv aspell-ta myspell-ru myspell-uk hunspell-vi aspell-el myspell-lv aspell-ro myspell-ca hunspell-gl``
-### Windows:
-<i>TODO</i> 
+<!-- ### Windows:
+<i>TODO</i>
+-->
 ### MacOS:
   Using Homebrew and pip, installing `revscoring` and `enchant` can be accomplished
   as follows::
@@ -72,7 +71,7 @@ some NLTK data.  The following command will get the necessary corpora.
 
 ``python -m nltk.downloader omw sentiwordnet stopwords wordnet``
 
-You'll also need to install `enchant <https://en.wikipedia.org/wiki/Enchant_(software)>`_ compatible
+You'll also need to install [enchant](https://en.wikipedia.org/wiki/Enchant_(software))-compatible
 dictionaries of the languages you'd like to use.  We recommend the following:
 
 * languages.arabic: aspell-ar
@@ -106,16 +105,21 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * languages.russian: myspell-ru
 * languages.ukrainian: aspell-uk
 * languages.vietnamese: hunspell-vi
+# Running tests
+Make sure you installed test dependencies:
+
+``
+$ pip install -r test-requirements.txt
+``
+
+Then run:
+
+``
+$ pytest . -vv
+``
 
 # Authors
-
   *   [Aaron Halfaker](http://halfaker.info)
-    
-    
   *   [Helder](https://github.com/he7d3r)
-    
-    
   *   [Adam Roses Wight](https://mediawiki.org/wiki/User:Adamw)
-    
-    
   *   [Amir Sarabadani](https://github.com/Ladsgroup)
