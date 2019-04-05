@@ -61,5 +61,6 @@ coverage.xml
 # Sphinx documentation
 doc/_build/
 
-# pyCharm
-.idea
+# pyCharm, IntelliJ
+*.idea
+*.iml
