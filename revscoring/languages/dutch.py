@@ -42,62 +42,99 @@ stemmed = Stemmed(name + ".stemmed", stemmer.stem)
 """
 
 badword_regexes = [
-    r"aars",
-    r"an(aal|us)\w*",
-    r"balhaar",
-    r"drol(len)?",
-    r"fack(en|ing|s)?", "facking",
-    r"flikkers?",
-    r"focking",
-    r"ge(ile?|lul)",
-    r"geneukt",
-    r"hoer(en?)?",
-    r"homos?",
-    r"kaka?",
-    r"kak(hoofd|ken)",
-    r"k[ae]nker",
-    r"klootzak(ken)?",
-    r"klote",
-    r"kont(gat|je)?",
-    r"pedo",
-    r"penis(sen)?",
-    r"peop",
-    r"piemels?",
-    r"pijpen",
-    r"pik",
-    r"pimel",
-    r"pipi",
-    r"poep(chinees?|en|hoofd)?",
-    r"poep(ie|je|sex|te?)s?",
-    r"porno?",
-    r"neuke?",
-    r"neuken(de)?",
-    r"neukt(en?)?",
-    r"stron(d|t)",
-    r"suck(s|t)?",
-    r"zuigt",
-    r"sukkels?",
-    r"ter(ing|ten)", "tetten",
-    r"tieten",
-    r"vagina",
-    r"verekte",
-    r"verkracht",
-    r"dikzak",
-    r"dildo",
-    r"mon?g(olen|ool)?", "mooiboy",
-    r"negers?",
-    r"shit",
-    r"sperma",
-    r"kut(jes?)?",
-    r"stelletje",
-    r"losers?",
-    r"lul(len)?",
-    r"reet",
-    r"scheet", "scheten", r"schijt",
-    r"diaree",
-    r"slet",
-    r"lekkerding",
-    r"likken"
+    # Curses
+    "aars",  # ass
+    "anaal", "anus",  # anal, anus
+    "balhaar",  # ball hair (testicular hair)
+    "debiel",  # infirm
+    "diaree", "diarree",  # diarrhea
+    "drol", "drollen",  # turd
+    "fack", "facking", "focking",  # misspelling of "fuck"
+    "flikker", "flikkers",  # perjorative for gay person ("faggot")
+    "geil", "geile",  # horny
+    "gelul",  # bullshit
+    "hoer", "hoere", "hoeren",  # whore
+    "homo", "homos",  # add "homo's" ; perjorative for gay person
+    "kak", "kaka",  # poop
+    "kakhoofd", "kakken",  # kakhoofd = poopy head; kakken = to poop (verb)
+    "kanker", "kenker",  # cancer
+    "klootzak", "klootzakken",  # "ball sack"
+    "klote",  # lit.: balls; equivalent: "sucky"
+    "kolere", "klere",  # Chollera
+    "kont", "kontgat",  # butt, butthole
+    "kontje",  # little butt
+    "lekkerding", "lekker ding",  # means something like "hot piece"
+    "likken",  # lick (not totally sure why this is here)
+    "pedo",  # add "pedofiel"; pedophile
+    "penis", "penissen",  # penis, penises
+    "peop", "poep",  # misspelling of poep (poop)
+    "pijpen",  # to give a blowjob
+    "pik",  # dick
+    "pimel", "piemel", "piemels",  # colloquial for penis (Eng: dick)
+    "pipi",  # somewhat archaic, somewhat childish word for penis
+    "poep", "poepen", "poephoofd",  # poop / poopy head
+    "poepie", "poepje", "poepjes", "poepsex",  # more poop words
+    "poept", "poepte", "poepseks",  # more poop words
+    "poepstamper", "poepstampen",  # perjorative for gay person
+    "pokke", "pokken",  # Smallpx
+    "porn", "porno",  # porn
+    "neuk", "neuke", "neuken", "neukende", "neukt",  # "fuck" conjugations
+    "neukte", "neukten", "geneukt",  # "fuck" conjugations continued
+    "nicht", "nichten",  # "faggot" but also sometimes "cousin"
+    "strond", "stront",  # shit
+    "zuigt", "suckt",  # sucks
+    "sukkel", "sukkels",  # sucker (idiot)
+    "tering",  # colloquial word for tuberculosis, now a swear word;
+    "tiet", "tetten", "tieten",  # tits
+    "verekte", "verkracht", "verrekte",  # "damn" or "fucking" (adj)
+    "verkracht", "verkrachten",  # rape/raped
+    "dikzak",  # fat person
+    "mogolen", "mogool", "mongool", "mongolen",  # perj. for down syndrome
+    "mooiboy",  # man who puts a lot of effort into his appearance
+    "sperma",  # sperm
+    "kut", "kutje", "kutjes",  # vulgar word for vagina (Eng.: cunt)
+    "stelletje",  # "bunch of", as part of a racial slur or perj.
+    "lul",  # dick
+    "lullen",  # out of an ass
+    "lulltje",  # weak person
+    "reet",  # buttcrack, often used in an idiom that means "don't give a shit"
+    "slet",  # slut
+    "scheet", "scheten",  # fart
+    "schijt",  # shit
+    "tyfus",  # Typhoid
+    "smeerlap",  # literally: "grease rag"
+    "het zuigt",  # "It sucks"
+    "sukkel",  # "Sucker"
+    "sul",  # "wimp", "dork", or "schlemiel". Its etymology is unclear
+    "vreten",  # rude form of the verb "to eat"
+    "vuil", "vuile",  # "filth" or "filthy"
+    "wijf", "kutwijf", "kankerhoer", "rothoer", "vishoer",  # perj for women
+
+    # Racial slurs
+    "bamivreter",  # "bami eater" an ethnic slur used against people of Asian
+    "bosneger",  # literally: "bushnegro"
+    "geitenneuker",  # literally: "goat fucker"
+    "kakker",  # "crapper" -- higher social class idiot
+    "koelie",  # "coolie" Indonesian laborer
+    "lijp",  # slur for Jewish people and "slow", "dumb", "sluggish"
+    "mocro",  # people of Moroccan descent
+    "mof", "moffenhoer", "mofrica", "kraut",  # ethnic slur of German people
+    "neger", "negers", "nikker",  # n-word
+    "poepchinees",  # "poop Chinese"
+    "roetmop",  # ethnic slur for black people.
+    "spaghettivreter", "pastavreter",  # perj. for people of Italian descent
+    "loempiavouwer",  # "spring roll folder" people of Vietnamese descent
+    "spleetoog",  # "slit eye" term for people of Asian descent
+    "tuig",  # "scum"
+    "zandneger",  # "sand negro" an ethnic slur for Middle Eastern people
+
+    # Religion
+    "gadverdamme", "godverdomme", "gadver", "getverderrie",   # "god damn"
+    "getver", "verdomme", "verdamme", "verdorie",  # "god damn" continued
+    "godskolere",  # "god fury"
+    "graftak",  # "grave branch" old, moody, and/or cranky person.
+    "jezus christus", "tjezus", "jeetje", "jezus mina", "jezus",  # Jesus
+    "jesses", "jasses", "harrejasses", "here jezus",  # Jesus continued
 ]
 
 badwords = RegexMatches(name + ".badwords", badword_regexes)
@@ -115,45 +152,52 @@ informal_regexes = [
     r"dombo",
     r"domme",
     r"eigelijk",
+    r"fransoos",  # Fransoos is a lightly derogatory term for French people.
     r"godverdomme",
     r"groetjes",
     r"gwn",
     r"hoi",
     r"hal+o+",
+    r"hangjongere",  # meaning "a youngster hanging around"
     r"heb",
     r"hee+[jyl]", r"heee+?l",
     r"houd?",
     r"(?:hoi+)+",
     r"hoor",
+    r"indo",  # dutch-indonesian descent
     r"izan",
     r"jij",
     r"jou",
     r"jullie",
-    r"kaas",
+    r"kaas", r"kaaskop",  # "cheese head" a term for dutch people
     r"klopt",
     r"kots",
     r"kusjes",
     r"le?kke?re?",
     r"maarja",
     r"mama",
+    r"medelander",  # Foreigner in Netherlands (only used ironically)
     r"nou",
     r"oma",
     r"ofzo",
     r"oke",
-    r"sexy?",
+    r"pauper",  # Low social standing
+    r"plebejer",  # low social standing
+    r"pinda",  # "peanut" slur used against people of Indonesian descent.
+    r"proleet",  # "proletarius" someone who is very rude and uncultured
+    r"rapalje", r"rapaille",  # Low social class
     r"snap",
     r"stink(en|t)",
     r"stoer",
-    r"swag",
     r"swek",
+    r"tatta",  # neutral term used by Antilleans and Surinamese people
+    r"tokkie",  # lower-class, anti-social people
     r"vies", "vieze",
     r"vind",
     r"vuile",
     r"xxx",
-    r"yeah",
     r"zielig",
     r"zooi",
-    r"yolo",
     r"zeg"
 ]
 

@@ -7,62 +7,99 @@ from revscoring.languages import dutch
 from .util import compare_extraction
 
 BAD = [
-    "aars",
-    "anaal", "anus",
-    "balhaar",
-    "drol", "drollen",
-    "fack", "facking",
-    "flikker", "flikkers",
-    "focking",
-    "geil", "geile", "gelul",
-    "geneukt",
-    "hoer", "hoere", "hoeren",
-    "homo", "homos",
-    "kak", "kaka",
-    "kakhoofd", "kakken",
-    "kanker", "kenker",
-    "klootzak", "klootzakken",
-    "klote",
-    "kont", "kontgat",
-    "kontje",
-    "pedo",
-    "penis", "penissen",
-    "peop",
-    "piemel", "piemels",
-    "pijpen",
-    "pik",
-    "pimel",
-    "pipi",
-    "poep", "poepchinees", "poepen", "poephoofd",
-    "poepie", "poepje", "poepjes", "poepsex", "poept", "poepte",
-    "porn", "porno",
-    "neuk", "neuke",
-    "neuken", "neukende",
-    "neukt", "neukte", "neukten",
-    "strond", "stront",
-    "suck", "sucks", "suckt",
-    "zuigt",
-    "sukkel", "sukkels",
-    "tering", "tetten", "tieten",
-    "vagina",
-    "verekte", "verkracht",
-    "dikzak",
-    "dildo",
-    "mogolen", "mogool", "mongool", "mooiboy",
-    "neger", "negers",
-    "shit",
-    "sperma",
-    "kut", "kutje", "kutjes",
-    "stelletje",
-    "loser", "losers",
-    "lul", "lullen",
-    "reet",
-    "scheet", "scheten",
-    "schijt",
-    "diaree",
-    "slet",
-    "lekkerding",
-    "likken"
+    # Curses
+    "aars",  # ass
+    "anaal", "anus",  # anal, anus
+    "balhaar",  # ball hair (testicular hair)
+    "debiel",  # infirm
+    "diaree", "diarree",  # diarrhea
+    "drol", "drollen",  # turd
+    "fack", "facking", "focking",  # misspelling of "fuck"
+    "flikker", "flikkers",  # perjorative for gay person ("faggot")
+    "geil", "geile",  # horny
+    "gelul",  # bullshit
+    "hoer", "hoere", "hoeren",  # whore
+    "homo", "homos",  # add "homo's" ; perjorative for gay person
+    "kak", "kaka",  # poop
+    "kakhoofd", "kakken",  # kakhoofd = poopy head; kakken = to poop (verb)
+    "kanker", "kenker",  # cancer
+    "klootzak", "klootzakken",  # "ball sack"
+    "klote",  # lit.: balls; equivalent: "sucky"
+    "kolere", "klere",  # Chollera
+    "kont", "kontgat",  # butt, butthole
+    "kontje",  # little butt
+    "lekkerding", "lekker ding",  # means something like "hot piece"
+    "likken",  # lick (not totally sure why this is here)
+    "pedo",  # add "pedofiel"; pedophile
+    "penis", "penissen",  # penis, penises
+    "peop", "poep",  # misspelling of poep (poop)
+    "pijpen",  # to give a blowjob
+    "pik",  # dick
+    "pimel", "piemel", "piemels",  # colloquial for penis (Eng: dick)
+    "pipi",  # somewhat archaic, somewhat childish word for penis
+    "poep", "poepen", "poephoofd",  # poop / poopy head
+    "poepie", "poepje", "poepjes", "poepsex",  # more poop words
+    "poept", "poepte", "poepseks",  # more poop words
+    "poepstamper", "poepstampen",  # perjorative for gay person
+    "pokke", "pokken",  # Smallpx
+    "porn", "porno",  # porn
+    "neuk", "neuke", "neuken", "neukende", "neukt",  # "fuck" conjugations
+    "neukte", "neukten", "geneukt",  # "fuck" conjugations continued
+    "nicht", "nichten",  # "faggot" but also sometimes "cousin"
+    "strond", "stront",  # shit
+    "zuigt", "suckt",  # sucks
+    "sukkel", "sukkels",  # sucker (idiot)
+    "tering",  # colloquial word for tuberculosis, now a swear word;
+    "tiet", "tetten", "tieten",  # tits
+    "verekte", "verkracht", "verrekte",  # "damn" or "fucking" (adj)
+    "verkracht", "verkrachten",  # rape/raped
+    "dikzak",  # fat person
+    "mogolen", "mogool", "mongool", "mongolen",  # perj. for down syndrome
+    "mooiboy",  # man who puts a lot of effort into his appearance
+    "sperma",  # sperm
+    "kut", "kutje", "kutjes",  # vulgar word for vagina (Eng.: cunt)
+    "stelletje",  # "bunch of", as part of a racial slur or perj.
+    "lul",  # dick
+    "lullen",  # out of an ass
+    "lulltje",  # weak person
+    "reet",  # buttcrack, often used in an idiom that means "don't give a shit"
+    "slet",  # slut
+    "scheet", "scheten",  # fart
+    "schijt",  # shit
+    "tyfus",  # Typhoid
+    "smeerlap",  # literally: "grease rag"
+    "het zuigt",  # "It sucks"
+    "sukkel",  # "Sucker"
+    "sul",  # "wimp", "dork", or "schlemiel". Its etymology is unclear.
+    "vreten",  # rude form of the verb "to eat"
+    "vuil", "vuile",  # "filth" or "filthy"
+    "wijf", "kutwijf", "kankerhoer", "rothoer", "vishoer",  # perj for women
+
+    # Racial slurs
+    "bamivreter",  # "bami eater" an ethnic slur used against people of Asian
+    "bosneger",  # literally: "bushnegro"
+    "geitenneuker",  # literally: "goat fucker"
+    "kakker",  # "crapper" -- higher social class idiot
+    "koelie",  # "coolie" Indonesian laborer
+    "lijp",  # slur for Jewish people and "slow", "dumb", "sluggish"
+    "mocro",  # people of Moroccan descent
+    "mof", "moffenhoer", "mofrica",  # ethnic slur used for german people
+    "neger", "negers", "nikker",  # n-word
+    "poepchinees",  # "poop Chinese"
+    "roetmop",  # ethnic slur for black people.
+    "spaghettivreter", "pastavreter",  # perj. for people of Italian descent
+    "loempiavouwer",  # "spring roll folder" people of Vietnamese descent
+    "spleetoog",  # "slit eye" term for people of Asian descent
+    "tuig",  # "scum"
+    "zandneger",  # "sand negro" an ethnic slur for people of Middle Eastern
+
+    # Religion
+    "gadverdamme", "godverdomme", "gadver", "getverderrie",   # "god damn"
+    "getver", "verdomme", "verdamme", "verdorie",  # "god damn" continued
+    "godskolere",  # "god fury"
+    "graftak",  # "grave branch" an old, moody, cranky person.
+    "jezus christus", "jezus", "tjezus", "jeetje", "jezus mina",  # Jesus
+    "jesses", "jasses", "harrejasses", "here jezus",  # Jesus continued
 ]
 
 INFORMAL = [
@@ -98,19 +135,15 @@ INFORMAL = [
     "oma",
     "ofzo",
     "oke",
-    "sex", "sexy",
     "snap",
     "stinken", "stinkt",
     "stoer",
-    "swag",
     "swek",
     "vies", "vieze",
     "vind",
     "vuile",
-    "xxx",
     "zielig",
     "zooi",
-    "yolo",
     "zeg"
 ]
 
