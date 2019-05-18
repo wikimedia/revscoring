@@ -36,6 +36,11 @@ catalan
 .. automodule:: revscoring.languages.catalan
     :members:
 
+chinese
++++++++
+.. automodule:: revscoring.languages.chinese
+    :members:
+
 croatian
 +++++
 .. automodule:: revscoring.languages.croatian

@@ -67,3 +67,22 @@ def test_pickling():
             badwords.revision.diff.matches_added)
     assert (pickle.loads(pickle.dumps(badwords.revision.diff.matches_removed)) ==
             badwords.revision.diff.matches_removed)
+
+
+def replace_foo_bar(text):
+    return text.replace("foo", "bar")
+
+my_barbaz = RegexMatches(
+    "my_barbaz",
+    [r"barbaz"],
+    text_preprocess=replace_foo_bar
+)
+
+
+def test_text_preprocessing():
+
+    cache = {r_text: "Hi foobaz. Derp"}
+    assert (solve(my_barbaz.revision.datasources.matches, cache=cache) ==
+            ['barbaz'])
+    assert (pickle.loads(pickle.dumps(badwords.revision.matches)) ==
+            badwords.revision.matches)
