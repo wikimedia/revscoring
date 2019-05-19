@@ -4,6 +4,14 @@ from .features import RegexMatches
 
 name = "chinese"
 
+
+def simplify_or_none(text):
+    if text is None:
+        return None
+    else:
+        return HanziConv.toSimplified(text)
+
+
 badword_regexes = list(map(HanziConv.toSimplified, [
     r"王八蛋",  # son of a bitch
     r"他媽的",  # "his mother's"
@@ -43,7 +51,7 @@ badword_regexes = list(map(HanziConv.toSimplified, [
 ]))
 
 badwords = RegexMatches(name + ".badwords", badword_regexes, wrapping=None,
-                        text_preprocess=HanziConv.toSimplified)
+                        text_preprocess=simplify_or_none)
 """
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 badword detecting regexes.
@@ -75,7 +83,7 @@ informal_regexes = list(map(HanziConv.toSimplified, [
 ]))
 
 informals = RegexMatches(name + ".informals", informal_regexes, wrapping=None,
-                         text_preprocess=HanziConv.toSimplified)
+                         text_preprocess=simplify_or_none)
 """
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 informal word detecting regexes.
@@ -101,7 +109,7 @@ words_to_watch_regexes = list(map(HanziConv.toSimplified, [
 
 words_to_watch = RegexMatches(name + ".words_to_watch", words_to_watch_regexes,
                               wrapping=None,
-                              text_preprocess=HanziConv.toSimplified)
+                              text_preprocess=simplify_or_none)
 """
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 advertising language regexes.
