@@ -54,18 +54,18 @@ badword_regexes = [
     "geil", "geile",  # horny
     "gelul",  # bullshit
     "hoer", "hoere", "hoeren",  # whore
-    "homo", "homos",  # add "homo's" ; perjorative for gay person
+    "homo", "homos", "homo's",  # perjorative for gay person
     "kak", "kaka",  # poop
     "kakhoofd", "kakken",  # kakhoofd = poopy head; kakken = to poop (verb)
     "kanker", "kenker",  # cancer
     "klootzak", "klootzakken",  # "ball sack"
     "klote",  # lit.: balls; equivalent: "sucky"
-    "kolere", "klere",  # Chollera
+    "kolere", "klere",  # Cholera
     "kont", "kontgat",  # butt, butthole
     "kontje",  # little butt
     "lekkerding", "lekker ding",  # means something like "hot piece"
-    "likken",  # lick (not totally sure why this is here)
-    "pedo",  # add "pedofiel"; pedophile
+    "likken",  # lick
+    "pedo", "pedofiel",  # pedophile
     "penis", "penissen",  # penis, penises
     "peop", "poep",  # misspelling of poep (poop)
     "pijpen",  # to give a blowjob
@@ -86,7 +86,7 @@ badword_regexes = [
     "sukkel", "sukkels",  # sucker (idiot)
     "tering",  # colloquial word for tuberculosis, now a swear word;
     "tiet", "tetten", "tieten",  # tits
-    "verekte", "verkracht", "verrekte",  # "damn" or "fucking" (adj)
+    "verekte", "verrekte",  # "damn" or "fucking" (adj)
     "verkracht", "verkrachten",  # rape/raped
     "dikzak",  # fat person
     "mogolen", "mogool", "mongool", "mongolen",  # perj. for down syndrome
@@ -95,7 +95,7 @@ badword_regexes = [
     "kut", "kutje", "kutjes",  # vulgar word for vagina (Eng.: cunt)
     "stelletje",  # "bunch of", as part of a racial slur or perj.
     "lul",  # dick
-    "lullen",  # out of an ass
+    "lullen",  # talking out of one's ass
     "lulltje",  # weak person
     "reet",  # buttcrack, often used in an idiom that means "don't give a shit"
     "slet",  # slut
@@ -111,7 +111,7 @@ badword_regexes = [
     "wijf", "kutwijf", "kankerhoer", "rothoer", "vishoer",  # perj for women
 
     # Racial slurs
-    "bamivreter",  # "bami eater" an ethnic slur used against people of Asian
+    "bamivreter",  # "bami eater" an ethnic slur for Asian people
     "bosneger",  # literally: "bushnegro"
     "geitenneuker",  # literally: "goat fucker"
     "kakker",  # "crapper" -- higher social class idiot
