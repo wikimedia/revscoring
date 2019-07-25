@@ -71,6 +71,7 @@ import yamlconf
 
 from ..dependencies import solve
 from .util import read_labels_and_population_rates, read_observations
+from .. import errors
 
 logger = logging.getLogger(__name__)
 
@@ -114,9 +115,7 @@ def main(argv=None):
         observations = read_observations(open(args['--observations']))
 
     label_name = args['<label>']
-    value_labels = \
-        [(list(solve(features, cache=ob['cache'])), ob[label_name])
-         for ob in observations]
+    value_labels = list(read_value_labels(features, label_name, observations))
 
     if args['--model-file'] == "<stdout>":
         model_file = sys.stdout.buffer
@@ -146,3 +145,12 @@ def cv_train(model, value_labels, folds, workers):
     model.train(value_labels)
 
     return model
+
+
+def read_value_labels(features, label_name, observations):
+    for i, ob in enumerate(observations):
+        try:
+            yield (list(solve(features, cache=ob['cache'])), ob[label_name])
+        except errors.DependencyError as e:
+            logger.warn("Failed to extract dependencies (line:{0}): {1}"
+                        .format(i + 1, e))
