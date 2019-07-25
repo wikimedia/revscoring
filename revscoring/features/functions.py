@@ -37,8 +37,9 @@ def _trim(dependent, context, cache):
         elif isinstance(feature, Constant):
             pass
         else:
-            cache.add(feature)
-            yield feature
+            if feature not in cache:
+                cache.add(feature)
+                yield feature
 
 
 def vectorize_values(feature_values):
