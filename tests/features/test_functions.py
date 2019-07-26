@@ -16,6 +16,7 @@ def test_trim():
 
     assert list(trim(f1)) == [f1]
     assert list(trim([f1, f2, fv])) == [f1, f2, fv]
+    assert list(trim([f1, f2, f1 + f2, fv])) == [f1, f2, fv]
     assert (list(trim(log(max(f1 - f2, 1)))) ==
             [f1, f2])
 
