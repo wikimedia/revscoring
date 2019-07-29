@@ -79,6 +79,14 @@ class Revision(DependentSet):
         A `set` of unique sources in the revision
         """
 
+        self.reference_claims = Datasource(
+            name + ".reference_claims", _process_ref_claims,
+            depends_on=[self.entity]
+        )
+        """
+        A `set` of unique reference claims in the revision
+        """
+
         self.qualifiers = Datasource(
             name + ".qualifiers", _process_qualifiers, depends_on=[self.entity]
         )
@@ -141,6 +149,18 @@ def _process_sources(entity):
         for pid, statements in entity.properties.items()
         for statement in statements
         for ref_pid, ref in statement.references.items()
+    )
+
+
+def _process_ref_claims(entity):
+    """Get reference claims in entity. Returns set."""
+    return set(
+        (pid, str(statement.claim.datavalue), ref_pid, i,
+            str(ref_claim.datavalue))
+        for pid, statements in entity.properties.items()
+        for statement in statements
+        for ref_pid, ref_claims in statement.references.items()
+        for i, ref_claim in enumerate(ref_claims)
     )
 
 
