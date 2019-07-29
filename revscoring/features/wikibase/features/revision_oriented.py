@@ -26,6 +26,9 @@ class Revision(DependentSet):
         "`int` : A count of claims in the revision"
         self.sources = aggregators.len(self.datasources.sources)
         "`int` : A count of sources in the revision"
+        self.reference_claims = aggregators.len(
+                self.datasources.reference_claims)
+        "`int` : A count of reference claims in the revision"
         self.qualifiers = aggregators.len(self.datasources.qualifiers)
         "`int` : A count of qualifiers in the revision"
         self.badges = aggregators.len(self.datasources.badges)
