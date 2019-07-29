@@ -135,13 +135,12 @@ def _process_aliases(entity):
 
 
 def _process_sources(entity):
+    """Get reference statements in entity. Returns set."""
     return set(
-        (pid, str(statement.claim.datavalue), ref_pid, i,
-         str(ref_claim.datavalue))
+        (pid, str(statement.claim.datavalue), ref_pid, str(ref[0].datavalue))
         for pid, statements in entity.properties.items()
         for statement in statements
-        for ref_pid, ref_claims in statement.references.items()
-        for i, ref_claim in enumerate(ref_claims)
+        for ref_pid, ref in statement.references.items()
     )
 
 
