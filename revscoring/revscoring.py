@@ -12,6 +12,8 @@ Utilities:
                     statistics
 * tune              Tunes a set of models against a training set to identify
                     the best model/configuration
+* dump_cache        Reads a cache file and dumps out a set of features, target
+                    label, and (optionally) score documents in a TSV file.
 
 Usage:
     revscoring (-h | --help)
@@ -21,6 +23,7 @@ Usage:
 import sys
 import traceback
 from importlib import import_module
+
 
 USAGE = """Usage:
     revscoring (-h | --help)
