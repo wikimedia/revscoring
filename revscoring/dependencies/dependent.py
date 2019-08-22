@@ -99,33 +99,35 @@ class DependentSet:
             A base name for the items in the set
     """
 
-    def __init__(self, name, _dependents=None, _dependent_sets=None):
-        self._dependents = _dependents or set()
-        self._dependent_sets = _dependent_sets or set()
-        self._name = name
+    def __init__(self, name, dependents=None, dependent_sets=None):
+        self.dependents = dependents or {}
+        self.dependent_sets = dependent_sets or {}
+        self.name = name
 
     def __setattr__(self, attr, value):
         super().__setattr__(attr, value)
 
         if isinstance(value, Dependent):
             logger.log(logging.NOTSET,
-                       "Registering {0} to {1}".format(value, self._name))
-            if value in self._dependents:
+                       "Registering {0} to {1}".format(value, self.name))
+            if value in self.dependents:
                 logger.warn("{0} has already been added to {1}.  Could be "
                             .format(value, self) + "overwritten?")
-            self._dependents.add(value)
+            self.dependents[attr] = value
         elif isinstance(value, DependentSet):
-            self._dependent_sets.add(value)
+            self.dependent_sets[attr] = value
+        else:
+            pass  # Just set it like a regular attribute
 
     # String methods
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
-        return "{" + self._name + "}"
+        return "{" + self.name + "}"
 
     def __hash__(self):
-        return hash('dependent_set.' + self._name)
+        return hash('dependent_set.' + self.name)
 
     def __eq__(self, other):
         return hash(self) == hash(other)
@@ -133,21 +135,24 @@ class DependentSet:
     def __ne__(self, other):
         return not self == other
 
+    def all_dependencies(self):
+        return set(self.dependents.values()).union(*self.dependent_sets.values())
+
     # Set methods
     def __len__(self):
-        return len(self._dependents.union(*self._dependent_sets))
+        return len(self.all_dependencies())
 
     def __contains__(self, item):
-        return item in self._dependents.union(*self._dependent_sets)
+        return item in self.all_dependencies()
 
     def __iter__(self):
-        return iter(self._dependents.union(*self._dependent_sets))
+        return iter(self.all_dependencies())
 
     def __sub__(self, other):
-        return self._dependents.union(*self._dependent_sets) - other
+        return self.all_dependencies() - other
 
     def __and__(self, other):
-        return self._dependents.union(*self._dependent_sets) & other
+        return self.all_dependencies() & other
 
     def __or__(self, other):
-        return self._dependents.union(*self._dependent_sets) | other
+        return self.all_dependencies() | other

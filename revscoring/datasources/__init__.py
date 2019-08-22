@@ -8,7 +8,8 @@ processors that represent the input data for extracting
 :class:`~revscoring.Datasource` processors are tended to
 be :func:`~revscoring.dependencies.solve`'d as dependencies. The
 provided datasources are split conceptually into a set of modules.  Currently,
-there is one module: :mod:`~revscoring.datasources.revision_oriented`.
+there are two modules: :mod:`~revscoring.datasources.revision_oriented` and
+:mod:`~revscoring.datasources.session_oriented`.
 
 Meta-datasources
 ++++++++++++++++

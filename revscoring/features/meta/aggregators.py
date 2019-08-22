@@ -19,6 +19,8 @@ import numpy as np
 from ..feature import Feature
 from ..feature_vector import FeatureVector
 
+any_builtin = any
+all_builtin = all
 len_builtin = len
 sum_builtin = sum
 max_builtin = max
@@ -70,6 +72,16 @@ def aggregators_factory(func):
             return AggregatorsScalar(
                 items_datasource, func_tocall, name, returns)
     return wrapper
+
+
+@aggregators_factory
+def all(items_datasource, name=None, returns=bool, vector=False):
+    return all_builtin
+
+
+@aggregators_factory
+def any(items_datasource, name=None, returns=bool, vector=False):
+    return any_builtin
 
 
 @aggregators_factory

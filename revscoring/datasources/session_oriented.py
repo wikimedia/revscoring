@@ -1,0 +1,60 @@
+"""
+Implements a set of datasources oriented off of a single revision.  This is
+useful for extracting features of edit and article quality.
+
+.. autodata:: revscoring.datasources.session_oriented.session
+
+"""
+
+from ..dependencies import DependentSet
+from .meta import expanders
+from .revision_oriented import Revision, User
+
+
+def list_of_tree(dependent_set, rewrite_name=None, cache=None):
+    cache = cache if cache is not None else {}
+    rewrite_name = rewrite_name if rewrite_name is not None else \
+        lambda name: name
+
+    # Rewrites all dependents.
+    for attr, dependent in dependent_set.dependents.items():
+        new_dependent = list_of_ify(dependent, rewrite_name, cache)
+        setattr(dependent_set, attr, new_dependent)
+
+    # Iterate into all sub-DependentSets
+    for attr, sub_dependent_set in dependent_set.dependent_sets.items():
+        new_dependent_set = list_of_tree(
+            sub_dependent_set, rewrite_name, cache)
+        setattr(dependent_set, attr, new_dependent_set)
+
+    return dependent_set
+
+
+def list_of_ify(dependent, rewrite_name, cache):
+    new_name = rewrite_name(dependent.name)
+    if new_name in cache:
+        return cache[new_name]
+    else:
+        new_dependencies = [list_of_ify(dependency, rewrite_name, cache)
+                            for dependency in dependent.dependencies]
+        return expanders.list_of(
+            dependent, depends_on=new_dependencies, name=new_name)
+
+
+class Session(DependentSet):
+    def __init__(self, name):
+        super().__init__(name)
+        self.revisions = list_of_tree(Revision(
+            name + ".revisions",
+            include_page_creation=True,
+            include_content=True,
+            include_user=False,
+            include_page_suggested=True))
+        self.user = list_of_tree(User(
+            name + ".user",
+            include_info=True,
+            include_last_revision=False
+        ))
+
+
+session = Session("session")

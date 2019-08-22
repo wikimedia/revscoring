@@ -116,8 +116,7 @@ class filter_keys(Datasource):
 
     :Parameters:
         table_datasource : :class:`revscoring.Datasource`
-            A datasource that generates a table including only the specified
-            keys
+            A datasource that generates a table with keys and values
         keys : `iterable` ( `hashable` )
             The keys to select from the table
         name : `str`
@@ -138,3 +137,43 @@ class filter_keys(Datasource):
                 new_table[key] = table[key]
 
         return new_table
+
+
+class first(Datasource):
+    """
+    Returns the first item in an indexable collection (e.g., a list)
+
+    :Parameters:
+        items_datasource : :class:`revscoring.Datasource`
+            A datasource that generates an indexable sequence
+        name : `str`
+            A name for the datasource
+    """
+
+    def __init__(self, items_datasource, name=None):
+        name = self._format_name(
+            name, [items_datasource])
+        super().__init__(name, self.process, depend_on=[items_datasource])
+
+    def process(self, items):
+        return items[0]
+
+
+class last(Datasource):
+    """
+    Returns the last item in an indexable collection (e.g., a list)
+
+    :Parameters:
+        items_datasource : :class:`revscoring.Datasource`
+            A datasource that generates an indexable sequence
+        name : `str`
+            A name for the datasource
+    """
+
+    def __init__(self, items_datasource, name=None):
+        name = self._format_name(
+            name, [items_datasource])
+        super().__init__(name, self.process, depend_on=[items_datasource])
+
+    def process(self, items):
+        return items[-1]
