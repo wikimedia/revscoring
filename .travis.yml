@@ -54,12 +54,15 @@ addons:
 before_install: {}
 install:
   - pip install -r requirements.txt
+  - pip install -r doc/requirements.txt
   - python -m nltk.downloader stopwords
   - pip install -r test-requirements.txt
   - pip install twine
 script:
   - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
   - pytest --cov=revscoring -m "not nottravis"
+  - sphinx-build -b html docs dist/docs
+  - sphinx-build -b linkcheck docs dist/docs
 after_success:
   - codecov
 notifications:
