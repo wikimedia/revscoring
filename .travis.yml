@@ -54,7 +54,7 @@ addons:
 before_install: {}
 install:
   - pip install -r requirements.txt
-  - pip install -r doc/requirements.txt
+  - pip install -r docs/requirements.txt
   - python -m nltk.downloader stopwords
   - pip install -r test-requirements.txt
   - pip install twine
