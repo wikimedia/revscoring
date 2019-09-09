@@ -26,11 +26,11 @@ class Feature(Dependent):
             The name of the feature
         process : `func`
             A function that will generate a feature value
-        return_type : `type`
+        returns : `type`
             A type to compare the return of this function to.
         dependencies : `list`(`hashable`)
-                An ordered list of dependencies that correspond
-                to the `*args` of `process`
+            An ordered list of dependencies that correspond
+            to the `*args` of `process`
     """
 
     def __init__(self, name, process=None, *, returns=None, depends_on=None):

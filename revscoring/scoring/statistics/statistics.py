@@ -1,6 +1,7 @@
 """
 .. autoclass:: revscoring.scoring.Statistics
     :members:
+    :inherited-members:
     :member-order:
 """
 import logging
@@ -11,13 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 class Statistics(ModelInfo):
-
+    """
+    Construct a set of Statistics.  Instances of this class work like a
+    `dict` of statistical values once
+    :func:`revscoring.scoring.Statistics.fit` is called.
+    """
     def __init__(self, *args, **kwargs):
-        """
-        Construct a set of Statistics.  Instances of this class work like a
-        `dict` of statistical values once
-        :func:`revscoring.scoring.Statistics.fit` is called.
-        """
         super().__init__(*args, **kwargs)
         self.fitted = False
 

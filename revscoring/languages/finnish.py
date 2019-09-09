@@ -17,7 +17,7 @@ except LookupError:
 stopwords = Stopwords(name + ".stopwords", stopwords)
 """
 :class:`~revscoring.languages.features.Stopwords` features provided by
-:func:`nltk.corpus.stopwords` "finnish"
+`nltk.corpus.stopwords <https://www.nltk.org/api/nltk.corpus.html>`_ "finnish"
 """
 
 badword_regexes = [

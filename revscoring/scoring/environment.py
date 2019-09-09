@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 
 
 class Environment(ModelInfo):
-
+    """
+    Constructs an environment snapshot including versions of revscoring, the
+    platform, OS, etc.
+    """
     def __init__(self):
-        """
-        Construct an environment snapshot.
-        """
         super().__init__()
         self['revscoring_version'] = __version__
         self['platform'] = platform.platform()

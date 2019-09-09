@@ -9,6 +9,8 @@ These Meta-Features apply an aggregate function to
 .. autoclass revscoring.features.meta.aggregators.max
 
 .. autoclass revscoring.features.meta.aggregators.min
+
+.. autoclass revscoring.features.meta.aggregators.mean
 """
 import statistics
 
@@ -73,23 +75,93 @@ def aggregators_factory(func):
 @aggregators_factory
 def sum(items_datasource, name=None, returns=float, vector=False):
     return sum_builtin
+sum.__doc__ = """
+    Constructs a :class:`revscoring.Feature` that contains returns the
+    sum of a collection of items.
+
+    :Parameters:
+        items_datasource : :class:`revscoring.Datasource`
+            A datasource that returns a collection of items
+        name : `str`
+            A name for the feature
+        returns : `type`
+            A type to compare the return of this function to.
+        vector : `bool`
+            If True, assume that `items_datasource` returns a vector of values.
+    """
 
 
 @aggregators_factory
 def len(items_datasource, name=None, returns=int, vector=False):
     return len_builtin
+len.__doc__ = """
+    Constructs a :class:`revscoring.Feature` that contains returns the
+    len of a collection of items.
+
+    :Parameters:
+        items_datasource : :class:`revscoring.Datasource`
+            A datasource that returns a collection of items
+        name : `str`
+            A name for the feature
+        returns : `type`
+            A type to compare the return of this function to.
+        vector : `bool`
+            If True, assume that `items_datasource` returns a vector of values.
+    """
 
 
 @aggregators_factory
 def max(items_datasource, name=None, returns=float, vector=False):
     return max_builtin
+max.__doc__ = """
+Constructs a :class:`revscoring.Feature` that contains returns the
+max of a collection of items.
+
+:Parameters:
+    items_datasource : :class:`revscoring.Datasource`
+        A datasource that returns a collection of items
+    name : `str`
+        A name for the feature
+    returns : `type`
+        A type to compare the return of this function to.
+    vector : `bool`
+        If True, assume that `items_datasource` returns a vector of values.
+"""
 
 
 @aggregators_factory
 def min(items_datasource, name=None, returns=float, vector=False):
     return min_builtin
+min.__doc__ = """
+Constructs a :class:`revscoring.Feature` that contains returns the
+min of a collection of items.
+
+:Parameters:
+    items_datasource : :class:`revscoring.Datasource`
+        A datasource that returns a collection of items
+    name : `str`
+        A name for the feature
+    returns : `type`
+        A type to compare the return of this function to.
+    vector : `bool`
+        If True, assume that `items_datasource` returns a vector of values.
+"""
 
 
 @aggregators_factory
 def mean(items_datasource, name=None, returns=np.float64, vector=False):
     return mean_builtin
+mean.__doc__ = """
+Constructs a :class:`revscoring.Feature` that contains returns the
+mean of a collection of items.
+
+:Parameters:
+    items_datasource : :class:`revscoring.Datasource`
+        A datasource that returns a collection of items
+    name : `str`
+        A name for the feature
+    returns : `type`
+        A type to compare the return of this function to.
+    vector : `bool`
+        If True, assume that `items_datasource` returns a vector of values.
+"""

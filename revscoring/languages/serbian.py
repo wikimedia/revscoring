@@ -12,7 +12,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "sr". Provided by `hunspell-sr`.
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "sr". Provided by `hunspell-sr`.
 """
 
 # https://meta.wikimedia.org/w/index.php?oldid=17213519

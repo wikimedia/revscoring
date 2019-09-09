@@ -44,8 +44,8 @@ class Model:
         self.info = ModelInfo()
         """
         A :class:`revscoring.scoring.ModelInfo` instance that implements
-        :func:`~revscoring.scoring.Model_Info.lookup` and
-        :func:`~revscoring.scoring.Model_Info.format` -- both of which
+        :func:`~revscoring.scoring.ModelInfo.lookup` and
+        :func:`~revscoring.scoring.ModelInfo.format` -- both of which
         act as an index into information about a model.
         """
         self.info['type'] = self.__class__.__name__
@@ -217,8 +217,8 @@ class Learned(Model):
                 `Feature` s provided to the constructor
             folds : `int`
                 When set to 1, cross-validation will run in the parent thread.
-                When set to 2 or greater, a :class:`multiprocessing.Pool` will
-                be created.
+                When set to 2 or greater, a :class:`multiprocessing.pool.Pool`
+                will be created.
         """
         folds_i = KFold(n_splits=folds, shuffle=True,
                         random_state=0)

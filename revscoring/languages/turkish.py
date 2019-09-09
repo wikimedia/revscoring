@@ -13,7 +13,7 @@ except LookupError:
 stopwords = Stopwords(name + ".stopwords", stopwords)
 """
 :class:`~revscoring.languages.features.Stopwords` features provided by
-:data:`nltk.corpus.stopwords` "turkish"
+`nltk.corpus.stopwords <https://www.nltk.org/api/nltk.corpus.html>`_ "turkish"
 """
 
 badword_regexes = [

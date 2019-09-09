@@ -12,19 +12,19 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import os
-import sys
 
-import alabaster
-
-# If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
+# If extensions (or modules to document with autodoc) are in another directory,
+import sys
+
+import alabaster
+import revscoring
+
 dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 print(dir_path)
 sys.path.insert(0, dir_path)
-import revscoring
 
 
 # -- General configuration ------------------------------------------------
@@ -107,6 +107,14 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build']
+nitpick_ignore = [
+    ('py:class', 'GradientBoostingClassifier'),
+    ('py:class', 'GaussianNB'),
+    ('py:class', 'MultinomialNB'),
+    ('py:class', 'BernoulliNB'),
+    ('py:class', 'LogisticRegression'),
+    ('py:class', 'SVC'),
+    ('py:class', 'RandomForestClassifier')]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -320,7 +328,7 @@ intersphinx_mapping = {'https://docs.python.org/3/': None,
                        'https://pythonhosted.org/mwtypes': None,
                        'https://pythonhosted.org/mwapi': None,
                        'https://pythonhosted.org/deltas': None,
-                       'http://pythonhosted.org/mwparserfromhell/': None,
-                       #'http://pythonhosted.org/pyenchant/': None,
+                       'https://mwparserfromhell.readthedocs.io/en/latest/': None,
+                       # 'http://pythonhosted.org/pyenchant/': None,
                        'http://www.nltk.org/': None,
-                       'http://scikit-learn.org/0.15/': None}
+                       'https://scikit-learn.org/0.20/': None}

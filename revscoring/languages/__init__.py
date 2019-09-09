@@ -27,12 +27,12 @@ bengali
     :members:
 
 bosnian
-+++++
++++++++
 .. automodule:: revscoring.languages.bosnian
     :members:
 
 catalan
-+++++
++++++++
 .. automodule:: revscoring.languages.catalan
     :members:
 
@@ -42,7 +42,7 @@ chinese
     :members:
 
 croatian
-+++++
+++++++++
 .. automodule:: revscoring.languages.croatian
     :members:
 
@@ -66,7 +66,10 @@ estonian
 .. automodule:: revscoring.languages.estonian
     :members:
 
-finnishswedish
+finnish
++++++++
+.. automodule:: revscoring.languages.finnish
+    :members:
 
 french
 ++++++
@@ -74,7 +77,7 @@ french
     :members:
 
 galician
-++++++
+++++++++
 .. automodule:: revscoring.languages.galician
     :members:
 
@@ -103,6 +106,11 @@ hungarian
 .. automodule:: revscoring.languages.hungarian
     :members:
 
+icelandic
++++++++++
+.. automodule:: revscoring.languages.icelandic
+    :members:
+
 indonesian
 ++++++++++
 .. automodule:: revscoring.languages.indonesian
@@ -124,7 +132,7 @@ korean
     :members:
 
 latvian
-++++++
++++++++
 .. automodule:: revscoring.languages.latvian
     :members:
 
@@ -138,6 +146,11 @@ persian
 .. automodule:: revscoring.languages.persian
     :members:
 
+polish
+++++++
+.. automodule:: revscoring.languages.polish
+    :members:
+
 portuguese
 ++++++++++
 .. automodule:: revscoring.languages.portuguese
@@ -146,6 +159,11 @@ portuguese
 romanian
 ++++++++
 .. automodule:: revscoring.languages.romanian
+    :members:
+
+russian
++++++++
+.. automodule:: revscoring.languages.russian
     :members:
 
 spanish

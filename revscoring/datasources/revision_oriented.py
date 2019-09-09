@@ -23,6 +23,10 @@ Supporting classes
     :members:
     :member-order: bysource
 
+.. autoclass:: revscoring.datasources.revision_oriented.Suggested
+    :members:
+    :member-order: bysource
+
 .. autoclass:: revscoring.datasources.revision_oriented.User
     :members:
     :member-order: bysource
@@ -213,7 +217,7 @@ class Page(DependentSet):
         if include_suggested:
             self.suggested = Suggested(name + ".suggestions")
             """
-            :class:`~revscoring.datasources.revision_oriented.Suggested" :
+            :class:`~revscoring.datasources.revision_oriented.Suggested` :
             The set of suggestions for a page.
             """
 

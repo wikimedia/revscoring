@@ -20,7 +20,7 @@ def safe_dictionary_check(word):
 dictionary = Dictionary(name + ".dictionary", safe_dictionary_check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "en". Provided by `myspell-en-au`, `myspell-en-gb`,
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "en". Provided by `myspell-en-au`, `myspell-en-gb`,
 `myspell-en-us`, and `myspell-en-za`.
 """
 
@@ -35,7 +35,7 @@ except LookupError:
 stopwords = Stopwords(name + ".stopwords", stopwords)
 """
 :class:`~revscoring.languages.features.Stopwords` features provided by
-:func:`nltk.corpus.stopwords` "english"
+`nltk.corpus.stopwords <https://www.nltk.org/api/nltk.corpus.html>`_ "english"
 """
 
 try:
