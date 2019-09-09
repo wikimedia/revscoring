@@ -61,7 +61,7 @@ session = Session("session")
 """
 Represents the session of interest.  Implements this structure:
 
-* session
+* session: :class:`~revscoring.datasources.session_oriented.Session`
     * revisions: :class:`~revscoring.datasources.revision_oriented.Revision`
         * diff: :class:`~revscoring.datasources.revision_oriented.Diff`
         * page: :class:`~revscoring.datasources.revision_oriented.Page`
@@ -71,7 +71,4 @@ Represents the session of interest.  Implements this structure:
             * user: :class:`~revscoring.datasources.revision_oriented.User`
     * user: :class:`~revscoring.datasources.revision_oriented.User`
         * info: :class:`~revscoring.datasources.revision_oriented.UserInfo`
-        * last_revision:
-            * page: :class:`~revscoring.datasources.revision_oriented.Page`
-                * namespace: :class:`~revscoring.datasources.revision_oriented.Namespace`
 """  # noqa
