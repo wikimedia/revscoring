@@ -61,7 +61,7 @@ install:
 script:
   - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
   - pytest --cov=revscoring -m "not nottravis"
-  - sphinx-build -b html docs dist/docs
+  - sphinx-build -anW -b html docs dist/docs
   - sphinx-build -b linkcheck docs dist/docs
 after_success:
   - codecov
