@@ -331,4 +331,4 @@ intersphinx_mapping = {'https://docs.python.org/3/': None,
                        'https://mwparserfromhell.readthedocs.io/en/latest/': None,
                        # 'http://pythonhosted.org/pyenchant/': None,
                        'http://www.nltk.org/': None,
-                       'https://scikit-learn.org/0.20/': None}
+                       'https://scikit-learn.org/stable/': None}
