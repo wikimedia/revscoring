@@ -50,7 +50,7 @@ class RegexMatches(DependentSet):
                 will be used
         """
         return self.__class__(
-            name or self._name + ".excluding({0!r})".format(exclusions),
+            name or self.name + ".excluding({0!r})".format(exclusions),
             self._regexes,
             exclusions=(self._exclusions or []) + exclusions,
             wrapping=self._wrapping)

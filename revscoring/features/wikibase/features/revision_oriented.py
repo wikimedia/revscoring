@@ -60,7 +60,7 @@ class Revision(DependentSet):
                 feature's name will be 'has_property(<property>)'
         """
         if name is None:
-            name = self._name + ".has_property({0})".format(repr(property))
+            name = self.name + ".has_property({0})".format(repr(property))
 
         return bools.item_in_set(property, self.datasources.properties,
                                  name=name)
@@ -80,7 +80,7 @@ class Revision(DependentSet):
                 'has_property_value(<property>, <value>)'
         """
         if name is None:
-            name = self._name + ".has_property_value({0}, {1})" \
+            name = self.name + ".has_property_value({0}, {1})" \
                 .format(repr(property), repr(value))
 
         return HasPropertyValue(name, property, value, self.datasources.entity)

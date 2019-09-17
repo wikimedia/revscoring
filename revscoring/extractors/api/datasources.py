@@ -9,7 +9,7 @@ class RevDocById(Datasource):
     def __init__(self, revision, extractor):
         self.revision = revision
         self.extractor = extractor
-        super().__init__(revision._name + ".doc", self.process,
+        super().__init__(revision.name + ".doc", self.process,
                          depends_on=[revision.id, extractor.dependents])
 
     def process(self, rev_id, dependents):
@@ -34,7 +34,7 @@ class PageCreationRevDoc(Datasource):
     def __init__(self, page, extractor):
         self.page = page
         self.extractor = extractor
-        super().__init__(page.creation._name + ".doc", self.process,
+        super().__init__(page.creation.name + ".doc", self.process,
                          depends_on=[page.id, extractor.dependents])
 
     def process(self, page_id, dependents):
@@ -77,7 +77,7 @@ class UserInfoDoc(Datasource):
     def __init__(self, user, extractor):
         self.user = user
         self.extractor = extractor
-        super().__init__(user.info._name + ".doc", self.process,
+        super().__init__(user.info.name + ".doc", self.process,
                          depends_on=[user.id, user.text])
 
     def process(self, user_id, user_text):
@@ -99,7 +99,7 @@ class LastUserRevDoc(Datasource):
         self.revision = revision
         self.extractor = extractor
         super().__init__(
-            revision.user.last_revision._name + ".doc", self.process,
+            revision.user.last_revision.name + ".doc", self.process,
             depends_on=[revision.user.text, revision.timestamp,
                         extractor.dependents]
         )

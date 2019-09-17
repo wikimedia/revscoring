@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class Revision(DependentSet):
     def __init__(self, revision, extractor, rev_doc, id_datasource=None):
-        super().__init__(revision._name)
+        super().__init__(revision.name)
 
         self.doc = rev_doc
 
@@ -47,9 +47,9 @@ class Revision(DependentSet):
 class RevisionPage(DependentSet):
 
     def __init__(self, page, extractor, rev_doc):
-        super().__init__(page._name)
+        super().__init__(page.name)
         namespace_title = Datasource(
-            page._name + ".namespace_title", normalize_title,
+            page.name + ".namespace_title", normalize_title,
             depends_on=[rev_doc]
         )
         self.id = key(['page', 'pageid'], rev_doc, name=page.id.name)
@@ -70,7 +70,7 @@ class RevisionPage(DependentSet):
 class PageSuggested(DependentSet):
 
     def __init__(self, page, extractor):
-        super().__init__(page.suggested._name)
+        super().__init__(page.suggested.name)
 
         if hasattr(page.suggested, "properties"):
             property_suggestion_doc = \
@@ -82,7 +82,7 @@ class PageSuggested(DependentSet):
 
 class Namespace(DependentSet):
     def __init__(self, namespace, extractor, rev_doc, namespace_title):
-        super().__init__(namespace._name)
+        super().__init__(namespace.name)
         self.id = key(['page', 'ns'], rev_doc, name=namespace.id.name)
         self.name = Datasource(namespace.name.name, first,
                                depends_on=[namespace_title])
@@ -91,7 +91,7 @@ class Namespace(DependentSet):
 class RevisionUser(DependentSet):
 
     def __init__(self, revision, extractor, rev_doc):
-        super().__init__(revision.user._name)
+        super().__init__(revision.user.name)
         self.id = key('userid', rev_doc, name=revision.user.id.name,
                       if_missing=(UserDeleted, revision.user))
         self.text = key('user', rev_doc, name=revision.user.text.name,
@@ -109,7 +109,7 @@ class RevisionUser(DependentSet):
 class RevisionUserInfo(DependentSet):
 
     def __init__(self, user, extractor):
-        super().__init__(user.info._name)
+        super().__init__(user.info.name)
 
         self.doc = extractor.get_user_info_doc(user)
         self.editcount = key('editcount', self.doc,

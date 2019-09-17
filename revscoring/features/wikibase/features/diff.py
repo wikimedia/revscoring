@@ -1,7 +1,6 @@
 import re
 
 import mwbase
-
 from revscoring.dependencies import DependentSet
 
 from ...feature import Feature
@@ -154,7 +153,7 @@ class Diff(DependentSet):
                 feature's name will be 'property_changed(<property>)'
         """
         if name is None:
-            name = self._name + ".property_changed({0})" \
+            name = self.name + ".property_changed({0})" \
                 .format(repr(property))
         return bools.item_in_set(property, self.datasources.properties_changed,
                                  name=name)

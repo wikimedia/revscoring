@@ -14,7 +14,7 @@ r_text = revision_oriented.revision.text
 p_text = revision_oriented.revision.parent.text
 
 badwords_notbad = badwords.excluding(
-    [r'notbad'], name=badwords._name + "_notbad")
+    [r'notbad'], name=badwords.name + "_notbad")
 
 
 def test_regexes():
