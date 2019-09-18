@@ -79,7 +79,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Revscoring'
-copyright = u'2017, Scoring Platform team'
+copyright = u'2019, Scoring Platform team'
 author = u'Aaron Halfaker'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -112,9 +112,11 @@ nitpick_ignore = [
     ('py:class', 'GaussianNB'),
     ('py:class', 'MultinomialNB'),
     ('py:class', 'BernoulliNB'),
-    ('py:class', 'LogisticRegression'),
-    ('py:class', 'SVC'),
-    ('py:class', 'RandomForestClassifier')]
+    ('py:class', 'sklearn.linear_model.logistic.LogisticRegression'),
+    ('py:class', 'sklearn.svm.classes.SVC'),
+    ('py:class', 'sklearn.ensemble.forest.RandomForestClassifier'),
+    ('py:class', 'sklearn.ensemble.gradient_boosting.GradientBoostingClassifier')
+    ]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
