@@ -1,5 +1,7 @@
 .. _api-reference:
 
+:orphan:
+
 revscoring package
 ==================
 

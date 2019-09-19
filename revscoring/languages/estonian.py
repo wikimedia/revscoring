@@ -12,7 +12,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "et". Provided by `myspell-et`
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "et". Provided by `myspell-et`
 """
 
 # No stemmer

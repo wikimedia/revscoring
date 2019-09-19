@@ -13,7 +13,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "ta". Provided by `aspell-ta`.
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "ta". Provided by `aspell-ta`.
 """
 '''
 

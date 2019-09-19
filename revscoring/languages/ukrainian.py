@@ -12,7 +12,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "uk".  Provided by `myspell-uk`
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "uk".  Provided by `myspell-uk`
 """
 
 stopwords = [

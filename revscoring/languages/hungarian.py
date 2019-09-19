@@ -12,7 +12,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "hungarian".  Provided by `aspell-hu`
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "hungarian".  Provided by `aspell-hu`
 """
 
 try:
@@ -26,7 +26,7 @@ except LookupError:
 stopwords = Stopwords(name + ".stopwords", stopwords)
 """
 :class:`~revscoring.languages.features.Stopwords` features provided by
-:func:`nltk.corpus.stopwords` "hungarian"
+`nltk.corpus.stopwords <https://www.nltk.org/api/nltk.corpus.html>`_ "hungarian"
 """
 
 badword_regexes = [

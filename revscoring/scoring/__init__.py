@@ -16,6 +16,9 @@ for more information.
 
 .. autoclass:: revscoring.scoring.ModelInfo
     :members:
+
+.. autoclass:: revscoring.scoring.Environment
+    :members:
 """
 from .environment import Environment
 from .model_info import ModelInfo

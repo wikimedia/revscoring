@@ -1,19 +1,19 @@
 from collections import OrderedDict
 
-from ..errors import ModelInfoLookupError
 from . import util
+from ..errors import ModelInfoLookupError
 
 
 class ModelInfo:
+    """
+    Constructs a mapping of information about a model.
+    :class:`~revscoring.scoring.ModelInfo` objects are usually nested
+    within each other to provide a convenient tree structure for
+    :func:`~revscoring.scoring.ModelInfo.lookup` and
+    :func:`~revscoring.scoring.ModelInfo.format`.
+    """
 
     def __init__(self, pairs=[], default_fields=None):
-        """
-        Constructs a mapping of information about a model.
-        :class:`~revscoring.scoring.ModelInfo` objects are usually nested
-        within each other to provide a convenient tree structure for
-        :func:`~revscoring.scoring.ModelInfo.lookup` and
-        :func:`~revscoring.scoring.ModelInfo.format`.
-        """
         self._data = OrderedDict(pairs)
         self._default_fields = set(default_fields) \
             if default_fields is not None else None

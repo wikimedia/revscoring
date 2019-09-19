@@ -12,7 +12,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "he".  Provided by `myspell-he`
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "he".  Provided by `myspell-he`
 """
 
 badword_regexes = [

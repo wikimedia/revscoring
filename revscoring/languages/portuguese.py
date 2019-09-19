@@ -12,7 +12,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "pt". Provided by `myspell-pt`
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "pt". Provided by `myspell-pt`
 """
 
 try:
@@ -26,7 +26,7 @@ except LookupError:
 stopwords = Stopwords(name + ".stopwords", stopwords)
 """
 :class:`~revscoring.languages.features.Stopwords` features provided by
-:func:`nltk.corpus.stopwords` "portuguese"
+`nltk.corpus.stopwords <https://www.nltk.org/api/nltk.corpus.html>`_ "portuguese"
 """
 
 try:

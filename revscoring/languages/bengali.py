@@ -14,7 +14,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "bn".  Provided by `aspell-bn`
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "bn".  Provided by `aspell-bn`
 """
 '''
 

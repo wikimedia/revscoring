@@ -44,6 +44,7 @@ addons:
     - aspell-ru
     - aspell-ta
     - aspell-uk
+    - hunspell-bs
     - hunspell-vi
     - hunspell-sr
     - myspell-lv
@@ -54,12 +55,15 @@ addons:
 before_install: {}
 install:
   - pip install -r requirements.txt
+  - pip install -r docs/requirements.txt
   - python -m nltk.downloader stopwords
   - pip install -r test-requirements.txt
   - pip install twine
 script:
-  - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,doc
+  - flake8 . --max-line-length=85 --exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg,docs
   - pytest --cov=revscoring -m "not nottravis"
+  - sphinx-build -anW -b html docs dist/docs
+  - sphinx-build -b linkcheck docs dist/docs
 after_success:
   - codecov
 notifications:

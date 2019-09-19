@@ -19,6 +19,7 @@ models/*.model
 env/
 bin/
 build/
+docs/_build/
 develop-eggs/
 dist/
 eggs/

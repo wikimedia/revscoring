@@ -1,6 +1,6 @@
 """
 This library contains a set of facilities for constructing and applying
-:class:`~revscoring.ScorerModel` s to MediaWiki revisions. This library
+:class:`~revscoring.Model` s to MediaWiki revisions. This library
 eases the training and testing of Machine Learning-based scoring
 strategies.
 
@@ -79,20 +79,31 @@ support feature extraction.  In order to support this, we provide a
 collection of language feature sets that work like other features except
 that they are language-specific.  Language-specific feature sets are
 available for the following languages:
+:data:`~revscoring.languages.albanian`,
 :data:`~revscoring.languages.arabic`,
+:data:`~revscoring.languages.bengali`,
+:data:`~revscoring.languages.bosnian`,
+:data:`~revscoring.languages.catalan`,
+:data:`~revscoring.languages.chinese`,
+:data:`~revscoring.languages.croatian`,
 :data:`~revscoring.languages.czech`,
 :data:`~revscoring.languages.dutch`,
 :data:`~revscoring.languages.english`,
 :data:`~revscoring.languages.estonian`,
+:data:`~revscoring.languages.finnish`,
 :data:`~revscoring.languages.french`,
+:data:`~revscoring.languages.galician`,
 :data:`~revscoring.languages.german`,
+:data:`~revscoring.languages.greek`,
 :data:`~revscoring.languages.hebrew`,
 :data:`~revscoring.languages.hindi`,
 :data:`~revscoring.languages.hungarian`,
+:data:`~revscoring.languages.icelandic`,
 :data:`~revscoring.languages.indonesian`,
 :data:`~revscoring.languages.italian`,
 :data:`~revscoring.languages.japanese`,
 :data:`~revscoring.languages.korean`,
+:data:`~revscoring.languages.latvian`,
 :data:`~revscoring.languages.norwegian`,
 :data:`~revscoring.languages.persian`,
 :data:`~revscoring.languages.polish`,
@@ -133,7 +144,7 @@ from .about import (__author__, __author_email__, __description__, __name__,
 from .datasources import Datasource
 from .dependencies import Dependent, DependentSet
 from .extractors import Extractor
-from .features import Feature
+from .features import Feature, FeatureVector
 from .score_processor import ScoreProcessor
 from .scoring import Model
 
@@ -145,5 +156,6 @@ if sys.version_info <= (3, 0):
 
 
 __all__ = [Datasource, Dependent, DependentSet, Extractor, Feature,
-           Model, ScoreProcessor, __name__, __version__, __author__,
+           FeatureVector, Model, ScoreProcessor,
+           __name__, __version__, __author__,
            __author_email__, __description__, __url__]

@@ -12,19 +12,19 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import os
-import sys
 
-import alabaster
-
-# If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
+# If extensions (or modules to document with autodoc) are in another directory,
+import sys
+
+import alabaster
+import revscoring
+
 dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 print(dir_path)
 sys.path.insert(0, dir_path)
-import revscoring
 
 
 # -- General configuration ------------------------------------------------
@@ -79,7 +79,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Revscoring'
-copyright = u'2017, Scoring Platform team'
+copyright = u'2019, Scoring Platform team'
 author = u'Aaron Halfaker'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -107,10 +107,20 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build']
+nitpick_ignore = [
+    ('py:class', 'GradientBoostingClassifier'),
+    ('py:class', 'GaussianNB'),
+    ('py:class', 'MultinomialNB'),
+    ('py:class', 'BernoulliNB'),
+    ('py:class', 'sklearn.linear_model.logistic.LogisticRegression'),
+    ('py:class', 'sklearn.svm.classes.SVC'),
+    ('py:class', 'sklearn.ensemble.forest.RandomForestClassifier'),
+    ('py:class', 'sklearn.ensemble.gradient_boosting.GradientBoostingClassifier')
+    ]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
-#default_role = None
+# default_role = None
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 #add_function_parentheses = True
@@ -169,7 +179,7 @@ html_theme = 'alabaster'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -320,7 +330,7 @@ intersphinx_mapping = {'https://docs.python.org/3/': None,
                        'https://pythonhosted.org/mwtypes': None,
                        'https://pythonhosted.org/mwapi': None,
                        'https://pythonhosted.org/deltas': None,
-                       'http://pythonhosted.org/mwparserfromhell/': None,
-                       #'http://pythonhosted.org/pyenchant/': None,
+                       'https://mwparserfromhell.readthedocs.io/en/latest/': None,
+                       # 'http://pythonhosted.org/pyenchant/': None,
                        'http://www.nltk.org/': None,
-                       'http://scikit-learn.org/0.15/': None}
+                       'https://scikit-learn.org/stable/': None}

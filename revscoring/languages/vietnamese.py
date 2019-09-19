@@ -12,7 +12,7 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-:class:`enchant.Dict` "vi". Provided by `hunspell-vi`.
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "vi". Provided by `hunspell-vi`.
 """
 
 # https://vi.wiktionary.org/wiki/Th%C3%A0nh_vi%C3%AAn:Laurent_Bouvier/
