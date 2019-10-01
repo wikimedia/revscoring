@@ -12,5 +12,6 @@ Supporting classes
 
 """
 from .revision_oriented import Revision, revision
+from .session_oriented import Session, session
 
-__all__ = [revision, Revision]
+__all__ = [revision, Revision, session, Session]

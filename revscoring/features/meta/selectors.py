@@ -1,19 +1,14 @@
-from ..aggregators import aggregators_factory
+from ..feature import function_applier
+
+math_min = min
+math_max = max
 
 
-def _first(items):
-    return items[0]
+@function_applier
+def min(fist_arg, second_arg, *other_args, name=None, returns=float):
+    return math_min, name, returns
 
 
-def _last(items):
-    return items[-1]
-
-
-@aggregators_factory
-def first(items_datasource, name=None, returns=float, vector=False):
-    return _first
-
-
-@aggregators_factory
-def last(items_datasource, name=None, returns=float, vector=False):
-    return _last
+@function_applier
+def max(fist_arg, second_arg, *other_args, name=None, returns=float):
+    return math_max, name, returns

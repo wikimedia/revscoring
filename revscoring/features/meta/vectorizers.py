@@ -4,7 +4,7 @@ These Meta-Features genetate a :class:`revscoring.FeatureVector` based on some
 
 .. autoclass revscoring.features.meta.vectorizers.vectorize
 """
-from ..feature_vector import FeatureVector
+from ..feature import FeatureVector
 
 
 class vectorize(FeatureVector):

@@ -27,8 +27,10 @@ Modifiers provide convenient mechanisms for modifying and combining
 .. autofunction:: revscoring.features.modifiers.le
 
 """
-from .feature import (add, and_, div, eq, ge, gt, le, log, lt, max, min, mul,
-                      ne, not_, or_, sub)
+from .feature import (add, and_, div, eq, ge, gt, le, lt, mul, ne, not_, or_,
+                      sub)
+from .meta.rescalers import log
+from .meta.selectors import max, min
 
-__all__ = [add, div, eq, ge, gt, le, log, lt, max, min, mul, ne, sub, and_,
-           or_, not_]
+__all__ = [add, div, eq, ge, gt, le, log, lt, mul, ne, sub, and_,
+           or_, not_, max, min]

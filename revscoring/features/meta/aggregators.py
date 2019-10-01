@@ -16,8 +16,7 @@ import statistics
 
 import numpy as np
 
-from ..feature import Feature
-from ..feature_vector import FeatureVector
+from ..feature import Feature, FeatureVector
 
 any_builtin = any
 all_builtin = all
@@ -25,155 +24,113 @@ len_builtin = len
 sum_builtin = sum
 max_builtin = max
 min_builtin = min
-mean_builtin = statistics.mean
 
 
-class AggregatorsScalar(Feature):
-    def __init__(self, items_datasource, func, name=None, returns=float):
+def _first(items):
+    return items[0]
+
+
+def _last(items):
+    return items[-1]
+
+
+class Aggregator:
+
+    def __init__(self, items_datasource, func, name=None, returns=None, empty_default=None):
         name = self._format_name(
             name, [items_datasource], func_name=func.__name__)
         super().__init__(name, self.process, depends_on=[items_datasource],
                          returns=returns)
         self.func = func
+        self.empty_default = empty_default
+
+
+class SingletonAggregator(Aggregator, Feature):
 
     def process(self, items):
         if items is None or len_builtin(items) == 0:
-            return self.returns()
+            if self.empty_default is None:
+                raise ValueError(
+                    "Cannot generate {0} of {1} -- length of zero"
+                    .format(self.func.__name__, self.dependencies[0]))
+            else:
+                return self.returns(self.empty_default)
         else:
             return self.returns(self.func(items))
 
 
-class AggregatorsVector(FeatureVector):
-    def __init__(self, items_datasource, func, name=None, returns=float):
-        name = self._format_name(
-            name, [items_datasource], func_name=func.__name__)
-        super().__init__(name, self.process, depends_on=[items_datasource],
-                         returns=returns)
-        self.func = func
+class VectorAggregator(Aggregator, FeatureVector):
 
-    def process(self, items):
-        if len_builtin(items) == 0 or items[0] is None or \
-                len_builtin(items[0]) == 0:
-            return [self.returns()]
+    def process(self, vectors):
+        if vectors is None or len_builtin(vectors) == 0 or \
+           vectors[0] is None or len_builtin(vectors[0]) == 0:
+            if self.empty_default is None:
+                raise ValueError(
+                    "Cannot generate {0} of {1} -- length of zero"
+                    .format(self.func.__name__, self.dependencies[0]))
+            else:
+                return [self.returns(self.empty_default)]
         else:
-            return_func = np.vectorize(self.returns)
-            # apply the function over each row
-            return return_func(np.apply_along_axis(
-                self.func, 0, np.array(items, dtype=self.returns))).tolist()
+            return [self.returns(self.func(vals)) for vals in zip(*vectors)]
 
 
-def aggregators_factory(func):
-    def wrapper(items_datasource, name=None, returns=float, vector=False):
-        func_tocall = func(items_datasource, name, returns)
+def aggregator(func):
+    def wrapper(items_datasource, name=None, returns=None, empty_default=None, vector=False):
+        func_tocall, name, returns, empty_default = \
+            func(items_datasource, name, returns, empty_default)
         if vector:
-            return AggregatorsVector(
-                items_datasource, func_tocall, name, returns)
+            return VectorAggregator(
+                items_datasource, func=func_tocall, empty_default=empty_default,
+                name=name, returns=returns)
         else:
-            return AggregatorsScalar(
-                items_datasource, func_tocall, name, returns)
+            return SingletonAggregator(
+                items_datasource, func=func_tocall, empty_default=empty_default,
+                name=name, returns=returns)
     return wrapper
 
 
-@aggregators_factory
-def all(items_datasource, name=None, returns=bool, vector=False):
-    return all_builtin
+@aggregator
+def all(items_datasource, name, returns, empty_default, vector=False):
+    return all_builtin, name, returns or bool, empty_default or False
 
 
-@aggregators_factory
-def any(items_datasource, name=None, returns=bool, vector=False):
-    return any_builtin
+@aggregator
+def any(items_datasource, name, returns, empty_default, vector=False):
+    return any_builtin, name, returns or bool, empty_default or False
 
 
-@aggregators_factory
-def sum(items_datasource, name=None, returns=float, vector=False):
-    return sum_builtin
-sum.__doc__ = """
-    Constructs a :class:`revscoring.Feature` that contains returns the
-    sum of a collection of items.
-
-    :Parameters:
-        items_datasource : :class:`revscoring.Datasource`
-            A datasource that returns a collection of items
-        name : `str`
-            A name for the feature
-        returns : `type`
-            A type to compare the return of this function to.
-        vector : `bool`
-            If True, assume that `items_datasource` returns a vector of values.
-    """
+@aggregator
+def sum(items_datasource, name, returns, empty_default, vector=False):
+    returns = returns or float
+    return sum_builtin, name, returns, empty_default or 0.0
 
 
-@aggregators_factory
-def len(items_datasource, name=None, returns=int, vector=False):
-    return len_builtin
-len.__doc__ = """
-    Constructs a :class:`revscoring.Feature` that contains returns the
-    len of a collection of items.
-
-    :Parameters:
-        items_datasource : :class:`revscoring.Datasource`
-            A datasource that returns a collection of items
-        name : `str`
-            A name for the feature
-        returns : `type`
-            A type to compare the return of this function to.
-        vector : `bool`
-            If True, assume that `items_datasource` returns a vector of values.
-    """
+@aggregator
+def len(items_datasource, name, returns, empty_default, vector=False):
+    return len_builtin, name, int, empty_default or 0
 
 
-@aggregators_factory
-def max(items_datasource, name=None, returns=float, vector=False):
-    return max_builtin
-max.__doc__ = """
-Constructs a :class:`revscoring.Feature` that contains returns the
-max of a collection of items.
-
-:Parameters:
-    items_datasource : :class:`revscoring.Datasource`
-        A datasource that returns a collection of items
-    name : `str`
-        A name for the feature
-    returns : `type`
-        A type to compare the return of this function to.
-    vector : `bool`
-        If True, assume that `items_datasource` returns a vector of values.
-"""
+@aggregator
+def mean(items_datasource, name, returns, empty_default, vector=False):
+    returns = returns or float
+    return statistics.mean, name, returns, empty_default or 0.0
 
 
-@aggregators_factory
-def min(items_datasource, name=None, returns=float, vector=False):
-    return min_builtin
-min.__doc__ = """
-Constructs a :class:`revscoring.Feature` that contains returns the
-min of a collection of items.
-
-:Parameters:
-    items_datasource : :class:`revscoring.Datasource`
-        A datasource that returns a collection of items
-    name : `str`
-        A name for the feature
-    returns : `type`
-        A type to compare the return of this function to.
-    vector : `bool`
-        If True, assume that `items_datasource` returns a vector of values.
-"""
+@aggregator
+def max(items_datasources, name, returns, empty_default, vector=False):
+    return max_builtin, name, returns or float, empty_default or 0
 
 
-@aggregators_factory
-def mean(items_datasource, name=None, returns=np.float64, vector=False):
-    return mean_builtin
-mean.__doc__ = """
-Constructs a :class:`revscoring.Feature` that contains returns the
-mean of a collection of items.
+@aggregator
+def min(items_datasources, name, returns, empty_default, vector=False):
+    return min_builtin, name, returns or float, empty_default or 0
 
-:Parameters:
-    items_datasource : :class:`revscoring.Datasource`
-        A datasource that returns a collection of items
-    name : `str`
-        A name for the feature
-    returns : `type`
-        A type to compare the return of this function to.
-    vector : `bool`
-        If True, assume that `items_datasource` returns a vector of values.
-"""
+
+@aggregator
+def first(items_datasource, name, returns, empty_default, vector=False):
+    return _first, name, returns or float, empty_default or None
+
+
+@aggregator
+def last(items_datasource, name, returns, empty_default, vector=False):
+    return _last, name, returns or float, empty_default or None

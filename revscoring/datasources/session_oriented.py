@@ -5,9 +5,13 @@ useful for extracting features of edit and article quality.
 .. autodata:: revscoring.datasources.session_oriented.session
 
 """
+import re
+
+from revscoring import Datasource, Feature
+from revscoring.features.meta import expanders as feature_expanders
 
 from ..dependencies import DependentSet
-from .meta import expanders
+from .meta import expanders as datasource_expanders
 from .revision_oriented import Revision, User
 
 
@@ -37,8 +41,20 @@ def list_of_ify(dependent, rewrite_name, cache):
     else:
         new_dependencies = [list_of_ify(dependency, rewrite_name, cache)
                             for dependency in dependent.dependencies]
-        return expanders.list_of(
-            dependent, depends_on=new_dependencies, name=new_name)
+
+        if isinstance(dependent, Datasource):
+            return datasource_expanders.list_of(
+                dependent, depends_on=new_dependencies, name=new_name)
+        elif isinstance(dependent, Feature):
+            return feature_expanders.list_of(
+                dependent, depends_on=new_dependencies, name=new_name)
+        else:
+            raise TypeError("Cannot convert type {0} into a list_of"
+                            .format(type(dependent)))
+
+
+def rewrite_name(name):
+    return re.sub(r"(^|\.)revision\.", r"\1session.revisions.", name)
 
 
 class Session(DependentSet):

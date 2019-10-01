@@ -53,8 +53,8 @@ Base classes
 .. automodule:: revscoring.features.feature_vector
 """
 
-from .feature import Constant, Feature, Modifier
-from .feature_vector import FeatureVector
+from .feature import Constant, ConstantVector, Feature, FeatureVector, Modifier
 from .functions import trim, vectorize_values
 
-__all__ = [Feature, Modifier, Constant, FeatureVector, trim, vectorize_values]
+__all__ = [Feature, Modifier, Constant, ConstantVector, FeatureVector, trim,
+           vectorize_values]
