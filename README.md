@@ -2,7 +2,7 @@
 [![Test coverage](https://codecov.io/gh/wikimedia/revscoring/branch/master/graph/badge.svg)](https://codecov.io/gh/wikimedia/revscoring)
 # Revision Scoring
 
-A generic, machine learning-based revision scoring system designed to help automate critical wiki-work — for example, vandalism detection and removal. This library empowers [ORES](https://ores.wikimedia.org).
+A generic, machine learning-based revision scoring system designed to help automate critical wiki-work — for example, vandalism detection and removal. This library powers [ORES](https://ores.wikimedia.org).
 
 ## Example
 
