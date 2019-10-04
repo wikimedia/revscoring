@@ -187,10 +187,18 @@ class ConstantVector(FeatureVector):
 
 
 class Modifier:
-    pass
+    """
+    A special type of feature that modifies or re-scales another feature.
+    Modifiers are intended to highlight the signal from features but do not
+    lend to human interpretability.
+    """
 
 
 class FunctionApplier(Modifier):
+    """
+    An abstract base class for defining a feature that applies a function onto
+    one or more other features.
+    """
     def __init__(self, *arguments, func, name=None, returns=float):
         if name is None:
             name = self._format_name(
@@ -201,12 +209,19 @@ class FunctionApplier(Modifier):
 
 
 class SingletonFunctionApplier(FunctionApplier, Feature):
-
+    """
+    A special type of Feature that applies a function to one or more other
+    features.
+    """
     def process(self, *arg_vals):
         return self.returns(self.func(*arg_vals))
 
 
 class VectorFunctionApplier(FunctionApplier, FeatureVector):
+    """
+    A special type of FeatureVector that maps a function over one or more
+    feature vector.
+    """
     def process(self, *arg_vectors):
         arg_vectors = self.normalize_vectors(arg_vectors)
         return [self.returns(self.func(*arg_vals))
@@ -237,6 +252,13 @@ class VectorFunctionApplier(FunctionApplier, FeatureVector):
 
 
 def function_applier(func):
+    """
+    A decorator for building a FunctionApplier.  The decorated function should
+    take a list of of `arguments` (Feature or FeatureVector), a name for the
+    new feature, and a `returns` type and return a function to call, a name,
+    and `returns` type.  These values will be used to construct a
+    SingletonFunctionApplier or VectorFunctionApplier as appropriate.
+    """
     def wrapper(*arguments, name=None, returns=None):
         arguments = [Feature.or_constant(a) for a in arguments]
         func_tocall, name, returns = func(*arguments, name, returns)
@@ -252,6 +274,14 @@ def function_applier(func):
 
 
 def binary_operator(func):
+    """
+    A decorator for building a FunctionApplier.  The decorated function should
+    take a list of two arguments (left and right) (Feature or FeatureVector)
+    and a `returns` type and return a function to call, an `operator` string
+    (e.g. "add" has "+" as an operator string), and `returns` type.  These
+    values will be used to construct a SingletonFunctionApplier or
+    VectorFunctionApplier as appropriate.
+    """
     def wrapper(left, right, name=None, returns=None):
         left = Feature.or_constant(left)
         right = Feature.or_constant(right)

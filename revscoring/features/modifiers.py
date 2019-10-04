@@ -26,11 +26,15 @@ Modifiers provide convenient mechanisms for modifying and combining
 .. autofunction:: revscoring.features.modifiers.ge
 .. autofunction:: revscoring.features.modifiers.le
 
+----
+
+.. autofunction:: revscoring.features.modifiers.function_applier
+.. autofunction:: revscoring.features.modifiers.binary_operator
 """
-from .feature import (add, and_, div, eq, ge, gt, le, lt, mul, ne, not_, or_,
-                      sub)
+from .feature import (add, and_, binary_operator, div, eq, function_applier,
+                      ge, gt, le, lt, mul, ne, not_, or_, sub)
 from .meta.rescalers import log
 from .meta.selectors import max, min
 
 __all__ = [add, div, eq, ge, gt, le, log, lt, mul, ne, sub, and_,
-           or_, not_, max, min]
+           or_, not_, max, min, function_applier, binary_operator]
