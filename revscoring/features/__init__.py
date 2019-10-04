@@ -49,8 +49,6 @@ Base classes
 ++++++++++++
 
 .. automodule:: revscoring.features.feature
-
-.. automodule:: revscoring.features.feature_vector
 """
 
 from .feature import Constant, ConstantVector, Feature, FeatureVector, Modifier

@@ -23,9 +23,6 @@ Base classes
 ++++++++++++
 .. automodule:: revscoring.datasources.datasource
 
-
-
-
 """
 from .datasource import Datasource
 

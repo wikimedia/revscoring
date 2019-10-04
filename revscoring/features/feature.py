@@ -2,11 +2,18 @@
 .. autoclass:: revscoring.Feature
     :members:
 
+.. autoclass:: revscoring.FeatureVector
+    :members:
+
 .. autoclass:: revscoring.features.Modifier
     :members:
 
 .. autoclass:: revscoring.features.Constant
     :members:
+
+.. autoclass:: revscoring.features.ConstantVector
+    :members:
+
 """
 import operator
 from itertools import repeat

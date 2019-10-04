@@ -157,7 +157,7 @@ sum of a collection of items.
 def len(items_datasource, name, returns, empty_default, vector=False):
     return len_builtin, name, int, empty_default or 0
 len.__doc__ = """
-Constructs a :class:`revscoring.Features` that returns the length of a
+Constructs a :class:`revscoring.Feature` that returns the length of a
 collection of items.
 
 :Parameters:
@@ -177,7 +177,7 @@ def mean(items_datasource, name, returns, empty_default, vector=False):
     returns = returns or float
     return statistics.mean, name, returns, empty_default or 0.0
 mean.__doc__ = """
-Constructs a :class:`revscoring.Features` that returns the mean of a
+Constructs a :class:`revscoring.Feature` that returns the mean of a
 collection of items.
 
 :Parameters:
@@ -196,7 +196,7 @@ collection of items.
 def max(items_datasources, name, returns, empty_default, vector=False):
     return max_builtin, name, returns or float, empty_default or 0
 max.__doc__ = """
-Constructs a :class:`revscoring.Features` that returns the maximum of a
+Constructs a :class:`revscoring.Feature` that returns the maximum of a
 collection of items.
 
 :Parameters:
@@ -215,7 +215,7 @@ collection of items.
 def min(items_datasources, name, returns, empty_default, vector=False):
     return min_builtin, name, returns or float, empty_default or 0
 min.__doc__ = """
-Constructs a :class:`revscoring.Features` that returns the minimum of a
+Constructs a :class:`revscoring.Feature` that returns the minimum of a
 collection of items.
 
 :Parameters:
@@ -234,7 +234,7 @@ collection of items.
 def first(items_datasource, name, returns, empty_default, vector=False):
     return _first, name, returns or float, empty_default or None
 first.__doc__ = """
-Constructs a :class:`revscoring.Features` that returns the first of a
+Constructs a :class:`revscoring.Feature` that returns the first of a
 collection of items.
 
 :Parameters:
@@ -253,7 +253,7 @@ collection of items.
 def last(items_datasource, name, returns, empty_default, vector=False):
     return _last, name, returns or float, empty_default or None
 last.__doc__ = """
-Constructs a :class:`revscoring.Features` that returns the last of a
+Constructs a :class:`revscoring.Feature` that returns the last of a
 collection of items.
 
 :Parameters:

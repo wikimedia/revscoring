@@ -15,6 +15,7 @@ Subpackages
     revscoring.datasources
     revscoring.datasources.meta
     revscoring.datasources.revision_oriented
+    revscoring.datasources.session_oriented
     revscoring.extractors
     revscoring.features
     revscoring.features.meta
