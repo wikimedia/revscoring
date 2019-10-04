@@ -2,6 +2,10 @@
 These Meta-Features apply an aggregate function to
 :class:`~revscoring.Datasource` that return lists of values.
 
+.. autoclass revscoring.features.meta.aggregators.any
+
+.. autoclass revscoring.features.meta.aggregators.all
+
 .. autoclass revscoring.features.meta.aggregators.sum
 
 .. autoclass revscoring.features.meta.aggregators.len
@@ -11,6 +15,10 @@ These Meta-Features apply an aggregate function to
 .. autoclass revscoring.features.meta.aggregators.min
 
 .. autoclass revscoring.features.meta.aggregators.mean
+
+.. autoclass revscoring.features.meta.aggregators.first
+
+.. autoclass revscoring.features.meta.aggregators.last
 """
 import statistics
 
@@ -90,11 +98,39 @@ def aggregator(func):
 @aggregator
 def all(items_datasource, name, returns, empty_default, vector=False):
     return all_builtin, name, returns or bool, empty_default or False
+all.__doc__ = """
+Constructs a :class:`revscoring.Feature` that returns True when all items are
+also True.
+
+:Parameters:
+    items_datasource : :class:`revscoring.Datasource`
+        A datasource that returns a collection of items
+    name : `str`
+        A name for the feature
+    returns : `type`
+        A type to compare the return of this function to.
+    vector : `bool`
+        If True, assume that `items_datasource` returns a vector of values.
+"""
 
 
 @aggregator
 def any(items_datasource, name, returns, empty_default, vector=False):
     return any_builtin, name, returns or bool, empty_default or False
+any.__doc__ = """
+Constructs a :class:`revscoring.Feature` that returns True when any items are
+also True.
+
+:Parameters:
+    items_datasource : :class:`revscoring.Datasource`
+        A datasource that returns a collection of items
+    name : `str`
+        A name for the feature
+    returns : `type`
+        A type to compare the return of this function to.
+    vector : `bool`
+        If True, assume that `items_datasource` returns a vector of values.
+"""
 
 
 @aggregator
