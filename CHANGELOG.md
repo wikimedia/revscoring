@@ -3,9 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+
+
+## [2.6.0]
+
 ### Added
 - Added release automation to PyPI via TravisCI.
 - Added CHANGELOG.md
+- Added revscoring.languages.basque (Minimal dictionary support)
+- Added <additional-field> to feature_csv utility.
 
 ## [2.5.2] - 2019-08-06
 
