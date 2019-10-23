@@ -46,8 +46,8 @@ class MicroMacroStats(ModelInfo):
             self['macro'] = None
 
         self['labels'] = OrderedDict()
-        for label, lstats in stats.items():	
-	        self['labels'][label] = lstats[field]
+        for label, lstats in stats.items():
+            self['labels'][label] = lstats[field]
 
     def format_str(self, path_tree, ndigits=3, **kwargs):
         if len(path_tree) > 0:
