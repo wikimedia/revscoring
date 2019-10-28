@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 
+## [2.6.1]
+
+## Fixed
+- revscoring.Model.model_info now has metrics sorted in label-order
 
 ## [2.6.0]
 
