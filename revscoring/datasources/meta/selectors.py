@@ -153,7 +153,7 @@ class first(Datasource):
     def __init__(self, items_datasource, name=None):
         name = self._format_name(
             name, [items_datasource])
-        super().__init__(name, self.process, depend_on=[items_datasource])
+        super().__init__(name, self.process, depends_on=[items_datasource])
 
     def process(self, items):
         return items[0]
@@ -173,7 +173,7 @@ class last(Datasource):
     def __init__(self, items_datasource, name=None):
         name = self._format_name(
             name, [items_datasource])
-        super().__init__(name, self.process, depend_on=[items_datasource])
+        super().__init__(name, self.process, depends_on=[items_datasource])
 
     def process(self, items):
         return items[-1]

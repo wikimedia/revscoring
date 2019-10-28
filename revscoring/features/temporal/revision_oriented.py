@@ -3,7 +3,6 @@ from datetime import datetime
 
 import mwtypes
 from pytz import utc
-
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import DependentSet
 
@@ -17,7 +16,8 @@ logger = logging.getLogger(__name__)
 class Revision(DependentSet):
     "Represents a revision"
 
-    def __init__(self, name, revision_datasources):
+    def __init__(self, name, revision_datasources,
+                 revision_user_datasources=None):
         super().__init__(name)
         self.datasources = revision_datasources
 
@@ -86,17 +86,17 @@ class ParentRevision(Revision):
 class User(DependentSet):
     "Represents a revision user"
 
-    def __init__(self, name, revision_datasources):
+    def __init__(self, name, revision_datasources, user_datasources=None):
         super().__init__(name)
-        self.datasources = revision_datasources.user
+        self.datasources = user_datasources or revision_datasources.user
 
         if hasattr(self.datasources, 'info'):
             self.seconds_since_registration = Feature(
                 name + ".seconds_since_registration",
                 _process_seconds_since_registration,
                 returns=int,
-                depends_on=[revision_datasources.user.id,
-                            revision_datasources.user.info.registration,
+                depends_on=[self.datasources.id,
+                            self.datasources.info.registration,
                             revision_datasources.timestamp])
             """
             `int` : The number of seconds since the user registered their
@@ -120,14 +120,15 @@ class User(DependentSet):
 class LastUserRevision(Revision):
     "Represents a revision user's last revision"
 
-    def __init__(self, name, revision_datasources):
-        super().__init__(name, revision_datasources.user.last_revision)
+    def __init__(self, name, revision_datasources, user_datasources=None):
+        user_datasources = user_datasources or revision_datasources.user
+        super().__init__(name, user_datasources.last_revision)
 
         self.seconds_since = Feature(
             name + ".seconds_since",
             _process_seconds_since,
             returns=int,
-            depends_on=[revision_datasources.user.last_revision.timestamp,
+            depends_on=[user_datasources.last_revision.timestamp,
                         revision_datasources.timestamp])
         "`int`: The number of seconds since the user last saved an edit"
 

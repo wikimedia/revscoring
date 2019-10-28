@@ -34,6 +34,7 @@ Supporting classes
 """
 from .revision_oriented import (LastUserRevision, Page, PageCreation,
                                 ParentRevision, Revision, User, revision)
+from .session_oriented import (session, Session, SessionUser, LastSessionUserRevision)
 
 __all__ = [revision, Revision, ParentRevision, LastUserRevision, PageCreation,
-           Page, User]
+           Page, User, session, Session, SessionUser, LastSessionUserRevision]

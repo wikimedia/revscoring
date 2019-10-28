@@ -1,4 +1,6 @@
+from mwtypes import Timestamp
 from revscoring.datasources.session_oriented import rewrite_name, session
+from revscoring.dependencies import solve
 
 from .util import check_datasource
 
@@ -76,3 +78,9 @@ def test_rewrite_name():
     assert rewrite_name("revision.text") == "session.revisions.text"
     assert rewrite_name("bytes.revision.foobar") == \
            "bytes.session.revisions.foobar"
+    assert rewrite_name("session.revisions.text") == "session.revisions.text"
+
+
+def test_timestamp_str():
+    cache = {session.revisions.timestamp_str: ["1970-01-01T00:00:00Z"]}
+    assert solve(session.revisions.timestamp, cache=cache) == [Timestamp(0)]

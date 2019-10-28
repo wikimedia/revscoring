@@ -18,6 +18,7 @@ Supporting functions
 
 .. autofunction:: revscoring.datasources.session_oriented.list_of_ify
 """
+import logging
 import re
 
 from revscoring import Feature, FeatureVector
@@ -27,6 +28,8 @@ from ..dependencies import DependentSet
 from .datasource import Datasource
 from .meta import expanders as datasource_expanders
 from .revision_oriented import Revision, User
+
+logger = logging.getLogger(__name__)
 
 
 def list_of_tree(dependent_set, rewrite_name=None, cache=None):
@@ -44,7 +47,7 @@ def list_of_tree(dependent_set, rewrite_name=None, cache=None):
         cache : dict(:class:`~revscoring.Feature` | :class:`~revscoring.FeatureVector` | :class:`~revscoring.Datasource`)
             A map of dependents that have already been converted.
     """
-
+    logger.debug("Applying list_of_tree to {0}".format(dependent_set.name))
     cache = cache if cache is not None else {}
     rewrite_name = rewrite_name if rewrite_name is not None else \
         lambda name: name
@@ -78,25 +81,31 @@ def list_of_ify(dependent, rewrite_name, cache):
         cache : dict(:class:`~revscoring.Feature` | :class:`~revscoring.FeatureVector` | :class:`~revscoring.Datasource`)
             A map of dependents that have already been converted.
     """
+
     new_name = rewrite_name(dependent.name)
     if new_name in cache:
+        logger.debug("list_of_ify {0} in the cache".format(dependent.name))
         return cache[new_name]
     else:
+        logger.debug("list_of_ify is modifying {0} into a list_of".format(dependent.name))
         new_dependencies = [list_of_ify(dependency, rewrite_name, cache)
                             for dependency in dependent.dependencies]
 
         if isinstance(dependent, Datasource):
-            return datasource_expanders.list_of(
+            new_dependent = datasource_expanders.list_of(
                 dependent, depends_on=new_dependencies, name=new_name)
         elif isinstance(dependent, FeatureVector):
-            return datasource_expanders.list_of(
+            new_dependent = datasource_expanders.list_of(
                 dependent, depends_on=new_dependencies, name=new_name)
         elif isinstance(dependent, Feature):
-            return feature_expanders.list_of(
+            new_dependent = feature_expanders.list_of(
                 dependent, depends_on=new_dependencies, name=new_name)
         else:
             raise TypeError("Cannot convert type {0} into a list_of"
                             .format(type(dependent)))
+
+        cache[new_name] = new_dependent
+        return cache[new_name]
 
 
 def rewrite_name(name):
@@ -110,26 +119,25 @@ class Session(DependentSet):
     def __init__(self, name):
         super().__init__(name)
         self.revisions = list_of_tree(Revision(
-            name + ".revisions",
+            "session.revisions",
             include_page_creation=True,
             include_content=True,
             include_user=False,
-            include_page_suggested=True))
+            include_page_suggested=True),
+            rewrite_name=rewrite_name)
         """
         :class:`revscoring.datasources.revision_oriented.Revision`: modified by
         :func:`~revscoring.datasources.session_oriented.list_of_tree()`
         """
 
-        self.user = list_of_tree(User(
+        self.user = User(
             name + ".user",
             include_info=True,
-            include_last_revision=False
-        ))
+            include_last_revision=True
+        )
         """
-        :class:`revscoring.datasources.revision_oriented.User`: modified by
-        :func:`~revscoring.datasources.session_oriented.list_of_tree()`
+        :class:`revscoring.datasources.revision_oriented.User`
         """
-
 
 session = Session("session")
 """
@@ -145,4 +153,5 @@ Represents the session of interest.  Implements this structure:
             * user: :class:`~revscoring.datasources.revision_oriented.User`
     * user: :class:`~revscoring.datasources.revision_oriented.User`
         * info: :class:`~revscoring.datasources.revision_oriented.UserInfo`
+        * last_revision: :class:`~revscoring.datasources.revision_oriented.Revision`
 """  # noqa

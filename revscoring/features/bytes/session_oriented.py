@@ -11,10 +11,10 @@ class Session(DependentSet):
     def __init__(self, name):
         super().__init__(name)
         revision = Revision(
-            name, datasources.Revision(name, revision_oriented.revision))
+            name, datasources.Revision(name, session_oriented.session.revisions))
         self.revisions = session_oriented.list_of_tree(
             revision, rewrite_name=session_oriented.rewrite_name,
-            cache={d: d for d in session_oriented.session})
+            cache={d.name: d for d in session_oriented.session.revisions})
 
 
 session = Session(name)
