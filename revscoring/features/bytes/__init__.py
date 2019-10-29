@@ -4,10 +4,15 @@ revisions.
 
 .. autodata:: revscoring.features.bytes.revision
 
+.. autodata:: revscoring.features.bytes.session
+
 Supporting classes
 ++++++++++++++++++
 
 .. autoclass:: revscoring.features.bytes.Revision
+    :members:
+
+.. autoclass:: revscoring.features.bytes.Session
     :members:
 
 """

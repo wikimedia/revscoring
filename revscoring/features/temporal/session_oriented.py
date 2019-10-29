@@ -10,18 +10,27 @@ name = "temporal.session"
 
 
 class Session(DependentSet):
-    def __init__(self, name):
+    """
+    Represents an editor's activity session
+    """
+    def __init__(self, name, revisions_datasources):
         super().__init__(name)
         session_revision = Revision(
-            name + ".revisions", session_oriented.session.revisions)
+            name + ".revisions", revisions_datasources)
         self.revisions = session_oriented.list_of_tree(
             session_revision, rewrite_name=session_oriented.rewrite_name,
-            cache={d.name: d for d in session_oriented.session.revisions})
+            cache={d.name: d for d in revisions_datasources})
+        """
+        :class:`~revscoring.features.temporal.revision_oriented.Revision` :
+        The revisions saved by the users within the session.
+        """
+
         self.user = SessionUser(
             name + ".user", session_oriented.session.user,
-            session_oriented.session.revisions)
+            revisions_datasources)
         """
-        :class:`~revscoring.features.temporal.session_oriented.SessionUser`
+        :class:`~revscoring.features.temporal.session_oriented.SessionUser` :
+        The session user.
         """
 
 
@@ -54,7 +63,7 @@ class SessionUser(DependentSet):
                 revisions_datasources)
             """
             :class:`~revscoring.features.temporal.session_oriented.LastSessionUserRevision` :
-            The last revision saved by the user.
+            The last revision saved by the user before the start of the session.
             """
 
 
@@ -70,7 +79,10 @@ class LastSessionUserRevision(Revision):
             returns=int,
             depends_on=[user_datasources.last_revision.timestamp,
                         first(revisions_datasources.timestamp)])
-        "`int`: The number of seconds since the user last saved an edit"
+        """
+        `int`: The number of seconds since the user last saved an edit before
+        the start of the current session.
+        """
 
 
-session = Session(name)
+session = Session(name, session_oriented.session.revisions)
