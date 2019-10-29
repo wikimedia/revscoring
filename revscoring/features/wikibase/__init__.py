@@ -18,6 +18,8 @@ Supporting classes
 """
 from .features import Diff, Revision
 from .revision_oriented import revision
+from .session_oriented import session, Session
 from .util import DictDiff, diff_dicts
 
-__all__ = [diff_dicts, DictDiff, revision, Revision, Diff]
+__all__ = [diff_dicts, DictDiff, revision, Revision, Diff,
+           session, Session]
