@@ -18,5 +18,9 @@ class Session(DependentSet):
         self.revisions = session_oriented.list_of_tree(
             revision, rewrite_name=session_oriented.rewrite_name,
             cache={d.name: d for d in revisions_datasources})
+        """
+        :class:`~revscoring.datasources.meta.expanders.list_of`(:class:`~revscoring.features.bytes.Revision`) :
+        The revisions saved by the users within the session.
+        """
 
 session = Session(name, session_oriented.session.revisions)

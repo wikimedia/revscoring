@@ -21,7 +21,7 @@ class Session(DependentSet):
             session_revision, rewrite_name=session_oriented.rewrite_name,
             cache={d.name: d for d in revisions_datasources})
         """
-        :class:`~revscoring.features.temporal.revision_oriented.Revision` :
+        :class:`~revscoring.datasources.meta.expanders.list_of`(:class:`~revscoring.features.temporal.Revision`) :
         The revisions saved by the users within the session.
         """
 
