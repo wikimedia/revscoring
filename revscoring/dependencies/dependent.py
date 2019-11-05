@@ -7,7 +7,6 @@
     :members:
 """
 import logging
-import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -68,26 +67,6 @@ class Dependent:
     def __repr__(self):
         return "<" + self.__str__() + ">"
 
-    @classmethod
-    def load(cls, f):
-        """
-        Reads serialized model information from a file.
-        """
-        if hasattr(f, 'buffer'):
-            return pickle.load(f.buffer)
-        else:
-            return pickle.load(f)
-
-    def dump(self, f):
-        """
-        Writes serialized model information to a file.
-        """
-
-        if hasattr(f, 'buffer'):
-            return pickle.dump(self, f.buffer)
-        else:
-            return pickle.dump(self, f)
-
 
 class DependentSet:
     """
@@ -99,9 +78,11 @@ class DependentSet:
             A base name for the items in the set
     """
 
-    def __init__(self, name, dependents=None, dependent_sets=None):
+    def __init__(self, name, dependents=None, dependent_sets=None,
+                 meta_dependents=None):
         self.dependents = dependents or {}
         self.dependent_sets = dependent_sets or {}
+        self.meta_dependents = meta_dependents or {}
         self.name = name
 
     def __setattr__(self, attr, value):
@@ -118,6 +99,14 @@ class DependentSet:
             self.dependent_sets[attr] = value
         else:
             pass  # Just set it like a regular attribute
+
+    @classmethod
+    def meta_dependent(cls, method):
+        """
+        A decorator for applying to methods that return a dependent value.
+        """
+        method.meta_dependent = True
+        return method
 
     # String methods
     def __str__(self):
