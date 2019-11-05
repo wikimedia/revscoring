@@ -5,6 +5,7 @@ import time
 from deltas import segment_matcher
 from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters
+from revscoring.dependencies import DependentSet
 
 from .tokenized import TokenIsInTypes, is_uppercase_word
 
@@ -19,10 +20,10 @@ class Diff:
         self.operations = Datasource(
             self.name + ".operations", _process_operations,
             depends_on=[
-                self.revision.parent.paragraphs_sentences_and_whitespace,
-                self.revision.paragraphs_sentences_and_whitespace,
-                self.revision.parent.tokens,
-                self.revision.tokens]
+                self._revision.parent.paragraphs_sentences_and_whitespace,
+                self._revision.paragraphs_sentences_and_whitespace,
+                self._revision.parent.tokens,
+                self._revision.tokens]
         )
         """
         Returns a tuple that describes the difference between the parent
@@ -225,6 +226,7 @@ class Diff:
         A list of break tokens removed in the edit
         """
 
+    @DependentSet.meta_dependent
     def tokens_added_matching(self, regex, name=None, regex_flags=re.I):
         """
         Constructs a :class:`revscoring.Datasource` that represents tokens
@@ -237,6 +239,7 @@ class Diff:
                                      regex.pattern)
         return filters.regex_matching(regex, self.tokens_added, name=name)
 
+    @DependentSet.meta_dependent
     def tokens_removed_matching(self, regex, name=None, regex_flags=re.I):
         """
         Constructs a :class:`revscoring.Datasource` that represents tokens
@@ -251,6 +254,7 @@ class Diff:
 
         return filters.regex_matching(regex, self.tokens_removed, name=name)
 
+    @DependentSet.meta_dependent
     def tokens_added_in_types(self, types, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that represents tokens
@@ -263,6 +267,7 @@ class Diff:
         return filters.filter(TokenIsInTypes(types).filter, self.tokens_added,
                               name=name)
 
+    @DependentSet.meta_dependent
     def tokens_removed_in_types(self, types, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that represents tokens

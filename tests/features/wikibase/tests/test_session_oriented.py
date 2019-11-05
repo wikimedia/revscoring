@@ -73,7 +73,21 @@ def test_session_sitelinks_diff():
             diff.datasources.sitelinks_diff)
 
 
-def test_entity():
+def test_session_property_changed():
+    p999_changed = diff.property_changed('P999')
+    p19_changed = diff.property_changed('P19')
+
+    cache = {revision_entity_doc: [ALAN_TURING, ALAN_TURING_OLD],
+             parent_entity_doc: [ALAN_TURING_OLD, ALAN_TURING]}
+
+    assert solve(p999_changed, cache=cache) == [False, False]
+    assert solve(p19_changed, cache=cache) == [True, True]
+
+    assert pickle.loads(pickle.dumps(p999_changed)) == p999_changed
+    assert pickle.loads(pickle.dumps(p19_changed)) == p19_changed
+
+
+def test_session_entity():
     assert solve(session.revisions.datasources.entity,
                  cache={revision_entity_doc: [None]})[0].properties == {}
 

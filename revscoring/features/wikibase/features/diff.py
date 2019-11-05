@@ -140,6 +140,7 @@ class Diff(DependentSet):
         )
         "`int` : The number of identifiers that were changed"
 
+    @DependentSet.meta_dependent
     def property_changed(self, property, name=None):
         """
         Returns a :class:`revscoring.Feature` that represents whether a

@@ -1,9 +1,9 @@
 import re
 
+from revscoring import Feature
+from revscoring.dependencies import DependentSet
+from revscoring.features.meta import aggregators
 from textstat.textstat import textstat
-
-from ...feature import Feature
-from ...meta import aggregators
 
 
 class Revision:
@@ -67,6 +67,7 @@ class Revision:
         )
         "`int` : The number of templates"
 
+    @DependentSet.meta_dependent
     def heading_titles_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Feature` that that generates a count of
@@ -83,6 +84,7 @@ class Revision:
             name=name
         )
 
+    @DependentSet.meta_dependent
     def headings_by_level(self, level, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a count of
@@ -96,6 +98,7 @@ class Revision:
             name=name
         )
 
+    @DependentSet.meta_dependent
     def external_link_urls_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a count of
@@ -114,6 +117,7 @@ class Revision:
             name=name
         )
 
+    @DependentSet.meta_dependent
     def wikilink_titles_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that that generates a count
@@ -132,6 +136,7 @@ class Revision:
             name=name
         )
 
+    @DependentSet.meta_dependent
     def tag_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a count of
@@ -149,6 +154,7 @@ class Revision:
             name=name
         )
 
+    @DependentSet.meta_dependent
     def template_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Feature` that generates a count of

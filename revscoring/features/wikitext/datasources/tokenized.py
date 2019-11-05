@@ -4,6 +4,7 @@ from deltas import wikitext_split
 from deltas.segmenters import ParagraphsSentencesAndWhitespace
 from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters, frequencies, mappers
+from revscoring.dependencies import DependentSet
 
 
 class Revision:
@@ -185,6 +186,7 @@ class Revision:
         A frequency table of break tokens.
         """
 
+    @DependentSet.meta_dependent
     def tokens_in_types(self, types, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that returns all content
@@ -199,6 +201,7 @@ class Revision:
         return filters.filter(token_is_in_types.filter,
                               self.tokens, name=name)
 
+    @DependentSet.meta_dependent
     def tokens_matching(self, regex, name=None, regex_flags=re.I):
         """
         Constructs a :class:`revscoring.Datasource` that returns all content
@@ -221,8 +224,8 @@ class Diff():
         super().__init__(*args, **kwargs)
 
         self.token_delta = frequencies.delta(
-            self.revision.parent.token_frequency,
-            self.revision.token_frequency,
+            self._revision.parent.token_frequency,
+            self._revision.token_frequency,
             name=self.name + ".token_delta"
         )
         """
@@ -230,7 +233,7 @@ class Diff():
         """
 
         self.token_prop_delta = frequencies.prop_delta(
-            self.revision.parent.token_frequency,
+            self._revision.parent.token_frequency,
             self.token_delta,
             name=self.name + ".token_prop_delta"
         )
@@ -239,8 +242,8 @@ class Diff():
         """
 
         self.number_delta = frequencies.delta(
-            self.revision.parent.number_frequency,
-            self.revision.number_frequency,
+            self._revision.parent.number_frequency,
+            self._revision.number_frequency,
             name=self.name + ".number_delta"
         )
         """
@@ -248,7 +251,7 @@ class Diff():
         """
 
         self.number_prop_delta = frequencies.prop_delta(
-            self.revision.parent.number_frequency,
+            self._revision.parent.number_frequency,
             self.number_delta,
             name=self.name + ".number_prop_delta"
         )
@@ -257,8 +260,8 @@ class Diff():
         """
 
         self.whitespace_delta = frequencies.delta(
-            self.revision.parent.whitespace_frequency,
-            self.revision.whitespace_frequency,
+            self._revision.parent.whitespace_frequency,
+            self._revision.whitespace_frequency,
             name=self.name + ".whitespace_delta"
         )
         """
@@ -266,7 +269,7 @@ class Diff():
         """
 
         self.whitespace_prop_delta = frequencies.prop_delta(
-            self.revision.parent.whitespace_frequency,
+            self._revision.parent.whitespace_frequency,
             self.whitespace_delta,
             name=self.name + ".whitespace_prop_delta"
         )
@@ -275,8 +278,8 @@ class Diff():
         """
 
         self.markup_delta = frequencies.delta(
-            self.revision.parent.markup_frequency,
-            self.revision.markup_frequency,
+            self._revision.parent.markup_frequency,
+            self._revision.markup_frequency,
             name=self.name + ".markup_delta"
         )
         """
@@ -284,7 +287,7 @@ class Diff():
         """
 
         self.markup_prop_delta = frequencies.prop_delta(
-            self.revision.parent.markup_frequency,
+            self._revision.parent.markup_frequency,
             self.markup_delta,
             name=self.name + ".markup_prop_delta"
         )
@@ -293,8 +296,8 @@ class Diff():
         """
 
         self.cjk_delta = frequencies.delta(
-            self.revision.parent.cjk_frequency,
-            self.revision.cjk_frequency,
+            self._revision.parent.cjk_frequency,
+            self._revision.cjk_frequency,
             name=self.name + ".cjk_delta"
         )
         """
@@ -302,7 +305,7 @@ class Diff():
         """
 
         self.cjk_prop_delta = frequencies.prop_delta(
-            self.revision.parent.cjk_frequency,
+            self._revision.parent.cjk_frequency,
             self.cjk_delta,
             name=self.name + ".cjk_prop_delta"
         )
@@ -311,8 +314,8 @@ class Diff():
         """
 
         self.entity_delta = frequencies.delta(
-            self.revision.parent.entity_frequency,
-            self.revision.entity_frequency,
+            self._revision.parent.entity_frequency,
+            self._revision.entity_frequency,
             name=self.name + ".entity_delta"
         )
         """
@@ -320,7 +323,7 @@ class Diff():
         """
 
         self.entity_prop_delta = frequencies.prop_delta(
-            self.revision.parent.entity_frequency,
+            self._revision.parent.entity_frequency,
             self.entity_delta,
             name=self.name + ".entity_prop_delta"
         )
@@ -329,8 +332,8 @@ class Diff():
         """
 
         self.url_delta = frequencies.delta(
-            self.revision.parent.url_frequency,
-            self.revision.url_frequency,
+            self._revision.parent.url_frequency,
+            self._revision.url_frequency,
             name=self.name + ".url_delta"
         )
         """
@@ -338,7 +341,7 @@ class Diff():
         """
 
         self.url_prop_delta = frequencies.prop_delta(
-            self.revision.parent.url_frequency,
+            self._revision.parent.url_frequency,
             self.url_delta,
             name=self.name + ".url_prop_delta"
         )
@@ -347,8 +350,8 @@ class Diff():
         """
 
         self.word_delta = frequencies.delta(
-            self.revision.parent.word_frequency,
-            self.revision.word_frequency,
+            self._revision.parent.word_frequency,
+            self._revision.word_frequency,
             name=self.name + ".word_delta"
         )
         """
@@ -356,7 +359,7 @@ class Diff():
         """
 
         self.word_prop_delta = frequencies.prop_delta(
-            self.revision.parent.word_frequency,
+            self._revision.parent.word_frequency,
             self.word_delta,
             name=self.name + ".word_prop_delta"
         )
@@ -365,8 +368,8 @@ class Diff():
         """
 
         self.uppercase_word_delta = frequencies.delta(
-            self.revision.parent.uppercase_word_frequency,
-            self.revision.uppercase_word_frequency,
+            self._revision.parent.uppercase_word_frequency,
+            self._revision.uppercase_word_frequency,
             name=self.name + ".uppercase_word_delta"
         )
         """
@@ -374,7 +377,7 @@ class Diff():
         """
 
         self.uppercase_word_prop_delta = frequencies.prop_delta(
-            self.revision.parent.uppercase_word_frequency,
+            self._revision.parent.uppercase_word_frequency,
             self.uppercase_word_delta,
             name=self.name + ".uppercase_word_prop_delta"
         )
@@ -383,8 +386,8 @@ class Diff():
         """
 
         self.punctuation_delta = frequencies.delta(
-            self.revision.parent.punctuation_frequency,
-            self.revision.punctuation_frequency,
+            self._revision.parent.punctuation_frequency,
+            self._revision.punctuation_frequency,
             name=self.name + ".punctuation_delta"
         )
         """
@@ -392,7 +395,7 @@ class Diff():
         """
 
         self.punctuation_prop_delta = frequencies.prop_delta(
-            self.revision.parent.punctuation_frequency,
+            self._revision.parent.punctuation_frequency,
             self.punctuation_delta,
             name=self.name + ".punctuation_prop_delta"
         )
@@ -401,8 +404,8 @@ class Diff():
         """
 
         self.break_delta = frequencies.delta(
-            self.revision.parent.break_frequency,
-            self.revision.break_frequency,
+            self._revision.parent.break_frequency,
+            self._revision.break_frequency,
             name=self.name + ".break_delta"
         )
         """
@@ -410,7 +413,7 @@ class Diff():
         """
 
         self.break_prop_delta = frequencies.prop_delta(
-            self.revision.parent.break_frequency,
+            self._revision.parent.break_frequency,
             self.break_delta,
             name=self.name + ".break_prop_delta"
         )

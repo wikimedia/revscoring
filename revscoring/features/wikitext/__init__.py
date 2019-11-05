@@ -367,5 +367,6 @@ Supporting classes
 """  # noqa
 from .features import Diff, Revision
 from .revision_oriented import revision
+from .session_oriented import Session, session
 
-__all__ = [revision, Revision, Diff]
+__all__ = [revision, Revision, Diff, Session, session]

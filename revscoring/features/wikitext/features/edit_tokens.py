@@ -1,6 +1,5 @@
 from revscoring.datasources.meta import mappers
-
-from ...meta import aggregators
+from revscoring.features.meta import aggregators
 
 
 class Diff:

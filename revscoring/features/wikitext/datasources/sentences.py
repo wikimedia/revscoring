@@ -24,8 +24,8 @@ class Diff():
 
         self.sentences_added_removed = Datasource(
             self.name + ".sentences_added_removed", set_diff,
-            depends_on=[self.revision.sentences,
-                        self.revision.parent.sentences]
+            depends_on=[self._revision.sentences,
+                        self._revision.parent.sentences]
         )
 
         self.sentences_added = indexable.index(

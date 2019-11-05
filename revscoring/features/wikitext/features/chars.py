@@ -1,9 +1,8 @@
 from itertools import groupby
 
+from revscoring import Feature
 from revscoring.datasources.meta import mappers
-
-from ...feature import Feature
-from ...meta import aggregators
+from revscoring.features.meta import aggregators
 
 
 class Revision:

@@ -48,6 +48,7 @@ class Revision(DependentSet):
             difference between this revision and the parent revision.
             """
 
+    @DependentSet.meta_dependent
     def has_property(self, property, name=None):
         """
         Returns True if the specified property exists
@@ -65,6 +66,7 @@ class Revision(DependentSet):
         return bools.item_in_set(property, self.datasources.properties,
                                  name=name)
 
+    @DependentSet.meta_dependent
     def has_property_value(self, property, value, name=None):
         """
         Returns True if the specified property matches the provided value.

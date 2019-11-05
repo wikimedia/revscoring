@@ -3,6 +3,7 @@ import re
 import mwparserfromhell
 from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters, mappers
+from revscoring.dependencies import DependentSet
 
 
 class Revision:
@@ -121,6 +122,7 @@ class Revision:
         Returns a list of template names present in the content of the revision
         """
 
+    @DependentSet.meta_dependent
     def heading_titles_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a `list` of
@@ -133,6 +135,7 @@ class Revision:
                                      regex.pattern)
         return filters.regex_matching(regex, self.heading_titles, name=name)
 
+    @DependentSet.meta_dependent
     def headings_by_level(self, level, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a `list` of
@@ -144,6 +147,7 @@ class Revision:
         return filters.filter(HeadingOfLevel(level).filter, self.headings,
                               name=name)
 
+    @DependentSet.meta_dependent
     def external_link_urls_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a `list` of
@@ -160,6 +164,7 @@ class Revision:
         return filters.regex_matching(regex, self.external_link_urls,
                                       name=name)
 
+    @DependentSet.meta_dependent
     def wikilink_titles_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a `list`
@@ -175,6 +180,7 @@ class Revision:
 
         return filters.regex_matching(regex, self.wikilink_titles, name=name)
 
+    @DependentSet.meta_dependent
     def tag_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that returns all tag names
@@ -189,6 +195,7 @@ class Revision:
 
         return filters.regex_matching(regex, self.tag_names, name=name)
 
+    @DependentSet.meta_dependent
     def template_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that returns all template
