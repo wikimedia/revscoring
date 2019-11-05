@@ -1,6 +1,8 @@
 from mwtypes import Timestamp
-from revscoring.datasources.session_oriented import rewrite_name, session
-from revscoring.dependencies import solve
+from revscoring import Datasource
+from revscoring.datasources.session_oriented import (list_of_tree,
+                                                     rewrite_name, session)
+from revscoring.dependencies import DependentSet, solve
 
 from .util import check_datasource
 
@@ -84,3 +86,65 @@ def test_rewrite_name():
 def test_timestamp_str():
     cache = {session.revisions.timestamp_str: ["1970-01-01T00:00:00Z"]}
     assert solve(session.revisions.timestamp, cache=cache) == [Timestamp(0)]
+
+
+def test_list_of_meta():
+    text = Datasource("text")
+
+    class contains(Datasource):
+
+        def __init__(self, string_datasource, value, name=None):
+            name = self._format_name(name, [string_datasource, value])
+            super().__init__(name, self.process, depends_on=[string_datasource])
+            self.value = value
+
+        def process(self, string):
+            return self.value in string
+
+    def text_contains(value):
+        return contains(text, value)
+
+
+def test_list_of_tree():
+    class TestThing(DependentSet):
+
+        def __init__(self, name):
+            super().__init__(name)
+            self.text = Datasource(name + ".text")
+            self.len = Datasource(
+                name + ".text.len", self._process_len, depends_on=[self.text])
+
+        @staticmethod
+        def _process_len(text):
+            return len(text)
+
+        @DependentSet.meta_dependent
+        def contains(self, value):
+            return contains(
+                self.text, value,
+                name=self.name + ".text.contains({0!r})".format(value))
+
+    class contains(Datasource):
+
+        def __init__(self, string_datasource, value, name=None):
+            name = self._format_name(name, [string_datasource, value])
+            super().__init__(name, self.process, depends_on=[string_datasource])
+            self.value = value
+
+        def process(self, string):
+            return self.value in string
+
+    thing = TestThing("thing")
+    cache = {thing.text: "Hello"}
+    assert solve(thing.len, cache=cache) == 5
+    assert solve(thing.contains("el"), cache=cache)
+    assert not solve(thing.contains("Foobar"), cache=cache)
+
+    list_of_thing = list_of_tree(
+        TestThing("thing"),
+        rewrite_name=lambda n: "list_of_" + n if not n.startswith("list_of_") else n)
+
+    cache = {list_of_thing.text: ["Hello", "Foobar"]}
+    assert solve(list_of_thing.len, cache=cache) == [5, 6]
+    assert solve(list_of_thing.contains("el"), cache=cache) == [True, False]
+    assert solve(list_of_thing.contains("Foobar"), cache=cache) == [False, True]

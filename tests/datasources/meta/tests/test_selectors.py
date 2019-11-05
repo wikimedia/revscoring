@@ -1,4 +1,4 @@
-import io
+import pickle
 
 from revscoring.datasources.datasource import Datasource
 from revscoring.datasources.meta import frequencies, selectors
@@ -35,10 +35,7 @@ def test_tfidf():
     assert tfidf_table['maybe'] > 0
     assert my_tfidf_table.document_n == 9
 
-    f = io.BytesIO()
-    my_tfidf_table.dump(f)
-    f.seek(0)
-    loaded_my_tfidf_table = Datasource.load(f)
+    loaded_my_tfidf_table = pickle.loads(pickle.dumps(my_tfidf_table))
     assert (solve(my_tfidf_table, cache=cache) ==
             solve(loaded_my_tfidf_table, cache=cache))
 

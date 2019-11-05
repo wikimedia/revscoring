@@ -20,6 +20,8 @@ Supporting functions
 """
 import logging
 import re
+from functools import wraps
+from inspect import getmembers, ismethod
 
 from revscoring import Feature, FeatureVector
 from revscoring.features.meta import expanders as feature_expanders
@@ -59,9 +61,22 @@ def list_of_tree(dependent_set, rewrite_name=None, cache=None):
 
     # Iterate into all sub-DependentSets
     for attr, sub_dependent_set in dependent_set.dependent_sets.items():
-        new_dependent_set = list_of_tree(
-            sub_dependent_set, rewrite_name, cache)
-        setattr(dependent_set, attr, new_dependent_set)
+        if attr.startswith("_"):
+            pass
+        else:
+            logger.debug("Running list_of_tree on {0}".format(attr))
+            new_dependent_set = list_of_tree(
+                sub_dependent_set, rewrite_name, cache)
+            setattr(dependent_set, attr, new_dependent_set)
+
+    # Iterate into all meta-dependents (methods that return a new dependent)
+    for attr, method in getmembers(dependent_set, ismethod):
+        if not hasattr(method, "meta_dependent"):
+            pass
+        else:
+            list_of_meta_method = meta_list_of_ify(
+                method, rewrite_name, cache)
+            setattr(dependent_set, attr, list_of_meta_method)
 
     return dependent_set
 
@@ -106,6 +121,15 @@ def list_of_ify(dependent, rewrite_name, cache):
 
         cache[new_name] = new_dependent
         return cache[new_name]
+
+
+def meta_list_of_ify(method, rewrite_name, cache):
+    @wraps(method)
+    def wrapper(*args, **kwargs):
+        dependent = method(*args, **kwargs)
+        return list_of_ify(dependent, rewrite_name, cache)
+
+    return wrapper
 
 
 def rewrite_name(name):
