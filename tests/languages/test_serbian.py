@@ -7,6 +7,7 @@ from revscoring.languages import serbian
 from .util import compare_extraction
 
 BAD = [
+    "геј",
     "говна",
     "говно",
     "далматии",
@@ -18,6 +19,7 @@ BAD = [
     "јебите",
     "јебо",
     "компније",
+    "лезбејка",
     "курац",
     "курца",
     "курчина",
