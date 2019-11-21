@@ -276,6 +276,7 @@ https://meta.wikimedia.org/w/index.php?oldid=17213519
 """
 
 badword_regexes = [
+    r"геј",
     r"говна",
     r"говно",
     r"далматии",
@@ -290,6 +291,7 @@ badword_regexes = [
     r"курац",
     r"курца",
     r"курчина",
+    r"лезбејка",
     r"мажарскога",
     r"мажарску",
     r"педер",
