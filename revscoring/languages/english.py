@@ -146,7 +146,7 @@ badword detecting regexes.
 """
 
 informal_regexes = [
-    r"ain'?t", "a+we?some?(r|st)?",
+    r"ain'?t", r"a+we?some?(r|st)?",
     r"(b+l+a+h*)+",
     r"b+?o+?n+?e+?r+?",
     r"boobs?",
@@ -195,7 +195,7 @@ informal_regexes = [
     r"shouldn'?t",
     r"test +edit", r"t+?u+?r+?d+?s?\w*",
     r"wasn'?t",
-    r"w+[oua]+t+", r"wtf\w*", r"wh?[ua]+?t?[sz]+[ua]+p", "s+?u+?p+?",
+    r"w+[oua]+t+", r"wtf\w*", r"wh?[ua]+?t?[sz]+[ua]+p", r"s+?u+?p+?",
     r"wu+?z+?",
     r"won'?t",
     r"w+?o+?o+?f+?",
