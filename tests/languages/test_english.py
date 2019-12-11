@@ -244,9 +244,9 @@ def test_words_to_watch():
 
 
 def test_dictionary():
-    cache = {r_text: 'This is spelled worngly. <td>'}
+    cache = {r_text: 'This color colour is spelled worngly. <td>'}
     assert (solve(english.dictionary.revision.datasources.dict_words, cache=cache) ==
-            ["This", "is", "spelled"])
+            ["This", "color", "colour", "is", "spelled"])
     assert (solve(english.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==
             ["worngly"])

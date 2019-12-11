@@ -1,20 +1,19 @@
 from .features import Dictionary, RegexMatches, Stemmed, Stopwords
+from .features.dictionary import MultiDictChecker, load_dict
 
-name = "german"
+name = "english"
 
-try:
-    import enchant
-    dictionary = enchant.Dict("de")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'de'.  " +
-                      "Consider installing 'myspell-de-de', " +
-                      "'myspell-de-at', and/or 'myspell-de-ch'.")
+multi_dict = MultiDictChecker(
+    load_dict('de_DE', 'myspell-de-de'),
+    load_dict('de_CH', 'myspell-de-ch'),
+    load_dict('de_AT', 'myspell-de-at'))
 
-dictionary = Dictionary(name + ".dictionary", dictionary.check)
+
+dictionary = Dictionary(name + ".dictionary", multi_dict.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-`enchant.Dict <https://github.com/rfk/pyenchant>`_ "de". Provided by `myspell-de-de`, `myspell-de-at`,
-and `myspell-de-ch`.
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "de".
+Provided by `myspell-de-de`, `myspell-de-at`, and `myspell-de-ch`.
 """
 
 try:

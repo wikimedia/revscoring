@@ -1,27 +1,23 @@
 from .features import Dictionary, RegexMatches, Stemmed, Stopwords
-from .features.dictionary import utf16_cleanup
+from .features.dictionary import MultiDictChecker, load_dict, utf16_cleanup
 
 name = "english"
 
-try:
-    import enchant
-    enchant_dict = enchant.Dict("en")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'en'.  " +
-                      "Consider installing 'myspell-en-au', " +
-                      "'myspell-en-gb', 'myspell-en-us' and/or " +
-                      "'myspell-en-za'.")
+multi_dict = MultiDictChecker(
+    load_dict('en_US', 'hunspell-en-us'),
+    load_dict('en_GB', 'hunspell-en-gb'),
+    load_dict('en_AU', 'hunspell-en-au'))
 
 
 def safe_dictionary_check(word):
-    return enchant_dict.check(utf16_cleanup(word))
+    return multi_dict.check(utf16_cleanup(word))
 
 
 dictionary = Dictionary(name + ".dictionary", safe_dictionary_check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-`enchant.Dict <https://github.com/rfk/pyenchant>`_ "en". Provided by `myspell-en-au`, `myspell-en-gb`,
-`myspell-en-us`, and `myspell-en-za`.
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "en". Provided by
+`hunspell-en-au`, `hunspell-en-gb`, and `hunspell-en-us`.
 """
 
 try:

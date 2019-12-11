@@ -39,7 +39,7 @@ dependencies in your operating system.
 
 ### Ubuntu & Debian:
   *  Run ``sudo apt-get install python3-dev g++ gfortran liblapack-dev libopenblas-dev``
-  *  Run ``sudo apt-get install aspell-ar aspell-bn aspell-is myspell-cs myspell-nl myspell-en-us myspell-en-gb myspell-en-au myspell-et voikko-fi myspell-fr myspell-de-at myspell-de-ch myspell-de-de myspell-he myspell-hr myspell-hu aspell-id myspell-it myspell-nb myspell-fa aspell-pl myspell-pt myspell-es hunspell-sr aspell-sv aspell-ta myspell-ru myspell-uk hunspell-vi aspell-el myspell-lv aspell-ro myspell-ca hunspell-gl hunspell-bs aspell-hi hunspell-eu``
+  *  Run ``sudo apt-get install aspell-ar aspell-bn aspell-el aspell-id aspell-is aspell-pl aspell-ro aspell-sv aspell-ta aspell-uk myspell-cs myspell-de-at myspell-de-ch myspell-de-de myspell-es myspell-et myspell-fa myspell-fr myspell-he myspell-hr myspell-hu myspell-lv myspell-nb myspell-nl myspell-pt myspell-ru myspell-hr hunspell-bs hunspell-ca hunspell-en-au hunspell-en-us hunspell-en-gb hunspell-eu hunspell-gl hunspell-it hunspell-hi hunspell-sr hunspell-vi voikko-fi``
 <!-- ### Windows:
 <i>TODO</i>
 -->

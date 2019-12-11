@@ -18,6 +18,6 @@ Supporting classes
 """
 from .dictionary import Dictionary
 from .features import Diff, Revision
-from .util import utf16_cleanup
+from .util import utf16_cleanup, load_dict, MultiDictChecker
 
-__all__ = [Dictionary, utf16_cleanup, Revision, Diff]
+__all__ = [Dictionary, utf16_cleanup, load_dict, MultiDictChecker, Revision, Diff]

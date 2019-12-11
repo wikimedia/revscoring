@@ -1,3 +1,5 @@
+import enchant
+
 REPLACEMENT_CHAR = "\uFFFD"
 
 
@@ -11,3 +13,28 @@ def utf16_cleanup(token):
     """
     return "".join(c if ord(c) < 2 ** 16 else REPLACEMENT_CHAR
                    for c in token)
+
+
+def load_dict(dict_name, target_package):
+    try:
+        return enchant.Dict(dict_name)
+    except enchant.errors.DictNotFoundError:
+        raise ImportError(
+            ("No enchant-compatible dictionary found for {0!r}.  " +
+             "Consider installing {1!r}").format(dict_name, target_package))
+
+
+class MultiDictChecker:
+    """
+    Implements a check() method that will iterate through dictionaries looking
+    for any correct spelling.
+    """
+
+    def __init__(self, *dicts):
+        self.dicts = dicts
+
+    def check(self, word):
+        for dict in self.dicts:
+            if dict.check(word):
+                return True
+        return False

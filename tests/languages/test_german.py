@@ -162,9 +162,9 @@ def test_informals():
 
 
 def test_dictionary():
-    cache = {r_text: "Hinzu kamen rund sechs m80 Personen."}
+    cache = {r_text: "Hinzu kamen rund Faschiertes Hackfleisch sechs m80 Personen."}
     assert (solve(german.dictionary.revision.datasources.dict_words, cache=cache) ==
-            ["Hinzu", "kamen", "rund", "sechs", "Personen"])
+            ["Hinzu", "kamen", "rund", "Faschiertes", "Hackfleisch", "sechs", "Personen"])
     assert (solve(german.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==
             ["m80"])
