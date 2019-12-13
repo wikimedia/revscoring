@@ -3,10 +3,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6.2]
+
+### Added
+- Adds explicit multi-dictionary support to English and German
+
+### Fixed
+- Minor fix to serbian badwords
+- Add "sudo" to installation commands in readme
+- Minor fix to English regexes 
+
 
 ## [2.6.1]
 
-## Fixed
+### Fixed
 - revscoring.Model.model_info now has metrics sorted in label-order
 
 ## [2.6.0]
