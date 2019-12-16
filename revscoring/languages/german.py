@@ -1,7 +1,7 @@
 from .features import Dictionary, RegexMatches, Stemmed, Stopwords
 from .features.dictionary import MultiDictChecker, load_dict
 
-name = "english"
+name = "german"
 
 multi_dict = MultiDictChecker(
     load_dict('de_DE', 'myspell-de-de'),
