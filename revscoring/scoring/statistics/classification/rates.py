@@ -8,6 +8,8 @@ from ...model_info import ModelInfo
 
 logger = logging.getLogger(__name__)
 
+MAX_COLUMNS_WIDTH_CHARS = 80
+
 
 class Rates(ModelInfo):
 
@@ -24,14 +26,9 @@ class Rates(ModelInfo):
         if len(path_tree) > 0:
             logger.warn("Ignoring path_tree={0!r} while formatting rates."
                         .format(path_tree))
-        formatted = "rates:\n"
-        table_data = [
-            [group] + [util.round(self[group].get(label), ndigits)
-                       for label in self['sample']]
-            for group in self]
 
-        table_str = tabulate(
-            table_data, headers=[''] + [repr(l) for l in self['sample']])
+        formatted = "rates:\n"
+        table_str = self.format_table(ndigits)
         formatted += util.tab_it_in(table_str)
         return formatted
 
@@ -45,3 +42,25 @@ class Rates(ModelInfo):
             group = self[key]
             doc[key] = {l: util.round(group[l], ndigits) for l in group}
         return doc
+
+    def format_table(self, ndigits):
+        column_header_width = sum(max(len(str(l)) + 2, ndigits + 4)
+                                  for l in self['sample'])
+        if column_header_width < MAX_COLUMNS_WIDTH_CHARS:
+            return self.format_column_major_table(ndigits)
+        else:
+            return self.format_row_major_table(ndigits)
+
+    def format_column_major_table(self, ndigits):
+        return tabulate(
+            [[group] + [util.round(self[group].get(label), ndigits)
+                           for label in self['sample']]
+             for group in self],
+            headers=[''] + [repr(l) for l in self['sample']])
+
+    def format_row_major_table(self, ndigits):
+        return tabulate(
+            [([label] +
+              [util.round(self[group][label], ndigits) for group in self])
+             for label in self['sample']],
+            headers=[''] + list(self.keys()))
