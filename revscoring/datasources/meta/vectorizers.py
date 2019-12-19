@@ -36,11 +36,12 @@ class word2vec(Datasource):
 
     @staticmethod
     def vectorize_words(keyed_vectors, words):
-        if not words:
-            return [[0] * VECTOR_DIMENSIONS]
-        return [keyed_vectors[word] if word in
-                keyed_vectors else [0] * VECTOR_DIMENSIONS
-                for word in words]
+        list_of_vectors = [
+            keyed_vectors[word]
+            for word in words or [] if word in keyed_vectors]
+        if len(list_of_vectors) == 0:
+            list_of_vectors = [[0] * VECTOR_DIMENSIONS]
+        return list_of_vectors
 
     @staticmethod
     def load_kv(filename=None, path=None, limit=None):
