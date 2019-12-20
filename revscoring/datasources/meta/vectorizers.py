@@ -11,7 +11,6 @@ from gensim.models.keyedvectors import KeyedVectors
 from ..datasource import Datasource
 
 ASSET_SEARCH_DIRS = ["word2vec/", "~/.word2vec/", "/var/share/word2vec/"]
-VECTOR_DIMENSIONS = 300
 
 
 class word2vec(Datasource):
@@ -40,20 +39,20 @@ class word2vec(Datasource):
             keyed_vectors[word]
             for word in words or [] if word in keyed_vectors]
         if len(list_of_vectors) == 0:
-            list_of_vectors = [[0] * VECTOR_DIMENSIONS]
+            list_of_vectors = [[0] * keyed_vectors.vector_size]
         return list_of_vectors
 
     @staticmethod
-    def load_kv(filename=None, path=None, limit=None):
+    def load_kv(filename=None, path=None, binary=False, limit=None):
         if path is not None:
             return KeyedVectors.load_word2vec_format(
-                path, binary=True, limit=limit)
+                path, binary=binary, limit=limit)
         elif filename is not None:
             for dir_path in ASSET_SEARCH_DIRS:
                 try:
                     path = os.path.join(dir_path, filename)
                     return KeyedVectors.load_word2vec_format(
-                        path, binary=True, limit=limit)
+                        path, binary=binary, limit=limit)
                 except FileNotFoundError:
                     continue
             raise FileNotFoundError("Please make sure that 'filename' \
