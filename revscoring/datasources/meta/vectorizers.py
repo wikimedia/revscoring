@@ -6,6 +6,8 @@ return `list`'s of items and produce vectors out of the same.
 """
 import os.path
 
+import fasttext
+
 from gensim.models.keyedvectors import KeyedVectors
 
 from ..datasource import Datasource
@@ -62,3 +64,29 @@ class word2vec(Datasource):
         else:
             raise TypeError(
                 "load_kv() requires either 'filename' or 'path' to be set.")
+
+
+class FastText(Datasource):
+    """
+    Generates vectors using FastText for a list of items generated
+    by another datasource.
+
+    :Parameters:
+        words_datasource : :class:`revscoring.Datasource`
+            A datasource that returns a list of words.
+        vectorize_words : `function`
+            a function that takes a list of words and converts it to a list
+            of vectors of those words
+        name : `str`
+            A name for the `revscoring.FeatureVector`
+    """  # noqa
+
+    def __init__(self, words_datasource, vectorize_words, name=None):
+        name = self._format_name(name, [words_datasource, vectorize_words])
+
+        super().__init__(name, vectorize_words, depends_on=[words_datasource])
+
+    def vectorize_words(vector_model, words):
+        model = fasttext.load_model(vector_model)
+        return [model.get_word_vector(x) for x in words]
+
