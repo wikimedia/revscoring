@@ -264,3 +264,12 @@ words_to_watch = RegexMatches(name + ".words_to_watch", words_to_watch_regexes)
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
 problematic words and phrases for use in reference text
 """
+
+with open('assets/idioms.txt') as file:
+    idioms_regexes = [each.replace('"', '') for each in file.read().splitlines()]
+
+idioms = RegexMatches(name + ".idioms", idioms_regexes)
+"""
+:class:`~revscoring.languages.features.RegexMatches` features via a list of
+idioms from the `~assets/idioms.txt` file
+"""
