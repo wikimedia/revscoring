@@ -271,3 +271,11 @@ def test_stemmmed():
             ["this", "is", "spell", "worng"])
 
     assert english.stemmed == pickle.loads(pickle.dumps(english.stemmed))
+
+
+def test_idioms():
+    cache = {r_text: "This is some text.  I don't want to beat around the bush."}
+    assert (solve(english.idioms.revision.datasources.matches, cache=cache) ==
+            ['beat around the bush'])
+
+    assert english.idioms == pickle.loads(pickle.dumps(english.idioms))
