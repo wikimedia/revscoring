@@ -10,6 +10,7 @@ from revscoring.features import wikitext
 
 class FakeVectors(dict):
     pass
+
 test_vectors = FakeVectors({
                 'a': [1] * 100,
                 'b': [2] * 100,
@@ -23,7 +24,7 @@ def vectorize_words(words):
 
 def test_word2vec():
     wv = vectorizers.word2vec(wikitext.revision.datasources.words,
-                              vectorize_words, name='word vectors')
+                              vectorize_words, test_vectors, name='word vectors')
     vector = solve(wv, cache={ro.revision.text: 'a bv c d'})
     assert len(vector) == 2
     assert len(vector[0]) == 100
@@ -48,3 +49,4 @@ def test_loadkv_filename_none(kv):
     vectorizers.KeyedVectors = kv.KeyedVectors
     assert pytest.raises(FileNotFoundError,
                          vectorizers.word2vec.load_kv, filename='foo')
+
