@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6.3]
+
+### Fixed
+- Fixes name of german language utils
+- Rates are now properly formatted when labels are long or numerous
+- word2vec generator now yields nothing rather than zero'd vectors when a word
+  isn't found.
+
 ## [2.6.2]
 
 ### Added
@@ -11,7 +19,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Minor fix to serbian badwords
 - Add "sudo" to installation commands in readme
-- Minor fix to English regexes 
+- Minor fix to English regexes
 
 
 ## [2.6.1]
@@ -939,4 +947,3 @@ This is an early release of the revscoring library.
 ## [0.0.1] - 2014-05-31
 ### Added
 - Basic project setup.
-
