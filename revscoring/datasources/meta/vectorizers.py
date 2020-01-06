@@ -28,11 +28,10 @@ class word2vec(Datasource):
             A name for the `revscoring.FeatureVector`
     """  # noqa
 
-    def __init__(self, words_datasource, keyed_vectors, name=None): 
+    def __init__(self, words_datasource, keyed_vectors, name=None):
         name = self._format_name(name, [words_datasource])
         self.keyed_vectors = keyed_vectors
         super().__init__(name, self.vectorize_words, depends_on=[words_datasource])
-
 
     def vectorize_words(self, words):
         list_of_vectors = [
