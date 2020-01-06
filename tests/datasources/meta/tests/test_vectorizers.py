@@ -18,13 +18,9 @@ test_vectors = FakeVectors({
 test_vectors.vector_size = 100
 
 
-def vectorize_words(words):
-    return vectorizers.word2vec.vectorize_words(test_vectors, words)
-
-
 def test_word2vec():
     wv = vectorizers.word2vec(wikitext.revision.datasources.words,
-                              vectorize_words, test_vectors, name='word vectors')
+                                test_vectors, name='word vectors')
     vector = solve(wv, cache={ro.revision.text: 'a bv c d'})
     assert len(vector) == 2
     assert len(vector[0]) == 100
@@ -49,4 +45,3 @@ def test_loadkv_filename_none(kv):
     vectorizers.KeyedVectors = kv.KeyedVectors
     assert pytest.raises(FileNotFoundError,
                          vectorizers.word2vec.load_kv, filename='foo')
-
