@@ -1,6 +1,7 @@
 """
 These meta-datasources operate on :class:`revscoring.Datasource`'s that
 return `list`'s of items and produce vectors out of the same.
+
 .. autoclass:: revscoring.datasources.meta.vectors
 """
 import os.path
@@ -16,6 +17,7 @@ class word2vec(Datasource):
     """
     Generates vectors using "word2vec format" for a list of items generated
     by another datasource.
+
     :Parameters:
         words_datasource : :class:`revscoring.Datasource`
             A datasource that returns a list of words.
@@ -28,17 +30,18 @@ class word2vec(Datasource):
             A name for the `revscoring.FeatureVector`
     """  # noqa
 
-    def __init__(self, words_datasource, keyed_vectors, name=None):
-        name = self._format_name(name, [words_datasource])
-        self.keyed_vectors = keyed_vectors
-        super().__init__(name, self.vectorize_words, depends_on=[words_datasource])
+    def __init__(self, words_datasource, vectorize_words, keyed_vectors, name=None):
+        name = self._format_name(name, [words_datasource, vectorize_words])
 
-    def vectorize_words(self, words):
+        super().__init__(name, vectorize_words, depends_on=[words_datasource])
+
+    @staticmethod
+    def vectorize_words(keyed_vectors, words):
         list_of_vectors = [
-            self.keyed_vectors[word]
-            for word in words or [] if word in self.keyed_vectors]
+            keyed_vectors[word]
+            for word in words or [] if word in keyed_vectors]
         if len(list_of_vectors) == 0:
-            list_of_vectors = [[0] * self.keyed_vectors.vector_size]
+            list_of_vectors = [[0] * keyed_vectors.vector_size]
         return list_of_vectors
 
     @staticmethod
