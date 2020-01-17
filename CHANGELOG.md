@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6.4]
+
+### Changed
+* word2vec is generalized and constructor now takes keyed_vectors
+
+### Fixed
+* Bumps gensim version to 3.8.1 to deal with smart_open warning
+
 ## [2.6.3]
 
 ### Fixed
