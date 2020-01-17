@@ -8,7 +8,7 @@ A generic, machine learning-based revision scoring system designed to help autom
 
 
 Using a scorer_model to score a revision::
-```
+```python
   import mwapi
   from revscoring import Model
   from revscoring.extractors.api.extractor import Extractor
@@ -47,12 +47,15 @@ dependencies in your operating system.
   Using Homebrew and pip, installing `revscoring` and `enchant` can be accomplished
   as follows::
 
-* brew install aspell --with-all-languages
-* brew install enchant
-* pip install --no-binary pyenchant revscoring
+```bash
+brew install aspell --with-all-languages
+brew install enchant
+pip install --no-binary pyenchant revscoring
+```
 
 #### Adding languages in aspell (MacOS only)
-```
+
+```bash
 cd /tmp
 wget http://ftp.gnu.org/gnu/aspell/dict/pt/aspell-pt-0.50-2.tar.bz2
 bzip2 -dc aspell-pt-0.50-2.tar.bz2 | tar xvf -
@@ -60,7 +63,8 @@ cd aspell-pt-0.50-2
 ./configure
 make
 sudo make install
- ```
+```
+
  Caveats: <br>
   <b><u> The differences between the `aspell` and `myspell` dictionaries can cause </b>
     <b> <u>some of the tests to fail </b>
@@ -110,15 +114,15 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 # Running tests
 Make sure you installed test dependencies:
 
-``
+```bash
 $ pip install -r test-requirements.txt
-``
+```
 
 Then run:
 
-``
+```bash
 $ pytest . -vv
-``
+```
 
 # Authors
   *   [Aaron Halfaker](http://halfaker.info)
