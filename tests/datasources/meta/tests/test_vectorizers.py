@@ -24,7 +24,7 @@ def vectorize_words(words):
 
 def test_word2vec():
     wv = vectorizers.word2vec(wikitext.revision.datasources.words,
-                              vectorize_words, test_vectors, name='word vectors')
+                              vectorize_words, name='word vectors')
     vector = solve(wv, cache={ro.revision.text: 'a bv c d'})
     assert len(vector) == 2
     assert len(vector[0]) == 100
@@ -39,7 +39,7 @@ def test_word2vec():
 def test_loadkv_path(kv):
     kv.KeyedVectors.load_word2vec_format.return_value = test_vectors
     vectorizers.KeyedVectors = kv.KeyedVectors
-    vectors = vectorizers.word2vec.load_kv(path='foo')
+    vectors = vectorizers.word2vec.load_word2vec(path='foo')
     assert vectors is not None
 
 
@@ -48,4 +48,4 @@ def test_loadkv_filename_none(kv):
     kv.KeyedVectors.load_word2vec_format.side_effect = FileNotFoundError
     vectorizers.KeyedVectors = kv.KeyedVectors
     assert pytest.raises(FileNotFoundError,
-                         vectorizers.word2vec.load_kv, filename='foo')
+                         vectorizers.word2vec.load_word2vec, filename='foo')

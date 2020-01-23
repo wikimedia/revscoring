@@ -24,13 +24,11 @@ class word2vec(Datasource):
         vectorize_words : `function`
             a function that takes a list of words and converts it to a list
             of vectors of those words
-        keyed_vectors : `dict`
-            A list of word vectors in "word2vec format"
         name : `str`
             A name for the `revscoring.FeatureVector`
     """  # noqa
 
-    def __init__(self, words_datasource, vectorize_words, keyed_vectors, name=None):
+    def __init__(self, words_datasource, vectorize_words, name=None):
         name = self._format_name(name, [words_datasource, vectorize_words])
 
         super().__init__(name, vectorize_words, depends_on=[words_datasource])
@@ -45,7 +43,7 @@ class word2vec(Datasource):
         return list_of_vectors
 
     @staticmethod
-    def load_kv(filename=None, path=None, binary=False, limit=None):
+    def load_word2vec(filename=None, path=None, binary=False, limit=None):
         if path is not None:
             return KeyedVectors.load_word2vec_format(
                 path, binary=binary, limit=limit)
@@ -63,4 +61,23 @@ class word2vec(Datasource):
                                     speficies file path of the binary")
         else:
             raise TypeError(
-                "load_kv() requires either 'filename' or 'path' to be set.")
+                "load_word2vec() requires either 'filename' or 'path' to be set.")
+
+    @staticmethod
+    def load_gensim_kv(filename=None, path=None, mmap=None):
+        if path is not None:
+            return KeyedVectors.load(path, mmap=mmap)
+        elif filename is not None:
+            for dir_path in ASSET_SEARCH_DIRS:
+                try:
+                    path = os.path.join(dir_path, filename)
+                    return KeyedVectors.load(path, mmap=mmap)
+                except FileNotFoundError:
+                    continue
+            raise FileNotFoundError("Please make sure that 'filename' \
+                                    specifies the word vector binary name \
+                                    in default search paths or 'path' \
+                                    speficies file path of the binary")
+        else:
+            raise TypeError(
+                "load_gensim_kv() requires either 'filename' or 'path' to be set.")
