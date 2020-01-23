@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6.5]
+
+### Added
+* Support for native gensim vectors and mmaps
+
+### Changed
+* word2vec constructor is reverted back to old behavior for memory usage reasons
+
 ## [2.6.4]
 
 ### Changed
