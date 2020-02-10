@@ -111,8 +111,19 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * languages.russian: myspell-ru
 * languages.ukrainian: aspell-uk
 * languages.vietnamese: hunspell-vi
-# Running tests
-Make sure you installed test dependencies:
+
+# Development
+To contribute, ensure to install the dependencies:
+```bash
+$ pip install -r requirements.txt
+```
+
+Install necessary NLTK data:
+
+``python -m nltk.downloader omw sentiwordnet stopwords wordnet``
+
+## Running tests
+Make sure you install test dependencies:
 
 ```bash
 $ pip install -r test-requirements.txt
