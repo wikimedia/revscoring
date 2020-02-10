@@ -1,3 +1,5 @@
+import json
+
 from .features import Dictionary, RegexMatches, Stemmed, Stopwords
 from .features.dictionary import MultiDictChecker, load_dict, utf16_cleanup
 
@@ -265,11 +267,11 @@ words_to_watch = RegexMatches(name + ".words_to_watch", words_to_watch_regexes)
 problematic words and phrases for use in reference text
 """
 
-with open('assets/idioms.txt') as file:
-    idioms_regexes = [each.replace('"', '') for each in file.read().splitlines()]
+with open('assets/enwiktionary_idioms.txt') as f:
+    idioms_regexes = [json.loads(line) for line in f]
 
 idioms = RegexMatches(name + ".idioms", idioms_regexes)
 """
 :class:`~revscoring.languages.features.RegexMatches` features via a list of
-idioms from the `~assets/idioms.txt` file
+idioms from the `~assets/enwiktionary_idioms.txt` file
 """
