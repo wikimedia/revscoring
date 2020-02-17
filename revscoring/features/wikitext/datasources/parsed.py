@@ -1,9 +1,9 @@
 import re
 
 import mwparserfromhell
-
 from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters, mappers
+from revscoring.dependencies import DependentSet
 
 
 class Revision:
@@ -12,7 +12,7 @@ class Revision:
         super().__init__(name, revision_datasources)
 
         self.wikicode = Datasource(
-            self._name + ".wikicode",
+            self.name + ".wikicode",
             _process_wikicode, depends_on=[revision_datasources.text]
         )
         """
@@ -21,7 +21,7 @@ class Revision:
         """
 
         self.node_class_map = Datasource(
-            self._name + ".node_class_map",
+            self.name + ".node_class_map",
             _process_node_class_map, depends_on=[self.wikicode]
         )
         """
@@ -31,7 +31,7 @@ class Revision:
 
         self.content = execute_method(
             "strip_code", self.wikicode,
-            name=self._name + ".content"
+            name=self.name + ".content"
         )
         """
         The viewable content (no markup or templates) of the revision.
@@ -40,7 +40,7 @@ class Revision:
         self.headings = get_key(
             mwparserfromhell.nodes.Heading, self.node_class_map,
             default=[],
-            name=self._name + ".headings"
+            name=self.name + ".headings"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.Heading`'s
@@ -48,7 +48,7 @@ class Revision:
 
         self.heading_titles = mappers.map(
             _extract_heading_title, self.headings,
-            name=self._name + ".heading_titles"
+            name=self.name + ".heading_titles"
         )
         """
         A list of heading titles
@@ -57,7 +57,7 @@ class Revision:
         self.external_links = get_key(
             mwparserfromhell.nodes.ExternalLink, self.node_class_map,
             default=[],
-            name=self._name + ".external_links"
+            name=self.name + ".external_links"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.ExternalLink`'s
@@ -65,7 +65,7 @@ class Revision:
 
         self.external_link_urls = mappers.map(
             _extract_external_link_url, self.external_links,
-            name=self._name + ".external_link_url"
+            name=self.name + ".external_link_url"
         )
         """
         A list of external link urls
@@ -74,7 +74,7 @@ class Revision:
         self.wikilinks = get_key(
             mwparserfromhell.nodes.Wikilink, self.node_class_map,
             default=[],
-            name=self._name + ".wikilinks"
+            name=self.name + ".wikilinks"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.Wikilink`'s
@@ -82,7 +82,7 @@ class Revision:
 
         self.wikilink_titles = mappers.map(
             _extract_wikilink_title, self.wikilinks,
-            name=self._name + ".wikilink_titles"
+            name=self.name + ".wikilink_titles"
         )
         """
         Returns a list of string titles of internal links (aka "targets")
@@ -91,7 +91,7 @@ class Revision:
         self.tags = get_key(
             mwparserfromhell.nodes.Tag, self.node_class_map,
             default=[],
-            name=self._name + ".tags"
+            name=self.name + ".tags"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.Tag`'s
@@ -99,7 +99,7 @@ class Revision:
 
         self.tag_names = mappers.map(
             _extract_tag_name, self.tags,
-            name=self._name + ".tag_names"
+            name=self.name + ".tag_names"
         )
         """
         Returns a list of html tag names present in the content of the revision
@@ -108,7 +108,7 @@ class Revision:
         self.templates = get_key(
             mwparserfromhell.nodes.Template, self.node_class_map,
             default=[],
-            name=self._name + ".templates"
+            name=self.name + ".templates"
         )
         """
         A list of :class:`mwparserfromhell.nodes.heading.Templates`'s
@@ -116,12 +116,13 @@ class Revision:
 
         self.template_names = mappers.map(
             _extract_template_name, self.templates,
-            name=self._name + ".template_names"
+            name=self.name + ".template_names"
         )
         """
         Returns a list of template names present in the content of the revision
         """
 
+    @DependentSet.meta_dependent
     def heading_titles_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a `list` of
@@ -130,21 +131,23 @@ class Revision:
         if not hasattr(regex, "pattern"):
             regex = re.compile(regex, re.I)
         if name is None:
-            name = "{0}({1})".format(self._name + ".heading_titles_matching",
+            name = "{0}({1})".format(self.name + ".heading_titles_matching",
                                      regex.pattern)
         return filters.regex_matching(regex, self.heading_titles, name=name)
 
+    @DependentSet.meta_dependent
     def headings_by_level(self, level, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a `list` of
         all headers of a level.
         """
         if name is None:
-            name = "{0}({1})".format(self._name + ".headings_by_level",
+            name = "{0}({1})".format(self.name + ".headings_by_level",
                                      level)
         return filters.filter(HeadingOfLevel(level).filter, self.headings,
                               name=name)
 
+    @DependentSet.meta_dependent
     def external_link_urls_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a `list` of
@@ -155,12 +158,13 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format(self._name + ".external_link_urls_matching",
+                   .format(self.name + ".external_link_urls_matching",
                            regex.pattern)
 
         return filters.regex_matching(regex, self.external_link_urls,
                                       name=name)
 
+    @DependentSet.meta_dependent
     def wikilink_titles_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a `list`
@@ -171,11 +175,12 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format(self._name + ".wikilink_titles_matching",
+                   .format(self.name + ".wikilink_titles_matching",
                            regex.pattern)
 
         return filters.regex_matching(regex, self.wikilink_titles, name=name)
 
+    @DependentSet.meta_dependent
     def tag_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that returns all tag names
@@ -186,10 +191,11 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format(self._name + ".tag_names_matching", regex.pattern)
+                   .format(self.name + ".tag_names_matching", regex.pattern)
 
         return filters.regex_matching(regex, self.tag_names, name=name)
 
+    @DependentSet.meta_dependent
     def template_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that returns all template
@@ -200,7 +206,7 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format(self._name + ".template_names_matching",
+                   .format(self.name + ".template_names_matching",
                            regex.pattern)
 
         return filters.regex_matching(regex, self.template_names, name=name)

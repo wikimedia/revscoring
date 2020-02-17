@@ -3,11 +3,11 @@ from itertools import islice
 
 import mwapi
 
+from . import datasources
+from .. import Extractor as BaseExtractor
 from ...datasources import Datasource, revision_oriented
 from ...dependencies import expand
 from ...errors import QueryNotSupported, RevisionNotFound, UserNotFound
-from .. import Extractor as BaseExtractor
-from . import datasources
 from .revision_oriented import Revision
 from .util import REV_PROPS, USER_PROPS
 
@@ -45,7 +45,7 @@ class Extractor(BaseExtractor):
         return datasources.PropertySuggestionDoc(page, self)
 
     def extract(self, rev_ids, dependents, context=None, caches=None,
-                cache=None, profile=None):
+                cache=None, profile=None, orientation="revision"):
         """
         Extracts a values for a set of
         :class:`~revscoring.dependents.dependent.Dependent` (e.g.

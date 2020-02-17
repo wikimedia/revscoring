@@ -1,7 +1,6 @@
 
 from revscoring.datasources import Datasource
-from revscoring.features.feature import Constant, Feature
-from revscoring.features.feature_vector import FeatureVector
+from revscoring.features.feature import Constant, Feature, FeatureVector
 from revscoring.features.functions import trim, vectorize_values
 from revscoring.features.modifiers import log, max
 

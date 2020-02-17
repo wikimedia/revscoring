@@ -48,6 +48,7 @@ class Revision(DependentSet):
             difference between this revision and the parent revision.
             """
 
+    @DependentSet.meta_dependent
     def has_property(self, property, name=None):
         """
         Returns True if the specified property exists
@@ -60,11 +61,12 @@ class Revision(DependentSet):
                 feature's name will be 'has_property(<property>)'
         """
         if name is None:
-            name = self._name + ".has_property({0})".format(repr(property))
+            name = self.name + ".has_property({0})".format(repr(property))
 
         return bools.item_in_set(property, self.datasources.properties,
                                  name=name)
 
+    @DependentSet.meta_dependent
     def has_property_value(self, property, value, name=None):
         """
         Returns True if the specified property matches the provided value.
@@ -80,7 +82,7 @@ class Revision(DependentSet):
                 'has_property_value(<property>, <value>)'
         """
         if name is None:
-            name = self._name + ".has_property_value({0}, {1})" \
+            name = self.name + ".has_property_value({0}, {1})" \
                 .format(repr(property), repr(value))
 
         return HasPropertyValue(name, property, value, self.datasources.entity)

@@ -20,12 +20,12 @@ import os
 import sys
 
 import alabaster
-import revscoring
 
 dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 print(dir_path)
 sys.path.insert(0, dir_path)
 
+import revscoring
 
 # -- General configuration ------------------------------------------------
 

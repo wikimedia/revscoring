@@ -77,7 +77,7 @@ class Revision(DependentSet):
             regex = re.compile(regex, re.I)
 
         if name is None:
-            name = "{0}({1})".format(self._name + ".comment_matches",
+            name = "{0}({1})".format(self.name + ".comment_matches",
                                      repr(regex.pattern))
 
         return bools.regex_match(regex, self.datasources.comment,
@@ -109,7 +109,7 @@ class Page(DependentSet):
                 A name for the new feature.
         """
         if name is None:
-            name = "{0}({1})".format(self._name + ".id_in_set", repr(ids))
+            name = "{0}({1})".format(self.name + ".id_in_set", repr(ids))
 
         return bools.set_contains_item(ids, self.datasources.id, name=name)
 
@@ -128,7 +128,7 @@ class Page(DependentSet):
             regex = re.compile(regex, re.I)
 
         if name is None:
-            name = "{0}({1})".format(self._name + ".title_matches",
+            name = "{0}({1})".format(self.name + ".title_matches",
                                      repr(regex.pattern))
 
         return bools.regex_match(regex, self.datasources.title, name=name)
@@ -151,7 +151,7 @@ class Namespace(DependentSet):
                 A name for the new feature.
         """
         if name is None:
-            name = "{0}({1})".format(self._name + ".id_in_set", repr(ids))
+            name = "{0}({1})".format(self.name + ".id_in_set", repr(ids))
 
         return bools.set_contains_item(ids, self.datasources.id, name=name)
 
@@ -170,7 +170,7 @@ class Namespace(DependentSet):
             regex = re.compile(regex, re.I)
 
         if name is None:
-            name = "{0}({1})".format(self._name + ".name_matches",
+            name = "{0}({1})".format(self.name + ".name_matches",
                                      repr(regex.pattern))
 
         return bools.regex_match(regex, self.datasources.name, name=name)
@@ -182,7 +182,7 @@ class User(DependentSet):
         super().__init__(name)
         self.datasources = user_datasources
 
-        self.is_anon = Feature(self._name + ".is_anon", _process_is_anon,
+        self.is_anon = Feature(self.name + ".is_anon", _process_is_anon,
                                returns=bool, depends_on=[self.datasources.id])
 
     def id_in_set(self, ids, name=None):
@@ -197,7 +197,7 @@ class User(DependentSet):
                 A name for the new feature.
         """
         if name is None:
-            name = "{0}({1})".format(self._name + ".id_in_set", repr(ids))
+            name = "{0}({1})".format(self.name + ".id_in_set", repr(ids))
 
         return bools.set_contains_item(ids, self.datasources.id,
                                        name=name)
@@ -217,7 +217,7 @@ class User(DependentSet):
             regex = re.compile(regex, re.I)
 
         if name is None:
-            name = "{0}({1})".format(self._name + ".text_matches",
+            name = "{0}({1})".format(self.name + ".text_matches",
                                      repr(regex.pattern))
 
         return bools.regex_match(regex, self.datasources.text, name=name)
@@ -234,7 +234,7 @@ class User(DependentSet):
                 A name for the new feature.
         """
         if name is None:
-            name = "{0}({1})".format(self._name + ".in_group",
+            name = "{0}({1})".format(self.name + ".in_group",
                                      repr(groups))
 
         return bools.sets_intersect(groups, self.datasources.info.groups,

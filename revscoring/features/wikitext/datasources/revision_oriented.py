@@ -32,7 +32,7 @@ class BaseDiff(DependentSet):
 
     def __init__(self, name, revision):
         super().__init__(name)
-        self.revision = revision
+        self._revision = revision
 
 
 class Diff(edit.Diff, sentences.Diff, tokenized.Diff, BaseDiff):

@@ -1,9 +1,9 @@
 import re
 
+from revscoring import Feature
+from revscoring.dependencies import DependentSet
+from revscoring.features.meta import aggregators
 from textstat.textstat import textstat
-
-from ...feature import Feature
-from ...meta import aggregators
 
 
 class Revision:
@@ -13,7 +13,7 @@ class Revision:
 
         self.content_chars = aggregators.len(
             self.datasources.content,
-            name=self._name + ".content_chars"
+            name=self.name + ".content_chars"
         )
         """
         `int` : The number of characters of viewable content (no markup or
@@ -21,7 +21,7 @@ class Revision:
         """
 
         self.flesh_kincaid = Feature(
-            self._name + ".flesh_kincaid",
+            self.name + ".flesh_kincaid",
             textstat.flesch_reading_ease,
             depends_on=[self.datasources.content],
             returns=float
@@ -33,40 +33,41 @@ class Revision:
 
         self.headings = aggregators.len(
             self.datasources.headings,
-            name=self._name + ".headings"
+            name=self.name + ".headings"
         )
         "`int` : The number of headings"
 
         self.external_links = aggregators.len(
             self.datasources.external_links,
-            name=self._name + ".external_links"
+            name=self.name + ".external_links"
         )
         "`int` : The number of external links"
 
         self.wikilinks = aggregators.len(
             self.datasources.wikilinks,
-            name=self._name + ".wikilinks"
+            name=self.name + ".wikilinks"
         )
         "`int` : The number of wikilinks (internal to other pages in the wiki)"
 
         self.tags = aggregators.len(
             self.datasources.tags,
-            name=self._name + ".tags"
+            name=self.name + ".tags"
         )
         "`int` : The number of HTML tags"
 
         self.ref_tags = aggregators.len(
             self.datasources.tag_names_matching(r"ref"),
-            name=self._name + ".ref_tags"
+            name=self.name + ".ref_tags"
         )
         "`int` : The number of <ref> tags"
 
         self.templates = aggregators.len(
             self.datasources.templates,
-            name=self._name + ".templates"
+            name=self.name + ".templates"
         )
         "`int` : The number of templates"
 
+    @DependentSet.meta_dependent
     def heading_titles_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Feature` that that generates a count of
@@ -75,7 +76,7 @@ class Revision:
         if not hasattr(regex, "pattern"):
             regex = re.compile(regex, re.I)
         if name is None:
-            name = "{0}({1})".format(self._name + ".heading_titles_matching",
+            name = "{0}({1})".format(self.name + ".heading_titles_matching",
                                      regex.pattern)
 
         return aggregators.len(
@@ -83,19 +84,21 @@ class Revision:
             name=name
         )
 
+    @DependentSet.meta_dependent
     def headings_by_level(self, level, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a count of
         all headers of a level.
         """
         if name is None:
-            name = "{0}({1})".format(self._name + ".headings_by_level",
+            name = "{0}({1})".format(self.name + ".headings_by_level",
                                      level)
         return aggregators.len(
             self.datasources.headings_by_level(level),
             name=name
         )
 
+    @DependentSet.meta_dependent
     def external_link_urls_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a count of
@@ -106,7 +109,7 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format(self._name + ".external_link_urls_matching",
+                   .format(self.name + ".external_link_urls_matching",
                            regex.pattern)
 
         return aggregators.len(
@@ -114,6 +117,7 @@ class Revision:
             name=name
         )
 
+    @DependentSet.meta_dependent
     def wikilink_titles_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that that generates a count
@@ -124,7 +128,7 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format(self._name + ".wikilink_titles_matching",
+                   .format(self.name + ".wikilink_titles_matching",
                            regex.pattern)
 
         return aggregators.len(
@@ -132,6 +136,7 @@ class Revision:
             name=name
         )
 
+    @DependentSet.meta_dependent
     def tag_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that generates a count of
@@ -142,13 +147,14 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format(self._name + ".tag_names_matching", regex.pattern)
+                   .format(self.name + ".tag_names_matching", regex.pattern)
 
         return aggregators.len(
             self.datasources.tag_names_matching(regex),
             name=name
         )
 
+    @DependentSet.meta_dependent
     def template_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Feature` that generates a count of
@@ -159,7 +165,7 @@ class Revision:
 
         if name is None:
             name = "{0}({1})" \
-                   .format(self._name + ".template_names_matching",
+                   .format(self.name + ".template_names_matching",
                            regex.pattern)
 
         return aggregators.len(

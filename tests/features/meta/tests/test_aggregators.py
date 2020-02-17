@@ -47,20 +47,6 @@ def test_min():
     assert pickle.loads(pickle.dumps(my_min)) == my_min
 
 
-def test_min_vectors():
-    my_list = Datasource("my_list")
-    my_min = aggregators.min(my_list, vector=True)
-    cache = {my_list: [[1, 2, 3], [4, 5, 6]]}
-    assert all(a == b for a, b in
-               zip(solve(my_min, cache=cache), [1, 2, 3]))
-    cache = {my_list: [[]]}
-    assert solve(my_min, cache=cache) == [0]
-    cache = {my_list: [None]}
-    assert solve(my_min, cache=cache) == [0]
-
-    assert pickle.loads(pickle.dumps(my_min)) == my_min
-
-
 def test_max():
     my_list = Datasource("my_list")
     my_max = aggregators.max(my_list)
@@ -76,7 +62,7 @@ def test_max():
 
 def test_max_vectors():
     my_list = Datasource("my_list")
-    my_max = aggregators.max(my_list, vector=True)
+    my_max = aggregators.max(my_list, returns=int, vector=True)
     cache = {my_list: [[1, 2, 3], [4, 5, 6]]}
     assert all(a == b for a, b in
                zip(solve(my_max, cache=cache), [4, 5, 6]))
@@ -86,6 +72,20 @@ def test_max_vectors():
     assert solve(my_max, cache=cache) == [0]
 
     assert pickle.loads(pickle.dumps(my_max)) == my_max
+
+
+def test_min_vectors():
+    my_list = Datasource("my_list")
+    my_min = aggregators.min(my_list, returns=int, vector=True)
+    cache = {my_list: [[1, 2, 3], [4, 5, 6]]}
+    assert all(a == b for a, b in
+               zip(solve(my_min, cache=cache), [1, 2, 3]))
+    cache = {my_list: [[]]}
+    assert solve(my_min, cache=cache) == [0]
+    cache = {my_list: [None]}
+    assert solve(my_min, cache=cache) == [0]
+
+    assert pickle.loads(pickle.dumps(my_min)) == my_min
 
 
 def test_len():

@@ -1,6 +1,5 @@
 from revscoring.datasources.meta import dicts, filters, mappers
-
-from ...meta import aggregators
+from revscoring.features.meta import aggregators
 
 
 class Revision:
@@ -46,25 +45,25 @@ class Diff:
 
         self.token_delta_sum = aggregators.sum(
             dicts.values(self.datasources.token_delta),
-            name=self._name + ".token_delta_sum"
+            name=self.name + ".token_delta_sum"
         )
         "`int` : The sum of delta changes in the token frequency table"
 
         self.token_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.token_delta)),
-            name=self._name + ".token_delta_increase"
+            name=self.name + ".token_delta_increase"
         )
         "`int` : The sum of delta increases in the token frequency table"
 
         self.token_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.token_delta)),
-            name=self._name + ".token_delta_decrease"
+            name=self.name + ".token_delta_decrease"
         )
         "`int` : The sum of delta decreases in the token frequency table"
 
         self.token_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.token_prop_delta),
-            name=self._name + ".token_prop_delta_sum"
+            name=self.name + ".token_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the token
@@ -73,7 +72,7 @@ class Diff:
 
         self.token_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.token_prop_delta)),
-            name=self._name + ".token_prop_delta_increase"
+            name=self.name + ".token_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the token
@@ -82,7 +81,7 @@ class Diff:
 
         self.token_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.token_prop_delta)),
-            name=self._name + ".token_prop_delta_decrease"
+            name=self.name + ".token_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the token
@@ -92,25 +91,25 @@ class Diff:
         # number
         self.number_delta_sum = aggregators.sum(
             dicts.values(self.datasources.number_delta),
-            name=self._name + ".number_delta_sum"
+            name=self.name + ".number_delta_sum"
         )
         "`int` : The sum of delta changes in the number frequency table"
 
         self.number_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.number_delta)),
-            name=self._name + ".number_delta_increase"
+            name=self.name + ".number_delta_increase"
         )
         "`int` : The sum of delta increases in the number frequency table"
 
         self.number_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.number_delta)),
-            name=self._name + ".number_delta_decrease"
+            name=self.name + ".number_delta_decrease"
         )
         "`int` : The sum of delta decreases in the number frequency table"
 
         self.number_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.number_prop_delta),
-            name=self._name + ".number_prop_delta_sum"
+            name=self.name + ".number_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the number
@@ -119,7 +118,7 @@ class Diff:
 
         self.number_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.number_prop_delta)),
-            name=self._name + ".number_prop_delta_increase"
+            name=self.name + ".number_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the number
@@ -128,7 +127,7 @@ class Diff:
 
         self.number_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.number_prop_delta)),
-            name=self._name + ".number_prop_delta_decrease"
+            name=self.name + ".number_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the number
@@ -138,25 +137,25 @@ class Diff:
         # whitespace
         self.whitespace_delta_sum = aggregators.sum(
             dicts.values(self.datasources.whitespace_delta),
-            name=self._name + ".whitespace_delta_sum"
+            name=self.name + ".whitespace_delta_sum"
         )
         "`int` : The sum of delta changes in the whitespace frequency table"
 
         self.whitespace_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.whitespace_delta)),
-            name=self._name + ".whitespace_delta_increase"
+            name=self.name + ".whitespace_delta_increase"
         )
         "`int` : The sum of delta increases in the whitespace frequency table"
 
         self.whitespace_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.whitespace_delta)),
-            name=self._name + ".whitespace_delta_decrease"
+            name=self.name + ".whitespace_delta_decrease"
         )
         "`int` : The sum of delta decreases in the whitespace frequency table"
 
         self.whitespace_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.whitespace_prop_delta),
-            name=self._name + ".whitespace_prop_delta_sum"
+            name=self.name + ".whitespace_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the whitespace
@@ -166,7 +165,7 @@ class Diff:
         self.whitespace_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(
                 self.datasources.whitespace_prop_delta)),
-            name=self._name + ".whitespace_prop_delta_increase"
+            name=self.name + ".whitespace_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the whitespace
@@ -176,7 +175,7 @@ class Diff:
         self.whitespace_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(
                 self.datasources.whitespace_prop_delta)),
-            name=self._name + ".whitespace_prop_delta_decrease"
+            name=self.name + ".whitespace_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the whitespace
@@ -186,25 +185,25 @@ class Diff:
         # markup
         self.markup_delta_sum = aggregators.sum(
             dicts.values(self.datasources.markup_delta),
-            name=self._name + ".markup_delta_sum"
+            name=self.name + ".markup_delta_sum"
         )
         "`int` : The sum of delta changes in the markup frequency table"
 
         self.markup_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.markup_delta)),
-            name=self._name + ".markup_delta_increase"
+            name=self.name + ".markup_delta_increase"
         )
         "`int` : The sum of delta increases in the markup frequency table"
 
         self.markup_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.markup_delta)),
-            name=self._name + ".markup_delta_decrease"
+            name=self.name + ".markup_delta_decrease"
         )
         "`int` : The sum of delta decreases in the markup frequency table"
 
         self.markup_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.markup_prop_delta),
-            name=self._name + ".markup_prop_delta_sum"
+            name=self.name + ".markup_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the markup
@@ -213,7 +212,7 @@ class Diff:
 
         self.markup_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.markup_prop_delta)),
-            name=self._name + ".markup_prop_delta_increase"
+            name=self.name + ".markup_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the markup
@@ -222,7 +221,7 @@ class Diff:
 
         self.markup_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.markup_prop_delta)),
-            name=self._name + ".markup_prop_delta_decrease"
+            name=self.name + ".markup_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the markup
@@ -232,25 +231,25 @@ class Diff:
         # cjk
         self.cjk_delta_sum = aggregators.sum(
             dicts.values(self.datasources.cjk_delta),
-            name=self._name + ".cjk_delta_sum"
+            name=self.name + ".cjk_delta_sum"
         )
         "`int` : The sum of delta changes in the cjk frequency table"
 
         self.cjk_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.cjk_delta)),
-            name=self._name + ".cjk_delta_increase"
+            name=self.name + ".cjk_delta_increase"
         )
         "`int` : The sum of delta increases in the cjk frequency table"
 
         self.cjk_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.cjk_delta)),
-            name=self._name + ".cjk_delta_decrease"
+            name=self.name + ".cjk_delta_decrease"
         )
         "`int` : The sum of delta decreases in the cjk frequency table"
 
         self.cjk_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.cjk_prop_delta),
-            name=self._name + ".cjk_prop_delta_sum"
+            name=self.name + ".cjk_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the cjk
@@ -259,7 +258,7 @@ class Diff:
 
         self.cjk_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.cjk_prop_delta)),
-            name=self._name + ".cjk_prop_delta_increase"
+            name=self.name + ".cjk_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the cjk
@@ -268,7 +267,7 @@ class Diff:
 
         self.cjk_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.cjk_prop_delta)),
-            name=self._name + ".cjk_prop_delta_decrease"
+            name=self.name + ".cjk_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the cjk
@@ -278,25 +277,25 @@ class Diff:
         # entity
         self.entity_delta_sum = aggregators.sum(
             dicts.values(self.datasources.entity_delta),
-            name=self._name + ".entity_delta_sum"
+            name=self.name + ".entity_delta_sum"
         )
         "`int` : The sum of delta changes in the entity frequency table"
 
         self.entity_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.entity_delta)),
-            name=self._name + ".entity_delta_increase"
+            name=self.name + ".entity_delta_increase"
         )
         "`int` : The sum of delta increases in the entity frequency table"
 
         self.entity_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.entity_delta)),
-            name=self._name + ".entity_delta_decrease"
+            name=self.name + ".entity_delta_decrease"
         )
         "`int` : The sum of delta decreases in the entity frequency table"
 
         self.entity_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.entity_prop_delta),
-            name=self._name + ".entity_prop_delta_sum"
+            name=self.name + ".entity_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the entity
@@ -305,7 +304,7 @@ class Diff:
 
         self.entity_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.entity_prop_delta)),
-            name=self._name + ".entity_prop_delta_increase"
+            name=self.name + ".entity_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the entity
@@ -314,7 +313,7 @@ class Diff:
 
         self.entity_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.entity_prop_delta)),
-            name=self._name + ".entity_prop_delta_decrease"
+            name=self.name + ".entity_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the entity
@@ -324,25 +323,25 @@ class Diff:
         # url
         self.url_delta_sum = aggregators.sum(
             dicts.values(self.datasources.url_delta),
-            name=self._name + ".url_delta_sum"
+            name=self.name + ".url_delta_sum"
         )
         "`int` : The sum of delta changes in the url frequency table"
 
         self.url_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.url_delta)),
-            name=self._name + ".url_delta_increase"
+            name=self.name + ".url_delta_increase"
         )
         "`int` : The sum of delta increases in the url frequency table"
 
         self.url_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.url_delta)),
-            name=self._name + ".url_delta_decrease"
+            name=self.name + ".url_delta_decrease"
         )
         "`int` : The sum of delta decreases in the url frequency table"
 
         self.url_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.url_prop_delta),
-            name=self._name + ".url_prop_delta_sum"
+            name=self.name + ".url_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the url
@@ -351,7 +350,7 @@ class Diff:
 
         self.url_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.url_prop_delta)),
-            name=self._name + ".url_prop_delta_increase"
+            name=self.name + ".url_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the url
@@ -360,7 +359,7 @@ class Diff:
 
         self.url_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.url_prop_delta)),
-            name=self._name + ".url_prop_delta_decrease"
+            name=self.name + ".url_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the url
@@ -370,25 +369,25 @@ class Diff:
         # word
         self.word_delta_sum = aggregators.sum(
             dicts.values(self.datasources.word_delta),
-            name=self._name + ".word_delta_sum"
+            name=self.name + ".word_delta_sum"
         )
         "`int` : The sum of delta changes in the word frequency table"
 
         self.word_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.word_delta)),
-            name=self._name + ".word_delta_increase"
+            name=self.name + ".word_delta_increase"
         )
         "`int` : The sum of delta increases in the word frequency table"
 
         self.word_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.word_delta)),
-            name=self._name + ".word_delta_decrease"
+            name=self.name + ".word_delta_decrease"
         )
         "`int` : The sum of delta decreases in the word frequency table"
 
         self.word_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.word_prop_delta),
-            name=self._name + ".word_prop_delta_sum"
+            name=self.name + ".word_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the word
@@ -397,7 +396,7 @@ class Diff:
 
         self.word_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.word_prop_delta)),
-            name=self._name + ".word_prop_delta_increase"
+            name=self.name + ".word_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the word
@@ -406,7 +405,7 @@ class Diff:
 
         self.word_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.word_prop_delta)),
-            name=self._name + ".word_prop_delta_decrease"
+            name=self.name + ".word_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the word
@@ -418,7 +417,7 @@ class Diff:
             dicts.values(self.datasources.uppercase_word_delta)
         self.uppercase_word_delta_sum = aggregators.sum(
             uppercase_word_delta_values,
-            name=self._name + ".uppercase_word_delta_sum"
+            name=self.name + ".uppercase_word_delta_sum"
         )
         """
         `int` : The sum of delta changes in the UPPERCASE word frequency
@@ -427,7 +426,7 @@ class Diff:
 
         self.uppercase_word_delta_increase = aggregators.sum(
             filters.positive(uppercase_word_delta_values),
-            name=self._name + ".uppercase_word_delta_increase"
+            name=self.name + ".uppercase_word_delta_increase"
         )
         """
         `int` : The sum of delta increases in the UPPERCASE word frequency
@@ -436,7 +435,7 @@ class Diff:
 
         self.uppercase_word_delta_decrease = aggregators.sum(
             filters.negative(uppercase_word_delta_values),
-            name=self._name + ".uppercase_word_delta_decrease"
+            name=self.name + ".uppercase_word_delta_decrease"
         )
         """
         `int` : The sum of delta decreases in the UPPERCASE word frequency
@@ -447,7 +446,7 @@ class Diff:
             dicts.values(self.datasources.uppercase_word_prop_delta)
         self.uppercase_word_prop_delta_sum = aggregators.sum(
             uppercase_word_prop_delta_values,
-            name=self._name + ".uppercase_word_prop_delta_sum"
+            name=self.name + ".uppercase_word_prop_delta_sum"
         )
         """
         `float` : The sum of proportional delta changes in the UPPERCASE word
@@ -456,7 +455,7 @@ class Diff:
 
         self.uppercase_word_prop_delta_increase = aggregators.sum(
             filters.positive(uppercase_word_prop_delta_values),
-            name=self._name + ".uppercase_word_prop_delta_increase"
+            name=self.name + ".uppercase_word_prop_delta_increase"
         )
         """
         `float` : The sum of proportional delta increases in the UPPERCASE word
@@ -465,7 +464,7 @@ class Diff:
 
         self.uppercase_word_prop_delta_decrease = aggregators.sum(
             filters.negative(uppercase_word_prop_delta_values),
-            name=self._name + ".uppercase_word_prop_delta_decrease"
+            name=self.name + ".uppercase_word_prop_delta_decrease"
         )
         """
         `float` : The sum of proportional delta decreases in the UPPERCASE word
@@ -475,25 +474,25 @@ class Diff:
         # punctuation
         self.punctuation_delta_sum = aggregators.sum(
             dicts.values(self.datasources.punctuation_delta),
-            name=self._name + ".punctuation_delta_sum"
+            name=self.name + ".punctuation_delta_sum"
         )
         "`int` : The sum of delta changes in the punctuation frequency table"
 
         self.punctuation_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.punctuation_delta)),
-            name=self._name + ".punctuation_delta_increase"
+            name=self.name + ".punctuation_delta_increase"
         )
         "`int` : The sum of delta increases in the punctuation frequency table"
 
         self.punctuation_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.punctuation_delta)),
-            name=self._name + ".punctuation_delta_decrease"
+            name=self.name + ".punctuation_delta_decrease"
         )
         "`int` : The sum of delta decreases in the punctuation frequency table"
 
         self.punctuation_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.punctuation_prop_delta),
-            name=self._name + ".punctuation_prop_delta_sum"
+            name=self.name + ".punctuation_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the punctuation
@@ -503,7 +502,7 @@ class Diff:
         self.punctuation_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(
                 self.datasources.punctuation_prop_delta)),
-            name=self._name + ".punctuation_prop_delta_increase"
+            name=self.name + ".punctuation_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the punctuation
@@ -513,7 +512,7 @@ class Diff:
         self.punctuation_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(
                 self.datasources.punctuation_prop_delta)),
-            name=self._name + ".punctuation_prop_delta_decrease"
+            name=self.name + ".punctuation_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the punctuation
@@ -523,25 +522,25 @@ class Diff:
         # break
         self.break_delta_sum = aggregators.sum(
             dicts.values(self.datasources.break_delta),
-            name=self._name + ".break_delta_sum"
+            name=self.name + ".break_delta_sum"
         )
         "`int` : The sum of delta changes in the break frequency table"
 
         self.break_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.break_delta)),
-            name=self._name + ".break_delta_increase"
+            name=self.name + ".break_delta_increase"
         )
         "`int` : The sum of delta increases in the break frequency table"
 
         self.break_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.break_delta)),
-            name=self._name + ".break_delta_decrease"
+            name=self.name + ".break_delta_decrease"
         )
         "`int` : The sum of delta decreases in the break frequency table"
 
         self.break_prop_delta_sum = aggregators.sum(
             dicts.values(self.datasources.break_prop_delta),
-            name=self._name + ".break_prop_delta_sum"
+            name=self.name + ".break_prop_delta_sum"
         )
         """
         `int` : The sum of proportional delta changes in the break
@@ -550,7 +549,7 @@ class Diff:
 
         self.break_prop_delta_increase = aggregators.sum(
             filters.positive(dicts.values(self.datasources.break_prop_delta)),
-            name=self._name + ".break_prop_delta_increase"
+            name=self.name + ".break_prop_delta_increase"
         )
         """
         `int` : The sum of proportional delta increases in the break
@@ -559,7 +558,7 @@ class Diff:
 
         self.break_prop_delta_decrease = aggregators.sum(
             filters.negative(dicts.values(self.datasources.break_prop_delta)),
-            name=self._name + ".break_prop_delta_decrease"
+            name=self.name + ".break_prop_delta_decrease"
         )
         """
         `int` : The sum of proportional delta decreases in the break

@@ -1,8 +1,8 @@
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import DependentSet
 
-from ..meta import aggregators
 from . import datasources
+from ..meta import aggregators
 
 name = "bytes.revision"
 

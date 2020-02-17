@@ -1,7 +1,6 @@
 import re
 
 import mwbase
-
 from revscoring.dependencies import DependentSet
 
 from ...feature import Feature
@@ -141,6 +140,7 @@ class Diff(DependentSet):
         )
         "`int` : The number of identifiers that were changed"
 
+    @DependentSet.meta_dependent
     def property_changed(self, property, name=None):
         """
         Returns a :class:`revscoring.Feature` that represents whether a
@@ -154,7 +154,7 @@ class Diff(DependentSet):
                 feature's name will be 'property_changed(<property>)'
         """
         if name is None:
-            name = self._name + ".property_changed({0})" \
+            name = self.name + ".property_changed({0})" \
                 .format(repr(property))
         return bools.item_in_set(property, self.datasources.properties_changed,
                                  name=name)
