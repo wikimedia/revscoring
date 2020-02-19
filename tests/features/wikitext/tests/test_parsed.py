@@ -125,6 +125,29 @@ def test_tags():
             revision.ref_tags)
 
 
+def test_tags_str():
+
+    cache = {r_text: "This is [https://wikis.com].\n" +
+             "== Heading! ==\n" +
+             "<ref>Foo</ref> the <span>foobar</span>!\n" +
+             "=== Another heading! ==="}
+    assert (solve(revision.datasources.tags_str, cache=cache) ==
+            ["<ref>Foo</ref>", "<span>foobar</span>"])
+
+
+def test_tags_str_matching():
+    cache = {r_text: "This is [https://wikis.com].\n" +
+                     "== Heading! ==\n" +
+                     "<ref>{{Cite thing}}</ref> the {{citation needed}}\n" +
+                     "=== Another {{heading|foo}}! ==="}
+
+    ref = revision.datasources.tags_str_matching(
+        r"<ref>.*</ref>", name="enwiki.revision.ref_tags")
+
+    assert (solve(ref, cache=cache) ==
+            ["<ref>{{Cite thing}}</ref>"])
+
+
 def test_templates():
 
     cache = {r_text: "This is [https://wikis.com].\n" +
@@ -142,3 +165,27 @@ def test_templates():
             revision.templates)
     assert (pickle.loads(pickle.dumps(cite_templates)) ==
             cite_templates)
+
+
+def test_templates_str():
+
+    cache = {r_text: "This is [https://wikis.com].\n" +
+             "== Heading! ==\n" +
+             "<ref>{{Cite thing}}</ref> the {{citation needed}}\n" +
+             "=== Another {{heading|foo}}! ==="}
+    assert (solve(revision.datasources.templates_str, cache=cache) ==
+            ["{{Cite thing}}", "{{citation needed}}", "{{heading|foo}}"])
+
+
+def test_templates_str_matching():
+
+    cache = {r_text: "This is [https://wikis.com].\n" +
+             "== Heading! ==\n" +
+             "<ref>{{Cite thing}}</ref> the {{citation needed}}\n" +
+             "=== Another {{heading|foo}}! ==="}
+
+    cite_template = revision.datasources.templates_str_matching(
+        r"{{Cit.*}}", name="enwiki.revision.cite_template")
+
+    assert (solve(cite_template, cache=cache) ==
+            ["{{Cite thing}}", "{{citation needed}}"])
