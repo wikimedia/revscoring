@@ -105,6 +105,14 @@ class Revision:
         Returns a list of html tag names present in the content of the revision
         """
 
+        self.tags_str = mappers.map(
+            str, self.tags,
+            name=self._name + ".tags_str"
+        )
+        """
+        Returns a list of tags present in the content of the revision as strings
+        """
+
         self.templates = get_key(
             mwparserfromhell.nodes.Template, self.node_class_map,
             default=[],
@@ -120,6 +128,14 @@ class Revision:
         )
         """
         Returns a list of template names present in the content of the revision
+        """
+
+        self.templates_str = mappers.map(
+            str, self.templates,
+            name=self._name + ".templates_str"
+        )
+        """
+        Returns a list of templates present in the content of the revision as strings
         """
 
     def heading_titles_matching(self, regex, name=None):
@@ -190,6 +206,20 @@ class Revision:
 
         return filters.regex_matching(regex, self.tag_names, name=name)
 
+    def tags_str_matching(self, regex, name=None):
+        """
+        Constructs a :class:`revscoring.Datasource` that returns all tags
+        that matches a regular expression as strings.
+        """
+        if not hasattr(regex, "pattern"):
+            regex = re.compile(regex, re.I)
+
+        if name is None:
+            name = "{0}({1})" \
+                   .format(self._name + ".tags_str_matching", regex.pattern)
+
+        return filters.regex_matching(regex, self.tags_str, name=name)
+
     def template_names_matching(self, regex, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that returns all template
@@ -204,6 +234,21 @@ class Revision:
                            regex.pattern)
 
         return filters.regex_matching(regex, self.template_names, name=name)
+
+    def templates_str_matching(self, regex, name=None):
+        """
+        Constructs a :class:`revscoring.Datasource` that returns all templates
+        that matches a regular expression as strings.
+        """
+        if not hasattr(regex, "pattern"):
+            regex = re.compile(regex, re.I)
+
+        if name is None:
+            name = "{0}({1})" \
+                .format(self._name + ".templates_str_matching",
+                        regex.pattern)
+
+        return filters.regex_matching(regex, self.templates_str, name=name)
 
 
 def _process_wikicode(text):
