@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6.7]
+
+### Fixed
+* Reference to english idioms data file
+
+## [2.6.6]
+
+### Added
+* English language idioms
+* tag_str and template_str datasources in features.wikitext.revision
+
 ## [2.6.5]
 
 ### Added
