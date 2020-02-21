@@ -1,1 +1,2 @@
-include LICENSE README.md requirements.txt assets/enwiktionary_idioms.txt
+include LICENSE README.md requirements.txt 
+include revscoring/assets/*.txt

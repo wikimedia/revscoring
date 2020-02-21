@@ -41,6 +41,7 @@ setup(
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
     install_requires=requirements("requirements.txt"),
+    include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python",
