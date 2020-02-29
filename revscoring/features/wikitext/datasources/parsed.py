@@ -137,6 +137,13 @@ class Revision:
         """
         Returns a list of templates present in the content of the revision as strings
         """
+        self.sections = execute_method(
+            "_extract_sections", self.wikicode,
+            name=self._name + ".content"
+        )
+        """
+        Returns list of sections in the article as wikicode shared node list
+        """
 
     def heading_titles_matching(self, regex, name=None):
         """
@@ -285,6 +292,9 @@ def _extract_tag_name(tag):
 
 def _extract_template_name(template):
     return str(template.name)
+
+def _extract_sections(template):
+    return mwparserfromhell.wikicode.Wikicode.get_sections(flat=True).template
 
 
 class HeadingOfLevel:
