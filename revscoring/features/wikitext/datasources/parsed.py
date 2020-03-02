@@ -137,9 +137,9 @@ class Revision:
         """
         Returns a list of templates present in the content of the revision as strings
         """
-        self.sections = execute_method(
-            "_extract_sections", self.wikicode,
-            name=self._name + ".content"
+        self.sections = Datasource(
+            self._name + ".section",
+            _extract_sections, depends_on=[self.wikicode]
         )
         """
         Returns list of sections in the article as wikicode shared node list
@@ -293,8 +293,8 @@ def _extract_tag_name(tag):
 def _extract_template_name(template):
     return str(template.name)
 
-def _extract_sections(template):
-    return mwparserfromhell.wikicode.Wikicode.get_sections(flat=True).template
+def _extract_sections(wikicode):
+    return wikicode.get_sections(flat=True)
 
 
 class HeadingOfLevel:
