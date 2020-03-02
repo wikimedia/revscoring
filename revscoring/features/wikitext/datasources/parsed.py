@@ -293,6 +293,7 @@ def _extract_tag_name(tag):
 def _extract_template_name(template):
     return str(template.name)
 
+
 def _extract_sections(wikicode):
     return wikicode.get_sections(flat=True)
 
