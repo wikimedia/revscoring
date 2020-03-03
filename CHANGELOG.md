@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6.8]
+
+### Added
+* revscoring.features.wikitext.revision.sections -- Returns mwparserfromhell.Wikicode objects of every section in a page.
+
 ## [2.6.7]
 
 ### Fixed
