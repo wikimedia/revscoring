@@ -16,6 +16,8 @@ my_ints = Datasource("my_ints")
 positive_ints = filters.positive(my_ints)
 negative_ints = filters.negative(my_ints)
 
+not_none_tokens = filters.not_none(tokens, name="not_none_tokens")
+
 
 def test_regex_matching():
     cache = {tokens: ["foo", "bar", "FOO"]}
@@ -47,3 +49,11 @@ def test_negative():
     assert pickle.loads(pickle.dumps(negative_ints)) == negative_ints
 
     assert negative_ints != positive_ints
+
+
+def test_not_none():
+    cache = {tokens: ["foo", None, 1]}
+    assert (solve(not_none_tokens, cache=cache) ==
+            ["foo", 1])
+
+    assert pickle.loads(pickle.dumps(not_none_tokens)) == not_none_tokens

@@ -100,3 +100,22 @@ class negative(filter):
 
     def is_negative(self, v):
         return v < 0
+
+
+class not_none(filter):
+    """
+    Generates a filtered list of not None entries from a list.
+
+    :Parameters:
+        items_datasource : :class:`revscoring.Datasource`
+            A datasource that generates the subset of items that are None
+        name : `str`
+            A name for the datasource.
+    """
+
+    def __init__(self, items_datasource, name=None):
+        name = self._format_name(name, [items_datasource])
+        super().__init__(self.is_not_none, items_datasource, name=name)
+
+    def is_not_none(self, v):
+        return v is not None
