@@ -18,6 +18,7 @@ negative_ints = filters.negative(my_ints)
 
 not_none_tokens = filters.not_none(tokens, name="not_none_tokens")
 
+
 def test_regex_matching():
     cache = {tokens: ["foo", "bar", "FOO"]}
     assert (solve(foo_tokens, cache=cache) ==
