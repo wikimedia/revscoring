@@ -114,7 +114,7 @@ class not_none(filter):
     """
 
     def __init__(self, items_datasource, name=None):
-        name = self.format_name(name, [items_datasource])
+        name = self._format_name(name, [items_datasource])
         super().__init__(self.is_not_none, items_datasource, name=name)
 
     def is_not_none(self, v):
