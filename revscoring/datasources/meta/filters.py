@@ -118,5 +118,4 @@ class not_none(filter):
         super().__init__(self.is_not_none, items_datasource, name=name)
 
     def is_not_none(self, v):
-        if v is not None:
-            return v
+        return v is not None
