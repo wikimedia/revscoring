@@ -40,7 +40,10 @@ def check_feature(feature, expected):
 
 
 def test_feature():
-    f = Feature("f")
+    with raises(TypeError):
+        f = Feature("f")
+
+    f = Feature("f", returns=int)
 
     assert pickle.loads(pickle.dumps(f)) == f
     assert solve(f, cache={f: 5}) == 5
@@ -50,7 +53,7 @@ def test_feature():
 
 
 def test_minimal_constructor():
-    myfive = Feature("five")
+    myfive = Feature("five", returns=int)
 
     assert myfive == five
 

@@ -70,7 +70,7 @@ class FakeIdentityProbabilityClassifierMultilabel(ProbabilityClassifier):
 
 def test_sklearn_classifier():
     skc = FakeIdentityClassifier(
-        [Feature("foo")], [True, False], version="0.0.1")
+        [Feature("foo", returns=int)], [True, False], version="0.0.1")
 
     assert skc.version == "0.0.1"
 
@@ -82,7 +82,7 @@ def test_sklearn_classifier():
 
 def test_sklearn_probabilityclassifier():
     skc = FakeIdentityProbabilityClassifier(
-        [Feature("foo")], [True, False], version="0.0.1")
+        [Feature("foo", returns=int)], [True, False], version="0.0.1")
 
     assert skc.version == "0.0.1"
 
@@ -96,7 +96,7 @@ def test_sklearn_probabilityclassifier():
 
 def test_sklearn_classifier_multilabel():
     skc = FakeIdentityClassifierMultilabel(
-        [Feature("foo")], ["A", "B"], multilabel=True,
+        [Feature("foo", returns=int)], ["A", "B"], multilabel=True,
         version="0.0.1", label_weights={"A": 5, "B": 0.5})
     expected_estimator_params = {'class_weight':
                                  [{0: 1, 1: 5}, {0: 1, 1: 0.5}]}
@@ -114,7 +114,7 @@ def test_sklearn_classifier_multilabel():
 
 def test_sklearn_probabilityclassifier_multilabel():
     skc = FakeIdentityProbabilityClassifierMultilabel(
-        [Feature("foo")], ["A", "B"], multilabel=True,
+        [Feature("foo", returns=int)], ["A", "B"], multilabel=True,
         version="0.0.1", label_weights={"A": 5, "B": 0.5})
     expected_estimator_params = {'class_weight':
                                  [{0: 1, 1: 5}, {0: 1, 1: 0.5}]}
@@ -130,12 +130,12 @@ def test_sklearn_probabilityclassifier_multilabel():
 
 def test_score():
     skc = FakeIdentityClassifier(
-        [Feature("foo")], [True, False], version="0.0.1")
+        [Feature("foo", returns=int)], [True, False], version="0.0.1")
     docs = skc.score_many([cv_feature_values[0][0]])
     assert len(docs) == 1
 
     skc = FakeIdentityProbabilityClassifier(
-        [Feature("foo")], [True, False], version="0.0.1")
+        [Feature("foo", returns=int)], [True, False], version="0.0.1")
     docs = skc.score_many([cv_feature_values[0][0]])
     assert len(docs) == 1
     assert 'probability' in docs[0]
@@ -143,13 +143,13 @@ def test_score():
 
 def test_score_many():
     skc = FakeIdentityClassifier(
-        [Feature("foo")], [True, False], version="0.0.1")
+        [Feature("foo", returns=int)], [True, False], version="0.0.1")
     features, labels = zip(*cv_feature_values)
     docs = skc.score_many(features)
     assert len(docs) == 10
 
     skc = FakeIdentityProbabilityClassifier(
-        [Feature("foo")], [True, False], version="0.0.1")
+        [Feature("foo", returns=int)], [True, False], version="0.0.1")
     features, labels = zip(*cv_feature_values)
     docs = skc.score_many(features)
     assert len(docs) == 10
@@ -159,5 +159,5 @@ def test_score_many():
 def test_sklearn_format_error():
     with raises(ValueError):
         skc = FakeIdentityClassifier(
-            [Feature("foo")], [True, False], version="0.0.1")
+            [Feature("foo", returns=int)], [True, False], version="0.0.1")
         skc.info.format(formatting="foo")

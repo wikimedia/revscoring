@@ -35,6 +35,9 @@ class Feature(Dependent):
 
     def __init__(self, name, process=None, *, returns=None, depends_on=None):
         super().__init__(name, process, depends_on)
+        if returns is None:
+            raise TypeError(
+                "__init__() missing required named argument 'returns'")
         self.returns = returns
 
     def __call__(self, *args, **kwargs):
