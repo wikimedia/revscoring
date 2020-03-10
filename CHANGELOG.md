@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6.9]
+
+### Added
+* revscoring.datasources.meta.filters.not_none -- Filters a list for None elements. 
+
 ## [2.6.8]
 
 ### Added
