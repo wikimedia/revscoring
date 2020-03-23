@@ -1,8 +1,5 @@
 import re
 
-from textstat.textstat import textstat
-
-from ...feature import Feature
 from ...meta import aggregators
 
 
@@ -18,17 +15,6 @@ class Revision:
         """
         `int` : The number of characters of viewable content (no markup or
         templates
-        """
-
-        self.flesh_kincaid = Feature(
-            self._name + ".flesh_kincaid",
-            textstat.flesch_reading_ease,
-            depends_on=[self.datasources.content],
-            returns=float
-        )
-        """
-        `float` : returns the Flesch reading ease score.
-        (https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests)
         """
 
         self.headings = aggregators.len(
