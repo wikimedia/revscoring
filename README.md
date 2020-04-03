@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/wikimedia/revscoring.svg?branch=master)](https://travis-ci.org/wikimedia/revscoring)
 [![Test coverage](https://codecov.io/gh/wikimedia/revscoring/branch/master/graph/badge.svg)](https://codecov.io/gh/wikimedia/revscoring)
+[![GitHub license](https://img.shields.io/github/license/wikimedia/revscoring.svg)](./LICENSE)
+[![PyPI version](https://badge.fury.io/py/revscoring.svg)](https://badge.fury.io/py/revscoring)
 # Revision Scoring
 
 A generic, machine learning-based revision scoring system designed to help automate critical wiki-work — for example, vandalism detection and removal. This library powers [ORES](https://ores.wikimedia.org).
