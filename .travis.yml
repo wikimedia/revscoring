@@ -40,7 +40,8 @@ addons:
     - myspell-lv
     - myspell-nb
     - myspell-nl
-    - myspell-pt
+    - myspell-pt-pt
+    - myspell-pt-br
     - myspell-ru
     - myspell-hr
     - hunspell-bs
