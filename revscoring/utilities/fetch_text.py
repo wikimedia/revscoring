@@ -8,6 +8,7 @@
     Usage:
         fetch_text --host=<url>
                    [--deleted-1st]
+                   [--login]
                    [--input=<path>] [--output=<path>]
                    [--threads=<num>]
                    [--verbose] [--debug]
@@ -20,6 +21,7 @@
                          This is more performant when looking up text that
                          will be (mostly) deleted, but it will have no effect
                          on output.
+        --login          If set, prompt the user to log in.
         --input=<path>   Path to a file containing observations
                          [default: <stdin>]
         --output=<path>  Path to a file to write extended observations
@@ -55,6 +57,7 @@ def main(argv=None):
     host = args['--host']
 
     try_deleted_first = args['--deleted-1st']
+    login = args['--login']
 
     if args['--input'] == "<stdin>":
         obs = read_observations(sys.stdin)
@@ -73,20 +76,21 @@ def main(argv=None):
 
     verbose = args['--verbose']
 
-    run(host, obs, try_deleted_first, output, threads, verbose)
+    run(host, obs, try_deleted_first, login, output, threads, verbose)
 
 
-def run(host, obs, try_deleted_first, output, threads, verbose):
+def run(host, obs, try_deleted_first, login, output, threads, verbose):
 
     session = mwapi.Session(
         host,
         user_agent="Fetch text (wikigrammar) <ahalfaker@wikimedia.org>",
         formatversion=2)
-    mwapi.cli.do_login(session, host)
+    if login:
+        mwapi.cli.do_login(session, host)
 
     obs_batches = read_chunks(obs, 10)
     fetcher = TextFetcher(
-        session, try_deleted_first=try_deleted_first)
+        session, try_deleted_first=try_deleted_first, login=login)
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
         for obs_with_text in executor.map(fetcher.fetch_text, obs_batches):
@@ -112,9 +116,11 @@ def read_chunks(iterable, size):
 
 class TextFetcher:
 
-    def __init__(self, session, try_deleted_first=False):
+    def __init__(self, session, try_deleted_first=False, login=False):
         self.session = session
-        if try_deleted_first:
+        if not login:
+            self.attempts = [self._get_live_text]
+        elif try_deleted_first:
             self.attempts = [self._get_deleted_text, self._get_live_text]
         else:
             self.attempts = [self._get_live_text, self._get_deleted_text]
@@ -142,6 +148,7 @@ class TextFetcher:
             action='query',
             prop='revisions',
             revids=rev_ids,
+            rvslots=['main'],
             rvprop={"content", "ids"}
         )
         return self._build_text_map(doc)
@@ -164,7 +171,8 @@ class TextFetcher:
         text_map = {}
         for page_doc in doc['query'].get('pages', []):
             for rev_doc in page_doc.get(revision_key, []):
-                if 'content' in rev_doc:
-                    text_map[rev_doc['revid']] = rev_doc['content']
+                if 'content' in rev_doc['slots']['main']:
+                    text_map[rev_doc['revid']] = \
+                        rev_doc['slots']['main']['content']
 
         return text_map
