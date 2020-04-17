@@ -161,6 +161,7 @@ class TextFetcher:
             action='query',
             prop='deletedrevisions',
             revids=rev_ids,
+            drvslots=['main'],
             drvprop={"content", "ids"}
         )
 
