@@ -152,41 +152,41 @@ informal word detecting regexes.
 
 words_to_watch_regexes = [
     # Puffery
-	r'lendári[ao]s?', r'grandes?', r'eminentes?', r'visionári[ao]s?',
+    r'lendári[ao]s?', r'grandes?', r'eminentes?', r'visionári[ao]s?',
     r'notáve(?:l|is)', r'líder(?:es)?', r'célebres?', r'de última linha',
     r'extraordinári[ao]s?', r'brilhantes?', r'famos[ao]s?', r'renomad[ao]s?',
     r'prestigios[ao]s?', r'de nível mundial', r'respeitad[ao]s?',
     r'excepciona(?:l|is)', r'excelentes?', r'virtuos[ao]s?',
     r'de grande estima',
     # Contentious labels (-gate removed)
-	r'cult[ao]s?', r'racistas?', r'pervers[ao]s?', r'seitas?',
+    r'cult[ao]s?', r'racistas?', r'pervers[ao]s?', r'seitas?',
     r'fundamentalistas?', r'hereges?', r'extremistas?', r'negacionistas?',
     r'terroristas?', r'libertador(?:as?|es)?', r'neo[- ]?nazis(?:ta|mo)?',
     r'pseudo-?(ciência|científic[oa]s?|intelectua(?:l|is))',
     r'controvers[ao]s?',
     # Unsupported attributions
-	r'algu(?:n|ma)s dizem', r'acredita-se', r'muit[ao]s têm a opinião',
+    r'algu(?:n|ma)s dizem', r'acredita-se', r'muit[ao]s têm a opinião',
     r'a maioria sente', r'especialistas afirmam', r'frequentemente se relata',
-	r'é a opinião corrente', r'estudos mostram', r'a ciência diz',
+    r'é a opinião corrente', r'estudos mostram', r'a ciência diz',
     r'provou-se que',
-	# Expressions of doubt
-	r'supost[ao]s?', r'alegad[ao]s?', r'pretens[ao]s?', r'acusad[ao]s?',
+    # Expressions of doubt
+    r'supost[ao]s?', r'alegad[ao]s?', r'pretens[ao]s?', r'acusad[ao]s?',
     r'chamad[ao]s?',
-	# Editorializing
-	r'notavelmente', r'interessantemente', r'deve-se ter em mente',
-	r'claramente', r'certamente', r'sem dúvida', r'é claro', r'afortunadamente',
-	r'(?:in)?felizmente', r'tragicamente', r'precocemente',
-	# Synonyms for "said"
-	r'revel(?:ou|aram)', r'indic(?:ou|aram)', r'expôs', r'explic(?:ou|aram)',
+    # Editorializing
+    r'notavelmente', r'interessantemente', r'deve-se ter em mente',
+    r'claramente', r'certamente', r'sem dúvida', r'é claro', r'afortunadamente',
+    r'(?:in)?felizmente', r'tragicamente', r'precocemente',
+    # Synonyms for "said"
+    r'revel(?:ou|aram)', r'indic(?:ou|aram)', r'expôs', r'explic(?:ou|aram)',
     r'encontr(?:ou|aram)', r'not(?:ou|aram)', r'observ(?:ou|aram)',
     r'insist(?:iu|iram)', r'especul(?:ou|aram)', r'conjetur(?:ou|aram)',
     r'aleg(?:ou|aram)', r'afirm(?:ou|aram)', r'admit(?:iu|iram)',
     r'confess(?:ou|aram)', r'neg(?:ou|aram)',
-	# Lack of precision
-	r'falec(?:eu|eram)', r'fo(?:i|ram) desta para a melhor', r'deu sua vida',
+    # Lack of precision
+    r'falec(?:eu|eram)', r'fo(?:i|ram) desta para a melhor', r'deu sua vida',
     r'deram suas vidas', r'local de descanso', r'fazer amor', r'uma questão com',
     r'danos colaterais', r'limpeza étnica', r'convivendo com o câncer',
-	r'sem visão', r'pessoas com cegueira',
+    r'sem visão', r'pessoas com cegueira',
 ]
 
 words_to_watch = RegexMatches(name + ".words_to_watch", words_to_watch_regexes)
