@@ -135,6 +135,14 @@ def test_informals():
         pickle.dumps(portuguese.informals))
 
 
+def test_words_to_watch():
+    compare_extraction(portuguese.words_to_watch.revision.datasources.matches,
+                       WORDS_TO_WATCH, OTHER)
+
+    assert portuguese.words_to_watch == \
+        pickle.loads(pickle.dumps(portuguese.words_to_watch))
+
+
 def test_dictionary():
     cache = {r_text: "A haver, rebeliões: e m80 da Normandia."}
     assert (solve(portuguese.dictionary.revision.datasources.dict_words,
