@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.0]
+
+### Added
+* revscoring.languages.engligh.idioms
+
+### Removed
+* textstat
+
+### Fixed
+* Explicitly use myspell-pt-(pt|br)
+* Pin sphinx to 2.4.4 to manage m2r compatibility
+* Handles revision slots in fetch_text utility
+
 ## [2.6.9]
 
 ### Added
