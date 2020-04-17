@@ -104,6 +104,60 @@ INFORMAL = [
     "xau"
 ]
 
+WORDS_TO_WATCH = [
+    # Puffery
+	"lendária", "lendárias", "lendário", "lendários", "grande", "grandes",
+    "eminente", "eminentes", "visionária", "visionárias", "visionário",
+    "visionários", "notável", "notáveis", "líder", "líderes", "célebre",
+    "célebres", "de última linha", "extraordinária", "extraordinárias",
+    "extraordinário", "extraordinários", "brilhantes", "brilhantes", "famosa",
+    "famosas", "famoso", "famosos", "renomada", "renomadas", "renomado",
+    "renomados", "prestigiosa", "prestigiosas", "prestigioso", "prestigiosos",
+    "de nível mundial", "respeitada", "respeitadas", "respeitado",
+    "respeitados", "excepcional", "excepcionais", "excelente", "excelentes",
+    "virtuosa", "virtuosas", "virtuoso", "virtuosos", "de grande estima",
+    # Contentious labels (-gate removed)
+	"culta", "cultas", "culto", "cultos", "racista", "racistas", "perversa",
+    "perversas", "perverso", "perversos", "seita", "seitas",
+    "fundamentalista", "fundamentalistas", "herege", "hereges", "extremista",
+    "extremistas", "negacionista", "negacionistas", "terrorista",
+    "terroristas", "libertador", "libertadora", "libertadoras", "libertadores",
+    "neonazis", "neo-nazis", "neo nazis", "neonazista", "neo-nazista",
+    "neo nazista", "neonazismo", "neo-nazismo", "neo nazismo", "pseudociência",
+    "pseudo-ciência", "pseudointelectual", "pseudo-intelectual",
+    "pseudointelectuais", "pseudo-intelectuais", "pseudocientífico",
+    "pseudocientífica", "pseudocientíficos", "pseudocientíficas",
+    "pseudo-científico", "pseudo-científica", "pseudo-científicos",
+    "pseudo-científicas", "controversa", "controversas", "controverso",
+    "controversos",
+    # Unsupported attributions
+	"alguns dizem", "algumas dizem", "acredita-se", "muitos têm a opinião",
+    "muitas têm a opinião", "a maioria sente", "especialistas afirmam",
+    "frequentemente se relata", "é a opinião corrente", "estudos mostram",
+    "a ciência diz", "provou-se que",
+	# Expressions of doubt
+	"suposta", "supostas", "suposto", "supostos", "alegada", "alegadas",
+    "alegado", "alegados", "pretensa", "pretensas", "pretenso", "pretensos",
+    "acusada", "acusadas", "acusado", "acusados", "chamada", "chamadas",
+    "chamado", "chamados",
+	# Editorializing
+	"notavelmente", "interessantemente", "deve-se ter em mente",
+	"claramente", "certamente", "sem dúvida", "é claro", "afortunadamente",
+	"felizmente", "infelizmente", "tragicamente", "precocemente",
+	# Synonyms for "said"
+	"revelou", "revelaram", "indicou", "indicaram", "expôs", "explicou", "explicaram",
+    "encontrou", "encontraram", "notou", "notaram", "observou", "observaram",
+    "insistiu", "insistiram", "especulou", "especularam", "conjeturou", "conjeturaram",
+    "alegou", "alegaram", "afirmou", "afirmaram", "admitiu", "admitiram",
+    "confessou", "confessaram", "negou", "negaram",
+	# Lack of precision
+	"faleceu", "faleceram", "foi desta para a melhor",
+    "foram desta para a melhor", "deu sua vida", "deram suas vidas",
+    "local de descanso", "fazer amor", "uma questão com", "danos colaterais",
+    "limpeza étnica", "convivendo com o câncer", "sem visão",
+    "pessoas com cegueira",
+]
+
 OTHER = [
     """
     A batalha de Hastings foi travada em 14 de outubro de 1066 entre o exército
