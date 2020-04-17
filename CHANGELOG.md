@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.1]
+
+### Fixed
+* fetch_text was missing drvslots param
+
 ## [2.7.0]
 
 ### Added
