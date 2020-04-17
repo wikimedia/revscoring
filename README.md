@@ -41,7 +41,7 @@ dependencies in your operating system.
 
 ### Ubuntu & Debian:
   *  Run ``sudo apt-get install python3-dev g++ gfortran liblapack-dev libopenblas-dev``
-  *  Run ``sudo apt-get install aspell-ar aspell-bn aspell-el aspell-id aspell-is aspell-pl aspell-ro aspell-sv aspell-ta aspell-uk myspell-cs myspell-de-at myspell-de-ch myspell-de-de myspell-es myspell-et myspell-fa myspell-fr myspell-he myspell-hr myspell-hu myspell-lv myspell-nb myspell-nl myspell-pt myspell-ru myspell-hr hunspell-bs hunspell-ca hunspell-en-au hunspell-en-us hunspell-en-gb hunspell-eu hunspell-gl hunspell-it hunspell-hi hunspell-sr hunspell-vi voikko-fi``
+  *  Run ``sudo apt-get install aspell-ar aspell-bn aspell-el aspell-id aspell-is aspell-pl aspell-ro aspell-sv aspell-ta aspell-uk myspell-cs myspell-de-at myspell-de-ch myspell-de-de myspell-es myspell-et myspell-fa myspell-fr myspell-he myspell-hr myspell-hu myspell-lv myspell-nb myspell-nl myspell-pt-pt myspell-pt-br myspell-ru myspell-hr hunspell-bs hunspell-ca hunspell-en-au hunspell-en-us hunspell-en-gb hunspell-eu hunspell-gl hunspell-it hunspell-hi hunspell-sr hunspell-vi voikko-fi``
 <!-- ### Windows:
 <i>TODO</i>
 -->
@@ -105,7 +105,7 @@ dictionaries of the languages you'd like to use.  We recommend the following:
 * languages.norwegian: myspell-nb
 * languages.persian: myspell-fa
 * languages.polish: aspell-pl
-* languages.portuguese: myspell-pt
+* languages.portuguese: myspell-pt-pt myspell-pt-br
 * languages.serbian: hunspell-sr
 * languages.spanish: myspell-es
 * languages.swedish: aspell-sv

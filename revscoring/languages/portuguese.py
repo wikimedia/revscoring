@@ -1,18 +1,23 @@
 from .features import Dictionary, RegexMatches, Stemmed, Stopwords
+from .features.dictionary import MultiDictChecker, load_dict, utf16_cleanup
 
 name = "portuguese"
 
-try:
-    import enchant
-    dictionary = enchant.Dict("pt")
-except enchant.errors.DictNotFoundError:
-    raise ImportError("No enchant-compatible dictionary found for 'pt'.  " +
-                      "Consider installing 'myspell-pt'.")
 
-dictionary = Dictionary(name + ".dictionary", dictionary.check)
+multi_dict = MultiDictChecker(
+    load_dict('pt_PT', 'myspell-pt-pt'),
+    load_dict('pt_BR', 'myspell-pt-br'))
+
+
+def safe_dictionary_check(word):
+    return multi_dict.check(utf16_cleanup(word))
+
+
+dictionary = Dictionary(name + ".dictionary", safe_dictionary_check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-`enchant.Dict <https://github.com/rfk/pyenchant>`_ "pt". Provided by `myspell-pt`
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "pt". Provided by
+`myspell-pt-pt` and `myspell-pt-br`.
 """
 
 try:
