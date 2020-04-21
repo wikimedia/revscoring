@@ -136,6 +136,8 @@ Then run:
 ```bash
 $ pytest . -vv
 ```
+# Reporting bugs
+To report a bug, please use [Phabricator](https://phabricator.wikimedia.org/maniphest/task/edit/form/1/?projects=revscoring)
 
 # Authors
   *   [Aaron Halfaker](http://halfaker.info)
