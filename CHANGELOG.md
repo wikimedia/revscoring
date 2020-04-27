@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.2]
+
+### Added
+* languages.portuguese.words_to_watch
+
+
 ## [2.7.1]
 
 ### Fixed
