@@ -100,8 +100,11 @@ class Feature(Dependent):
         if isinstance(value, self.returns):
             return value
         else:
-            raise ValueError("Expected {0}, but got {1} instead."
-                             .format(self.returns, type(value)))
+            try:
+                return self.returns(value)
+            except ValueError:
+                raise ValueError("Expected {0}, but got {1} instead."
+                                    .format(self.returns, type(value)))
 
     @classmethod
     def or_constant(self, val):
