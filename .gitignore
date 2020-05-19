@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *~
 ipython/.ipynb_checkpoints
+.python-version
 
 # C extensions
 *.so
