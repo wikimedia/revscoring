@@ -63,7 +63,18 @@ INFORMAL = [
 ]
 
 OTHER = [
-    """A táboa periódica dos elementos é unha disposición en formato de táboa dos elementos químicos, ordenados polo seu número atómico, configuración electrónica e propiedades químicas recorrentes. Esta ordenación presenta unhas tendencias periódicas, como por exemplo a presenza de elementos semellantes na mesma columna. Presenta tamén catro bloques con propiedades químicas semellantes. As filas da táboa denomínanse períodos, mentres que as columnas chámanse grupos. Seis destes grupos teñen nomes xeralmente aceptados ademais de números. A táboa periódica pode utilizarse para derivar relacións entre as propiedades dos elementos e predicir as propiedades de novos elementos aínda non descubertos ou obtidos de maneira sintética.
+    """
+    A táboa periódica dos elementos é unha disposición en formato de táboa dos
+    elementos químicos, ordenados polo seu número atómico, configuración
+    electrónica e propiedades químicas recorrentes. Esta ordenación presenta
+    unhas tendencias periódicas, como por exemplo a presenza de elementos
+    semellantes na mesma columna. Presenta tamén catro bloques con propiedades
+    químicas semellantes. As filas da táboa denomínanse períodos, mentres
+    que as columnas chámanse grupos. Seis destes grupos teñen nomes xeralmente
+    aceptados ademais de números. A táboa periódica pode utilizarse para
+    derivar relacións entre as propiedades dos elementos e predicir as
+    propiedades de novos elementos aínda non descubertos ou obtidos de
+    maneira sintética.
     """
 ]
 
@@ -84,7 +95,8 @@ def test_informals():
 
 def test_dictionary():
     cache = {revision_oriented.revision.text: 'táboa períodos worngly.'}
-    assert (solve(galician.dictionary.revision.datasources.dict_words, cache=cache) ==
+    assert (solve(galician.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
             ['táboa', 'períodos'])
     assert (solve(galician.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==

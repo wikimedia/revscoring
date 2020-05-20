@@ -224,8 +224,10 @@ words_to_watch_regexes = [
     r'myth', r'neo[- ]?nazi', r'pseudo(scientific|intellectual)',
     r'controversial',
     # Unsupported attributions
-    r'(most|many|some|people|scholars|scientists|science|experts) (say|state|believe|regard|report|claim|feel|declare)',
-    r'it is ((often|sometimes|widely) )?(believed|regarded|said|shown|reported|thought)',
+    r'(most|many|some|people|scholars|scientists|science|experts) ' +
+        '(say|state|believe|regard|report|claim|feel|declare)',
+    r'it is ((often|sometimes|widely) )?' +
+        '(believed|regarded|said|shown|reported|thought)',
     r'are of the opinion',
     r'(research|science) (has shown|says|claims)',
     # Expressions of doubt

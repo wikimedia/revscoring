@@ -57,7 +57,8 @@ badwords = RegexMatches(name + ".badwords", badword_regexes, wrapping=None,
 badword detecting regexes.
 """
 
-# Formatted from https://resources.allsetlearning.com/chinese/grammar/Formal_and_informal_function_words
+# Formatted from
+# https://resources.allsetlearning.com/chinese/grammar/Formal_and_informal_function_words
 informal_regexes = list(map(HanziConv.toSimplified, [
     # Hello
     r"你好",  # nǐ hǎo; The standard "hello" greeting.

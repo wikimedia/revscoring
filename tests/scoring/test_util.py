@@ -4,11 +4,11 @@ from revscoring.scoring import util
 
 def test_pattern():
     assert (util.parse_pattern("'maximum filter_rate @ recall >= 0.9'.labels.true") ==  # noqa
-        ["maximum filter_rate @ recall >= 0.9", "labels", "true"])
+            ["maximum filter_rate @ recall >= 0.9", "labels", "true"])
     assert (util.parse_pattern("'maximum filter_rate @ recall >= 0.9'.'labels'.true") ==  # noqa
-        ["maximum filter_rate @ recall >= 0.9", "labels", "true"])
+            ["maximum filter_rate @ recall >= 0.9", "labels", "true"])
     assert (util.parse_pattern("'foo\"bar\"'.buz") ==  # noqa
-        ["foo\"bar\"", "buz"])
+            ["foo\"bar\"", "buz"])
 
 
 def test_treeify():

@@ -45,7 +45,7 @@ class ScaledPredictionStatistics(ScaledClassificationMatrix):
 
             match-rate = positives / n
         """
-        return (self.positives / self.n) if self.n is not 0 else None
+        return (self.positives / self.n) if self.n != 0 else None
 
     def filter_rate(self):
         """

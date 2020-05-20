@@ -67,10 +67,12 @@ def main(argv=None):
 
     verbose = args['--verbose']
 
-    run(observations, output, features, label_name, model, additional_fields, verbose)
+    run(observations, output, features, label_name, model, additional_fields,
+        verbose)
 
 
-def run(observations, output, features, label_name, model, additional_fields, verbose):
+def run(observations, output, features, label_name, model, additional_fields,
+        verbose):
     headers = [str(f) for f in features] + [label_name]
     if model is not None:
         headers.append("score_doc")

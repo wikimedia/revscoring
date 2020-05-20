@@ -1,6 +1,6 @@
 
 from revscoring.scoring.statistics.classification.scaled_prediction_statistics import \
-    ScaledPredictionStatistics
+    ScaledPredictionStatistics # noqa
 
 BALANCED = ([({'prediction': True}, True) for i in range(50)] +   # TP
             [({'prediction': False}, True) for i in range(50)] +  # FN
