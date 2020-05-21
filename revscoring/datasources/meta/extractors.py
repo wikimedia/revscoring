@@ -7,6 +7,8 @@ return `str`'s or `list` ( `str` ) and extract information from them.
 """
 import re
 
+from flashtext import KeywordProcessor
+
 from ..datasource import Datasource
 
 
@@ -64,3 +66,36 @@ class regex(Datasource):
                     if not hasattr(self, 'exclude_re') or
                     self.exclude_re is None or
                     not self.exclude_re.match(match.group(2))]
+
+
+class trie(Datasource):
+    """
+        Generates a list of strings that match any of a set of provided words
+        or phrases
+
+        :Parameters:
+            words: `list` ( `str` )
+                A list of words or phrases to find in the text
+            text_datasource : :class:`revscoring.Datasource`
+                A datasource that returns a `str` or a `list` of `str`
+            name : `str`
+                A name for the new datasource
+    """
+
+    def __init__(self, words, text_datasource, name=None):
+        self.keyword_processor = KeywordProcessor()
+        self.keyword_processor.add_keywords_from_list(words)
+
+        name = self._format_name(name, [words, text_datasource])
+        super().__init__(name, self.process, depends_on=[text_datasource])
+
+    def process(self, text_or_texts):
+        if text_or_texts is None:
+            return []
+        elif isinstance(text_or_texts, str):
+            text = text_or_texts
+            return self.keyword_processor.extract_keywords(text)
+        else:
+            texts = text_or_texts
+            return [self.keyword_processor.extract_keywords(text)
+                    for text in texts]
