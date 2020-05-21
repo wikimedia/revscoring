@@ -162,9 +162,12 @@ def test_informals():
 
 
 def test_dictionary():
-    cache = {r_text: "Hinzu kamen rund Faschiertes Hackfleisch sechs m80 Personen."}
-    assert (solve(german.dictionary.revision.datasources.dict_words, cache=cache) ==
-            ["Hinzu", "kamen", "rund", "Faschiertes", "Hackfleisch", "sechs", "Personen"])
+    cache = {
+        r_text: "Hinzu kamen rund Faschiertes Hackfleisch sechs m80 Personen."}
+    assert (solve(german.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
+            ["Hinzu", "kamen", "rund", "Faschiertes", "Hackfleisch", "sechs",
+             "Personen"])
     assert (solve(german.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==
             ["m80"])
@@ -174,7 +177,8 @@ def test_dictionary():
 
 def test_stopwords():
     cache = {r_text: "im Lager oder in der Verbannung."}
-    assert (solve(german.stopwords.revision.datasources.stopwords, cache=cache) ==
+    assert (solve(german.stopwords.revision.datasources.stopwords,
+                  cache=cache) ==
             ["im", "oder", "in", "der"])
     assert (solve(german.stopwords.revision.datasources.non_stopwords,
                   cache=cache) ==

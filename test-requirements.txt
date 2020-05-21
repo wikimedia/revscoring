@@ -2,3 +2,4 @@ pytest
 codecov
 pytest-cov
 google-compute-engine <= 2.7.999
+flake8 >= 3.8.1, < 3.8.999

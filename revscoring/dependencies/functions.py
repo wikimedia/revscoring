@@ -248,7 +248,7 @@ def _solve(dependent, context, cache, history=None, profile=None):
                         profile[dependent].append(duration)
                     else:
                         profile[dependent] = [duration]
-            except DependencyError as e:
+            except DependencyError:
                 raise
             except Exception as e:
                 message = "Failed to process {0}: {1}".format(dependent, e)

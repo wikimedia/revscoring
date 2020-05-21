@@ -56,7 +56,8 @@ def test_page_creation_string_timestamp():
 
     cache = {
         revision_oriented.revision.timestamp_str: '1970-01-01T00:00:10Z',
-        revision_oriented.revision.page.creation.timestamp_str: '1970-01-01T00:00:00Z'
+        revision_oriented.revision.page.creation.timestamp_str:
+            '1970-01-01T00:00:00Z'
     }
     assert solve(revision.page.creation.seconds_since, cache=cache) == 10
 
@@ -98,7 +99,8 @@ def test_user_registration():
     assert (solve(revision.user.seconds_since_registration, cache=cache) ==
             60 * 60 * 24 * 365)  # one year
 
-    assert (pickle.loads(pickle.dumps(revision.user.seconds_since_registration)) ==
+    assert (pickle.loads(pickle.dumps(
+               revision.user.seconds_since_registration)) ==
             revision.user.seconds_since_registration)
 
 
@@ -107,7 +109,8 @@ def test_user_registration_string_timestamp():
     cache = {
         revision_oriented.revision.timestamp_str: '1970-01-01T00:00:10Z',
         revision_oriented.revision.user.id: 10,
-        revision_oriented.revision.user.info.registration_str: '1970-01-01T00:00:00Z'
+        revision_oriented.revision.user.info.registration_str:
+            '1970-01-01T00:00:00Z'
     }
     assert solve(revision.user.seconds_since_registration, cache=cache) == 10
 
@@ -131,12 +134,14 @@ def test_user_registration_string_timestamp():
     cache = {
         revision_oriented.revision.timestamp_str: '1970-01-01T00:00:00Z',
         revision_oriented.revision.user.id: 10,
-        revision_oriented.revision.user.info.registration_str: '1970-01-01T00:00:10Z'
+        revision_oriented.revision.user.info.registration_str:
+            '1970-01-01T00:00:10Z'
     }
     assert (solve(revision.user.seconds_since_registration, cache=cache) ==
             60 * 60 * 24 * 365)  # one year
 
-    assert (pickle.loads(pickle.dumps(revision.user.seconds_since_registration)) ==
+    assert (pickle.loads(pickle.dumps(
+                revision.user.seconds_since_registration)) ==
             revision.user.seconds_since_registration)
 
 
@@ -159,7 +164,8 @@ def test_last_user_revision_string_timestamp():
 
     cache = {
         revision_oriented.revision.timestamp_str: '1970-01-01T00:00:10Z',
-        revision_oriented.revision.user.last_revision.timestamp_str: '1970-01-01T00:00:00Z'
+        revision_oriented.revision.user.last_revision.timestamp_str:
+            '1970-01-01T00:00:00Z'
     }
     assert solve(revision.user.last_revision.seconds_since, cache=cache) == 10
 

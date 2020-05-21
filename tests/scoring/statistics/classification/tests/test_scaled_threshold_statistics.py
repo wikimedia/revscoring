@@ -4,7 +4,7 @@ import random
 from numpy import linspace
 
 from revscoring.scoring.statistics.classification.scaled_threshold_statistics import \
-    ScaledThresholdStatistics
+    ScaledThresholdStatistics # noqa
 
 # Build up the observations.
 PROBAS = list(linspace(0, 1, 4000))

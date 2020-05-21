@@ -5,6 +5,8 @@ language: python
 python:
   # Track Python version on future production machines, Debian Stretch.
   - 3.5
+  - 3.7
+  - 3.8
 sudo: required
 addons:
   apt:

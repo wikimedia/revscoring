@@ -27,7 +27,8 @@ def test_entity_doc():
 
 
 def test_entity():
-    assert solve(revision.datasources.entity, cache={r_text: None}).properties == {}
+    entity = solve(revision.datasources.entity, cache={r_text: None})
+    assert entity.properties == {}
 
     solve(revision.datasources.entity, cache={r_text: ALAN_TEXT})
 
@@ -39,11 +40,12 @@ def test_entity():
                   cache={r_text: ALAN_TEXT}).keys() ==
             {'P1430', 'P906', 'P1816', 'P570', 'P31', 'P1343', 'P2021', 'P535',
              'P800', 'P569', 'P373', 'P1819', 'P108', 'P227', 'P185', 'P910',
-             'P1273', 'P69', 'P244', 'P20', 'P101', 'P106', 'P18', 'P1563', 'P25',
-             'P646', 'P1296', 'P214', 'P950', 'P463', 'P1006', 'P268', 'P21',
-             'P1417', 'P22', 'P1207', 'P19', 'P91', 'P735', 'P1412', 'P166',
-             'P269', 'P1741', 'P1196', 'P27', 'P140', 'P512', 'P1415', 'P691',
-             'P345', 'P949', 'P1263', 'P549', 'P184', 'P935', 'P349', 'P213'})
+             'P1273', 'P69', 'P244', 'P20', 'P101', 'P106', 'P18', 'P1563',
+             'P25', 'P646', 'P1296', 'P214', 'P950', 'P463', 'P1006', 'P268',
+             'P21', 'P1417', 'P22', 'P1207', 'P19', 'P91', 'P735', 'P1412',
+             'P166', 'P269', 'P1741', 'P1196', 'P27', 'P140', 'P512', 'P1415',
+             'P691', 'P345', 'P949', 'P1263', 'P549', 'P184', 'P935', 'P349',
+             'P213'})
 
     assert solve(revision.claims, cache={r_text: ALAN_TEXT}) == 71
     assert (solve(revision.datasources.claims, cache={r_text: ALAN_TEXT}) ==
@@ -98,7 +100,8 @@ def test_entity():
              ('P25', 'Q20895935', 'P248', 'Q20895922'),
              ('P349', "'00621580'", 'P143', 'Q48183'),
              ('P549', "'8014'", 'P143', 'Q328'),
-             ('P569', '+1912-06-23T00:00:00Z', 'P854', "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
+             ('P569', '+1912-06-23T00:00:00Z', 'P854',
+              "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
              ('P18', "'Alan Turing Aged 16.jpg'", 'P143', 'Q11920'),
              ('P569', '+1912-06-23T00:00:00Z', 'P248', 'Q20666306'),
              ('P19', 'Q122744', 'P143', 'Q328'),
@@ -106,14 +109,16 @@ def test_entity():
              ('P569', '+1912-06-23T00:00:00Z', 'P143', 'Q328'),
              ('P569', '+1912-06-23T00:00:00Z', 'P345', "'nm6290133'"),
              ('P91', 'Q6636', 'P248', 'Q20895922'),
-             ('P1273', "'a11455408'", 'P854', "'https://viaf.org/viaf/41887917/'"),
+             ('P1273', "'a11455408'", 'P854',
+              "'https://viaf.org/viaf/41887917/'"),
              ('P1412', 'Q1860', 'P143', 'Q20666306'),
              ('P69', 'Q2278254', 'P248', 'Q20895922'),
              ('P31', 'Q5', 'P813', '+2015-10-10T00:00:00Z'),
              ('P512', 'Q230899', 'P143', 'Q8447'),
              ('P512', 'Q21578', 'P143', 'Q8447'),
              ('P1412', 'Q1860', 'P813', '+2015-10-10T00:00:00Z'),
-             ('P1412', 'Q1860', 'P854', "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
+             ('P1412', 'Q1860', 'P854',
+              "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
              ('P535', "'12651680'", 'P143', 'Q328'),
              ('P19', 'Q20895942', 'P248', 'Q20895922'),
              ('P227', "'118802976'", 'P143', 'Q1419226'),
@@ -126,20 +131,25 @@ def test_entity():
              ('P646', "'/m/0n00'", 'P248', 'Q15241312'),
              ('P646', "'/m/0n00'", 'P577', '+2013-10-28T00:00:00Z'),
              ('P1563', "'Turing'", 'P143', 'Q11921'),
-             ('P19', 'Q122744', 'P854', "'http://www.telegraph.co.uk/technology/news/9314910/Britain-still-owes-Alan-Turing-a-debt.html'"),
+             ('P19', 'Q122744', 'P854',
+              "'http://www.telegraph.co.uk/technology/news/9314910/Britain-still-owes-Alan-Turing-a-debt.html'"), # noqa
              ('P269', "'030691621'", 'P143', 'Q8447'),
              ('P108', 'Q230899', 'P248', 'Q20895922'),
              ('P22', 'Q20895930', 'P248', 'Q20895922'),
              ('P906', "'254262'", 'P143', 'Q877583'),
              ('P21', 'Q6581097', 'P813', '+2014-04-09T00:00:00Z'),
              ('P244', "'n83171546'", 'P143', 'Q328'),
-             ('P570', '+1954-06-07T00:00:00Z', 'P854', "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
-             ('P570', '+1954-06-07T00:00:00Z', 'P813', '+2015-10-10T00:00:00Z'),
+             ('P570', '+1954-06-07T00:00:00Z', 'P854',
+              "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
+             ('P570', '+1954-06-07T00:00:00Z', 'P813',
+              '+2015-10-10T00:00:00Z'),
              ('P106', 'Q82594', 'P143', 'Q328'),
              ('P570', '+1954-06-07T00:00:00Z', 'P345', "'nm6290133'"),
              ('P213', "'0000 0001 1058 9902'", 'P143', 'Q423048'),
-             ('P31', 'Q5', 'P854', "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
-             ('P569', '+1912-06-23T00:00:00Z', 'P813', '+2015-10-10T00:00:00Z'),
+             ('P31', 'Q5', 'P854',
+              "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
+             ('P569', '+1912-06-23T00:00:00Z', 'P813',
+              '+2015-10-10T00:00:00Z'),
              ('P1196', 'Q10737', 'P248', 'Q20895922'),
              ('P268', "'12205670t'", 'P143', 'Q8447'),
              ('P800', 'Q772056', 'P248', 'Q20895922'),
@@ -147,9 +157,11 @@ def test_entity():
              ('P27', 'Q145', 'P143', 'Q48183')})
     assert solve(revision.qualifiers, cache={r_text: ALAN_TEXT}) == 6
     assert (solve(revision.datasources.qualifiers, cache={r_text: ALAN_TEXT}) ==
-            {('P1343', 'Q17329836', 'P854', 0, "'http://www.larousse.fr/encyclopedie/personnage/Alan_Mathison_Turing/147690'"),
+            {('P1343', 'Q17329836', 'P854', 0,
+              "'http://www.larousse.fr/encyclopedie/personnage/Alan_Mathison_Turing/147690'"), # noqa
              ('P108', 'Q220798', 'P580', 0, '+1938-00-00T00:00:00Z'),
-             ('P1343', 'Q2627728', 'P854', 0, "'http://krugosvet.ru/enc/gumanitarnye_nauki/lingvistika/TYURING_ALAN_MATISON.html'"),
+             ('P1343', 'Q2627728', 'P854', 0,
+              "'http://krugosvet.ru/enc/gumanitarnye_nauki/lingvistika/TYURING_ALAN_MATISON.html'"), # noqa
              ('P108', 'Q220798', 'P582', 0, '+1945-00-00T00:00:00Z'),
              ('P108', 'Q230899', 'P580', 0, '+1948-03-00T00:00:00Z'),
              ('P69', 'Q2278254', 'P580', 0, '+1926-00-00T00:00:00Z')})
@@ -189,11 +201,14 @@ def test_entity():
              'nn': 'Alan Turing', 'zh-hans': '艾伦·图灵', 'af': 'Alan Turing',
              'be': 'Алан Матысан Цьюрынг', 'ga': 'Alan Turing',
              'ckb': 'ئالان تیورینگ', 'es': 'Alan Turing', 'arz': 'الان تورينج',
-             'new': 'एलेन त्युरिङ्ग', 'tt': 'Alan Tyuring', 'ht': 'Alan Turing',
+             'new': 'एलेन त्युरिङ्ग', 'tt': 'Alan Tyuring',
+             'ht': 'Alan Turing',
              'cy': 'Alan Turing', 'mwl': 'Alan Turing', 'or': 'ଆଲାନ ଟ୍ୟୁରିଙ୍ଗ',
-             'jbo': '.alan turin', 'ml': 'അലൻ ട്യൂറിംഗ്', 'sa': 'एलेन ट्यूरिंग',
+             'jbo': '.alan turin', 'ml': 'അലൻ ട്യൂറിംഗ്',
+             'sa': 'एलेन ट्यूरिंग',
              'bs': 'Alan Turing', 'tg': 'Алан Тюринг', 'ms': 'Alan Turing',
-             'lv': 'Alans Tjūrings', 'fur': 'Alan Turing', 'sco': 'Alan Turing',
+             'lv': 'Alans Tjūrings', 'fur': 'Alan Turing',
+             'sco': 'Alan Turing',
              'sah': 'Алан Матисон Тьюринг', 'lmo': 'Alan Turing',
              'mr': 'ॲलन ट्युरिंग', 'pnb': 'الان ٹورنگ', 'eu': 'Alan Turing',
              'zh': '艾伦·图灵', 'de-ch': 'Alan Turing', 'gu': 'ઍલન ટ્યુરિંગ',
@@ -274,7 +289,8 @@ def test_entity():
              'cywiki': 'Alan Turing', 'euwiki': 'Alan Turing',
              'ltwiki': 'Alan Turing', 'cawikiquote': 'Alan Turing',
              'simplewiki': 'Alan Turing', 'cowiki': 'Alanu Turing',
-             'ganwiki': '圖靈', 'ckbwiki': 'ئالان تیورینگ', 'slwiki': 'Alan Turing'})
+             'ganwiki': '圖靈', 'ckbwiki': 'ئالان تیورینگ',
+             'slwiki': 'Alan Turing'})
     assert solve(revision.descriptions, cache={r_text: ALAN_TEXT}) == 22
     assert (solve(revision.datasources.descriptions, cache={r_text: ALAN_TEXT}) ==
             {'da': 'britisk informatiker, matematiker og ingeniør',
@@ -287,8 +303,8 @@ def test_entity():
              'nl': 'Brits wiskundige',
              'de': 'britischer Logiker, Mathematiker und Kryptoanalytiker',
              'zh-cn': '英国数学家，逻辑学家，密码学家和计算机科学家',
-             'en': 'British mathematician, logician, cryptanalyst, and computer ' +
-             'scientist',
+             'en': 'British mathematician, logician, cryptanalyst, and '
+                   'computer ' + 'scientist',
              'as': 'Computer scientist, mathematician, and cryptographer',
              'zh': '英国数学家，逻辑学家，密码学家和计算机科学家',
              'ru': 'английский математик, логик, криптограф',
@@ -314,7 +330,8 @@ def test_entity():
              ('P25', 'Q20895935', 'P248', 0, 'Q20895922'),
              ('P349', "'00621580'", 'P143', 0, 'Q48183'),
              ('P549', "'8014'", 'P143', 0, 'Q328'),
-             ('P569', '+1912-06-23T00:00:00Z', 'P854', 0, "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
+             ('P569', '+1912-06-23T00:00:00Z', 'P854', 0,
+              "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
              ('P18', "'Alan Turing Aged 16.jpg'", 'P143', 0, 'Q11920'),
              ('P569', '+1912-06-23T00:00:00Z', 'P248', 0, 'Q20666306'),
              ('P19', 'Q122744', 'P143', 0, 'Q328'),
@@ -322,14 +339,16 @@ def test_entity():
              ('P569', '+1912-06-23T00:00:00Z', 'P143', 0, 'Q328'),
              ('P569', '+1912-06-23T00:00:00Z', 'P345', 0, "'nm6290133'"),
              ('P91', 'Q6636', 'P248', 0, 'Q20895922'),
-             ('P1273', "'a11455408'", 'P854', 0, "'https://viaf.org/viaf/41887917/'"),
+             ('P1273', "'a11455408'", 'P854', 0,
+              "'https://viaf.org/viaf/41887917/'"),
              ('P1412', 'Q1860', 'P143', 0, 'Q20666306'),
              ('P69', 'Q2278254', 'P248', 0, 'Q20895922'),
              ('P31', 'Q5', 'P813', 0, '+2015-10-10T00:00:00Z'),
              ('P512', 'Q230899', 'P143', 0, 'Q8447'),
              ('P512', 'Q21578', 'P143', 0, 'Q8447'),
              ('P1412', 'Q1860', 'P813', 0, '+2015-10-10T00:00:00Z'),
-             ('P1412', 'Q1860', 'P854', 0, "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
+             ('P1412', 'Q1860', 'P854', 0,
+              "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
              ('P535', "'12651680'", 'P143', 0, 'Q328'),
              ('P19', 'Q20895942', 'P248', 0, 'Q20895922'),
              ('P227', "'118802976'", 'P143', 0, 'Q1419226'),
@@ -342,20 +361,25 @@ def test_entity():
              ('P646', "'/m/0n00'", 'P248', 0, 'Q15241312'),
              ('P646', "'/m/0n00'", 'P577', 0, '+2013-10-28T00:00:00Z'),
              ('P1563', "'Turing'", 'P143', 0, 'Q11921'),
-             ('P19', 'Q122744', 'P854', 0, "'http://www.telegraph.co.uk/technology/news/9314910/Britain-still-owes-Alan-Turing-a-debt.html'"),
+             ('P19', 'Q122744', 'P854', 0,
+              "'http://www.telegraph.co.uk/technology/news/9314910/Britain-still-owes-Alan-Turing-a-debt.html'"), # noqa
              ('P269', "'030691621'", 'P143', 0, 'Q8447'),
              ('P108', 'Q230899', 'P248', 0, 'Q20895922'),
              ('P22', 'Q20895930', 'P248', 0, 'Q20895922'),
              ('P906', "'254262'", 'P143', 0, 'Q877583'),
              ('P21', 'Q6581097', 'P813', 0, '+2014-04-09T00:00:00Z'),
              ('P244', "'n83171546'", 'P143', 0, 'Q328'),
-             ('P570', '+1954-06-07T00:00:00Z', 'P854', 0, "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
-             ('P570', '+1954-06-07T00:00:00Z', 'P813', 0, '+2015-10-10T00:00:00Z'),
+             ('P570', '+1954-06-07T00:00:00Z', 'P854', 0,
+              "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
+             ('P570', '+1954-06-07T00:00:00Z', 'P813', 0,
+              '+2015-10-10T00:00:00Z'),
              ('P106', 'Q82594', 'P143', 0, 'Q328'),
              ('P570', '+1954-06-07T00:00:00Z', 'P345', 0, "'nm6290133'"),
              ('P213', "'0000 0001 1058 9902'", 'P143', 0, 'Q423048'),
-             ('P31', 'Q5', 'P854', 0, "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
-             ('P569', '+1912-06-23T00:00:00Z', 'P813', 0, '+2015-10-10T00:00:00Z'),
+             ('P31', 'Q5', 'P854', 0,
+              "'http://data.bnf.fr/ark:/12148/cb12205670t'"),
+             ('P569', '+1912-06-23T00:00:00Z', 'P813', 0,
+              '+2015-10-10T00:00:00Z'),
              ('P1196', 'Q10737', 'P248', 0, 'Q20895922'),
              ('P268', "'12205670t'", 'P143', 0, 'Q8447'),
              ('P800', 'Q772056', 'P248', 0, 'Q20895922'),

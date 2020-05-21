@@ -112,10 +112,10 @@ nitpick_ignore = [
     ('py:class', 'GaussianNB'),
     ('py:class', 'MultinomialNB'),
     ('py:class', 'BernoulliNB'),
-    ('py:class', 'sklearn.linear_model.logistic.LogisticRegression'),
-    ('py:class', 'sklearn.svm.classes.SVC'),
-    ('py:class', 'sklearn.ensemble.forest.RandomForestClassifier'),
-    ('py:class', 'sklearn.ensemble.gradient_boosting.GradientBoostingClassifier')
+    ('py:class', 'sklearn.linear_model._logistic.LogisticRegression'),
+    ('py:class', 'sklearn.svm._classes.SVC'),
+    ('py:class', 'sklearn.ensemble._forest.RandomForestClassifier'),
+    ('py:class', 'sklearn.ensemble._gb.GradientBoostingClassifier')
     ]
 
 # The reST default role (used for this markup: `text`) to use for all

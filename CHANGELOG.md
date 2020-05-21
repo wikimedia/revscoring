@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.8.0]
+
+### Added
+* Support for python 3.7 and 3.8
+
+### Fixed
+* Code example to use revscoring.Model
+
+### Changed
+* Depends on scikit-learn-0.22.1
+* Removes flake8 as an install dependency
+
 ## [2.7.2]
 
 ### Added

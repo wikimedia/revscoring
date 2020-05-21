@@ -227,7 +227,7 @@ def write_profile(profile_f, dependents, profile, batch_size):
     for dependent in dependents:
         profile_f.write("* `{0}`\n".format(dependent))
 
-    profile_f.write("\n".format(batch_size))
+    profile_f.write("\n")
     profile_f.write("Batch size: {0}\n\n".format(batch_size))
 
     table = tabulate(
@@ -247,7 +247,7 @@ def write_profile(profile_f, dependents, profile, batch_size):
     datasource_profiles = []
     misc_profiles = []
     for dependent_name, durations in profile.items():
-        row = (dependent_name.replace("<", "\<").replace(">", "\>"),
+        row = (dependent_name.replace("<", "\\<").replace(">", "\\>"),
                len(durations),
                round(min(durations), 3),
                round(max(durations), 3),

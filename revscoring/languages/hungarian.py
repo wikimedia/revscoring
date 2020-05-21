@@ -12,7 +12,8 @@ except enchant.errors.DictNotFoundError:
 dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
-`enchant.Dict <https://github.com/rfk/pyenchant>`_ "hungarian".  Provided by `aspell-hu`
+`enchant.Dict <https://github.com/rfk/pyenchant>`_ "hungarian".  Provided by
+`aspell-hu`
 """
 
 try:

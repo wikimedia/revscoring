@@ -145,9 +145,11 @@ WORDS_TO_WATCH = [
     "claramente", "certamente", "sem dúvida", "é claro", "afortunadamente",
     "felizmente", "infelizmente", "tragicamente", "precocemente",
     # Synonyms for "said"
-    "revelou", "revelaram", "indicou", "indicaram", "expôs", "explicou", "explicaram",
+    "revelou", "revelaram", "indicou", "indicaram", "expôs", "explicou",
+    "explicaram",
     "encontrou", "encontraram", "notou", "notaram", "observou", "observaram",
-    "insistiu", "insistiram", "especulou", "especularam", "conjeturou", "conjeturaram",
+    "insistiu", "insistiram", "especulou", "especularam", "conjeturou",
+    "conjeturaram",
     "alegou", "alegaram", "afirmou", "afirmaram", "admitiu", "admitiram",
     "confessou", "confessaram", "negou", "negaram",
     # Lack of precision
@@ -225,7 +227,8 @@ def test_stopwords():
 
 def test_stemmmed():
     cache = {r_text: "A haver, rebeliões: e m80 da Normandia."}
-    assert (solve(portuguese.stemmed.revision.datasources.stems, cache=cache) ==
+    assert (solve(portuguese.stemmed.revision.datasources.stems,
+                  cache=cache) ==
             ["a", "hav", "rebeliõ", "e", "m80", "da", "normand"])
 
     assert portuguese.stemmed == pickle.loads(pickle.dumps(portuguese.stemmed))

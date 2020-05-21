@@ -146,7 +146,8 @@ INFORMAL = [
     "yolo", "yooolloo"
 ]
 
-# Borrowed from https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style/Words_to_watch
+# Borrowed from
+# https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style/Words_to_watch
 WORDS_TO_WATCH = [
     # Puffery
     "legendary", "best", "great", "acclaimed", "iconic",
@@ -207,10 +208,10 @@ OTHER = [
     Leslie Groves, the director of the Manhattan Project. The Smyth Report was
     the first official account of the development of the atomic bombs and the
     basic physical processes behind them. Anything in the declassified
-    Smyth Report could be discussed openly, so it focused heavily on basic nuclear
-    physics and other information which was either already widely known in the
-    scientific community or easily deducible by a competent scientist. It
-    omitted details about chemistry, metallurgy, and ordnance, ultimately
+    Smyth Report could be discussed openly, so it focused heavily on basic
+    nuclear physics and other information which was either already widely known
+    in the scientific community or easily deducible by a competent scientist.
+    It omitted details about chemistry, metallurgy, and ordnance, ultimately
     giving a false impression that the Manhattan Project was all about physics.
     """,
     'association', 'shihtzhu', 'shih tzu', 'shih tzhu', 'Wafflehats',
@@ -245,7 +246,8 @@ def test_words_to_watch():
 
 def test_dictionary():
     cache = {r_text: 'This color colour is spelled worngly. <td>'}
-    assert (solve(english.dictionary.revision.datasources.dict_words, cache=cache) ==
+    assert (solve(english.dictionary.revision.datasources.dict_words,
+                  cache=cache) ==
             ["This", "color", "colour", "is", "spelled"])
     assert (solve(english.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==
@@ -256,7 +258,8 @@ def test_dictionary():
 
 def test_stopwords():
     cache = {r_text: 'This is spelled worngly. <td>'}
-    assert (solve(english.stopwords.revision.datasources.stopwords, cache=cache) ==
+    assert (solve(english.stopwords.revision.datasources.stopwords,
+                  cache=cache) ==
             ["This", "is"])
     assert (solve(english.stopwords.revision.datasources.non_stopwords,
                   cache=cache) ==
@@ -274,7 +277,8 @@ def test_stemmmed():
 
 
 def test_idioms():
-    cache = {r_text: "This is some text.  I don't want to beat around the bush."}
+    cache = {
+        r_text: "This is some text.  I don't want to beat around the bush."}
     assert (solve(english.idioms.revision.datasources.matches, cache=cache) ==
             ['beat around the bush'])
 
