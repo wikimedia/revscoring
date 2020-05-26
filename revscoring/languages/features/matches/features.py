@@ -5,7 +5,7 @@ from ....features.meta import aggregators
 
 class Revision(DependentSet):
 
-    def __init__(self, name, words, revision_datasources):
+    def __init__(self, name, revision_datasources):
         super().__init__(name)
         self.datasources = revision_datasources
 
@@ -14,26 +14,26 @@ class Revision(DependentSet):
 
         if hasattr(revision_datasources, 'parent'):
             self.parent = Revision(
-                name + ".parent", words, revision_datasources.parent
+                name + ".parent", revision_datasources.parent
             )
             """
-            :class:`~revscoring.languages.features.word_matches.Revision` :
+            :class:`~revscoring.languages.features.regex_matches.Revision` :
             The parent revision
             """
 
         if hasattr(revision_datasources, 'diff'):
             self.diff = Diff(
-                name + ".diff", words, revision_datasources.diff
+                name + ".diff", revision_datasources.diff
             )
             """
-            :class:`~revscoring.languages.features.word_matches.Diff` : The
+            :class:`~revscoring.languages.features.regex_matches.Diff` : The
             difference made by this revision
             """
 
 
 class Diff(DependentSet):
 
-    def __init__(self, name, words, diff_datasources):
+    def __init__(self, name, diff_datasources):
         super().__init__(name)
         self.datasources = diff_datasources
 

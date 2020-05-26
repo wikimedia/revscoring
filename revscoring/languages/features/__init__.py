@@ -15,11 +15,15 @@ Stemmed
 +++++++
 .. automodule :: revscoring.languages.features.stemmed
 
+SubstringMatches
+++++++++++++
+.. automodule :: revscoring.languages.features.substring_matches
+
 """
 from .dictionary import Dictionary
-from .regex_matches import RegexMatches
 from .stemmed import Stemmed
 from .stopwords import Stopwords
-from .word_matches import WordMatches
+from .matches.regex_matches import RegexMatches
+from .matches.substring_matches import SubstringMatches
 
-__all__ = [Dictionary, RegexMatches, Stemmed, Stopwords, WordMatches]
+__all__ = [Dictionary, RegexMatches, Stemmed, Stopwords, SubstringMatches]

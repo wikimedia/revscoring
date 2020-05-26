@@ -14,7 +14,7 @@ from ..datasource import Datasource
 
 class regex(Datasource):
     """
-    Generates a list of strings that match any of a set of privided `regexes`
+    Generates a list of strings that match any of a set of provided `regexes`
 
     :Parameters:
         regexes : `list` ( `str` )
@@ -30,7 +30,7 @@ class regex(Datasource):
             A name for the new datasource
     """
 
-    def __init__(self, regexes, text_datasource, regex_flags=re.I,
+    def __init__(self, regexes, text_datasource=None, regex_flags=re.I,
                  wrapping=(r'\b', r'\b'), exclusions=None, name=None):
         wrapping = wrapping or ("", "")
         group_pattern = r"(" + wrapping[0] + r")" + \
@@ -70,23 +70,28 @@ class regex(Datasource):
 
 class trie(Datasource):
     """
-        Generates a list of strings that match any of a set of provided words
-        or phrases
+        Generates a list of strings that match any of a set of provided
+        substrings
 
         :Parameters:
-            words: `list` ( `str` )
-                A list of words or phrases to find in the text
+            substrings: `list` ( `str` )
+                A list of substrings to find in the text
             text_datasource : :class:`revscoring.Datasource`
                 A datasource that returns a `str` or a `list` of `str`
             name : `str`
                 A name for the new datasource
     """
 
-    def __init__(self, words, text_datasource, name=None):
-        self.keyword_processor = KeywordProcessor()
-        self.keyword_processor.add_keywords_from_list(words)
+    def __init__(self, substrings, text_datasource=None, case_sensitive=False,
+                 exclusions=None, name=None):
+        self.word_processor = KeywordProcessor(case_sensitive=case_sensitive)
 
-        name = self._format_name(name, [words, text_datasource])
+        if exclusions is not None:
+            substrings = list(set(substrings).difference(set(exclusions)))
+
+        self.word_processor.add_keywords_from_list(substrings)
+
+        name = self._format_name(name, [substrings, text_datasource])
         super().__init__(name, self.process, depends_on=[text_datasource])
 
     def process(self, text_or_texts):
@@ -94,8 +99,8 @@ class trie(Datasource):
             return []
         elif isinstance(text_or_texts, str):
             text = text_or_texts
-            return self.keyword_processor.extract_keywords(text)
+            return self.word_processor.extract_keywords(text)
         else:
             texts = text_or_texts
-            return [self.keyword_processor.extract_keywords(text)
+            return [self.word_processor.extract_keywords(text)
                     for text in texts]
