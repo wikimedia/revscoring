@@ -270,7 +270,7 @@ problematic words and phrases for use in reference text
 """
 
 filepath = resource_filename('revscoring', 'assets/enwiktionary_idioms.txt')
-with open('ORES/revscoring/revscoring/assets/enwiktionary_idioms.txt') as f:
+with open(filepath) as f:
     idioms_list = [json.loads(line) for line in f]
 
 idioms = SubstringMatches(name + ".idioms", idioms_list)

@@ -102,5 +102,5 @@ class trie(Datasource):
             return self.word_processor.extract_keywords(text)
         else:
             texts = text_or_texts
-            return [self.word_processor.extract_keywords(text)
-                    for text in texts]
+            return [substring for text in texts
+                    for substring in self.word_processor.extract_keywords(text)]

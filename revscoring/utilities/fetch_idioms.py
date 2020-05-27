@@ -122,8 +122,7 @@ def fetch():
             if not is_idiom(phrase):
                 continue
             idioms.append(phrase)
-    regex = create_regex(idioms)
-    return regex
+    return idioms
 
 
 def run(output, verbose):
@@ -131,5 +130,6 @@ def run(output, verbose):
     if verbose:
         logger.info('Fetching idioms...')
 
-    regex = fetch()
-    dump_observation(regex, output)
+    idioms = fetch()
+    for idiom in idioms:
+        dump_observation(idiom, output)

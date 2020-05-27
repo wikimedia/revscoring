@@ -1,10 +1,8 @@
-import pickle
-
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
 from revscoring.languages.features import SubstringMatches
 
-idioms = SubstringMatches(
+substrings = SubstringMatches(
     "english.idioms",
     ["blood", "bonding", "friends"],
 )
@@ -17,29 +15,25 @@ def test_regexes():
     cache = {p_text: "Blood runs in the family.",
              r_text: "Bonding connects friends and family."}
 
-    assert (solve(idioms.revision.datasources.matches, cache=cache) ==
+    assert (solve(substrings.revision.datasources.matches, cache=cache) ==
             ['bonding', 'friends'])
 
-    assert solve(idioms.revision.matches, cache=cache) == 2
+    assert solve(substrings.revision.matches, cache=cache) == 2
 
-    assert (solve(idioms.revision.parent.datasources.matches, cache=cache) ==
+    assert (solve(substrings.revision.parent.datasources.matches, cache=cache) ==
             ['blood'])
 
-    assert solve(idioms.revision.parent.matches, cache=cache) == 1
+    assert solve(substrings.revision.parent.matches, cache=cache) == 1
 
-    diff = idioms.revision.diff
-    datasources_matches_added = solve(diff.datasources.matches_added,
-                                      cache=cache)
+    diff = substrings.revision.diff
 
-    assert [substring for substring in datasources_matches_added
-            if substring] == [['bonding'], ['friends']]
+    assert solve(diff.datasources.matches_added,
+                 cache=cache) == ['bonding', 'friends']
 
-    matches_added = solve(diff.matches_added, cache=cache)
-    assert matches_added == 2.0
+    assert solve(diff.matches_added, cache=cache) == 2.0
 
-    datasources_matches_removed = solve(diff.datasources.matches_removed, cache=cache)
-    assert [substring for substring in datasources_matches_removed
-            if substring] == [['blood']]
+    assert solve(diff.datasources.matches_removed,
+                 cache=cache) == ['blood']
 
     assert solve(diff.matches_removed, cache=cache) == 1.0
 
