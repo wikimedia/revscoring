@@ -6,6 +6,7 @@ Implements a feature set based off of a set of regexes applied to strings.
     :member-order: bysource
 
 Implements a feature set based off of a set of substrings applied to strings.
+
 .. autoclass:: revscoring.languages.features.SubstringMatches
     :members:
     :member-order: bysource

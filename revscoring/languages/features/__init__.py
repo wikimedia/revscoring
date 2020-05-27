@@ -5,7 +5,7 @@ Dictionary
 
 RegexMatches
 ++++++++++++
-.. automodule :: revscoring.languages.features.regex_matches
+.. automodule :: revscoring.languages.features.matches.regex_matches
 
 Stopwords
 +++++++++
@@ -16,8 +16,8 @@ Stemmed
 .. automodule :: revscoring.languages.features.stemmed
 
 SubstringMatches
-++++++++++++
-.. automodule :: revscoring.languages.features.substring_matches
+++++++++++++++++
+.. automodule :: revscoring.languages.features.matches.substring_matches
 
 """
 from .dictionary import Dictionary

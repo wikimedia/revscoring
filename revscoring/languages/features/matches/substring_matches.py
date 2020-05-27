@@ -1,3 +1,10 @@
+"""
+Implements a feature set based off of list of regular expressions to match.
+
+.. autoclass:: revscoring.languages.features.SubstringMatches
+    :members:
+    :member-order: bysource
+"""
 from . import Matches
 from ....datasources.meta import extractors
 

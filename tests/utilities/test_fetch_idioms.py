@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from revscoring.utilities.fetch_idioms import create_regex, is_idiom, \
-    construct_trie, convert_trie_to_regex
+    convert_trie_to_regex
 
 
 def test_is_idiom():
@@ -20,36 +20,11 @@ def test_is_idiom():
     assert idioms == ['bat for the other team', 'beard the lion in his den']
 
 
-def test_construct_trie():
-    words = ['gold', 'goat', 'goal', 'sole']
-    trie = construct_trie(words)
-    assert trie == OrderedDict({
-        "g": {
-            "o": {
-                "l": {
-                    "d": {}
-                },
-                "a": {
-                    "t": {},
-                    "l": {}
-                }
-            }
-        },
-        "s": {
-            "o": {
-                "l": {
-                    "e": {}
-                }
-            }
-        }
-    })
-
-
 def test_convert_trie_to_regex():
-    trie = OrderedDict({'g': {'o': {'l': {'d': {}}, 'a': {'t': {}, 'l': {}}}},
+    trie = OrderedDict({'g': {'o': {'l': {'d': {}}}},
                         's': {'o': {'l': {'e': {}}}}})
     regex = convert_trie_to_regex(trie)
-    assert regex == '(?:go(?:ld|a(?:t|l))|sole)'
+    assert regex in ['(?:gold|sole)', '(?:sole|gold)']
 
 
 def test_create_regex():
