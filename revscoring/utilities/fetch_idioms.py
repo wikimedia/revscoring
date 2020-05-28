@@ -16,7 +16,6 @@
         --debug          Print debug logging
 """
 
-from collections import OrderedDict
 import logging
 import re
 import sys
@@ -62,48 +61,6 @@ def is_idiom(phrase):
     if 'as a' in phrase:
         return False
     return True
-
-
-def construct_trie(word_list):
-    root = OrderedDict()
-    for word in word_list:
-        level = root
-        # Start at root node
-        for letter in word:
-            if letter not in level:
-                # Create a child node
-                level[letter] = OrderedDict()
-            # Set new level to the child node
-            level = level[letter]
-    return root
-
-
-def convert_trie_to_regex(trie):
-    # Extract the nodes and the sub-trees
-    keys = trie.keys()
-    values = trie.values()
-
-    # Return an empty string if node is a leaf node
-    if len(values) == 0:
-        return keys if len(keys) else ''
-    else:
-        combo = []
-        # Traverse depth first
-        for key, value in zip(keys, values):
-            combo.append(key + convert_trie_to_regex(value))
-        if len(combo) > 1:
-            return "(?:{})".format('|'.join(combo))
-        else:
-            return ''.join(combo)
-
-
-def create_regex(idioms):
-    """
-        Creates regex out of idioms
-    """
-    idioms_trie = construct_trie(idioms)
-    regex = convert_trie_to_regex(idioms_trie)
-    return regex
 
 
 def fetch():
