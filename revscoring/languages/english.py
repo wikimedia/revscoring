@@ -1,7 +1,8 @@
 import json
 from pkg_resources import resource_filename
 
-from .features import Dictionary, RegexMatches, Stemmed, Stopwords
+from .features import Dictionary, SubstringMatches, Stemmed, Stopwords, \
+    RegexMatches
 from .features.dictionary import MultiDictChecker, load_dict, utf16_cleanup
 
 name = "english"
@@ -272,10 +273,10 @@ problematic words and phrases for use in reference text
 
 filepath = resource_filename('revscoring', 'assets/enwiktionary_idioms.txt')
 with open(filepath) as f:
-    idioms_regexes = [json.loads(line) for line in f]
+    idioms_list = [json.loads(line) for line in f]
 
-idioms = RegexMatches(name + ".idioms", idioms_regexes)
+idioms = SubstringMatches(name + ".idioms", idioms_list)
 """
-:class:`~revscoring.languages.features.RegexMatches` features via a list of
+:class:`~revscoring.languages.features.SubstringMatches` features via a list of
 idioms from the `~assets/enwiktionary_idioms.txt` file
 """

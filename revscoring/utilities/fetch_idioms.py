@@ -63,50 +63,6 @@ def is_idiom(phrase):
     return True
 
 
-def combine_words(first_word, following_words):
-    """
-        Combines the first word and following words into one regex
-        Sample:
-        first_word (word1|word2|...|wordx)
-    """
-    if len(following_words) == 1:
-        idiom_regex = '{} {}'.format(
-            first_word, "".join(following_words))
-    else:
-        idiom_regex = '{} ({})'.format(
-            first_word, "|".join(following_words))
-    if not idiom_regex.isspace():
-        return idiom_regex
-
-
-def create_regexes(idioms):
-    """
-        Creates regexes out of idioms
-    """
-    regexes = []
-    first_word = ''
-    following_words = []
-    for idiom in idioms:
-        words = idiom.split()
-        if first_word == '':
-            pass
-        elif first_word == words[0]:
-            following_words.append(" ".join(words[1:]))
-            continue
-        else:
-            regex = combine_words(first_word, following_words)
-            if regex:
-                regexes.append(regex)
-        first_word = words[0]
-        following_words = [" ".join(words[1:])]
-
-    regex = combine_words(first_word, following_words)
-    if regex:
-        regexes.append(regex)
-
-    return regexes
-
-
 def fetch():
     session = mwapi.Session("https://en.wiktionary.org")
 
@@ -116,7 +72,6 @@ def fetch():
         cmtitle="Category:English idioms",
         formatversion=2,
         continuation=True)
-
     idioms = []
     for doc in results:
         for page_doc in doc['query']['categorymembers']:
@@ -124,9 +79,7 @@ def fetch():
             if not is_idiom(phrase):
                 continue
             idioms.append(phrase)
-
-    regexes = create_regexes(idioms)
-    return regexes
+    return idioms
 
 
 def run(output, verbose):
@@ -134,6 +87,6 @@ def run(output, verbose):
     if verbose:
         logger.info('Fetching idioms...')
 
-    regexes = fetch()
-    for regex in regexes:
-        dump_observation(regex, output)
+    idioms = fetch()
+    for idiom in idioms:
+        dump_observation(idiom, output)

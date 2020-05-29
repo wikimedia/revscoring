@@ -7,8 +7,9 @@ feature collections
 Languages implement a subset of feature collections (e.g.
 :class:`~revscoring.languages.features.Dictionary`,
 :class:`~revscoring.languages.features.Stopwords`,
-:class:`~revscoring.languages.features.Stemmed` and
-:class:`~revscoring.languages.features.RegexMatches`) based on what
+:class:`~revscoring.languages.features.Stemmed`,
+:class:`~revscoring.languages.features.RegexMatches`, and
+:class:`~revscoring.languages.features.SubstringMatches`) based on what
 language assets are available. See :mod:`revscoring.languages.features`.
 
 albanian
