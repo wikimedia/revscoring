@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.8.1]
+
+### Fixed
+* revscoring.languages.english.idioms is now an order of magnitude faster
+
 ## [2.8.0]
 
 ### Added
