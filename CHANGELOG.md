@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.8.2]
+
+## Fixed
+* Updated deltas to 0.5.1 to address regression in ref singleton matching
+
+
 ## [2.8.1]
 
 ### Fixed
