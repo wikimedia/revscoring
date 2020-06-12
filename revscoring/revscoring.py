@@ -3,17 +3,24 @@ Provides access to a set of utilities for working with revision scorer models.
 
 Utilities:
 
-* score             Scores a set of revisions using a trained model
-* extract           Extracts a cache of dependencies for a set of observations
-* fetch_text        Fetches text for a set of observations
-* test_model        Tests an MLScorerModel with extracted features
+* check_model       Compares a models construction environment snapshot to the
+                    current environment
 * cv_train          Cross-validates, and then trains a Model with extracted features
-* model_info        Reads a model-file and reports metadata and testing
-                    statistics
-* tune              Tunes a set of models against a training set to identify
-                    the best model/configuration
 * dump_cache        Reads a cache file and dumps out a set of features, target
                     label, and (optionally) score documents in a TSV file.
+* extract           Extracts a cache of dependencies for a set of observations
+* fetch_idioms      Fetches a list of English idioms from English Wiktionary
+* fetch_text        Fetches text for a set of observations
+* fit               Fits a dependent to observed data
+* intersect_merge_observations   Intersect observation data
+* model_info        Reads a model-file and reports metadata and testing
+                    statistics
+* score             Scores a set of revisions using a trained model
+* test_model        Tests an MLScorerModel with extracted features
+* tune              Tunes a set of models against a training set to identify
+                    the best model/configuration
+* union_merge_observations   Merge labeled revisions, taking the union of
+                    values for any rows with the same id
 
 Usage:
     revscoring (-h | --help)
