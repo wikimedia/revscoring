@@ -1,4 +1,4 @@
-pytest
+pytest >= 4.6.0, < 4.6.999
 codecov
 pytest-cov
 google-compute-engine <= 2.7.999
