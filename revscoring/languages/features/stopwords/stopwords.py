@@ -33,4 +33,4 @@ class WordIsInStopwordSet:
         self.stopword_set = stopword_set
 
     def __call__(self, word):
-        return word.lower() in self.stopword_set
+         return word.lower() in self.stopword_set

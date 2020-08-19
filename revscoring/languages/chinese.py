@@ -10,8 +10,6 @@ def simplify_or_none(text):
         return None
     else:
         return HanziConv.toSimplified(text)
-
-
 badword_regexes = list(map(HanziConv.toSimplified, [
     r"王八蛋",  # son of a bitch
     r"他媽的",  # "his mother's"
@@ -25,20 +23,26 @@ badword_regexes = list(map(HanziConv.toSimplified, [
     r"王八",  # bitch
     r"白癡",  # idiot
     r"腦殘",  # brain dead
+    r"NT", # same as above
     r"智障",  # mentally retarded
     r"婊", r"妓",  # prostitute
+    r"吃屎", r"吔屎", # eat shit
     r"屎",  # shit
-    r"屌",  # dick
+    r"屌*",  # dick, any after this may be bad, such like 屌丝 and I do not want to explain.
     r"妈逼",  # (this is verbal but definitely bad)
     r"艹", r"肏",  # fuck (in any context)
     r"放屁",
-
+    r"给爷爬", # bad in any context but the character 爷  cannot be added.
+    r"傻逼", # idiot
+    r"sb", # same as above
+    r"S13", # same as above
+    r"2B", # same as above. Although this is about a kind of pencil.
     # Variants (homonyms) of the use of "fuck" that use 操 ("operation") and
     # 草 ("grass"), "肏" is the actual character.  "艹" is not a real character
     # but it's used this way
-    r"操你", r"草你", r"日你",  # fuck you
-    r"操他", r"草他", r"日他",  # fuck his
-    r"操她", r"草她", r"日她",  # fuck her
+    r"操你", r"草你", r"日你", r"艹你" # fuck you
+    r"操他", r"草他", r"日他", r"艹他" # fuck his
+    r"操她", r"草她", r"日她", r"艹她" # fuck her
 
     # Discrimination (racial slurs)
     r"小日本",  # little Japanese
@@ -47,7 +51,8 @@ badword_regexes = list(map(HanziConv.toSimplified, [
     r"流氓国家",  # rogue country
     r"人渣",  # human slag
     r"我去",  # this is verbal and bad
-    r"鬼子"
+    r"鬼子",  # Japanese
+    r"欧皇", r"非酋" # discrimination related to gaming
 ]))
 
 badwords = RegexMatches(name + ".badwords", badword_regexes, wrapping=None,
@@ -80,7 +85,7 @@ informal_regexes = list(map(HanziConv.toSimplified, [
     r"回頭見",  # huítóujiàn: roughly equivalent to "see you soon"
     r"回見",  # huíjiàn; usually used in Beijing or written Chinese.
     r"再會",  # zàihuì: Literally "[we'll] hello again".
-    r"666+", r"233+",  # No one knows why.  But this belongs
+    r"666+", r"233+",  # No one knows why.  But this belongs to this category for the following reasons:
 ]))
 
 informals = RegexMatches(name + ".informals", informal_regexes, wrapping=None,
@@ -96,7 +101,7 @@ words_to_watch_regexes = list(map(HanziConv.toSimplified, [
     r"本公司",  # this company
     r"代刷", r"代练", r"代抢",  # someone who plays games for you
     r"强势回归",  # "mightly" return
-    r"超值",  # very cost-effective
+    r"超值", r"打折",r"折扣",  # soliciting
     r"一条龙",  # a proverb? "one line of dragon"
     r"一夜情",  # selling one's body (advertising)
     r"世界一流", r"国际一流",  # world first-class
