@@ -65,6 +65,9 @@ class RevisionPage(DependentSet):
 
         if hasattr(page, 'suggested'):
             self.suggested = PageSuggested(page, extractor)
+        
+        if hasattr(page, 'entity'):
+            self.entity = EntityDoc(page, rev_doc.id, extractor)
 
 
 class PageSuggested(DependentSet):
@@ -78,6 +81,19 @@ class PageSuggested(DependentSet):
             self.properties = Datasource(
                 page.suggested.properties.name, identity,
                 depends_on=[property_suggestion_doc])
+
+
+class EntityDoc(DependentSet):
+
+    def __init__(self, page, rev_id, extractor):
+        super().__init__(page.entity._name)
+
+        if hasattr(page, "entity"):
+            entity_doc = \
+                extractor.get_entity_doc_by_id(page, rev_id)
+            self.entity = Datasource(
+                page.entity.name, identity,
+                depends_on=[entity_doc])
 
 
 class Namespace(DependentSet):

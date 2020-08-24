@@ -51,6 +51,7 @@ def test_revision():
     assert not hasattr(revision.page.creation, "diff")
     assert hasattr(revision.page, "suggested")
     check_datasource(revision.page.suggested.properties)
+    check_datasource(revision.page.entity)
 
     # revision.page.creation.user
     check_datasource(revision.page.creation.user.id)

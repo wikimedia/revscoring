@@ -72,6 +72,26 @@ class PropertySuggestionDoc(Datasource):
             return property_suggestion_doc
 
 
+class EntityDoc(Datasource):
+    def __init__(self, page, rev_id, extractor):
+        self.page = page
+        self.extractor = extractor
+        self.rev_id = rev_id
+        super().__init__(page.entity.name + ".doc", self.process,
+                         depends_on=[page.title, extractor.dependents])
+
+    def process(self, entity_id, dependents):
+
+        entity_doc = \
+            self.extractor.get_entity_doc(entity_id, rev_id)
+
+        # If we didn't find a revision for page creation, this is bad.  Error.
+        if entity_doc is None:
+            raise EntityNotFound(self.page, entity_id)
+        else:
+            return entity_doc
+
+
 class UserInfoDoc(Datasource):
 
     def __init__(self, user, extractor):

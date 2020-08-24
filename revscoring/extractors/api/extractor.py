@@ -44,6 +44,9 @@ class Extractor(BaseExtractor):
     def get_property_suggestion_search_doc(self, page):
         return datasources.PropertySuggestionDoc(page, self)
 
+    def get_entity_doc_by_id(self, page, rev_id):
+        return datasources.EntityDoc(page, rev_id, self)
+
     def extract(self, rev_ids, dependents, context=None, caches=None,
                 cache=None, profile=None):
         """
@@ -328,6 +331,25 @@ class Extractor(BaseExtractor):
                 return None
 
         return doc['search']
+
+    def get_entity_doc(self, entity_id, rev_id):
+        if entity_id is None or rev_id is None:
+            return None
+
+        logger.debug("Requesting entity for {0} revision {1} from the API"
+                     .format(entity_id, rev_id))
+        # TODO: wbgetentities doesn't support revid.
+        doc = self.session.get(
+            action='wbgetentities', ids=entity_id)
+
+        if 'error' in doc:
+            if doc['error']['code'] == "unknown_action":
+                raise QueryNotSupported(doc['error']['info'])
+            else:
+                # Any other error should be a missing entity
+                return None
+
+        return doc['entities'][entity_id]
 
     @classmethod
     def from_config(cls, config, name, section_key="extractors"):
