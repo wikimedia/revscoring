@@ -14,13 +14,13 @@ from itertools import groupby
 from mw import api
 from mw.lib import reverts
 
-from revscores import APIExtractor
-from revscores.scorers import LinearSVC
+from revscoring.extractors.api.extractor import Extractor
+from revscoring.scorers import LinearSVC
 
 model = LinearSVC.MODEL.from_file(open("ptwiki.model", 'rb'))
 
 session = api.Session("https://pt.wikipedia.org/w/api.php")
-extractor = APIExtractor(session)
+extractor = Extractor(session)
 
 scorer = LinearSVC(extractor, model)
 
