@@ -9,22 +9,18 @@ makes predictions
 Imagine some python (requires `pip install mwreverts`):
 
 # There exists a model file at enwiki.model
-from itertools import groupby
-
 from mwapi import Session
 import mwreverts
 
 from revscoring.extractors.api.extractor import Extractor
 from revscoring.scoring.models import LinearSVC
 
-model = LinearSVC.MODEL.from_file(open("enwiki.model", 'rb'))
-
 session = Session("https://en.wikipedia.org/w/api.php")
 extractor = Extractor(session)
 
-scorer = LinearSVC(extractor, model)
+model = Model.load(open("enwiki.model", "rb"))
 
-api_result = session.get(action='query', titles = 'Main Page', prop='revisions', rvlimit=500, rvprop='sha1')
+api_result = session.get(action='query', titles='Main Page', prop='revisions', rvlimit=500, rvprop='sha1|ids')
 revisions = next(iter(api_result['query']['pages'].values()))['revisions']
 
 # Content that has been revision-deleted has a hidden SHA-1
@@ -36,8 +32,8 @@ for revert in mwreverts.detect((revision['sha1'], revision) for revision in revi
         reverted_set.add(reverted['sha1'])
 
 for revision in revisions:
-    if revision['sha1'] not in reverted_set: # no revert happened
-        score = scorer.score(revision['revid'])
+    if revision['sha1'] not in reverted_set:  # no revert happened
+        score = model.score([revision['revid']])['probability'][True]
 
         if score > .5:
-            print(rev['pagetitle'])
+            print(revision['pagetitle'])
