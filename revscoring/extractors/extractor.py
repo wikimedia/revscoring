@@ -43,7 +43,7 @@ class OfflineExtractor(Extractor):
     def __init__(self):
         super().__init__()
         logger.warning("Loading OfflineExtractor.  You probably want an " +
-                       "APIExtractor unless this is the test server.")
+                       "revscoring.extractors.api.extractor.Extractor unless this is the test server.")
 
     def extract(self, rev_ids, dependents, context=None, caches=None,
                 cache=None, profile=None):
