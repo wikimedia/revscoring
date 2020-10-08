@@ -1,6 +1,7 @@
 import re
 
 from deltas import wikitext_split
+from deltas import wikitext_split_w_cjk
 from deltas.segmenters import ParagraphsSentencesAndWhitespace
 
 from revscoring.datasources import Datasource
@@ -13,6 +14,7 @@ class Revision:
         super().__init__(name, revision_datasources)
 
         self.tokens = tokenized(revision_datasources.text)
+        self.tokens_cjk = tokenized(revision_datasources.text, strategy="CJK")
         """
         A list of all tokens
         """
@@ -82,7 +84,7 @@ class Revision:
         """
 
         self.cjks = self.tokens_in_types(
-            {'cjk'}, name=self._name + ".cjks"
+            {'cjk_word'}, name=self._name + ".cjks", tok_strategy="CJK"
         )
         """
         A list of Chinese/Japanese/Korean tokens
@@ -186,7 +188,7 @@ class Revision:
         A frequency table of break tokens.
         """
 
-    def tokens_in_types(self, types, name=None):
+    def tokens_in_types(self, types, name=None, tok_strategy="Latin"):
         """
         Constructs a :class:`revscoring.Datasource` that returns all content
         tokens that are within a set of types.
@@ -196,11 +198,17 @@ class Revision:
         if name is None:
             name = "{0}({1})" \
                    .format(self._name + ".tokens_in_types", types)
+        
+        if tok_strategy == "Latin":
+            return filters.filter(token_is_in_types.filter,
+                                self.tokens, name=name)
+        elif tok_strategy == "CJK":
+            return filters.filter(token_is_in_types.filter,
+                                self.tokens_cjk, name=name)
+        else:
+            raise NotImplementedError
 
-        return filters.filter(token_is_in_types.filter,
-                              self.tokens, name=name)
-
-    def tokens_matching(self, regex, name=None, regex_flags=re.I):
+    def tokens_matching(self, regex, name=None, regex_flags=re.I, tok_strategy="Latin"):
         """
         Constructs a :class:`revscoring.Datasource` that returns all content
         tokens that match a regular expression.
@@ -212,9 +220,14 @@ class Revision:
             name = "{0}({1})" \
                    .format(self._name + ".tokens_matching", regex.pattern)
 
-        return filters.regex_matching(regex, self.tokens,
-                                      name=name)
-
+        if tok_strategy == "Latin":
+            return filters.regex_matching(regex, self.tokens,
+                                        name=name)
+        elif tok_strategy == "CJK":
+            return filters.regex_matching(regex, self.tokens_cjk,
+                                        name=name)
+        else:
+            raise NotImplementedError
 
 class Diff():
 
@@ -437,17 +450,27 @@ class TokenIsInTypes:
 def _process_tokens(text):
     return [t for t in wikitext_split.tokenize(text or "")]
 
+def _process_tokens_cjk(text):
+    return [t for t in wikitext_split_w_cjk.tokenize(text or "")]
 
-def tokenized(text_datasource, name=None):
+
+def tokenized(text_datasource, name=None, tok_strategy="Latin"):
     """
     Constructs a :class:`revision.Datasource` that generates a list of tokens
     """
     if name is None:
         name = "{0}({1})".format("tokenized", text_datasource)
 
-    return Datasource(
-        name, _process_tokens, depends_on=[text_datasource]
-    )
+    if tok_strategy == "Latin":
+        return Datasource(
+            name, _process_tokens, depends_on=[text_datasource]
+        )
+    elif tok_strategy =="CJK":
+        return Datasource(
+            name, _process_tokens_cjk, depends_on=[text_datasource]
+        )
+    else:
+        raise NotImplementedError
 
 
 paragraphs_sentences_and_whitespace = ParagraphsSentencesAndWhitespace()
