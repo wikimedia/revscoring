@@ -8,15 +8,19 @@ from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters, frequencies, mappers
 
 
-class Revision:
+from . import base
+
+class Revision(base.BaseRevision):
 
     def __init__(self, name, revision_datasources, tokens_datasource=None):
         super().__init__(name, revision_datasources)
 
         if tokens_datasource is None: 
             tokens_datasource = tokenized(revision_datasources.text)
-            self.cjk = Revision(revision_datasources, tokenized(revision_datasources.text, tok_strategy="CJK"))
+            self.cjk = Revision(name, revision_datasources, tokenized(revision_datasources.text, tok_strategy="CJK"))
         self.tokens = tokens_datasource
+
+        #self.tokens = tokenized(revision_datasources.text)
         """
         A list of all tokens
         """
@@ -86,7 +90,7 @@ class Revision:
         """
 
         self.cjks = self.tokens_in_types(
-            {'cjk_word'}, name=self._name + ".cjks", tok_strategy="CJK"
+            {'cjk_word'}, name=self._name + ".cjks"
         )
         """
         A list of Chinese/Japanese/Korean tokens
@@ -190,7 +194,7 @@ class Revision:
         A frequency table of break tokens.
         """
 
-    def tokens_in_types(self, types, name=None, tok_strategy="Latin"):
+    def tokens_in_types(self, types, name=None):
         """
         Constructs a :class:`revscoring.Datasource` that returns all content
         tokens that are within a set of types.
@@ -200,17 +204,11 @@ class Revision:
         if name is None:
             name = "{0}({1})" \
                    .format(self._name + ".tokens_in_types", types)
-
-        if tok_strategy == "Latin":
-            return filters.filter(token_is_in_types.filter,
+            
+        return filters.filter(token_is_in_types.filter,
                                   self.tokens, name=name)
-        elif tok_strategy == "CJK":
-            return filters.filter(token_is_in_types.filter,
-                                  self.tokens_cjk, name=name)
-        else:
-            raise NotImplementedError
 
-    def tokens_matching(self, regex, name=None, regex_flags=re.I, tok_strategy="Latin"):
+    def tokens_matching(self, regex, name=None, regex_flags=re.I):
         """
         Constructs a :class:`revscoring.Datasource` that returns all content
         tokens that match a regular expression.
@@ -222,17 +220,11 @@ class Revision:
             name = "{0}({1})" \
                    .format(self._name + ".tokens_matching", regex.pattern)
 
-        if tok_strategy == "Latin":
-            return filters.regex_matching(regex, self.tokens,
+        return filters.regex_matching(regex, self.tokens,
                                           name=name)
-        elif tok_strategy == "CJK":
-            return filters.regex_matching(regex, self.tokens_cjk,
-                                          name=name)
-        else:
-            raise NotImplementedError
 
 
-class Diff():
+class Diff(base.BaseDiff):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

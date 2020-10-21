@@ -6,7 +6,9 @@ from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters, mappers
 
 
-class Revision:
+from . import base
+
+class Revision(base.BaseRevision):
 
     def __init__(self, name, revision_datasources):
         super().__init__(name, revision_datasources)
