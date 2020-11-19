@@ -8,6 +8,7 @@ from revscoring.datasources.meta import filters, mappers
 
 from . import base
 
+
 class Revision(base.BaseRevision):
 
     def __init__(self, name, revision_datasources):

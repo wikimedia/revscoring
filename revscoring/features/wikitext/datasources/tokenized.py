@@ -10,17 +10,17 @@ from revscoring.datasources.meta import filters, frequencies, mappers
 
 from . import base
 
+
 class Revision(base.BaseRevision):
 
     def __init__(self, name, revision_datasources, tokens_datasource=None):
         super().__init__(name, revision_datasources)
 
-        if tokens_datasource is None: 
+        if tokens_datasource is None:
             tokens_datasource = tokenized(revision_datasources.text)
             self.cjk = Revision(name, revision_datasources, tokenized(revision_datasources.text, tok_strategy="CJK"))
         self.tokens = tokens_datasource
 
-        #self.tokens = tokenized(revision_datasources.text)
         """
         A list of all tokens
         """
@@ -204,7 +204,7 @@ class Revision(base.BaseRevision):
         if name is None:
             name = "{0}({1})" \
                    .format(self._name + ".tokens_in_types", types)
-            
+
         return filters.filter(token_is_in_types.filter,
                                   self.tokens, name=name)
 

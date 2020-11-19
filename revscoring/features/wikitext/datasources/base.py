@@ -1,6 +1,7 @@
 from revscoring.dependencies import DependentSet
 from . import revision_oriented
 
+
 class BaseRevision(DependentSet):
 
     def __init__(self, name, revision_datasources):

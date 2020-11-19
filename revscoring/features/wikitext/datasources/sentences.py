@@ -5,6 +5,7 @@ from revscoring.datasources.meta import indexable
 
 from . import base
 
+
 class Revision(base.BaseRevision):
 
     def __init__(self, name, revision_datasources):

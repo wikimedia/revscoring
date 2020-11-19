@@ -1,4 +1,3 @@
-from revscoring.dependencies import DependentSet
 from . import edit, parsed, sentences, tokenized
 
 
