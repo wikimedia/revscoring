@@ -99,17 +99,14 @@ def test_markup():
 
 
 def test_cjks():
-    cache = {p_text: "This is 55 {{るは}} a string.",
-             r_text: "This is 56 [[壌のは]] a string."}
+    cache = {p_text: "This is 55 {{るは 壌}} a string.",
+             r_text: "This is 56 [[るは 壌のは の]] a string."}
     assert solve(revision.diff.cjks_added, cache=cache) == 2
     assert solve(revision.diff.cjks_removed, cache=cache) == 1
     assert solve(
         revision.diff.datasources.cjks_added,
-        cache=cache) == [
-        '壌',
-        'の']
-    assert solve(revision.diff.datasources.cjks_removed, cache=cache) == ['る']
-
+        cache=cache) == ['壌のは', 'の']
+    assert solve(revision.diff.datasources.cjks_removed, cache=cache) == ['壌']
     assert (pickle.loads(pickle.dumps(revision.diff.cjks_added)) ==
             revision.diff.cjks_added)
     assert (pickle.loads(pickle.dumps(revision.diff.cjks_removed)) ==

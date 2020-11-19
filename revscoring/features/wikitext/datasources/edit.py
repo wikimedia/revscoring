@@ -122,14 +122,14 @@ class Diff(base.BaseDiff):
         """
 
         self.cjks_added = self.tokens_added_in_types(
-            {'cjk'}, name=self._name + ".cjks_added"
+            {'cjk_word'}, name=self._name + ".cjks_added"
         )
         """
         A list of Chinese/Japanese/Korean tokens added in the edit
         """
 
         self.cjks_removed = self.tokens_removed_in_types(
-            {'cjk'}, name=self._name + ".cjks_removed"
+            {'cjk_word'}, name=self._name + ".cjks_removed"
         )
         """
         A list of Chinese/Japanese/Korean tokens removed in the edit

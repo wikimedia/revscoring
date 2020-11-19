@@ -17,7 +17,7 @@ I guess we'll never know.
 
 
 def test_tokens():
-    assert solve(revision.tokens, cache={r_text: text}) == 97
+    assert solve(revision.tokens, cache={r_text: text}) == 81
     assert pickle.loads(pickle.dumps(revision.tokens)) == revision.tokens
 
 
