@@ -17,7 +17,7 @@ I guess we'll never know.
 
 
 def test_tokens():
-    assert solve(revision.tokens, cache={r_text: text}) == 97
+    assert solve(revision.tokens, cache={r_text: text}) == 81
     assert pickle.loads(pickle.dumps(revision.tokens)) == revision.tokens
 
 
@@ -57,7 +57,7 @@ def test_markups():
 
 def test_cjks():
     assert (solve(revision.datasources.cjks, cache={r_text: text}) ==
-            list("修造のための勧進を担った組織の総称"))
+            ['修造のための勧進を担った組織の総称'])
     assert pickle.loads(pickle.dumps(revision.cjks)) == revision.cjks
 
 
@@ -203,3 +203,21 @@ def test_diff():
             diff.number_prop_delta_increase)
     assert (pickle.loads(pickle.dumps(diff.number_prop_delta_decrease)) ==
             diff.number_prop_delta_decrease)
+
+
+def test_cjk_cjks():
+    assert (solve(revision.datasources.cjk.cjks, cache={r_text: text}) ==
+            ['修造', 'の', 'ため', 'の', '勧進', 'を', '担っ', 'た', '組織', 'の', '総称'])
+    assert pickle.loads(pickle.dumps(revision.cjks)) == revision.cjks
+
+
+def test_cjk_tokens():
+    assert (solve(revision.datasources.cjk.tokens, cache={r_text: text}) == [
+            '\n', 'This', ' ', 'is', ' ', 'an', ' ', 'm80', '.', '  ', 'It', ' ', 'has', ' ', '50', ' ',
+            'grams', ' ', 'of', ' ', 'TNT', '.', ' ', "Here's", ' ', 'some', ' ', 'japanese', ':', '\n',
+            '修造', 'の', 'ため', 'の', '勧進', 'を', '担っ', 'た', '組織', 'の', '総称', '。', '[',
+            '//google.com?foo=bar', ' ', 'hats', ']', '\n', 'I', ' ', 'can', ' ', 'use', ' ', '&middot;',
+            ' ', 'and', ' ', '&nbsp;', '.', '  ', 'But', ' ', '[[', 'can', ']]', ' ', 'I', ' ', '{{', 'foo',
+            '}}', ' ', 'a', ' ', '{{', 'bar', '}}', '?', '\n\n', 'I', ' ', 'guess', ' ', "we'll", ' ',
+            'never', ' ', 'know', '.', '\n'])
+    assert pickle.loads(pickle.dumps(revision.cjks)) == revision.cjks

@@ -1,18 +1,26 @@
 import re
 
 from deltas import wikitext_split
+from deltas import wikitext_split_w_cjk
 from deltas.segmenters import ParagraphsSentencesAndWhitespace
 
 from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters, frequencies, mappers
 
 
-class Revision:
+from . import base
 
-    def __init__(self, name, revision_datasources):
+
+class Revision(base.BaseRevision):
+
+    def __init__(self, name, revision_datasources, tokens_datasource=None):
         super().__init__(name, revision_datasources)
 
-        self.tokens = tokenized(revision_datasources.text)
+        if tokens_datasource is None:
+            tokens_datasource = tokenized(revision_datasources.text)
+            self.cjk = Revision(name, revision_datasources, tokenized(revision_datasources.text, tok_strategy="CJK"))
+        self.tokens = tokens_datasource
+
         """
         A list of all tokens
         """
@@ -82,7 +90,7 @@ class Revision:
         """
 
         self.cjks = self.tokens_in_types(
-            {'cjk'}, name=self._name + ".cjks"
+            {'cjk_word'}, name=self._name + ".cjks"
         )
         """
         A list of Chinese/Japanese/Korean tokens
@@ -198,7 +206,7 @@ class Revision:
                    .format(self._name + ".tokens_in_types", types)
 
         return filters.filter(token_is_in_types.filter,
-                              self.tokens, name=name)
+                                  self.tokens, name=name)
 
     def tokens_matching(self, regex, name=None, regex_flags=re.I):
         """
@@ -213,10 +221,10 @@ class Revision:
                    .format(self._name + ".tokens_matching", regex.pattern)
 
         return filters.regex_matching(regex, self.tokens,
-                                      name=name)
+                                          name=name)
 
 
-class Diff():
+class Diff(base.BaseDiff):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -438,16 +446,27 @@ def _process_tokens(text):
     return [t for t in wikitext_split.tokenize(text or "")]
 
 
-def tokenized(text_datasource, name=None):
+def _process_tokens_cjk(text):
+    return [t for t in wikitext_split_w_cjk.tokenize(text or "")]
+
+
+def tokenized(text_datasource, name=None, tok_strategy="Latin"):
     """
     Constructs a :class:`revision.Datasource` that generates a list of tokens
     """
     if name is None:
         name = "{0}({1})".format("tokenized", text_datasource)
 
-    return Datasource(
-        name, _process_tokens, depends_on=[text_datasource]
-    )
+    if tok_strategy == "Latin":
+        return Datasource(
+            name, _process_tokens, depends_on=[text_datasource]
+        )
+    elif tok_strategy == "CJK":
+        return Datasource(
+            name, _process_tokens_cjk, depends_on=[text_datasource]
+        )
+    else:
+        raise NotImplementedError
 
 
 paragraphs_sentences_and_whitespace = ParagraphsSentencesAndWhitespace()

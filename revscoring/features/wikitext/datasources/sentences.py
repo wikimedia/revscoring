@@ -3,8 +3,10 @@ from deltas.segmenters import MatchableSegment
 from revscoring.datasources import Datasource
 from revscoring.datasources.meta import indexable
 
+from . import base
 
-class Revision:
+
+class Revision(base.BaseRevision):
 
     def __init__(self, name, revision_datasources):
         super().__init__(name, revision_datasources)
@@ -18,7 +20,7 @@ class Revision:
         """
 
 
-class Diff():
+class Diff(base.BaseDiff):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

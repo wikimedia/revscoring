@@ -8,11 +8,12 @@ from revscoring.datasources import Datasource
 from revscoring.datasources.meta import filters
 
 from .tokenized import TokenIsInTypes, is_uppercase_word
+from . import base
 
 logger = logging.getLogger(__name__)
 
 
-class Diff:
+class Diff(base.BaseDiff):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -121,14 +122,14 @@ class Diff:
         """
 
         self.cjks_added = self.tokens_added_in_types(
-            {'cjk'}, name=self._name + ".cjks_added"
+            {'cjk_word'}, name=self._name + ".cjks_added"
         )
         """
         A list of Chinese/Japanese/Korean tokens added in the edit
         """
 
         self.cjks_removed = self.tokens_removed_in_types(
-            {'cjk'}, name=self._name + ".cjks_removed"
+            {'cjk_word'}, name=self._name + ".cjks_removed"
         )
         """
         A list of Chinese/Japanese/Korean tokens removed in the edit
