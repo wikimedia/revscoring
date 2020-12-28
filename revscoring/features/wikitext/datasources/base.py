@@ -8,12 +8,6 @@ class BaseRevision(DependentSet):
         super().__init__(name)
         self.text = revision_datasources.text
 
-        if hasattr(revision_datasources, "parent"):
-            self.parent = revision_oriented.Revision(
-                name + ".parent",
-                revision_datasources.parent
-            )
-
 
 class BaseDiff(DependentSet):
 

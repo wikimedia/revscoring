@@ -1,15 +1,13 @@
 from itertools import groupby
-
 from revscoring.datasources.meta import mappers
-
 from ...feature import Feature
 from ...meta import aggregators
+from . import base
 
+class Revision(base.BaseRevision):
 
-class Revision:
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, name, revision_datasources):
+        super().__init__(name, revision_datasources)
 
         self.chars = aggregators.len(
             self.datasources.text,
@@ -74,7 +72,7 @@ class Revision:
         "`int` : The most repeated character"
 
 
-class Diff:
+class Diff(base.BaseDiff):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

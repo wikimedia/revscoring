@@ -1,16 +1,13 @@
-from revscoring.dependencies import DependentSet
-
 from . import chars, edit_tokens, parsed, tokenized
 
-prefix = "wikitext.revision"
+#prefix = "wikitext.revision"
 
 
-class BaseRevision(DependentSet):
-
+class Revision(parsed.Revision, chars.Revision, tokenized.Revision):
+    #pass
     def __init__(self, name, revision_datasources):
-        super().__init__(name)
-        self.datasources = revision_datasources
-
+        # Initializes all of the Revision datasources
+        super().__init__(name, revision_datasources)
         if hasattr(self.datasources, "parent"):
             self.parent = Revision(
                 name + ".parent",
@@ -31,18 +28,5 @@ class BaseRevision(DependentSet):
             difference between this revision and the parent revision.
             """
 
-
-class Revision(parsed.Revision, chars.Revision, tokenized.Revision,
-               BaseRevision):
-    pass
-
-
-class BaseDiff(DependentSet):
-
-    def __init__(self, name, diff_datasources, *args, **kwargs):
-        super().__init__(name)
-        self.datasources = diff_datasources
-
-
-class Diff(chars.Diff, edit_tokens.Diff, tokenized.Diff, BaseDiff):
+class Diff(chars.Diff, edit_tokens.Diff, tokenized.Diff):
     pass
