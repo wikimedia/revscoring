@@ -18,7 +18,7 @@ class Revision(base.BaseRevision):
 
         if tokens_datasource is None:
             tokens_datasource = tokenized(revision_datasources.text)
-            self.cjk = Revision(name, revision_datasources, tokenized(revision_datasources.text, tok_strategy="CJK"))
+            self.cjk = Revision(self._name + ".cjk", revision_datasources, tokenized(revision_datasources.text, tok_strategy="CJK"))
         self.tokens = tokens_datasource
 
         """
