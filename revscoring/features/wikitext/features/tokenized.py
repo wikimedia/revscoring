@@ -8,7 +8,7 @@ class Revision(base.BaseRevision):
     def __init__(self, name, revision_datasources, tokens_datasource=None):
         super().__init__(name, revision_datasources)
         if tokens_datasource is None:
-            self.cjk = Revision(name, revision_datasources.cjk, tokens_datasource='CJK')
+            self.cjk = Revision(self._name + ".cjk", revision_datasources.cjk, tokens_datasource='CJK')
             "`int` : Features in the revision after the CJK tokenization"
         self.tokens = aggregators.len(self.datasources.tokens)
         "`int` : The number of tokens in the revision"
