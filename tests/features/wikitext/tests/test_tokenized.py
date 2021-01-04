@@ -15,6 +15,15 @@ I can use &middot; and &nbsp;.  But [[can]] I {{foo}} a {{bar}}?
 I guess we'll never know.
 """
 
+p_text_text = """
+This is an m80.  It has 50 grams of TNT. Here's some japanese:
+修造の 修造のための勧進を担った組織の総称。[//google.com?foo=bar hats]
+I can use &middot; and &nbsp;.  But [[can]] I {{foo}} a {{bar}}?
+
+I guess we'll never know.
+guess
+"""
+
 
 def test_tokens():
     assert solve(revision.tokens, cache={r_text: text}) == 81
@@ -221,3 +230,13 @@ def test_cjk_tokens():
             '}}', ' ', 'a', ' ', '{{', 'bar', '}}', '?', '\n\n', 'I', ' ', 'guess', ' ', "we'll", ' ',
             'never', ' ', 'know', '.', '\n'])
     assert pickle.loads(pickle.dumps(revision.cjks)) == revision.cjks
+
+
+def test_cjk_tokens_features():
+    assert (solve(revision.tokens, cache={r_text: text}) == 81)
+    assert (solve(revision.cjk.tokens, cache={r_text: text}) == 91)
+
+
+def test_tokens_diff_features():
+    assert (solve(revision.diff.token_delta_increase, cache={r_text: text, p_text: p_text_text}) == 0)
+    assert (solve(revision.diff.token_delta_decrease, cache={r_text: text, p_text: p_text_text}) == -4)

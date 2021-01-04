@@ -1,9 +1,9 @@
 from revscoring.datasources.meta import mappers
-
 from ...meta import aggregators
+from . import base
 
 
-class Diff:
+class Diff(base.BaseDiff):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
