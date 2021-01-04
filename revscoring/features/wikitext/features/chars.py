@@ -4,6 +4,7 @@ from ...feature import Feature
 from ...meta import aggregators
 from . import base
 
+
 class Revision(base.BaseRevision):
 
     def __init__(self, name, revision_datasources):
