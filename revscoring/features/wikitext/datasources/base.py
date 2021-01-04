@@ -1,5 +1,4 @@
 from revscoring.dependencies import DependentSet
-from . import revision_oriented
 
 
 class BaseRevision(DependentSet):
