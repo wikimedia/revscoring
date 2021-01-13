@@ -240,3 +240,24 @@ def test_cjk_tokens_features():
 def test_tokens_diff_features():
     assert (solve(revision.diff.token_delta_increase, cache={r_text: text, p_text: p_text_text}) == 0)
     assert (solve(revision.diff.token_delta_decrease, cache={r_text: text, p_text: p_text_text}) == -4)
+
+
+# related to https://github.com/wikimedia/editquality/pull/232
+def test_cjk_tokenization_naming_01():
+    r_text = revision_oriented.revision.text
+    r_text_text = 'れた'
+
+    cache = {r_text: r_text_text}
+
+    assert (list(solve([revision.cjk_chars, revision.cjk.tokens], cache=cache)) ==
+                [2, 2.0])
+
+
+def test_cjk_tokenization_naming_02():
+    r_text = revision_oriented.revision.text
+    r_text_text = 'れた'
+
+    cache = {r_text: r_text_text}
+
+    assert (list(solve([revision.cjk.tokens, revision.cjk_chars], cache=cache)) ==
+                [2.0, 2])

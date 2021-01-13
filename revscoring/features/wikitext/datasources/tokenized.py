@@ -455,7 +455,7 @@ def tokenized(text_datasource, name=None, tok_strategy="Latin"):
     Constructs a :class:`revision.Datasource` that generates a list of tokens
     """
     if name is None:
-        name = "{0}({1})".format("tokenized", text_datasource)
+        name = "{0}({1!r}, {2!r})".format("tokenized", text_datasource, tok_strategy)
 
     if tok_strategy == "Latin":
         return Datasource(
