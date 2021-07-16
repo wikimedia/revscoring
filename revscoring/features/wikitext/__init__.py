@@ -69,32 +69,6 @@ Supporting classes
             The length of the longest token
         **longest_word** : `int`
             The length of the longest word-token
-        **cjk.tokens** : `int`
-            The number of tokens after CJK tokenization
-        **cjk.numbers** : `int`
-            The number of number tokens after CJK tokenization
-        **cjk.whitespaces** : `int`
-            The number of whitespace tokens after CJK tokenization
-        **cjk.markups** : `int`
-            The number of markup tokens after CJK tokenization
-        **cjk.cjks** : `int`
-            The number of Chinese/Japanese/Korean tokens after CJK tokenization
-        **cjk.entities** : `int`
-            The number of HTML entity tokens after CJK tokenization
-        **cjk.urls** : `int`
-            The number of URL tokens after CJK tokenization
-        **cjk.words** : `int`
-            The number of word tokens after CJK tokenization
-        **cjk.uppercase_words** : `int`
-            The number of UPPERCASE word tokens after CJK tokenization
-        **cjk.punctuations** : `int`
-            The number of punctuation tokens after CJK tokenization
-        **cjk.breaks** : `int`
-            The number of break tokens after CJK tokenization
-        **cjk.longest_token** : `int`
-            The length of the longest token after CJK tokenization
-        **cjk.longest_word** : `int`
-            The length of the longest word-token after CJK tokenization
 
     :Parsed features:
         **content_chars** : `int`

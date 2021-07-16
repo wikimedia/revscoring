@@ -1,12 +1,12 @@
 import re
+
 from ...meta import aggregators
-from . import base
 
 
-class Revision(base.BaseRevision):
+class Revision:
 
-    def __init__(self, name, revision_datasources):
-        super().__init__(name, revision_datasources)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.content_chars = aggregators.len(
             self.datasources.content,

@@ -1,15 +1,13 @@
 from revscoring.datasources.meta import dicts, filters, mappers
+
 from ...meta import aggregators
-from . import base
 
 
-class Revision(base.BaseRevision):
+class Revision:
 
-    def __init__(self, name, revision_datasources, tokens_datasource=None):
-        super().__init__(name, revision_datasources)
-        if tokens_datasource is None:
-            self.cjk = Revision(self._name + ".cjk", revision_datasources.cjk, tokens_datasource='CJK')
-            "`int` : Features in the revision after the CJK tokenization"
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         self.tokens = aggregators.len(self.datasources.tokens)
         "`int` : The number of tokens in the revision"
         self.numbers = aggregators.len(self.datasources.numbers)
@@ -41,7 +39,7 @@ class Revision(base.BaseRevision):
         "`int` : The longest single word-token in the revision"
 
 
-class Diff(base.BaseDiff):
+class Diff:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

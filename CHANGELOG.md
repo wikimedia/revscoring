@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 * Adds explicit support for CJK tokenization.  See revscoring.features.wikitext.revision.cjk.tokens
 
+
 ## [2.8.2]
 
 ### Fixed

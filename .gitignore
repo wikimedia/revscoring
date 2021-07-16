@@ -16,7 +16,6 @@ datasets/
 models/*.model
 
 # Distribution / packaging
-.vscode/
 .Python
 env/
 bin/
