@@ -15,18 +15,9 @@ I can use &middot; and &nbsp;.  But [[can]] I {{foo}} a {{bar}}?
 I guess we'll never know.
 """
 
-p_text_text = """
-This is an m80.  It has 50 grams of TNT. Here's some japanese:
-修造の 修造のための勧進を担った組織の総称。[//google.com?foo=bar hats]
-I can use &middot; and &nbsp;.  But [[can]] I {{foo}} a {{bar}}?
-
-I guess we'll never know.
-guess
-"""
-
 
 def test_tokens():
-    assert solve(revision.tokens, cache={r_text: text}) == 81
+    assert solve(revision.tokens, cache={r_text: text}) == 97
     assert pickle.loads(pickle.dumps(revision.tokens)) == revision.tokens
 
 
@@ -66,7 +57,7 @@ def test_markups():
 
 def test_cjks():
     assert (solve(revision.datasources.cjks, cache={r_text: text}) ==
-            ['修造のための勧進を担った組織の総称'])
+            list("修造のための勧進を担った組織の総称"))
     assert pickle.loads(pickle.dumps(revision.cjks)) == revision.cjks
 
 
@@ -212,52 +203,3 @@ def test_diff():
             diff.number_prop_delta_increase)
     assert (pickle.loads(pickle.dumps(diff.number_prop_delta_decrease)) ==
             diff.number_prop_delta_decrease)
-
-
-def test_cjk_cjks():
-    assert (solve(revision.datasources.cjk.cjks, cache={r_text: text}) ==
-            ['修造', 'の', 'ため', 'の', '勧進', 'を', '担っ', 'た', '組織', 'の', '総称'])
-    assert pickle.loads(pickle.dumps(revision.cjks)) == revision.cjks
-
-
-def test_cjk_tokens():
-    assert (solve(revision.datasources.cjk.tokens, cache={r_text: text}) == [
-            '\n', 'This', ' ', 'is', ' ', 'an', ' ', 'm80', '.', '  ', 'It', ' ', 'has', ' ', '50', ' ',
-            'grams', ' ', 'of', ' ', 'TNT', '.', ' ', "Here's", ' ', 'some', ' ', 'japanese', ':', '\n',
-            '修造', 'の', 'ため', 'の', '勧進', 'を', '担っ', 'た', '組織', 'の', '総称', '。', '[',
-            '//google.com?foo=bar', ' ', 'hats', ']', '\n', 'I', ' ', 'can', ' ', 'use', ' ', '&middot;',
-            ' ', 'and', ' ', '&nbsp;', '.', '  ', 'But', ' ', '[[', 'can', ']]', ' ', 'I', ' ', '{{', 'foo',
-            '}}', ' ', 'a', ' ', '{{', 'bar', '}}', '?', '\n\n', 'I', ' ', 'guess', ' ', "we'll", ' ',
-            'never', ' ', 'know', '.', '\n'])
-    assert pickle.loads(pickle.dumps(revision.cjks)) == revision.cjks
-
-
-def test_cjk_tokens_features():
-    assert (solve(revision.tokens, cache={r_text: text}) == 81)
-    assert (solve(revision.cjk.tokens, cache={r_text: text}) == 91)
-
-
-def test_tokens_diff_features():
-    assert (solve(revision.diff.token_delta_increase, cache={r_text: text, p_text: p_text_text}) == 0)
-    assert (solve(revision.diff.token_delta_decrease, cache={r_text: text, p_text: p_text_text}) == -4)
-
-
-# related to https://github.com/wikimedia/editquality/pull/232
-def test_cjk_tokenization_naming_01():
-    r_text = revision_oriented.revision.text
-    r_text_text = 'れた'
-
-    cache = {r_text: r_text_text}
-
-    assert (list(solve([revision.cjk_chars, revision.cjk.tokens], cache=cache)) ==
-                [2, 2.0])
-
-
-def test_cjk_tokenization_naming_02():
-    r_text = revision_oriented.revision.text
-    r_text_text = 'れた'
-
-    cache = {r_text: r_text_text}
-
-    assert (list(solve([revision.cjk.tokens, revision.cjk_chars], cache=cache)) ==
-                [2.0, 2])

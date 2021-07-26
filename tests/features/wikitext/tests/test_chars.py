@@ -84,12 +84,12 @@ def test_markup_chars():
 
 
 def test_cjk_chars():
-    cache = {p_text: "This is 55 {{るは 壌}} a string.",
-             r_text: "This is 56 [[るは 壌のは の]] a string."}
+    cache = {p_text: "This is 55 {{るは}} a string.",
+             r_text: "This is 56 [[壌のは]] a string."}
 
-    assert solve(revision.cjk_chars, cache=cache) == 6
-    assert solve(revision.parent.cjk_chars, cache=cache) == 3
-    assert solve(revision.diff.cjk_chars_added, cache=cache) == 4
+    assert solve(revision.cjk_chars, cache=cache) == 3
+    assert solve(revision.parent.cjk_chars, cache=cache) == 2
+    assert solve(revision.diff.cjk_chars_added, cache=cache) == 2
     assert solve(revision.diff.cjk_chars_removed, cache=cache) == 1
 
     assert (pickle.loads(pickle.dumps(revision.cjk_chars)) ==
