@@ -47,6 +47,12 @@ class Revision:
         )
         "`int` : The number of <ref> tags"
 
+        self.list_items = aggregators.len(
+            self.datasources.tag_names_matching(r"li"),
+            name=self._name + ".list_items"
+        )
+        "`int` : The number of list items"
+
         self.templates = aggregators.len(
             self.datasources.templates,
             name=self._name + ".templates"
