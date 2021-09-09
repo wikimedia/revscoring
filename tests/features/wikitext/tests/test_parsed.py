@@ -97,18 +97,27 @@ def test_tags():
     cache = {r_text: "This is [https://wikis.com].\n" +
              "== Heading! ==\n" +
              "<ref>Foo</ref> the <span>foobar</span>!\n" +
-             "=== Another heading! ==="}
+             "* item one\n" +
+             "=== Another heading! ===\n" +
+             "* item one\n" +
+             "** item two\n"}
+    print(solve(revision.datasources.tags_str, cache=cache))
     assert (solve(revision.datasources.tag_names, cache=cache) ==
-            ["ref", "span"])
+            ["ref", "span", "li", "li", "li", "li"])
+    # Note that the number of list items relates to the number of asterisks.
 
-    assert solve(revision.tags, cache=cache) == 2
+    assert solve(revision.tags, cache=cache) == 6
 
     assert solve(revision.ref_tags, cache=cache) == 1
+
+    assert solve(revision.list_items, cache=cache) == 4
 
     assert (pickle.loads(pickle.dumps(revision.tags)) ==
             revision.tags)
     assert (pickle.loads(pickle.dumps(revision.ref_tags)) ==
             revision.ref_tags)
+    assert (pickle.loads(pickle.dumps(revision.list_items)) ==
+            revision.list_items)
 
 
 def test_tags_str():
