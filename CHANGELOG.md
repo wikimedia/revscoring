@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.11.0]
+
+### Added
+* wikitext.revision.list_items feature for counting list items in a page
+
+## [2.10.0]
+
+### Removed
+* Removes CJK tokenization.  Needs more work. 
+
 ## [2.9.0]
 
 ### Added
