@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+
+## [2.11.1]
+* revscoring score utility now works with rev_docs
+
 ## [2.11.0]
 
 ### Added
