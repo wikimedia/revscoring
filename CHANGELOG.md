@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+* Improved hindi language assets
+
 
 ## [2.11.1]
 * revscoring score utility now works with rev_docs
