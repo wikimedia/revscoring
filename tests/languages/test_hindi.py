@@ -4,7 +4,7 @@ from pytest import mark
 
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
-
+from revscoring.languages import hindi
 from .util import compare_extraction
 
 try:
@@ -191,9 +191,9 @@ def test_informals():
 
 @mark.nottravis
 def test_dictionary():
-    cache = {revision_oriented.revision.text: 'पहनाया उनकी कविताओं worngly.'}
+    cache = {revision_oriented.revision.text: 'सजा उनकी कविताओं worngly.'}
     assert (solve(hindi.dictionary.revision.datasources.dict_words, cache=cache) ==
-            ["पहनाया", "उनकी"])
+            ["सजा", "उनकी"])
     assert (solve(hindi.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==
             ["कविताओं", "worngly"])
