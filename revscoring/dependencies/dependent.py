@@ -111,7 +111,7 @@ class DependentSet:
             logger.log(logging.NOTSET,
                        "Registering {0} to {1}".format(value, self._name))
             if value in self._dependents:
-                logger.warn("{0} has already been added to {1}.  Could be "
+                logger.warning("{0} has already been added to {1}.  Could be "
                             .format(value, self) + "overwritten?")
             self._dependents.add(value)
         elif isinstance(value, DependentSet):
