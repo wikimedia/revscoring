@@ -6,7 +6,8 @@ from revscoring.errors import (CaughtDependencyError, CommentDeleted,
                                DependencyError, DependencyLoop,
                                MissingResource, PageNotFound,
                                QueryNotSupported, RevisionNotFound,
-                               TextDeleted, UserDeleted, UserNotFound)
+                               TextDeleted, UserDeleted, UserNotFound,
+                               UnexpectedContentType)
 
 
 def test_exceptions_picklability():
@@ -69,3 +70,9 @@ def test_exceptions_picklability():
     cde = CaughtDependencyError("Test", RuntimeError("Foo"))
     pickle.loads(pickle.dumps(cde))
     assert str(cde) == "RuntimeError: Test\nNone"
+
+    uct = UnexpectedContentType(Dependent("Test"), "JSON")
+    pickle.loads(pickle.dumps(uct))
+    assert str(cde) == ("RuntimeError: Expected content of type JSON, "
+                        "but the following can't be parsed "
+                        "(max 50 chars showed): Test")
