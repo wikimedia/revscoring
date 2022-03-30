@@ -4,6 +4,7 @@ import mwbase
 
 from revscoring.datasources import Datasource
 from revscoring.dependencies import DependentSet
+from revscoring.errors import UnexpectedContentType
 
 from .diff import Diff
 
@@ -114,7 +115,10 @@ class Revision(DependentSet):
 
 def _process_entity_doc(text):
     if text is not None:
-        return json.loads(text)
+        try:
+            return json.loads(text)
+        except json.decoder.JSONDecodeError:
+            raise UnexpectedContentType(text, "JSON")
     else:
         return None
 
