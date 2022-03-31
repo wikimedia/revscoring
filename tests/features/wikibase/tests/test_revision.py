@@ -1,9 +1,11 @@
 import os
 import pickle
+import pytest
 
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
 from revscoring.features.wikibase.revision_oriented import revision
+from revscoring.errors import UnexpectedContentType
 
 pwd = os.path.dirname(os.path.realpath(__file__))
 ALAN_TEXT = open(os.path.join(pwd, "alan_turing.json")).read()
@@ -25,6 +27,9 @@ def test_entity_doc():
     assert (pickle.loads(pickle.dumps(revision.datasources.entity_doc)) ==
             revision.datasources.entity_doc)
 
+    with pytest.raises(UnexpectedContentType):
+        solve(revision.datasources.entity_doc, cache={r_text:
+                "unexpected content type"})
 
 def test_entity():
     entity = solve(revision.datasources.entity, cache={r_text: None})
