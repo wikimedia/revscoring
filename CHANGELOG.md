@@ -1,11 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [2.11.2]
 
 ### Fixed
 * Improved hindi language assets
-
+* Improved error message when decoding a non-item revision from Wikidata
 
 ## [2.11.1]
 * revscoring score utility now works with rev_docs
