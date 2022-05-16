@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.3]
+
+* No-op release, the artifact uploaded for 2.11.2 may not be the correct
+  one, hence a new release to avoid issues (first time publishing
+  a revscoring artifact for a new uploader).
+
 ## [2.11.2]
 
 ### Fixed
