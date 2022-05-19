@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.4]
+
+* No-op release, the artifact uploaded for 2.11.3 may not be the correct
+  one, hence a new release to avoid issues. The wheel was compiled with
+  Python 3.9 that should work just fine, but since the project support
+  only Python 3.7 we want to be extra careful. The new wheel has been
+  created from a Python 3.7 venv.
+
 ## [2.11.3]
 
 * No-op release, the artifact uploaded for 2.11.2 may not be the correct
