@@ -11,7 +11,7 @@ mwtypes >= 0.2.0, < 0.3.999
 mwparserfromhell >= 0.6.1, < 0.6.999
 mysqltsv >= 0.0.7, < 0.0.999
 nltk == 3.5
-numpy >= 1.18.4, < 1.18.999
+numpy >= 1.18.4, < 1.19.999
 pytz >= 2017.2
 requests >= 2.0.0, < 2.999.999
 pyenchant >= 1.6.6, < 1.6.999
