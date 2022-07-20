@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.5]
+
+* Add MWApiCache to the API extractor to bypass the default mwapi usage.
+  Useful when revscoring is used in frameworks (like KServe) where
+  asyncio/tornado and co-routines are neeed.
+* Allow numpy versions 1.19.x.
+
 ## [2.11.4]
 
 * No-op release, the artifact uploaded for 2.11.3 may not be the correct
