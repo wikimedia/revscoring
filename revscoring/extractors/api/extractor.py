@@ -1,5 +1,6 @@
 import logging
 from itertools import islice
+from typing import Dict, List, Optional
 
 import mwapi
 
@@ -14,10 +15,94 @@ from .util import REV_PROPS, USER_PROPS
 logger = logging.getLogger(__name__)
 
 
+class MWAPICache:
+    """A basic HTTP cache for the MediaWiki API,
+       tailored around mwapi.
+       This class is useful to bypass the extractor's default
+       HTTP calls to the MediaWiki API, to use the extractor in more
+       modern context. For example, where async HTTP clients are used,
+       non blocking code is essential and revscoring doesn't support it.
+    """
+    def __init__(self):
+        """Initializes the HTTP cache"""
+        self._cache = {
+            "revisions": {},
+            "pageid": {},
+            "users": {},
+            "wbsgetsuggestions": {},
+            "usercontribs": {}
+        }
+
+    def add_revisions_batch_doc(self, rev_ids_batch: List[int], doc: Dict) -> None:
+        """Save a document containing the results of the MW API call
+           related to a specific batch. Documents will be saved/indexed by
+           blocks of rev-ids.
+        """
+        self._cache["revisions"][tuple(rev_ids_batch)] = doc
+
+    def get_revisions_batch_doc(self, rev_ids_batch: List[int]) -> Optional[Dict]:
+        """Get a document related to a specific batch of rev-ids,
+           previously stored in the HTTP cache.
+        """
+        index = tuple(rev_ids_batch)
+        return self._cache["revisions"].get(index)
+
+    def add_pageid_doc(self, page_id: int, doc: Dict) -> None:
+        """Save a document containing the result of the MW API call
+           related to a specific page-id.
+        """
+        self._cache["pageid"][page_id] = doc
+
+    def get_pageid_doc(self, page_id: int) -> Optional[Dict]:
+        """Get a document related to a specific page-id,
+           previously stored in the HTTP cache.
+        """
+        return self._cache["pageid"].get(page_id)
+
+    def add_users_batch_doc(self, users: List[str], doc: Dict) -> None:
+        """Save a document containing the results of the MW API call
+           related to a specific batch. Documents will be saved/indexed by
+           blocks of users.
+        """
+        self._cache["users"][tuple(users)] = doc
+
+    def get_users_batch_doc(self, users: List[str]) -> Optional[Dict]:
+        """Get a document related to a specific batch of users,
+           previously stored in the HTTP cache.
+        """
+        index = tuple(users)
+        return self._cache["users"].get(index)
+
+    def add_usercontribs_doc(self, user: str, doc: Dict) -> None:
+        """Save a document containing the results of the MW API call
+           related to a specific user text.
+        """
+        self._cache["usercontribs"][user] = doc
+
+    def get_usercontribs_doc(self, user: str) -> Optional[Dict]:
+        """Get a document related to a specific user text,
+           previously stored in the HTTP cache.
+        """
+        return self._cache["usercontribs"].get(user)
+
+    def add_wbsgetsuggestions_doc(self, entity_id: str, doc: Dict) -> None:
+        """Save a document containing the results of the MW API call
+           related to a specific entity id.
+        """
+        self._cache["wbsgetsuggestions"][entity_id] = doc
+
+    def get_wbsgetsuggestions_doc(self, entity_id: str) -> Optional[dict]:
+        """Get a document related to a specific entity id,
+           previously stored in the HTTP cache.
+        """
+        return self._cache["wbsgetsuggestions"].get(entity_id)
+
+
 class Extractor(BaseExtractor):
-    def __init__(self, session, context=None, cache=None):
+    def __init__(self, session, context=None, cache=None, http_cache=None):
         super().__init__(context=context, cache=cache)
         self.session = session
+        self.http_cache = MWAPICache() if http_cache is None else http_cache
         self.dependents = Datasource("extractor.dependents")
 
         rev_doc = self.get_rev_doc_by_id(revision_oriented.revision)
@@ -45,7 +130,7 @@ class Extractor(BaseExtractor):
         return datasources.PropertySuggestionDoc(page, self)
 
     def extract(self, rev_ids, dependents, context=None, caches=None,
-                cache=None, profile=None):
+                http_cache=None, cache=None, profile=None):
         """
         Extracts a values for a set of
         :class:`~revscoring.dependents.dependent.Dependent` (e.g.
@@ -66,6 +151,11 @@ class Extractor(BaseExtractor):
             cache : `dict`
                 A set of call-specific pre-computed values to inject for every
                 rev_id
+            http_cache: `MWAPICache`
+                A MWAPICache object containing pre-computed HTTP calls to
+                the MediaWiki API, bypassing the need to use the mwapi package.
+                This value overrides the one passed to the Extractor's init
+                (if any).
             profile : `dict`
                 A mapping of :class:`revscoring.Dependent` to `list` of process
                 durations for generating the value.  The provided `dict` will
@@ -76,6 +166,11 @@ class Extractor(BaseExtractor):
             error occured during extraction.
         """
         context = context or {}
+
+        # Update the Extractor's http_cache is a fresher one is passed
+        # as input.
+        if http_cache:
+            self.http_cache = http_cache
 
         if (caches or cache) is not None:
             logger.debug("Extracting {0} dependents with cache {1}"
@@ -239,9 +334,11 @@ class Extractor(BaseExtractor):
             if len(batch_ids) == 0:
                 break
             else:
-                doc = self.session.get(action='query', prop='revisions',
-                                       revids=batch_ids, rvslots='main',
-                                       **params)
+                doc = self.http_cache.get_revisions_batch_doc(batch_ids)
+                if not doc:
+                    doc = self.session.get(action='query', prop='revisions',
+                                           revids=batch_ids, rvslots='main',
+                                           **params)
 
                 for page_doc in doc['query'].get('pages', {}).values():
                     yield from _normalize_revisions(page_doc)
@@ -263,8 +360,10 @@ class Extractor(BaseExtractor):
             if len(batch_texts) == 0:
                 break
             else:
-                doc = self.session.get(action='query', list='users',
-                                       ususers=batch_texts, **params)
+                doc = self.http_cache.get_users_batch_doc(batch_texts)
+                if not doc:
+                    doc = self.session.get(action='query', list='users',
+                                           ususers=batch_texts, **params)
 
                 for user_doc in doc['query'].get('users', []):
                     yield user_doc
@@ -274,12 +373,14 @@ class Extractor(BaseExtractor):
         if user_text is None or rev_timestamp is None:
             return None
 
-        logger.debug("Requesting the last revision by {0} from the API"
-                     .format(user_text))
-        doc = self.session.get(action="query", list="usercontribs",
-                               ucuser=user_text, ucprop=ucprop,
-                               uclimit=1, ucdir="older",
-                               ucstart=(rev_timestamp - 1))
+        doc = self.http_cache.get_usercontribs_doc(user_text)
+        if not doc:
+            logger.debug("Requesting the last revision by {0} from the API"
+                         .format(user_text))
+            doc = self.session.get(action="query", list="usercontribs",
+                                   ucuser=user_text, ucprop=ucprop,
+                                   uclimit=1, ucdir="older",
+                                   ucstart=(rev_timestamp - 1))
 
         rev_docs = doc['query']['usercontribs']
 
@@ -295,11 +396,13 @@ class Extractor(BaseExtractor):
         if page_id is None:
             return None
 
-        logger.debug("Requesting creation revision for ({0}) from the API"
-                     .format(page_id))
-        doc = self.session.get(action="query", prop="revisions",
-                               pageids=page_id, rvdir="newer", rvlimit=1,
-                               rvprop=rvprop)
+        doc = self.http_cache.get_pageid_doc(page_id)
+        if not doc:
+            logger.debug("Requesting creation revision for ({0}) from the API"
+                         .format(page_id))
+            doc = self.session.get(action="query", prop="revisions",
+                                   pageids=page_id, rvdir="newer", rvlimit=1,
+                                   rvprop=rvprop)
 
         page_doc = doc['query'].get('pages', {'revisions': []}).values()
         rev_docs = page_doc['revisions']
@@ -314,11 +417,13 @@ class Extractor(BaseExtractor):
         if entity_id is None:
             return None
 
-        logger.debug("Requesting property suggestions for ({0}) from the API"
-                     .format(entity_id))
-        doc = self.session.get(
-            action='wbsgetsuggestions', entity=entity_id, include='all',
-            limit=50)
+        doc = self.http_cache.get_wbsgetsuggestions_doc(entity_id)
+        if not doc:
+            logger.debug("Requesting property suggestions for ({0}) from the API"
+                         .format(entity_id))
+            doc = self.session.get(
+                action='wbsgetsuggestions', entity=entity_id, include='all',
+                limit=50)
 
         if 'error' in doc:
             if doc['error']['code'] == "unknown_action":
