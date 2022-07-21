@@ -1,8 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [2.11.5]
 
+* Add MWApiCache to the API extractor to bypass the default mwapi usage.
+  Useful when revscoring is used in frameworks (like KServe) where
+  asyncio/tornado and co-routines are neeed.
+* Allow numpy versions 1.19.x.
+
+## [2.11.4]
+
+* No-op release, the artifact uploaded for 2.11.3 may not be the correct
+  one, hence a new release to avoid issues. The wheel was compiled with
+  Python 3.9 that should work just fine, but since the project support
+  only Python 3.7 we want to be extra careful. The new wheel has been
+  created from a Python 3.7 venv.
+
+## [2.11.3]
+
+* No-op release, the artifact uploaded for 2.11.2 may not be the correct
+  one, hence a new release to avoid issues (first time publishing
+  a revscoring artifact for a new uploader).
+
+## [2.11.2]
+
+### Fixed
+* Improved hindi language assets
+* Improved error message when decoding a non-item revision from Wikidata
 
 ## [2.11.1]
 * revscoring score utility now works with rev_docs

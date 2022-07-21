@@ -1,3 +1,3 @@
-from .extractor import Extractor
+from .extractor import Extractor, MWAPICache
 
-__all__ = [Extractor]
+__all__ = [Extractor, MWAPICache]

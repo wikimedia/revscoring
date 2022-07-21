@@ -76,6 +76,18 @@ class QueryNotSupported(DependencyError):
                          .format(datasources, info))
 
 
+class UnexpectedContentType(DependencyError):
+    def __init__(self, text, content_type, arg=None):
+        self.text = text
+        self.content_type = content_type
+        super().__init__("Expected content of type {0}, "
+                         "but the following can't be parsed "
+                         "(max 50 chars showed): {1}"
+                         .format(content_type, text[:50]))
+    def __reduce__(self):
+        return (UnexpectedContentType, (self.text, self.content_type))
+
+
 class RevisionNotFound(MissingResource):
     def __init__(self, datasources, rev_id=None, arg=None):
         super().__init__("Could not find revision ({0}:{1})"
