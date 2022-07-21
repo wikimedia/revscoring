@@ -4,7 +4,7 @@ from pytest import mark
 
 from revscoring.datasources import revision_oriented
 from revscoring.dependencies import solve
-
+from revscoring.languages import hindi
 from .util import compare_extraction
 
 try:
@@ -44,6 +44,7 @@ BAD = [
     "दिल्ली",
     "बहन चोदा",
     "गांडू",
+    "हराम जादा",
     "हरामी",
     "हराम",
     "लोडु",
@@ -65,15 +66,11 @@ BAD = [
     "बहनचोद",
     "गांडू",
     "सूअर",
-    "हरामी",
-    "हराम जादा",
     "लंड",
     "कुतिया",
     "कमीना",
     "कमीनी",
     "गधा",
-    "हिजड़ा",
-    "हिज्र",
     "साली",
 ]
 INFORMAL = [
@@ -128,8 +125,6 @@ INFORMAL = [
     "हगना",
     "झंड",
     "झंडू",
-    "हिजड़ा",
-    "हिंजडा",
     "हीहीही",
     "हहहा",
     "हुदंग",
@@ -137,12 +132,12 @@ INFORMAL = [
     "कुत्ते",
     "कुत्ता",
     "अच्छा",
-    "वाह",
     "वाह वाह",
+    "वाह",
     "शाबाश",
     "हैं",
-    "सुनो",
     "सुनो ना",
+    "सुनो",
     "और फिर",
     "हां बोलो",
     "सच में",
@@ -191,9 +186,9 @@ def test_informals():
 
 @mark.nottravis
 def test_dictionary():
-    cache = {revision_oriented.revision.text: 'पहनाया उनकी कविताओं worngly.'}
+    cache = {revision_oriented.revision.text: 'सजा उनकी कविताओं worngly.'}
     assert (solve(hindi.dictionary.revision.datasources.dict_words, cache=cache) ==
-            ["पहनाया", "उनकी"])
+            ["सजा", "उनकी"])
     assert (solve(hindi.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==
             ["कविताओं", "worngly"])
