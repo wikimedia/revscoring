@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.6]
+
+* Allow mwapi up to 0.6.x in requirements.txt
+* Fixed unit tests for Hindi Wikipedia.
+
 ## [2.11.5]
 
 * Add MWApiCache to the API extractor to bypass the default mwapi usage.
