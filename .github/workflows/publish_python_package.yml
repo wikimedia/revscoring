@@ -32,8 +32,8 @@ jobs:
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: scoring-internal
-          password: ${{ secrets.PYPI_PASS }}
+          user: isaranto
+          password: ${{ secrets.ISARANTO_PASS }}
           repository_url: https://test.pypi.org/legacy/
 
     #    - name: Publish distribution 📦 to PyPI
