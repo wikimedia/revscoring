@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.8]
+* Add new github action that pushes to PYPI - no code relevant changes
+
 ## [2.11.6]
 
 * Allow mwapi up to 0.6.x in requirements.txt
