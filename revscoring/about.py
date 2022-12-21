@@ -1,5 +1,5 @@
 __name__ = "revscoring-isaranto-test"
-__version__ = "2.5.7"
+__version__ = "2.5.8"
 __author__ = "Aaron Halfaker"
 __author_email__ = "ahalfaker@wikimedia.org"
 __description__ = ("A set of utilities for generating quality scores for " +
