@@ -98,10 +98,10 @@ def test_dictionary():
     cache = {r_text: "Gita Gutawa adalah seorang m80 sopran, aktris."}
     assert (solve(indonesian.dictionary.revision.datasources.dict_words,
                   cache=cache) ==
-            ['adalah', 'seorang', 'sopran', 'aktris'])
+            ['Gita', 'adalah', 'seorang', 'sopran', 'aktris'])
     assert (solve(indonesian.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==
-            ['Gita', 'Gutawa', 'm80'])
+            ['Gutawa', 'm80'])
 
     assert (indonesian.dictionary ==
             pickle.loads(pickle.dumps(indonesian.dictionary)))

@@ -1,0 +1,29 @@
+name: "CI"
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  ci-merge:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.7", "3.9"]
+#    container:
+#      image: docker-registry.wikimedia.org/buster:20221204
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run all
+        run: |
+          make setup
+          make install-deps
+          make run-tests
+    outputs:
+      head-status: ${{ job.status }}
