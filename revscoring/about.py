@@ -1,4 +1,4 @@
-__name__ = "revscoring"
+__name__ = "revscoring-isaranto-test"
 __version__ = "2.5.6"
 __author__ = "Aaron Halfaker"
 __author_email__ = "ahalfaker@wikimedia.org"
