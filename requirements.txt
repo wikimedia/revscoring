@@ -17,7 +17,7 @@ pytz >= 2017.2
 requests >= 2.0.0, < 2.999.999
 pyenchant == 3.2.2
 scipy >= 1.5.4, < 1.5.999
-scikit-learn == 0.22.1
+scikit-learn == 1.0.2
 tabulate >= 0.8.7, < 0.8.999
 tqdm >= 4.15.0, < 4.15.9999
 yamlconf >= 0.2.4, < 0.2.999
