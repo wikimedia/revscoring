@@ -11,7 +11,7 @@ mwbase >= 0.1.4, < 0.1.999
 mwtypes >= 0.2.0, < 0.3.999
 mwparserfromhell >= 0.6.1, < 0.6.999
 mysqltsv >= 0.0.7, < 0.0.999
-nltk == 3.5
+nltk == 3.6.6
 numpy ~= 1.19.3
 pytz >= 2017.2
 requests >= 2.0.0, < 2.999.999
