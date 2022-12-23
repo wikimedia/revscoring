@@ -1,0 +1,32 @@
+name: "CI"
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  ci-merge:
+    runs-on: ubuntu-latest
+    container:
+      image: docker-registry.wikimedia.org/bullseye:20221204
+      options: --user root
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Setup Wikimedia Buster image
+        run: |
+          apt-get update -y
+          apt-get install python3-pip python3-dev python3-setuptools build-essential python3-enchant g++ gfortran git \
+          liblapack-dev	libopenblas-dev libenchant-2-2 wget -y
+          make setup-image
+
+      - name: Run all
+        run: |
+          pip install -r requirements.txt
+          pip install -r test-requirements.txt
+          python3 -m nltk.downloader omw sentiwordnet stopwords wordnet
+          python3 -m pytest tests/ -v --cov
+
+    outputs:
+      head-status: ${{ job.status }}
