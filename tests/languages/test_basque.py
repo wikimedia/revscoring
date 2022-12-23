@@ -41,10 +41,9 @@ def test_dictionary():
     assert solve(basque.dictionary.revision.datasources.dict_words,
                  cache=cache) == ['gizonezko']
     assert solve(basque.dictionary.revision.datasources.non_dict_words,
-                 cache=cache) == ['dominadun', "worngly"]
+                 cache=cache) == ["dominadun", "worngly"]
 
     assert basque.dictionary == pickle.loads(pickle.dumps(basque.dictionary))
-
 
 '''
 @mark.nottravis
