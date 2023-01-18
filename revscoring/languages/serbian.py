@@ -4,12 +4,12 @@ name = "serbian"
 
 try:
     import enchant
-    dictionary_ = enchant.Dict("sr")
+    dictionary = enchant.Dict("sr")
 except enchant.errors.DictNotFoundError:
     raise ImportError("No enchant-compatible dictionary found for 'sr'.  " +
                       "Consider installing 'hunspell-sr'.")
 
-dictionary = Dictionary(name + ".dictionary", dictionary_.check)
+dictionary = Dictionary(name + ".dictionary", dictionary.check)
 """
 :class:`~revscoring.languages.features.Dictionary` features via
 `enchant.Dict <https://github.com/rfk/pyenchant>`_ "sr". Provided by `hunspell-sr`.

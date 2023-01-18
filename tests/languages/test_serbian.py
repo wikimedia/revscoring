@@ -113,7 +113,6 @@ def test_informals():
 
 def test_dictionary():
     cache = {r_text: "Стога мулплати се мултипла склероза."}
-    print(serbian.dictionary_.provider.file)
     assert (solve(serbian.dictionary.revision.datasources.dict_words,
                   cache=cache) ==
             ['Стога', 'се', 'мултипла', 'склероза'])
