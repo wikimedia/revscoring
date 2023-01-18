@@ -30,7 +30,7 @@ setup-image:
 	hunspell-fr \
 	hunspell-he \
 	hunspell-hr \
-	myspell-hu \
+	aspell-hu \
 	hunspell-lv \
 	myspell-nb \
 	hunspell-nl \
