@@ -7,7 +7,7 @@ jobs:
   ci-merge:
     runs-on: ubuntu-latest
     container:
-      image: docker-registry.wikimedia.org/bullseye:20221204
+      image: docker-registry.wikimedia.org/bullseye:20221218
       options: --user root
 
     steps:
