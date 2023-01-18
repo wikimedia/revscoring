@@ -159,10 +159,10 @@ def test_dictionary():
     assert (solve(
             hungarian.dictionary.revision.datasources.dict_words,
             cache=cache) ==
-            ["nyugatról"])
+            ["nyugatról", "között"])
     assert (solve(hungarian.dictionary.revision.datasources.non_dict_words,
                   cache=cache) ==
-            ["között", "worngly"])
+            ["worngly"])
 
     assert (hungarian.dictionary ==
             pickle.loads(pickle.dumps(hungarian.dictionary)))
