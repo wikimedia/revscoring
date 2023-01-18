@@ -9,7 +9,7 @@ run-tests:
 .PHONY: setup-image
 setup-image:
 	apt-get install \
-	aspell-ar \
+	hunspell-ar \
 	aspell-bn \
 	aspell-el \
 	hunspell-id \
@@ -20,24 +20,24 @@ setup-image:
 	aspell-sv \
 	aspell-ta \
 	aspell-uk \
-	myspell-cs \
+	hunspell-cs \
 	hunspell-de-at \
 	hunspell-de-ch \
 	hunspell-de-de \
-	myspell-es \
-	myspell-et \
-	myspell-fa \
-	myspell-fr \
-	myspell-he \
-	myspell-hr \
-	myspell-hu \
-	myspell-lv \
-	myspell-nb \
-	myspell-nl \
-	myspell-pt-pt \
-	myspell-pt-br \
-	myspell-ru \
-	myspell-hr \
+	hunspell-es \
+	hunspell-et \
+	hunspell-fa \
+	hunspell-fr \
+	hunspell-he \
+	hunspell-hr \
+	hunspell-hu \
+	hunspell-lv \
+	hunspell-nb \
+	hunspell-nl \
+	hunspell-pt-pt \
+	hunspell-pt-br \
+	hunspell-ru \
+	hunspell-hr \
 	hunspell-bs \
 	hunspell-ca \
 	hunspell-en-au \
