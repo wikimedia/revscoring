@@ -47,7 +47,7 @@ setup-image:
 	hunspell-gl \
 	hunspell-it \
 	hunspell-hi \
-	hunspell-sr \
+	aspell-sr \
 	hunspell-vi \
 	-y
 	python3 -m nltk.downloader omw sentiwordnet stopwords wordnet
