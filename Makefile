@@ -26,13 +26,13 @@ setup-image:
 	hunspell-de-de \
 	hunspell-es \
 	hunspell-et \
-	hunspell-fa \
+	myspell-fa \
 	hunspell-fr \
 	hunspell-he \
 	hunspell-hr \
 	hunspell-hu \
 	hunspell-lv \
-	hunspell-nb \
+	myspell-nb \
 	hunspell-nl \
 	hunspell-pt-pt \
 	hunspell-pt-br \
