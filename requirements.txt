@@ -11,13 +11,13 @@ mwbase >= 0.1.4, < 0.1.999
 mwtypes >= 0.2.0, < 0.3.999
 mwparserfromhell >= 0.6.1, < 0.6.999
 mysqltsv >= 0.0.7, < 0.0.999
-nltk == 3.6.6
-numpy == 1.19.5
+nltk >= 3.6.6
+numpy >= 1.19.5, < 1.21
 pytz >= 2017.2
 requests >= 2.0.0, < 2.999.999
-pyenchant == 3.2.2
+pyenchant >= 3.2.2
 scipy >= 1.5.4, < 1.5.999
-scikit-learn == 1.0.2
+scikit-learn >= 1.0.2
 tabulate >= 0.8.7, < 0.8.999
 tqdm >= 4.15.0, < 4.15.9999
 yamlconf >= 0.2.4, < 0.2.999
