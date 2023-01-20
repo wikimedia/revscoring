@@ -14,7 +14,7 @@ def normalize(v):
         return "-Infinity"
     elif v == numpy.PINF:
         return "Infinity"
-    elif isinstance(v, numpy.float):
+    elif isinstance(v, numpy.floating):
         return float(v)
     elif isinstance(v, tuple):
         return list(v)
