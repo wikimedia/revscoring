@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.10]
+Bump numpy version to 1.24 and fix failing test (numpy.float has been deprecated)
+
+## [2.11.9]
+* Add github actions for CI with debian bullseye image
+* updated dictionaries that have a hunspell package in debian. hunspell is a "superset" of myspell. 
+
 ## [2.11.8]
 * Add new github action that pushes to PYPI - no code relevant changes
 
