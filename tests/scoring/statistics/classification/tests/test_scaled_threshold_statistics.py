@@ -2,10 +2,11 @@ import json
 import random
 
 from numpy import linspace
-
+import numpy as np
 from revscoring.scoring.statistics.classification.scaled_threshold_statistics import \
     ScaledThresholdStatistics # noqa
 
+np.random.seed(42)
 # Build up the observations.
 PROBAS = list(linspace(0, 1, 4000))
 LABELS = [True if proba > 0.8 or
