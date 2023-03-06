@@ -19,6 +19,6 @@ pyenchant >= 3.2.2
 scipy >= 1.5.4, < 1.10.1
 scikit-learn >= 1.0.2
 tabulate >= 0.8.7, < 0.8.999
-tqdm >= 4.15.0, < 4.15.9999
+tqdm >= 4.15.0, < 4.65.1
 yamlconf >= 0.2.4, < 0.2.999
 flashtext==2.7
