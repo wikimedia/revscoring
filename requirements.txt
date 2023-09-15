@@ -12,13 +12,13 @@ mwtypes >= 0.2.0, < 0.3.999
 mwparserfromhell >= 0.6.1, < 0.6.999
 mysqltsv >= 0.0.7, < 0.0.999
 nltk >= 3.6.6
-numpy >= 1.21.5, < 1.24.0
+numpy >= 1.21.5, < 1.25.0
 pytz >= 2017.2
 requests >= 2.0.0, < 2.999.999
 pyenchant >= 3.2.2
 scipy >= 1.5.4, < 1.10.1
 scikit-learn >= 1.0.2
-tabulate >= 0.8.7, < 0.8.999
+tabulate >= 0.9.0, < 0.9.999
 tqdm >= 4.15.0, < 4.15.9999
-yamlconf >= 0.2.4, < 0.2.999
+yamlconf @ git+https://github.com/elukey/yamlconf@8c7f77937c81b7ee3adb7e3526ee88e9193528e7
 flashtext==2.7
