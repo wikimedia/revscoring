@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.12]
+* Switch yamlconf to wmf maintained fork.
+  
 ## [2.11.11]
 * Bump tabulate and numpy versions.
 * Update (temporarily) yamlconf's version to a git commit
