@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.11]
+* Bump tabulate and numpy versions.
+* Update (temporarily) yamlconf's version to a git commit
+  while we wait for https://github.com/halfak/yamlconf/pull/8
+
 ## [2.11.10]
 * Bump numpy version to 1.24 and fix failing test (numpy.float has been deprecated)
 * Loosen upper bound restriction for scipy
