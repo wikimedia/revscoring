@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.11.13]
+* Force mwparserfromhell to use version older than 0.6.5 as there was a memory leak solved. 
+  https://github.com/earwig/mwparserfromhell/pull/303
+
 ## [2.11.12]
 * Switch yamlconf to wmf maintained fork.
   
